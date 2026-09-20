@@ -1,0 +1,2068 @@
+name: 文件操作_suite
+app: dde-file-manager
+description: 文件操作模块 AT-SPI 用例
+module: 文件操作
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_mainui_文件操作_001
+  name: 【IO性能优化】复制中途停止拷贝，自动删除残留文件
+  description: '来源用例编号: 1977035'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_002
+  name: 右键菜单点击优化
+  description: '来源用例编号: 1976581'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_004
+  name: 应用图标重命名
+  description: '来源用例编号: 1955355'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_005
+  name: sh脚本权限为给647时，普通用户执行
+  description: '来源用例编号: 1891067'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_006
+  name: 预览含有大量文件目录中的文件
+  description: '来源用例编号: 1874125'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_007
+  name: 【右键菜单增加反选选项】组策略开启反选后，不影响反选快捷键
+  description: '来源用例编号: 1816265'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+s
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+shift+i
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+s
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+shift+i
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: case_mainui_文件操作_008
+  name: 快捷访问-版本升级不会影响快捷访问_
+  description: '来源用例编号: 1816085'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 快捷访问
+- id: case_mainui_文件操作_009
+  name: 埋点，右键菜单项点击分布-挂载
+  description: '来源用例编号: 1816013'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_mainui_文件操作_010
+  name: 埋点，右键菜单项点击分布-图标大小，极小
+  description: '来源用例编号: 1815847'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_mainui_文件操作_011
+  name: 埋点，右键菜单项点击分布-新建文件夹
+  description: '来源用例编号: 1815831'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_mainui_文件操作_012
+  name: 埋点，右键菜单项点击分布-标记信息
+  description: '来源用例编号: 1815825'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_mainui_文件操作_013
+  name: Bug186751转：长文件名-/tmp目录删除新建
+  description: '来源用例编号: 1810957'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_014
+  name: 【撤销交互】【应用交互】撤销与恢复撤销操作次数上限为100次
+  description: '来源用例编号: 1809911'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_015
+  name: 【撤销交互】【应用交互】浏览器网页文件提交功能适配文件删除操作的撤销与还原
+  description: '来源用例编号: 1809903'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_016
+  name: 【撤销交互】【应用交互】应用打开文件功能适配文件剪切粘贴操作的撤销与还原
+  description: '来源用例编号: 1809901'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 图片
+- id: case_mainui_文件操作_017
+  name: 【撤销交互】【文件管理器】多个文件重命名操作的撤销与恢复
+  description: '来源用例编号: 1809893'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_018
+  name: 【撤销交互】【文件管理器】将多个文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809883'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_019
+  name: 【撤销交互】【文件管理器】将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809881'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 下载
+- id: case_mainui_文件操作_020
+  name: 【撤销交互】【桌面】将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809879'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_021
+  name: 【撤销交互】【文件管理器】将多个文件移动后Ctrl+Z撤销移动操作，再利用Ctrl+Y恢复
+  description: '来源用例编号: 1809869'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_022
+  name: 【撤销交互】【桌面】将文件移动后Ctrl+Z撤销移动操作，再利用Ctrl+Y恢复
+  description: '来源用例编号: 1809865'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_023
+  name: 【撤销交互】快捷键面板包含撤销和恢复快捷键
+  description: '来源用例编号: 1809863'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+s
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_024
+  name: 【撤销交互】多次进行撤销操作与恢复操作
+  description: '来源用例编号: 1809861'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 回收站
+- id: case_mainui_文件操作_025
+  name: 【撤销交互】新建文件后，对文件内容进行编辑，Ctrl+Z执行撤销后，不支持Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809859'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_026
+  name: 【撤销交互】将回收站中文件彻底删除后Ctrl+Z撤销，不能撤销删除操作
+  description: '来源用例编号: 1809857'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_027
+  name: 【撤销交互】将回收站中文件还原后Ctrl+Z撤销还原文件，再利用Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809855'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_028
+  name: 【撤销交互】【桌面】文件重命名后Ctrl+Z撤销重命名操作，再利用Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809829'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_029
+  name: 【撤销交互】【文件管理器】删除多个文件后Ctrl+Z撤销删除操作，再利用Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809819'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_030
+  name: 【撤销交互】【桌面】删除文件后Ctrl+Z撤销删除操作，再利用Ctrl+Y恢复撤销
+  description: '来源用例编号: 1809815'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+y
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件操作_032
+  name: 拖拽文件到同目录的文件夹下
+  description: '来源用例编号: 1809301'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_033
+  name: 目标目录存在同名文件/文件夹，可以再次复制
+  description: '来源用例编号: 1809297'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_034
+  name: 【重复打开文件夹】默认勾选：在单独的进程中打开文件窗口
+  description: '来源用例编号: 1809289'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_035
+  name: 文件名称分词优化-桌面图标大小为小，文件名称为英文，检查文件显示
+  description: '来源用例编号: 1809257'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_037
+  name: 音频支持缩略图-设置“音乐预览”，检查损坏的有封面缩略图的音频
+  description: '来源用例编号: 1807287'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_038
+  name: 预览开关-存在预览窗口时关闭预览
+  description: '来源用例编号: 1807267'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_039
+  name: 预览开关-多用户关闭预览
+  description: '来源用例编号: 1807261'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_040
+  name: 预览-预览文件名包含特殊字符的文件
+  description: '来源用例编号: 1807255'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_041
+  name: 预览-图片缩略图预览
+  description: '来源用例编号: 1807253'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 图片
+- id: case_mainui_文件操作_042
+  name: 【拖入选中】列表模式_从外部拖入文件后默认选中文件
+  description: '来源用例编号: 1807217'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_043
+  name: Bug202013转：拖拽文件到同目录的文件夹下
+  description: '来源用例编号: 1807213'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_044
+  name: 聚合拖拽-4K屏高分辨率在文管选中多个文件拖拽
+  description: '来源用例编号: 1807189'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_045
+  name: 聚合拖拽-选中文档拖拽到wps应用
+  description: '来源用例编号: 1807181'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_046
+  name: '[core]拖入优化-列表模式下，按住ctrl从普通目录拖拽文件/文件夹到另一文管窗口'
+  description: '来源用例编号: 1807147'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_047
+  name: 拖入优化-列表模式下，按住ctrl从回收站拖拽文件/文件夹到普通目录
+  description: '来源用例编号: 1807139'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_048
+  name: '[core]拖入优化-图标模式下，按住ctrl从普通目录拖拽文件/文件夹到另一文管窗口'
+  description: '来源用例编号: 1807133'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_049
+  name: 拖入优化-各目录搜索目录拖拽
+  description: '来源用例编号: 1807119'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_050
+  name: 拖入优化- 关闭窗口特效，拖拽文件/文件夹
+  description: '来源用例编号: 1807115'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_051
+  name: '[core]库目录禁止拖拽-图标模式下库目录禁止拖拽'
+  description: '来源用例编号: 1807095'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_052
+  name: '[core]文件操作-ALT+拖拽文件到本地目录'
+  description: '来源用例编号: 1807067'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: case_mainui_文件操作_053
+  name: 聚合拖拽-桌面已铺满全选文件拖拽_
+  description: '来源用例编号: 1807031'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_054
+  name: 聚合拖拽-多屏下桌面拖拽99个文件至副屏
+  description: '来源用例编号: 1807025'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_055
+  name: 聚合拖拽-在桌面选中多个文件发生聚合后在原位置释放_
+  description: '来源用例编号: 1807019'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_056
+  name: 聚合拖拽-在桌面拖拽多个文件至回收站_
+  description: '来源用例编号: 1807015'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+- id: case_mainui_文件操作_057
+  name: 【Ctrl+Z撤销】跨分区拖拽文件后，Ctrl+Z撤销弹出彻底删除提示
+  description: '来源用例编号: 1806975'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_058
+  name: 快捷键-桌面选中文件，快捷键alt+m调出右键菜单
+  description: '来源用例编号: 1806955'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_059
+  name: 桌面，选中计算机图标，空格预览
+  description: '来源用例编号: 1806949'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: case_mainui_文件操作_060
+  name: 文件操作-在有缩略图的文件夹使用F5不断刷新
+  description: '来源用例编号: 1806945'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_061
+  name: 选中多个文件后，再取消选中一些
+  description: '来源用例编号: 1806939'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_062
+  name: 文件框选-桌面文件铺满堆叠状态下框选堆叠的文件
+  description: '来源用例编号: 1806931'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_063
+  name: 文件框选-框选主副屏桌面上的文件
+  description: '来源用例编号: 1806919'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_065
+  name: 文件操作-快捷键选中文件_
+  description: '来源用例编号: 1806877'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+a
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_066
+  name: 文件操作-文件名快速定位到文件_
+  description: '来源用例编号: 1806875'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_067
+  name: '[052]文件操作-选中文件后底部状态栏展示'
+  description: '来源用例编号: 1806871'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_069
+  name: 文件操作-Enter键打开文件或确定
+  description: '来源用例编号: 1806867'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_070
+  name: 文件操作-方向键切换文件或选项
+  description: '来源用例编号: 1806865'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_071
+  name: 文件操作-在桌面/文管切换隐藏文件显示模式_
+  description: '来源用例编号: 1806861'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+h
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+h
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_072
+  name: 快捷访问-保存文件到快捷访问_
+  description: '来源用例编号: 1806849'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: case_mainui_文件操作_073
+  name: 快捷访问-原文件夹名称修改不影响快捷访问_
+  description: '来源用例编号: 1806827'
+  tags: []
+  steps:
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 快捷访问
+- id: case_mainui_文件操作_074
+  name: 快捷访问-切换顺序
+  description: '来源用例编号: 1806823'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 快捷访问
+- id: case_mainui_文件操作_075
+  name: 快捷访问-删除快捷访问文件
+  description: '来源用例编号: 1806819'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: 快捷访问
+- id: case_mainui_文件操作_076
+  name: 快捷访问-源文件夹右键移除
+  description: '来源用例编号: 1806817'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_077
+  name: '[058]快捷访问-右键重命名'
+  description: '来源用例编号: 1806811'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_078
+  name: '[061]快捷访问-右键菜单检查'
+  description: '来源用例编号: 1806805'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_080
+  name: 快捷访问-回收站内文件夹右键无添加快捷访问
+  description: '来源用例编号: 1806785'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: case_mainui_文件操作_081
+  name: 快捷访问-选中多个文件夹右键添加快捷访问
+  description: '来源用例编号: 1806779'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: case_mainui_文件操作_082
+  name: 日常操作-访问/sys/power目录_
+  description: '来源用例编号: 1806775'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_083
+  name: 文件权限-在可读写文件夹下对可读写文件/文件夹进行操作_
+  description: '来源用例编号: 1806773'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_084
+  name: 文件权限-在可读写文件夹下对只读文件夹/文件进行操作_
+  description: '来源用例编号: 1806771'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_085
+  name: 文件权限-在只读文件夹下对可读写文件进行操作_
+  description: '来源用例编号: 1806769'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_086
+  name: 文件权限-在只读文件夹下对可读写文件夹进行操作_
+  description: '来源用例编号: 1806767'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_087
+  name: 文件权限-在只读文件夹下对只读文件夹进行操作_
+  description: '来源用例编号: 1806765'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_088
+  name: 文件权限-多选只读文件和非只读文件操作_
+  description: '来源用例编号: 1806763'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Delete
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_089
+  name: ELF文件的权限为644时，双击弹出可执行权限确认框
+  description: '来源用例编号: 1806761'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_090
+  name: ELF文件的权限为655时，双击弹出可执行权限确认框
+  description: '来源用例编号: 1806759'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_091
+  name: 剪切-选中10000个文件按ctrl+x
+  description: '来源用例编号: 1806757'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+x
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_092
+  name: 右键菜单-以管理员身份打开文本文档
+  description: '来源用例编号: 1806755'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_093
+  name: 管理员-右键文件夹检查菜单选项展示
+  description: '来源用例编号: 1806753'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_094
+  name: 管理员-切换用户后以管理员身份打开目录
+  description: '来源用例编号: 1806749'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_095
+  name: Bug181153转：目标目录存在同名文件/文件夹，可以再次复制
+  description: '来源用例编号: 1806739'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_096
+  name: 剪切拷贝-从剪切板拖拽文件到桌面/文管窗口
+  description: '来源用例编号: 1806737'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: case_mainui_文件操作_097
+  name: 剪切拷贝-拷贝过程中操作进度弹窗的按钮_
+  description: '来源用例编号: 1806735'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_098
+  name: 剪切拷贝-从桌面复制500个快捷方式到其他目录_
+  description: '来源用例编号: 1806733'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_099
+  name: 剪切拷贝-复制过程中对源文件的特殊操作_
+  description: '来源用例编号: 1806641'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_101
+  name: 剪切拷贝-退出剪切状态_
+  description: '来源用例编号: 1806629'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+x
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_102
+  name: '[043]快捷键-按住Ctrl复制'
+  description: '来源用例编号: 1806627'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_103
+  name: 标记-标记输入框输入特殊字符
+  description: '来源用例编号: 1806599'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_104
+  name: '[core]三方应用自定义角标-支持路径'
+  description: '来源用例编号: 1806555'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_106
+  name: 角标设置-更改状态或改变路径情况下，角标显示
+  description: '来源用例编号: 1806517'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_107
+  name: 角标设置-使用不同格式图片设置角标
+  description: '来源用例编号: 1806515'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_108
+  name: 角标设置-设置不支持格式/大小的图片
+  description: '来源用例编号: 1806513'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_109
+  name: 角标设置-文件复制/替换
+  description: '来源用例编号: 1806503'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_110
+  name: 角标-设置损坏图片_
+  description: '来源用例编号: 1806493'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_111
+  name: Bug192087转：连续长按或多次按下ctrl+shift+?快捷键后系统正常
+  description: '来源用例编号: 1806487'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+s
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+s
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_112
+  name: 【文件操作】【Bug211431转】使用2022文本中的内容重命名文件时不会导致文管崩溃
+  description: '来源用例编号: 1806483'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_113
+  name: 重命名文件时命名内容检查
+  description: '来源用例编号: 1806479'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_114
+  name: 多文件、文件夹的操作
+  description: '来源用例编号: 1806477'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_115
+  name: 重命名共享文件夹名称
+  description: '来源用例编号: 1806475'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_116
+  name: 批量重命名-替换文本
+  description: '来源用例编号: 1806473'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: adsafe
+    wait: 1.0
+  - action: keyboard_type
+    text: png
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_117
+  name: 批量重命名-添加文本
+  description: '来源用例编号: 1806471'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_118
+  name: 批量重命名-自定义文本
+  description: '来源用例编号: 1806469'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: abc
+    wait: 1.0
+  - action: keyboard_type
+    text: abc
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件操作_119
+  name: 文件操作-打开原件已被删除的.txt文件快捷方式图标_
+  description: '来源用例编号: 1806467'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

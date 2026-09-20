@@ -1,0 +1,1058 @@
+name: xlsx增量youqu_suite
+app: dde-file-manager
+description: 基于 YouQu skill 从 V25 xlsx 增量补充的低风险 AT-SPI 对应用例
+module: xlsx增量youqu
+tags:
+- youqu_increment
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_youqu_increment.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_youqu_increment_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+suites:
+- id: case_1806093
+  name: 侧边栏固定目录，内容区域右键切换显示方式
+  description: 'xlsx 用例编号: 1806093
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，侧边栏选择一个固定目录(如：视频)
+
+    2. 右键内容区域，右键菜单，"显示方式"选择为"列表模式"
+
+    预期结果:
+
+    1. 文管页面跳转到选中的固定目录
+
+    2. 内容区域变为列表模式'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806093'
+    case_type: 功能测试
+    feature: 侧边栏固定目录视图排序
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - &id001
+    action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: listView_button
+- id: case_1806095
+  name: 侧边栏固定目录，排序方式 - 名称_
+  description: 'xlsx 用例编号: 1806095
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，侧边栏选择一个固定目录(如：视频)
+
+    2. 右键内容区域，切换为列表模式
+
+    3. 右键菜单，"排序方式"选择为"名称"
+
+    预期结果:
+
+    1. 文管页面跳转到选中的固定目录
+
+    2. 内容区域的文件变为列表显示
+
+    3. 内容区域的文件变为名称排序'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806095'
+    case_type: 功能测试
+    feature: 侧边栏固定目录视图排序
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id001
+  - action: assert_element
+    ref: listView_button
+- id: case_1806097
+  name: 侧边栏固定目录，排序方式 - 大小_
+  description: 'xlsx 用例编号: 1806097
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，侧边栏选择一个固定目录(如：视频)
+
+    2. 右键内容区域，切换为列表模式
+
+    3. 右键菜单，"排序方式"选择为"大小"
+
+    预期结果:
+
+    1. 文管页面跳转到选中的固定目录
+
+    2. 内容区域的文件变为列表显示
+
+    3. 内容区域的文件变为大小排序'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806097'
+    case_type: 功能测试
+    feature: 侧边栏固定目录视图排序
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id001
+  - action: assert_element
+    ref: listView_button
+- id: case_1806099
+  name: 侧边栏固定目录，排序方式 - 类型_
+  description: 'xlsx 用例编号: 1806099
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，侧边栏选择一个固定目录(如：视频)
+
+    2. 右键内容区域，切换为列表模式
+
+    3. 右键菜单，"排序方式"选择为"类型"
+
+    预期结果:
+
+    1. 文管页面跳转到选中的固定目录
+
+    2. 内容区域的文件变为列表显示
+
+    3. 内容区域的文件变为类型排序'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806099'
+    case_type: 功能测试
+    feature: 侧边栏固定目录视图排序
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id001
+  - action: assert_element
+    ref: listView_button
+- id: case_1806101
+  name: 侧边栏固定目录，排序方式 - 修改时间_
+  description: 'xlsx 用例编号: 1806101
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，侧边栏选择一个固定目录(如：视频)
+
+    2. 右键内容区域，切换为列表模式
+
+    3. 右键菜单，"排序方式"选择为"修改时间"
+
+    预期结果:
+
+    1. 文管页面跳转到选中的固定目录
+
+    2. 内容区域的文件变为列表显示
+
+    3. 内容区域的文件变为修改时间排序'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806101'
+    case_type: 功能测试
+    feature: 侧边栏固定目录视图排序
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id001
+  - action: assert_element
+    ref: listView_button
+- id: case_1873487
+  name: 侧边栏固定目录，排序方式 - 创建时间
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，侧边栏选择一个固定目录(如：视频)
+
+    2. 右键内容区域，切换为列表模式
+
+    3. 右键菜单，"排序方式"选择为"创建时间"
+
+    预期结果:
+
+    1. 文管页面跳转到选中的固定目录
+
+    2. 内容区域的文件变为列表显示
+
+    3. 内容区域的文件变为创建时间排序'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1873487'
+    case_type: 功能测试
+    feature: 侧边栏固定目录视图排序
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id001
+  - action: assert_element
+    ref: listView_button
+- id: case_1806145
+  name: 侧边栏目-查看主目录
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文件管理，查看主目录
+
+    2. 文档、图片、下载、视频、音乐、桌面右键菜单
+
+    3. 主目录不同入口文件操作（侧边栏主目录、系统盘主目录、数据盘主目录）
+
+    预期结果:
+
+    1. 用户主目录一般都存在于路径 /home/用户名 目录下， 包括的子目录依次为： 文档、图片、下载、视频、音乐、桌面。
+
+    2. “打开”，“在新窗口中打开”、在新标签中打开、属性，复制，共享此文件夹，
+
+    3. 不同路径的主目录中文件操作正确'
+  tags:
+  - '1'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806145'
+    case_type: 功能测试
+    feature: 侧边栏主目录
+  steps:
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: case_1806067
+  name: '[052]固定目录顶部排序'
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 文件夹内有文件，并切换成 列表视图
+
+    测试步骤:
+
+    1. 在各个页面查看标头区域
+
+    （主目录/桌面/视频/音乐/图片/文档/下载）
+
+    2. 再次点击“名称”，查看搜索的文件排序
+
+    3. 在点击“修改时间”，查看系统显示
+
+    4. 再点击“修改时间”，查看搜索的文件排序
+
+    5. 在点击“大小”，查看系统显示
+
+    6. 再点击“大小”，查看搜索的文件排序
+
+    7. 在点击“类型”，查看系统显示
+
+    8. 再点击“类型”，查看搜索的文件排序
+
+    9. 切换目录检查表头
+
+    10. 切换窗口检查表头
+
+    预期结果:
+
+    1. 名称、修改时间、大小、类型
+
+    默认“名称”排序规则进行正序排序
+
+    2. “名称”排序规则改变为反序进行排序
+
+    3. 当前文件夹中的文件会自动按照修改时间正序规则进行排序
+
+    4. 当前文件夹中的文件会自动按照修改时间反序规则进行排序
+
+    5. 当前文件夹中的文件会自动按照大小规则正序进行排序
+
+    6. 当前文件夹中的文件会自动按照大小规则反序进行排序
+
+    7. 当前文件夹中的文件会自动按照类型规则正序进行排序
+
+    8. 当前文件夹中的文件会自动按照类型规则反序进行排序
+
+    9. 排序方式不改变
+
+    10. 排序方式不改变'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806067'
+    case_type: 功能测试
+    feature: 固定目录顶部排序入口
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - &id002
+    action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: listView_button
+- id: case_1808751
+  name: 树状结构-开启树状结构
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/顶部区域/视图(#110809)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 点击文管标题栏的"树形列表视图"小图标
+
+    2. 点击文管空白处，右键"显示方式"-"树形视图"
+
+    3. 进入最近使用目录，按ctr+3组合键，观察是否可以切换到树形视图
+
+    预期结果:
+
+    1. 列表视图变为树状结构，所有目录均为默认的折叠状态
+
+    2. 文管内容变为树状结构，所有目录均为默认的折叠状态
+
+    3. 无法切换到树形视图，且树形视图图标没有变为蓝色'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1808751'
+    case_type: 功能测试
+    feature: 树形视图入口
+  steps:
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id002
+  - action: assert_element
+    ref: treeView_button
+- id: case_1816683
+  name: 搜索框-搜索结果列表切换显示视图
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/顶部区域/V25设计改版(#123271)
+
+    前置条件: 1、文件管理器已开启
+
+    测试步骤:
+
+    1. 在搜索框中，输入关键词，按enter搜索
+
+    2. 点击切换列表视图
+
+    3. 点击切换图标视图
+
+    4. 点击切换树形视图
+
+    5. 点击切换内容视图
+
+    6. 在空白处右键菜单，点击切换以上视图
+
+    预期结果:
+
+    1. 显示结果列表
+
+    2. 显示为列表视图
+
+    3. 显示为图标视图
+
+    4. 显示为树形视图
+
+    5. 显示为内容视图
+
+    6. 切换效果与上面显示一致'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1816683'
+    case_type: 功能测试
+    feature: 搜索结果视图切换
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.5
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id002
+  - action: assert_element
+    ref: iconView_button
+- id: case_1808251
+  name: 桌面刷新优化-快捷键-桌面空白处点击右键【刷新】按钮刷新桌面
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/桌面整理(#132301)
+
+    前置条件: 开启方法:gsettings set com.deepin.dde.filemanager.contextmenu refresh true
+
+    关闭：gsettings set com.deepin.dde.filemanager.contextmenu refresh false
+
+    测试步骤:
+
+    1. 进入桌面-桌面空白处点击右键【刷新】按钮刷新桌面
+
+    2. 选中文件/文件夹-桌面空白处点击右键【刷新】按钮刷新桌面
+
+    3. 频繁多次桌面空白处点击右键【刷新】按钮刷新桌面
+
+    预期结果:
+
+    1. 桌面文件/文件夹图标、数量、缩略图正常刷新，同105x一致，具有明显刷新延迟感受
+
+    2. 取消选中态，刷新桌面
+
+    3. 桌面文件/文件夹图标、名称、数量、缩略图均正常刷新无异常'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1808251'
+    case_type: 功能测试
+    feature: 桌面刷新
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: F5
+    wait: 1.0
+  assert_steps:
+  - *id002
+- id: case_1808273
+  name: '[smoke]计算机图标右键菜单'
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/计算机界面/文管设置(#132333)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 进入桌面-双击计算机图标
+
+    2. 进入桌面-计算机图标右键-点击属性
+
+    3. 计算机图标右键-点击打开
+
+    预期结果:
+
+    1. 正常在新窗口打开计算机页面
+
+    2. 弹出属性弹窗，包含基本信息：计算机名、版本、版本号、类型、处理器、内存
+
+    3. 打开文件管理器，定位在计算机目录下'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1808273'
+    case_type: 功能测试
+    feature: 计算机入口
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id002
+  - action: assert_element
+    ref: 计算机
+- id: case_1805689
+  name: 【回收站】入口-通过桌面回收站图标进入回收站
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/回收站(#132281)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 双击桌面回收站图标
+
+    2. 桌面回收站图标-单击右键打开
+
+    预期结果:
+
+    1. 打开进入回收站，且左侧侧边栏高亮定位在回收站
+
+    2. 打开进入回收站，且左侧侧边栏高亮定位在回收站'
+  tags:
+  - '1'
+  - youqu_increment
+  vars:
+    xlsx_id: '1805689'
+    case_type: 功能测试
+    feature: 回收站入口
+  steps:
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id002
+  - action: assert_element
+    ref: 回收站
+- id: case_1806251
+  name: 【最近使用】最近使用侧边栏右键-清除最近访问
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/左侧栏/地址栏/导航栏(#132297)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管--打开新窗口--右键最近使用--点击清除最近访问
+
+    2. 打开新标签--右键最近使用--点击清除最近访问
+
+    预期结果:
+
+    1. 两个窗口的最近使用记录都被清空
+
+    2. 两个标签的最近使用记录都被清空'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806251'
+    case_type: 功能测试
+    feature: 最近使用入口
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id002
+  - action: assert_element
+    ref: 最近使用
+- id: case_1806277
+  name: '[t]最近使用目录右键-空白页右键_'
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/固定目录/最近使用(#110827)
+
+    前置条件: 打开文件管理，进“最近使用”栏目
+
+    测试步骤:
+
+    1. 在空白出右键点击--查看菜单
+
+    2. 选择“排序方式”
+
+    3. 选择“最近访问时间”排序
+
+    预期结果:
+
+    1. 菜单列表：显示方式，排列方式，全选
+
+    2. 弹出二级菜单：名称、最近访问时间、大小、类型
+
+    默认“最近访问时间”排序规则进行排序
+
+    3. 当前文件夹中的文件会自动按照最近访问时间规则进行排序'
+  tags:
+  - '3'
+  - youqu_increment
+  vars:
+    xlsx_id: '1806277'
+    case_type: 功能测试
+    feature: 最近使用视图
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id002
+  - action: assert_element
+    ref: listView_button
+- id: case_1807685
+  name: 检查文管-列表模式-留白处右键菜单
+  description: 'xlsx 用例编号: 1873487
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/视图/标签页(#132319)
+
+    前置条件: 1.视图模式为列表视图
+
+    2.各目录内均有2个以上文件
+
+    3.进入文管
+
+    测试步骤:
+
+    1. 主目录，文件留白处右键
+
+    2. 桌面目录，文件留白处右键
+
+    3. 文档目录，文件留白处右键
+
+    4. 回收站，文件留白处右键
+
+    5. 系统盘目录，文件留白处右键
+
+    预期结果:
+
+    1. 不选中文件，唤起空白处右键菜单
+
+    2. 不选中文件，唤起空白处右键菜单
+
+    3. 不选中文件，唤起空白处右键菜单
+
+    4. 不选中文件，唤起空白处右键菜单
+
+    5. 不选中文件，唤起空白处右键菜单'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1807685'
+    case_type: 功能测试
+    feature: 列表模式右键入口
+  steps:
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id002
+  - action: assert_element
+    ref: listView_button
+- id: case_1816689
+  name: 工具栏-新增视图选项和排序方式按钮
+  description: 'xlsx 用例编号: 1816689
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/顶部区域/V25设计改版(#123271)
+
+    前置条件: 1、文件管理器已开启
+
+    测试步骤:
+
+    1. 进入任意目录，查看标题栏下方工具栏的显示
+
+    2. 鼠标悬浮在视图选项上
+
+    3. 鼠标悬浮在排序方式选项上
+
+    预期结果:
+
+    1. 工具栏除了图标视图、列表视图、树形视图之外，新增了视图选项、排序方式选项
+
+    2. 弹出提示信息“视图选项”
+
+    3. 弹出提示信息“排序方式”'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1816689'
+    case_type: 功能测试
+    feature: 工具栏按钮显示
+  steps: []
+  assert_steps:
+  - &id003
+    action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: viewoptions_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+- id: case_1816691
+  name: 视图选项-单击弹出视图选项面板
+  description: 'xlsx 用例编号: 1816691
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/顶部区域/V25设计改版(#123271)
+
+    前置条件: 1、文件管理器已开启
+
+    测试步骤:
+
+    1. 进入任意目录，单击视图选项
+
+    2. 再次单击“视图选项”
+
+    3. 再次单击“视图选项”
+
+    4. 点击下拉框以外的空白
+
+    预期结果:
+
+    1. 弹出视图选项面板，面板由上到下的模块依次为图标大小、网格密度、显示预览、显示文件（夹）简介、显示图标预览
+
+    2. 收起视图选项面板
+
+    3. 开启视图选项面板
+
+    4. 收起视图选项面板'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1816691'
+    case_type: 功能测试
+    feature: 视图选项面板
+  steps:
+  - action: element_action
+    ref: viewoptions_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id003
+  - action: assert_element
+    ref: viewoptions_button
+- id: case_1816711
+  name: 排序方式-排序方式修改
+  description: 'xlsx 用例编号: 1816711
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: 1、文件管理器已开启
+
+    2、测试目录下有多种类型的文件
+
+    测试步骤:
+
+    1. 进入用户下载目录，点击“排序方式”按钮
+
+    2. 单击-名称
+
+    3. 单击-修改时间
+
+    4. 单击-大小
+
+    5. 单击-类型
+
+    6. 在空白处右键菜单，点击切换以上排序方式
+
+    预期结果:
+
+    1. 展开排序下拉框
+
+    2. 按名称排序，同时收起下拉框
+
+    3. 按修改时间排序，同时收起下拉框
+
+    4. 按大小排序，同时收起下拉框
+
+    5. 按类型排序，同时收起下拉框
+
+    6. 排序方式与上面显示一致'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1816711'
+    case_type: 功能测试
+    feature: 排序方式入口
+  steps:
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id003
+  - action: assert_element
+    ref: listView_button
+- id: case_1883939
+  name: 【搜索专项优化-v1.1】文管搜索结果高亮显示关键词
+  description: 'xlsx 用例编号: 1883939
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/搜索(#132327)
+
+    前置条件: 1.在桌面上分别创建3张图片，3个文本文件，3个文件夹，3个xmind文件，3个pdf文件，名称均含有：搜索专项测试
+
+    2.下载附件文本文档放到视频目录
+
+    3.全文检索开关已打开：打开文管，点击右上角的三横杠-设置-高级设置-全文搜索，打开全文检索
+
+    测试步骤:
+
+    1. 点击任务栏上的文管，在右上角搜索框中输入：搜索专项测试，检查是否能搜索出前置条件步骤1和步骤2准备的文件
+
+    2. 检查搜索结果中所有关键词（搜索专项测试）是否都高亮显示
+
+    3. 检查搜索结果中的：搜索专项测试.txt 文档，召回的内容字符字数
+
+    4. 检查 搜索专项测试-仅文件名.txt  文件，是否显示所有的文件内容
+
+    预期结果:
+
+    1. 能搜索出前置条件步骤1和步骤2准备的文件
+
+    2. 都高亮显示，且清晰显示
+
+    3. 列表内容有显示“搜搜转测测试文档的内容”
+
+    4. 不显示所有的文件内容'
+  tags:
+  - '1'
+  - youqu_increment
+  vars:
+    xlsx_id: '1883939'
+    case_type: 功能测试
+    feature: 搜索关键词输入
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.5
+  assert_steps: &id004
+  - *id003
+- id: case_1878185
+  name: 【搜索专项优化-v1.0】完整镜像全文检索开关默认开启
+  description: 'xlsx 用例编号: 1878185
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/搜索(#132327)
+
+    前置条件: 1. 完整镜像装机
+
+    2.在桌面上创建一个search.txt，写入内容：这个是搜索专项优化测试文档
+
+    测试步骤:
+
+    1. 打开文管，点击右上角的三横杠-设置-高级设置，检查搜索中的全文搜索是否默认打开。
+
+    2. 在文管右上角搜索栏中输入内容：搜索专项优化测试文档，检查是否能搜出桌面上的search.txt文档
+
+    预期结果:
+
+    1. 默认打开
+
+    2. 能搜出桌面上的search.txt文档'
+  tags:
+  - '1'
+  - youqu_increment
+  vars:
+    xlsx_id: '1878185'
+    case_type: 功能测试
+    feature: 全文搜索入口
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项优化测试文档
+    wait: 1.5
+  assert_steps: *id004
+- id: case_1850197
+  name: 桌面名称排序、修改时间排序、大小排序、类型排序
+  description: 'xlsx 用例编号: 1850197
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/团标(#123177)
+
+    前置条件: 功能要求：d）支持右键选单选择图标排列顺序，排序可按名称.类型.修改时间.文件大小
+
+    前置条件：
+
+    1. 桌面存在不同名称的测试文件
+
+    1. 桌面存在不同修改时间的测试文件
+
+    1. 桌面存在不同大小的测试文件
+
+    1. 桌面存在不同类型的测试文件
+
+    测试步骤:
+
+    1. 在桌面空白处，单击鼠标右键
+
+    2. 点击"排序方式"，继续在二级菜单中点击"名称"
+
+    3. 在桌面空白处，单击鼠标右键，点击"排序方式"，继续在二级菜单中点击"修改时间"
+
+    4. 在桌面空白处，单击鼠标右键，点击"排序方式"，继续在二级菜单中点击"大小"
+
+    5. 在桌面空白处，单击鼠标右键，点击"排序方式"，继续在二级菜单中点击"类型"
+
+    预期结果:
+
+    1. 展示二级菜单，分别为："名称"."修改时间"."大小"."类型"
+
+    2. 桌面图标将按文件的名称顺序显示
+
+    3. 桌面图标将按最近一次的修改日期顺序显示
+
+    4. 桌面图标将按文件的大小顺序显示
+
+    5. 桌面图标将计算机、回收站和文件类型排序（计算机和回收站单独排序始终显示在开头或者末尾）'
+  tags:
+  - '2'
+  - youqu_increment
+  vars:
+    xlsx_id: '1850197'
+    case_type: 功能测试
+    feature: 桌面排序入口
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - *id003
+  - action: assert_element
+    ref: iconView_button
+teardown:
+- action: session_stop

@@ -1,0 +1,2957 @@
+name: xlsx桌面文件管理扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 未覆盖用例映射：桌面整理、文件管理、动态效果、壁纸
+module: xlsx桌面文件管理扩展
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_xlsx桌面文件管理扩展_001
+  name: "开启桌面整理后设置任务栏在不同位置"
+  description: '来源用例编号: 1998555'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_002
+  name: "【桌面】将谷歌或者edge、深度自研浏览器中的视频资源拖动至系统桌面"
+  description: '来源用例编号: 1969639'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_003
+  name: "【桌面整理】桌面整理后编辑集合中的文件"
+  description: '来源用例编号: 1964085'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_004
+  name: "【控制中心】【个性化】【壁纸】不同路径下的本地图片设置壁纸后，都可添加到“壁纸-我的图片”中"
+  description: '来源用例编号: 1884497'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_005
+  name: "【控制中心】【个性化】【壁纸】设置本地图片为壁纸后，自动同步添加到“壁纸-我的图片”中"
+  description: '来源用例编号: 1884495'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_006
+  name: "【控制中心】【个性化】【主题】深色外观，设置不同的系统主题，相关主题壁纸都默认在系统壁纸中"
+  description: '来源用例编号: 1884485'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_007
+  name: "【控制中心】【个性化】【主题】浅色外观，设置不同的系统主题，相关主题壁纸都默认在系统壁纸中"
+  description: '来源用例编号: 1884483'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_008
+  name: "【控制中心】【个性化】【主题】nirvana主题下更换外观深浅色，会同步更新深浅色壁纸"
+  description: '来源用例编号: 1884481'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_009
+  name: "【控制中心】【个性化】【主题】square主题下更换外观深浅色，会同步更新深浅色壁纸"
+  description: '来源用例编号: 1884477'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_010
+  name: "【控制中心】【个性化】【主题】flow主题下更换外观深浅色，会同步更新深浅色壁纸"
+  description: '来源用例编号: 1884475'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_011
+  name: "【控制中心】【个性化】【主题】hazy color主题下更换外观深浅色，会同步更新深浅色壁纸"
+  description: '来源用例编号: 1884473'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_012
+  name: "【控制中心】【个性化】【主题】organic glass主题下更换外观深浅色，会同步更新深浅色壁纸"
+  description: '来源用例编号: 1884471'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_013
+  name: "【控制中心】【个性化】【主题】vintage主题下更换外观深浅色，会同步更新深浅色壁纸"
+  description: '来源用例编号: 1884469'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_014
+  name: "【控制中心】【个性化】【主题】bloom主题下更换外观深浅色，会同步更新深浅色壁纸"
+  description: '来源用例编号: 1884467'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_015
+  name: "【控制中心】【个性化】【主题】手动同时修改壁纸，不会生成自定义主题项"
+  description: '来源用例编号: 1884465'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_016
+  name: "【控制中心】【个性化】【主题】本地图片设置为桌面壁纸，不会生成自定义主题项"
+  description: '来源用例编号: 1884463'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_017
+  name: "桌面整理-埋点数据上报（待补充桌面整理埋点编号）"
+  description: '来源用例编号: 1816793'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_018
+  name: "桌面右键菜单关闭桌面整理"
+  description: '来源用例编号: 1816785'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx桌面文件管理扩展_019
+  name: "桌面右键菜单隐藏所有集合"
+  description: '来源用例编号: 1816783'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_020
+  name: "桌面右键菜单开启桌面整理"
+  description: '来源用例编号: 1816781'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_021
+  name: "拖动改变集合窗口大小"
+  description: '来源用例编号: 1816767'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_022
+  name: "组策略配置自动排序-右键菜单关闭自动排列时，检查组策略配置"
+  description: '来源用例编号: 1816511'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_023
+  name: "组策略配置自动排序-右键菜单开启自动排列时，检查组策略配置"
+  description: '来源用例编号: 1816509'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_024
+  name: "组策略配置自动排序-修改组策略为关闭时，检查桌面图标及右键菜单"
+  description: '来源用例编号: 1816507'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_025
+  name: "组策略配置自动排序-修改组策略为开启时，检查桌面图标及右键菜单"
+  description: '来源用例编号: 1816505'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_026
+  name: "组策略配置自动排序-主线默认为关闭"
+  description: '来源用例编号: 1816503'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_027
+  name: "【1071桌面整理】视图选项，关闭桌面整理"
+  description: '来源用例编号: 1810223'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx桌面文件管理扩展_028
+  name: "【1071桌面整理】自动整理，拖拽移动图标-Ctrl+拖拽到集合外"
+  description: '来源用例编号: 1810213'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_029
+  name: "【1071桌面整理】集合内文件操作-设为壁纸"
+  description: '来源用例编号: 1810103'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_030
+  name: "【桌面整理】视图选项-自动排列图标(已开启桌面整理)"
+  description: '来源用例编号: 1810063'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx桌面文件管理扩展_031
+  name: "【1071桌面整理】集合悬浮在上一层"
+  description: '来源用例编号: 1810041'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_032
+  name: "【桌面整理】自由拖动集合"
+  description: '来源用例编号: 1810039'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_033
+  name: "【1071桌面整理】集合尺寸设置，从小尺寸调节到大尺寸"
+  description: '来源用例编号: 1810035'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_034
+  name: "【1071桌面整理】集合尺寸设置，从大尺寸调节到小尺寸"
+  description: '来源用例编号: 1810033'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_035
+  name: "【桌面整理】集合尺寸调节，边框拉伸"
+  description: '来源用例编号: 1810031'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_036
+  name: "【1071桌面整理】集合尺寸调节，边角拉伸"
+  description: '来源用例编号: 1810029'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_037
+  name: "【桌面整理】集合尺寸调节，与其他集合相邻-上下拉伸"
+  description: '来源用例编号: 1810027'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_038
+  name: "【1071桌面整理】集合尺寸调节，与其他集合相邻-左右拉伸"
+  description: '来源用例编号: 1810025'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_039
+  name: "【1071桌面整理】集合尺寸调节，与其他集合相邻-边角拉伸"
+  description: '来源用例编号: 1810023'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_040
+  name: "【1071桌面整理】集合尺寸调节，最小尺寸"
+  description: '来源用例编号: 1810021'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_041
+  name: "【1071桌面整理】集合尺寸调节，最大尺寸"
+  description: '来源用例编号: 1810019'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_042
+  name: "【1071桌面整理】集合尺寸调节，集合间最小边距"
+  description: '来源用例编号: 1810017'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_043
+  name: "【1071桌面整理】集合尺寸调节，集合间不能重叠"
+  description: '来源用例编号: 1810015'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_044
+  name: "【桌面整理】拖拽集合，集合吸附"
+  description: '来源用例编号: 1810013'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_045
+  name: "【桌面整理】拖拽集合到集合，显示辅助框"
+  description: '来源用例编号: 1810009'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_046
+  name: "【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间足(拖拽对象尺寸相比较小，中心点距上方左侧近)"
+  description: '来源用例编号: 1810005'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_047
+  name: "【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间足(拖拽对象尺寸相比较小，中心点距上方右侧近)"
+  description: '来源用例编号: 1810003'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_048
+  name: "【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间不足"
+  description: '来源用例编号: 1809995'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_049
+  name: "【1071桌面整理】多屏扩展，调节尺寸"
+  description: '来源用例编号: 1809987'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_050
+  name: "【1071桌面整理】多屏扩展，拖拽集合"
+  description: '来源用例编号: 1809985'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_051
+  name: "【1071桌面整理】多屏扩展，极限场景"
+  description: '来源用例编号: 1809981'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_052
+  name: "【1071桌面整理】记忆布局，多屏切换模式"
+  description: '来源用例编号: 1809979'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_053
+  name: "【1071桌面整理】记忆布局，多屏拔插"
+  description: '来源用例编号: 1809977'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_054
+  name: "【桌面整理】单次整理，记忆布局，开启/关闭桌面整理"
+  description: '来源用例编号: 1809975'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_055
+  name: "【1071桌面整理】自动整理，记忆布局，开启/关闭桌面整理"
+  description: '来源用例编号: 1809973'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_056
+  name: "【1071桌面整理】视图选项配置，关闭一键隐藏集合，快捷键设置"
+  description: '来源用例编号: 1809955'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx桌面文件管理扩展_057
+  name: "【1071桌面整理】视图选项配置，开启一键隐藏集合，快捷键设置"
+  description: '来源用例编号: 1809953'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx桌面文件管理扩展_058
+  name: "【1071桌面整理】集合文件归类-应用程序"
+  description: '来源用例编号: 1809949'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_059
+  name: "【1071桌面整理】集合文件归类-其他"
+  description: '来源用例编号: 1809937'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_060
+  name: "【1071桌面整理】调节集合尺寸，集合内图标布局"
+  description: '来源用例编号: 1809933'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_061
+  name: "【1071桌面整理】单次整理，粘贴到桌面文件"
+  description: '来源用例编号: 1809927'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_062
+  name: "桌面空白处，右键菜单点击【显示设置】"
+  description: '来源用例编号: 1809919'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_063
+  name: "桌面刷新优化-桌面包含大量U盘的快捷图标(数量大于20个)-U盘挂载/卸载-桌面自动刷新"
+  description: '来源用例编号: 1809915'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_064
+  name: "桌面刷新优化-桌面包含大量SMB的快捷图标(数量大于20个)-SMB挂载/卸载-桌面自动刷新"
+  description: '来源用例编号: 1809913'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_065
+  name: "【桌面自动整理】图标焦点优化-跨集合选中多个文件，拖拽"
+  description: '来源用例编号: 1809789'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_066
+  name: "【桌面自动整理】图标焦点优化-跨集合选中多个文件，快捷键粘贴"
+  description: '来源用例编号: 1809783'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_067
+  name: "【桌面自动整理】图标焦点优化-跨集合选中多个文件，反选"
+  description: '来源用例编号: 1809781'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_068
+  name: "【文件管理】【桌面自动整理】桌面选项-集合方式"
+  description: '来源用例编号: 1809725'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_069
+  name: "【桌面自动整理】桌面选项-非模态窗口"
+  description: '来源用例编号: 1809713'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_070
+  name: "【桌面自动整理】集合交互-选项设置"
+  description: '来源用例编号: 1809613'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_071
+  name: "【桌面自动整理】集合文件归类-软链接"
+  description: '来源用例编号: 1809609'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_072
+  name: "【桌面自动整理】集合显示，分屏显示，桌面整理模式切换"
+  description: '来源用例编号: 1809591'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_073
+  name: "【桌面自动整理】集合显示，分屏显示-复制模式"
+  description: '来源用例编号: 1809587'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_074
+  name: "【桌面自动整理】集合显示，分屏显示-扩展模式"
+  description: '来源用例编号: 1809585'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_075
+  name: "【桌面自动整理】集合显示，超出屏幕处"
+  description: '来源用例编号: 1809583'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_076
+  name: "【桌面自动整理】大尺寸集合，不限制集合内图标总容量"
+  description: '来源用例编号: 1809575'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_077
+  name: "【桌面自动整理】小尺寸集合，不限制集合内图标总容量"
+  description: '来源用例编号: 1809573'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_078
+  name: "【桌面自动整理】大尺寸集合，超出集合图标，翻页浏览"
+  description: '来源用例编号: 1809571'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_079
+  name: "【文件管理】【桌面自动整理】超出集合图标"
+  description: '来源用例编号: 1809569'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_080
+  name: "【桌面自动整理】小尺寸集合，超出集合图标，翻页浏览"
+  description: '来源用例编号: 1809567'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_081
+  name: "【桌面自动整理】快捷键缩放图标大小"
+  description: '来源用例编号: 1809563'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_082
+  name: "【桌面自动整理】桌面整理模式，切换到非桌面整理模式-图标大小为极小"
+  description: '来源用例编号: 1809553'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_083
+  name: "【桌面自动整理】非桌面整理模式，切换到桌面整理模式-图标大小为极大"
+  description: '来源用例编号: 1809551'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_084
+  name: "【桌面自动整理】网格布局-其他分辨率和缩放"
+  description: '来源用例编号: 1809539'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_085
+  name: "[016]桌面右键菜单功能检查"
+  description: '来源用例编号: 1808515'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_086
+  name: "[010][core]桌面右键菜单-排序方式"
+  description: '来源用例编号: 1808503'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_087
+  name: "桌面-文件名优化-多屏下文件跨屏幕展示不会改变"
+  description: '来源用例编号: 1808469'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_088
+  name: "桌面-文件名优化-不同字体下检查文件/文件夹名称显示_"
+  description: '来源用例编号: 1808467'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_089
+  name: "桌面-文件名优化-4K屏下不同分辨率检查文件/文件夹名称显示"
+  description: '来源用例编号: 1808465'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_090
+  name: "[131] 添加到桌面-复制ftp内文件/文件夹到桌面"
+  description: '来源用例编号: 1808461'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "ftp://IP地址-复制文件/文件夹-粘贴到桌面"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_091
+  name: "[127]添加到桌面-拖拽sftp内文件/文件夹到桌面"
+  description: '来源用例编号: 1808457'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "sftp://IP地址-拖拽文件/文件夹到桌面"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_092
+  name: "控制中心-调节鼠标速度后快速点击移动桌面图标"
+  description: '来源用例编号: 1808453'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_093
+  name: "快捷键-切换选中文件/文件夹顺序"
+  description: '来源用例编号: 1808451'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_094
+  name: "[086]快捷键-剪切置灰状态按esc重新呈选中状态"
+  description: '来源用例编号: 1808443'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_095
+  name: "快捷键-选中文件/文件夹按ctrl+i键调出属性弹窗"
+  description: '来源用例编号: 1808437'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_096
+  name: "快捷键-敲击键盘快速定位选中文件/文件夹"
+  description: '来源用例编号: 1808429'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_097
+  name: "[056]快捷键-按ctrl+h显示隐藏文件/文件夹"
+  description: '来源用例编号: 1808425'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_098
+  name: "选中文件-按shift/ctrl选中多个文件/文件夹"
+  description: '来源用例编号: 1808419'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_099
+  name: "未勾选自动排列-扩展模式下减少屏幕"
+  description: '来源用例编号: 1808415'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_100
+  name: "未勾选自动排列-扩展模式下新增屏幕"
+  description: '来源用例编号: 1808413'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_101
+  name: "未勾选自动排列-扩展模式下删除主屏上文件/文件夹"
+  description: '来源用例编号: 1808411'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_102
+  name: "未勾选自动排列-扩展模式下删除副屏上文件/文件夹"
+  description: '来源用例编号: 1808409'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_103
+  name: "[core]未勾选自动排列-扩展模式下添加文件/文件夹"
+  description: '来源用例编号: 1808407'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_104
+  name: "[core]未勾选自动排列-扩展模式下不同屏幕之间拖拽文件/文件夹"
+  description: '来源用例编号: 1808405'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_105
+  name: "勾选自动排列-桌面文件过多堆叠在最后一个图标上"
+  description: '来源用例编号: 1808403'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_106
+  name: "勾选自动排列-扩展模式下可在不同屏幕上粘贴"
+  description: '来源用例编号: 1808399'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_107
+  name: "勾选自动排列-扩展模式下再减少屏幕"
+  description: '来源用例编号: 1808397'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_108
+  name: "勾选自动排列-扩展模式下再接入新屏幕"
+  description: '来源用例编号: 1808395'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_109
+  name: "勾选自动排列-扩展模式下删除主屏上文件/文件夹"
+  description: '来源用例编号: 1808393'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_110
+  name: "勾选自动排列-扩展模式下删除副屏上文件/文件夹"
+  description: '来源用例编号: 1808391'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_111
+  name: "勾选自动排列-扩展模式下添加文件/文件夹至满屏"
+  description: '来源用例编号: 1808389'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_112
+  name: "[core]勾选自动排列-扩展模式下移动文件/文件夹"
+  description: '来源用例编号: 1808387'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_113
+  name: "[061][core]勾选自动排列-移动文件/文件夹"
+  description: '来源用例编号: 1808385'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_114
+  name: "勾选自动排列-切换排序方式"
+  description: '来源用例编号: 1808383'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_115
+  name: "[061][core]勾选自动排列-桌面添加文件/文件夹"
+  description: '来源用例编号: 1808379'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_116
+  name: "拖拽-同时框选主副屏文件拖拽"
+  description: '来源用例编号: 1808377'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_117
+  name: "拖拽-主屏铺满时拖拽副屏文件至主屏"
+  description: '来源用例编号: 1808375'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_118
+  name: "拖拽-拖拽文件到不可见区域"
+  description: '来源用例编号: 1808373'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_119
+  name: "[089]拖拽-拖拽文件到回收站图标"
+  description: '来源用例编号: 1808359'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_120
+  name: "添加到桌面-同一文件重复多次右键发送到桌面"
+  description: '来源用例编号: 1808353'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_121
+  name: "右键菜单-切换用户后右键菜单功能正常"
+  description: '来源用例编号: 1808305'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_122
+  name: "右键菜单-勾选自动排列右键菜单呼出正常"
+  description: '来源用例编号: 1808295'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_123
+  name: "右键菜单-快捷键唤出右键菜单"
+  description: '来源用例编号: 1808291'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_124
+  name: "桌面刷新优化-硬盘挂载/卸载-桌面自动刷新"
+  description: '来源用例编号: 1808257'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_125
+  name: "桌面刷新优化-快捷键-按F5刷新桌面"
+  description: '来源用例编号: 1808249'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_126
+  name: "双屏扩展模式，旋转屏幕，插拔HDML/VGA线"
+  description: '来源用例编号: 1808019'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_127
+  name: "拉伸窗口工作区文件动效-左右拉伸"
+  description: '来源用例编号: 1808017'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_128
+  name: "拉伸窗口工作区文件动效-对角线拉伸"
+  description: '来源用例编号: 1808015'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_129
+  name: "文管内切换目录动效-后退到上一次浏览目录"
+  description: '来源用例编号: 1808013'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: back_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: forword_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+- id: case_xlsx桌面文件管理扩展_130
+  name: "文管内切换目录动效-切换上一级目录"
+  description: '来源用例编号: 1808011'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_131
+  name: "文管内切换目录动效-切换到其他目录"
+  description: '来源用例编号: 1808009'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_132
+  name: "详情视图展开动效-图标视图"
+  description: '来源用例编号: 1808005'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx桌面文件管理扩展_133
+  name: "详情视图展开动效-树状视图"
+  description: '来源用例编号: 1808003'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx桌面文件管理扩展_134
+  name: "桌面非自动排序状态-图标排序动效"
+  description: '来源用例编号: 1808001'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_135
+  name: "桌面自动排序状态-图标排序动效"
+  description: '来源用例编号: 1807999'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_136
+  name: "不同分辨率下文管的动效显示"
+  description: '来源用例编号: 1807997'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_137
+  name: "不同分辨率下桌面的动效显示"
+  description: '来源用例编号: 1807995'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_138
+  name: "高分屏下文管的动效显示"
+  description: '来源用例编号: 1807993'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_139
+  name: "高分屏下文管的动效显示-切换较低分辨率"
+  description: '来源用例编号: 1807991'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_140
+  name: "高分屏下文管的动效显示-切换缩放比"
+  description: '来源用例编号: 1807989'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_141
+  name: "高分屏下桌面的动效显示"
+  description: '来源用例编号: 1807987'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_142
+  name: "高分屏下桌面的动效显示-切换分辨率"
+  description: '来源用例编号: 1807985'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_143
+  name: "高分屏下桌面的动效显示-切换缩放比"
+  description: '来源用例编号: 1807983'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_144
+  name: "2D模式下文管的动效显示"
+  description: '来源用例编号: 1807981'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_145
+  name: "2D模式下桌面的动效显示"
+  description: '来源用例编号: 1807979'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_146
+  name: "[t]自定义壁纸-tif/tiff格式图片设置桌面壁纸_112"
+  description: '来源用例编号: 1807945'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_147
+  name: "[116]自定义壁纸-smb目录下图片右键设置桌面壁纸"
+  description: '来源用例编号: 1807929'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "smb://IP地址-点击任一文件夹-选中图片-右键-设置壁纸"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx桌面文件管理扩展_148
+  name: "[005][core]角标设置-桌面文件/文件夹设置角标"
+  description: '来源用例编号: 1806539'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager

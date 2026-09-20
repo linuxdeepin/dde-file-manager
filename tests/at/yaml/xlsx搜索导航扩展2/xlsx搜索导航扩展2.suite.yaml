@@ -1,0 +1,111 @@
+name: xlsx搜索导航扩展2_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的搜索输入Enter和地址栏导航扩展用例
+module: xlsx搜索导航扩展2
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_1805535
+  name: 【搜索】【支持筛选搜索】文管单击"搜索"按钮后，输入关键字进行搜索
+  description: 'xlsx 用例编号: 1805535
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，顶部工具栏，单击"搜索"按钮
+
+    2. 搜索输入框键入关键字，然后按键Enter
+
+    预期结果:
+
+    1. 显示搜索输入框，输入框旁显示"筛选"按钮
+
+    2. 显示匹配的搜索结果
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805535'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.8
+  - action: keyboard_type
+    text: test
+    wait: 0.5
+  - action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: AdvancedButton
+- id: case_1816667
+  name: 地址栏-激活状态显示
+  description: 'xlsx 用例编号: 1816667
+
+    前置条件: 文件管理器已开启
+
+    测试步骤:
+
+    1. 点击地址栏输入框
+
+    2. 输入地址"/home"，单击输入框外任意位置
+
+    3. 输入地址"/home"，按enter键
+
+    预期结果:
+
+    1. 输入焦点出现在输入框
+
+    2. 输入框失去焦点，退出编辑状态，恢复默认状态
+
+    3. 跳转到/home目录
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1816667'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.5
+  - action: keyboard_type
+    text: /home
+    wait: 0.5
+  - action: keyboard_press
+    key: escape
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.5
+  - action: keyboard_type
+    text: /home
+    wait: 0.5
+  - action: keyboard_press
+    key: enter
+    wait: 1.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

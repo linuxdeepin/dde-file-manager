@@ -1,0 +1,48 @@
+name: xlsx严格新建标签页补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 顶部区域/菜单批次17中筛选的严格新建标签页用例，使用 /tmp/dde-at-fixtures 隔离深层目录夹具，通过 verified AT-SPI 路径打开标题栏菜单并点击新建标签页，再断言标签页数量与深层目录路径
+module: xlsx严格新建标签页补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'set -e; rm -rf /tmp/dde-at-fixtures/batch17 && mkdir -p /tmp/dde-at-fixtures/batch17/deep/level1/level2/level3; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; sleep 1; dde-file-manager /tmp/dde-at-fixtures/batch17/deep/level1/level2/level3 >/tmp/dfm_at_strict_new_tab_batch17.log 2>&1 & python3 tests/at/yaml/xlsx严格新建标签页补全/open_new_tab.py >/tmp/dfm_at_strict_new_tab_batch17_probe.log 2>&1'
+  wait: 8.0
+suites:
+- id: case_1808659
+  name: 【新建标签页】文管深层目录页面，菜单-新建标签页
+  description: 'xlsx 用例编号: 1808659
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/顶部区域/菜单(#110807)
+
+    前置条件: 文件管理器已启动并处于深层目录页面（用 /tmp/dde-at-fixtures/batch17/deep/level1/level2/level3 作为隔离深层目录夹具）
+
+    测试步骤:
+
+    1. 打开文管，处于深层目录页面，点击顶部工具栏菜单按钮下的选项：新建标签页
+
+    预期结果:
+
+    1. 新建当前页面的标签页（深层目录页面）
+
+    严格映射说明: 本用例通过 verified AT-SPI 路径打开标题栏 DTitlebarDWindowOptionButton 菜单并点击其中的“新建标签页”项，随后使用 pyatspi 断言 role=page tab 且 name=level3 的元素恰好为 2（证明新建了一个标签页且新标签页位于同一深层目录），并通过唯一可定位的面包屑按钮 level1、level2 断言当前视图仍为深层目录路径。夹具仅在 /tmp/dde-at-fixtures/batch17 下创建并在 teardown 中清理。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1808659'
+    case_type: 功能测试
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'python3 tests/at/yaml/xlsx严格新建标签页补全/assert_two_tabs.py'
+    wait: 0.3
+  - action: assert_element
+    ref: breadcrumb_level1
+  - action: assert_element
+    ref: breadcrumb_level2
+teardown:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; rm -rf /tmp/dde-at-fixtures/batch17'
+  wait: 0.3
+- action: session_stop

@@ -1,0 +1,322 @@
+name: 桌面整理_suite
+app: dde-file-manager
+description: 桌面整理模块 AT-SPI 用例
+module: 桌面整理
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_smoke_桌面整理_001
+  name: 桌面右键菜单点击跳转控制中心设置壁纸
+  description: '来源用例编号: 1846659'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_002
+  name: 【1071桌面整理】单次整理，拖拽桌面文件到符合规则集合内
+  description: '来源用例编号: 1810241'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_003
+  name: 【1071桌面整理】单次整理，集合空白处-新建文档
+  description: '来源用例编号: 1810199'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_桌面整理_004
+  name: 【1071桌面整理】整理桌面
+  description: '来源用例编号: 1810047'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_桌面整理_005
+  name: 【桌面整理】单次生效，新建文件不自动整理
+  description: '来源用例编号: 1809929'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_桌面整理_006
+  name: 桌面文件来回右键点击，右键菜单选项显示正确
+  description: '来源用例编号: 1809921'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_007
+  name: 检查桌面右键菜单的刷新
+  description: '来源用例编号: 1809917'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_桌面整理_009
+  name: 【文件管理】【桌面自动整理】拖拽移动图标-集合内拖拽
+  description: '来源用例编号: 1809621'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_010
+  name: 【文件管理】【桌面自动整理】集合交互-选项设置-集合尺寸
+  description: '来源用例编号: 1809617'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_011
+  name: 【文件管理】【桌面自动整理】集合交互-标题栏
+  description: '来源用例编号: 1809611'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_012
+  name: 【桌面自动整理】网格布局-集合图标大小布局
+  description: '来源用例编号: 1809541'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_014
+  name: 勾选自动排列-取消勾选自动排列
+  description: '来源用例编号: 1808401'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_桌面整理_015
+  name: '[138][core]勾选自动排列-删除桌面文件/文件夹'
+  description: '来源用例编号: 1808381'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_桌面整理_017
+  name: 桌面刷新优化-快捷键-桌面空白处点击右键【刷新】按钮刷新桌面
+  description: '来源用例编号: 1808251'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_桌面整理_018
+  name: '[117]自定义壁纸-图片目录下图片右键设置桌面壁纸'
+  description: '来源用例编号: 1807925'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_桌面整理_019
+  name: '[core]聚合拖拽-桌面未铺满时，拖拽6个文件至桌面空白处_'
+  description: '来源用例编号: 1807041'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

@@ -1,0 +1,3065 @@
+name: xlsx搜索扩展3_suite
+app: dde-file-manager
+description: 从 V25 xlsx 未覆盖用例映射：搜索、搜索专项优化、智能语义搜索
+module: xlsx搜索扩展3
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_xlsx搜索扩展3_001
+  name: "【智能语义搜索】中文数字转换"
+  description: '来源用例编号: 2023317'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：25年十二月创建的表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_002
+  name: "【智能语义搜索】时间槽-两种时间叠加搜索"
+  description: '来源用例编号: 2023303'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：去年12月创建的表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_003
+  name: "【智能语义搜索】隐藏文件扩展名进行搜索"
+  description: '来源用例编号: 2022847'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：音乐目录里的pdf"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_004
+  name: "【智能语义搜索】类型槽-压缩包泛化库：归档, 源码包, 打包文件, zip, rar"
+  description: '来源用例编号: 2021439'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：音乐目录里的归档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_005
+  name: "【智能语义搜索】类型槽-压缩包"
+  description: '来源用例编号: 2021437'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：音乐目录里的压缩包"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_006
+  name: "【智能语义搜索】类型槽-音频泛化库：音频, 音乐, 录音, 歌, 语音"
+  description: '来源用例编号: 2021435'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：音乐目录里的音频"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_007
+  name: "【智能语义搜索】类型槽-音频-音乐目录里的歌"
+  description: '来源用例编号: 2021433'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：音乐目录里的歌"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_008
+  name: "【智能语义搜索】类型槽-音频"
+  description: '来源用例编号: 2021431'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：mp3的歌"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_009
+  name: "【智能语义搜索】类型槽-视频泛化库：录像, 电影, 动画, 短片, 片子"
+  description: '来源用例编号: 2021429'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：文档目录下的录像"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_010
+  name: "【智能语义搜索】类型槽-视频-wmv视频"
+  description: '来源用例编号: 2021427'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：文档目录下的wmv视频"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_011
+  name: "【智能语义搜索】类型槽-视频"
+  description: '来源用例编号: 2021425'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：文档目录下的视频"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_012
+  name: "【智能语义搜索】类型槽-照片泛化库：图片, 截图, 图, 壁纸, 海报, 相片, 表情包"
+  description: '来源用例编号: 2021423'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：文档目录下的图片"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_013
+  name: "【智能语义搜索】类型槽-照片-指定gif格式"
+  description: '来源用例编号: 2021421'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：文档目录下的gif图片"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_014
+  name: "【智能语义搜索】类型槽-照片"
+  description: '来源用例编号: 2021419'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：文档目录下的照片"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_015
+  name: "【智能语义搜索】时间槽-精确时间-错误的日期格式"
+  description: '来源用例编号: 2021321'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：1月33日创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_016
+  name: "【智能语义搜索】时间槽-精确时间-本年精确日期"
+  description: '来源用例编号: 2021319'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：5月1日创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_017
+  name: "【智能语义搜索】时间槽-精确时间-本年精确月份"
+  description: '来源用例编号: 2021317'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：5月创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_018
+  name: "【智能语义搜索】时间槽-精确时间-精确年份"
+  description: '来源用例编号: 2021315'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：2025年创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_019
+  name: "【智能语义搜索】时间槽-精确时间-绝对日期"
+  description: '来源用例编号: 2021313'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：2026年5月1日创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_020
+  name: "【智能语义搜索】时间槽-去年"
+  description: '来源用例编号: 2021311'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：去年创建的表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_021
+  name: "【智能语义搜索】时间槽-今年泛化库：本年/这年"
+  description: '来源用例编号: 2021309'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：本年创建的表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_022
+  name: "【智能语义搜索】时间槽-今年"
+  description: '来源用例编号: 2021307'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：今年创建的表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_023
+  name: "【智能语义搜索】时间槽-本月泛化库：这个月/ 当月"
+  description: '来源用例编号: 2021301'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：这个月创建的excel表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_024
+  name: "【智能语义搜索】时间槽-本月"
+  description: '来源用例编号: 2021299'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：本月创建的excel表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_025
+  name: "【智能语义搜索】时间槽-上周泛化库：上个星期/上星期"
+  description: '来源用例编号: 2021297'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：上个星期创建的pdf"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_026
+  name: "【智能语义搜索】时间槽-上周"
+  description: '来源用例编号: 2021295'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：上周创建的pdf"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_027
+  name: "【智能语义搜索】时间槽-本周泛化库：这周/这个星期"
+  description: '来源用例编号: 2021293'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：这周创建的Word文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_028
+  name: "【智能语义搜索】时间槽-本周"
+  description: '来源用例编号: 2021291'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：本周创建的Word文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_029
+  name: "【智能语义搜索】时间槽-前天"
+  description: '来源用例编号: 2021289'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：前天创建的文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_030
+  name: "【智能语义搜索】时间槽-昨天泛化库：昨日/昨晚"
+  description: '来源用例编号: 2021287'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：昨日创建的文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_031
+  name: "【智能语义搜索】时间槽-昨天"
+  description: '来源用例编号: 2021285'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：昨天创建的文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_032
+  name: "【智能语义搜索】位置槽-微信接受泛化库：微信, vx, 微信里, 微信群, 微信发我的"
+  description: '来源用例编号: 2019753'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：今天微信的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_033
+  name: "【智能语义搜索】位置槽-微信接受"
+  description: '来源用例编号: 2019751'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：今天微信接受的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_034
+  name: "【智能语义搜索】类型槽-设计源文件，搜索指定后缀文件"
+  description: '来源用例编号: 2019737'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：文档目录里的sketch文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_035
+  name: "【智能语义搜索】手动关闭开启提示语之后通过dconfig配置显示提示语"
+  description: '来源用例编号: 2019687'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_036
+  name: "【智能语义搜索】智能搜索默认值检查及恢复默认值"
+  description: '来源用例编号: 2019285'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "智能语义搜索智能搜索默认值检查及恢复默认"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_037
+  name: "【智能语义搜索】位置槽-图片目录泛化库：相册里, 图片库"
+  description: '来源用例编号: 2019223'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：相册里的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_038
+  name: "【智能语义搜索】位置槽-图片目录"
+  description: '来源用例编号: 2019221'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：图片目录的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_039
+  name: "【智能语义搜索】位置槽-文档目录泛化库：文档里, 文档库"
+  description: '来源用例编号: 2019217'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：文档里的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_040
+  name: "【智能语义搜索】位置槽-文档目录"
+  description: '来源用例编号: 2019177'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：我的文档里的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_041
+  name: "【智能语义搜索】位置槽-下载目录泛化库：下载的, 下载目录, 下下来的, 浏览器下载"
+  description: '来源用例编号: 2019159'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今天下载的"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_042
+  name: "【智能语义搜索】位置槽-下载目录"
+  description: '来源用例编号: 2019153'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今天下载文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_043
+  name: "【智能语义搜索】搜索框中输入：关键词+位置槽"
+  description: '来源用例编号: 2019141'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：桌面上的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_044
+  name: "【智能语义搜索】属性槽-动态精准大小泛化词：超过1G、100MB以内、大于500MB"
+  description: '来源用例编号: 2018925'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今天创建的超过1G的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_045
+  name: "【智能语义搜索】属性槽-动态精准大小大于500M"
+  description: '来源用例编号: 2018851'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：大于500M的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_046
+  name: "【智能语义搜索】关键词包含泛化词及文件后缀"
+  description: '来源用例编号: 2018831'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：昨天创建的psd源文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_047
+  name: "【智能语义搜索】类型槽-设计源文件泛化库：设计稿, psd, 矢量图, 工程文件"
+  description: '来源用例编号: 2018829'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：昨天创建的设计稿"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_048
+  name: "【智能语义搜索】类型槽-设计源文件：源文件"
+  description: '来源用例编号: 2018827'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：昨天创建的源文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_049
+  name: "【智能语义搜索】类型槽-应用程序泛化库：软件, 应用, 脚本, 程序, 包"
+  description: '来源用例编号: 2018825'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：昨天创建的软件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_050
+  name: "【智能语义搜索】类型槽-应用程序：安装包"
+  description: '来源用例编号: 2018823'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：昨天创建的安装包"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_051
+  name: "【智能语义搜索】类型槽-视频-搜索特性类型视频"
+  description: '来源用例编号: 2018813'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：音乐目录下wmv的录像"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_052
+  name: "【智能语义搜索】类型槽-表格泛化库：统计表, 报表, 名单, 数据表, 数据, 明细"
+  description: '来源用例编号: 2018759'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：昨天的统计表"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_053
+  name: "【智能语义搜索】类型槽-表格"
+  description: '来源用例编号: 2018753'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：昨天的表格"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_054
+  name: "【智能语义搜索】关闭智能搜索索引授权提醒"
+  description: '来源用例编号: 2018747'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：500M"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_055
+  name: "【智能语义搜索】一键授权开启智能搜索"
+  description: '来源用例编号: 2018745'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：500M"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_056
+  name: "【智能语义搜索】时间槽-精确时间-完整精确日期"
+  description: '来源用例编号: 2018723'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：2025年3月16日创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_057
+  name: "【智能语义搜索】时间槽-精确时间-精确年月"
+  description: '来源用例编号: 2018721'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：2025年3月创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_058
+  name: "【智能语义搜索】时间槽-精确时间-精确月份"
+  description: '来源用例编号: 2018719'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：2025年3月创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_059
+  name: "【智能语义搜索】时间槽-精准时间-绝对月份"
+  description: '来源用例编号: 2018713'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：2025年7月点开过的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_060
+  name: "【智能语义搜索】关键词中含有某个槽位部分关键词"
+  description: '来源用例编号: 2018707'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：上点开过的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_061
+  name: "【智能语义搜索】时间槽-上个月及泛化词：上月"
+  description: '来源用例编号: 2018705'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：上个月点开过的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_062
+  name: "【智能语义搜索】时间槽-去年泛化词：上一年/去年一整年"
+  description: '来源用例编号: 2018703'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：上一年浏览过的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_063
+  name: "【智能语义搜索】时间槽-去年"
+  description: '来源用例编号: 2018701'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：去年浏览过的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_064
+  name: "【智能语义搜索】关键词有空格"
+  description: '来源用例编号: 2018699'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：今天新建的ppt"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_065
+  name: "【智能语义搜索】行为槽-创建泛化词：新建的/存下来的/保存的/新加的"
+  description: '来源用例编号: 2018697'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：昨天新建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_066
+  name: "【智能语义搜索】行为槽-创建"
+  description: '来源用例编号: 2018695'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：昨天创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_067
+  name: "【智能语义搜索】对搜索结果进行高级筛选"
+  description: '来源用例编号: 2018687'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今天创建的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_068
+  name: "【智能语义搜索】时间槽-今天泛化词：今日/今日份"
+  description: '来源用例编号: 2018685'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今日创建的文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_069
+  name: "【智能语义搜索】时间槽-今天"
+  description: '来源用例编号: 2018683'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今天创建的文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_070
+  name: "【智能语义搜索】搜索结果显示"
+  description: '来源用例编号: 2018657'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "智能语义搜索搜索结果显示"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_071
+  name: "【智能语义搜索】分组展开/折叠按钮检查"
+  description: '来源用例编号: 2018599'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "智能语义搜索分组展开/折叠按钮检查"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_072
+  name: "【智能语义搜索】支持智能语义搜索所有文件类型检查"
+  description: '来源用例编号: 2018553'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今天创建的word"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_073
+  name: "【智能语义搜索】分组标题检查"
+  description: '来源用例编号: 2018291'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "智能语义搜索分组标题检查"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_074
+  name: "【图片文本内容搜索】仅图片文本内容搜索索引进行更新"
+  description: '来源用例编号: 2017141'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "图片文本内容搜索仅图片文本内容搜索索引进"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_075
+  name: "【搜索】开启长文件名后高级搜索-创建时间_"
+  description: '来源用例编号: 2013939'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索开启长文件名后高级搜索-创建时间_"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_076
+  name: "【搜索专项优化-v1.0】LVM装机时搜索文件名和文件内容"
+  description: '来源用例编号: 2009163'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：deepin-elf-verify服务"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_077
+  name: "【图片文本内容搜索】搜索过程中异常断电"
+  description: '来源用例编号: 2002029'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：石鼓寺"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_078
+  name: "【图片文本内容搜索】索引更新过程中进行图片文件内容搜索"
+  description: '来源用例编号: 2002027'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：石鼓寺"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_079
+  name: "【全局搜索-图片文本内容搜索】关键词命中多行OCR文本时，仅展示第1行"
+  description: '来源用例编号: 2002023'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：最长显示255"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_080
+  name: "【全局搜索-图片文本内容搜索】文件内容摘要超出1行展示不下时"
+  description: '来源用例编号: 2002021'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：最长显示255"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_081
+  name: "【文管-图片文本内容搜索】关键词命中多行OCR文本时，仅展示第1行"
+  description: '来源用例编号: 2002019'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：最长显示255"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_082
+  name: "【文管-图片文本内容搜索】文件内容摘要超出1行展示不下时"
+  description: '来源用例编号: 2002017'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：最长显示255"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_083
+  name: "【文管-图片文本内容搜索】对图片文件内容搜索结果进行排序"
+  description: '来源用例编号: 2002013'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：终于等到你啦"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_084
+  name: "【图片文本内容搜索】索引更新失败UI检查"
+  description: '来源用例编号: 2001997'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "图片文本内容搜索索引更新失败UI检查"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_085
+  name: "【图片文本内容搜索】索引各个状态UI检查"
+  description: '来源用例编号: 2001995'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "附件中任意一张图片中的文本内容"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_086
+  name: "【文管-图片文本内容搜索】图片文本内容增删改之后进行搜索"
+  description: '来源用例编号: 2001913'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "附件中任意一张图片中的文本内容"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_087
+  name: "【全局搜索-图片文本内容搜索】图片文本内容增删改之后进行搜索"
+  description: '来源用例编号: 2001905'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "附件中任意一张图片中的文本内容"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_088
+  name: "【图片文本内容搜索】有图片更新时自动触发主目录全量索引更新"
+  description: '来源用例编号: 2001887'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "图片文本内容搜索有图片更新时自动触发主目"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_089
+  name: "【全局搜索-图片文本内容搜索】新增“图片中找到的文字”类目"
+  description: '来源用例编号: 2001827'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：石鼓寺"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_090
+  name: "【全局搜索-图片文本内容搜索】多关键词搜索"
+  description: '来源用例编号: 2000559'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：测试最长 1211测试"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_091
+  name: "【全局搜索-图片文本内容搜索】对搜索结果进行操作"
+  description: '来源用例编号: 2000451'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "0007-大图片"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_092
+  name: "【文管-图片文本内容搜索】对搜索结果进行操作"
+  description: '来源用例编号: 2000449'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：0007-大图片"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_093
+  name: "【图片文本内容搜索】支持搜索文本内容的图片类型"
+  description: '来源用例编号: 2000363'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "附件中如下图片类型中的文本"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_094
+  name: "【全局搜索-图片文本内容搜索】预览搜索结果"
+  description: '来源用例编号: 2000359'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：已被磐 石系统拦截"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_095
+  name: "【全局搜索-图片文本内容搜索】全局搜索进行图片文件内容搜索"
+  description: '来源用例编号: 2000357'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：石鼓寺"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_096
+  name: "【文管-图片文本内容搜索】功能开启后进行图片文件内容搜索"
+  description: '来源用例编号: 2000319'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：图片手动添加文本"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_097
+  name: "【图片文本内容搜索】功能默认关闭"
+  description: '来源用例编号: 2000317'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "图片文本内容搜索功能默认关闭"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_098
+  name: "【搜索】【黑名单配置】在黑名单路径下修改文件内容再搜索"
+  description: '来源用例编号: 1973563'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：black-path"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_099
+  name: "【搜索】【黑名单配置】home目录外的其他目录加入黑名单路径"
+  description: '来源用例编号: 1972981'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框中输入关键词：a-search.txt"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_100
+  name: "【搜索】【黑名单配置】配置黑名单路径-异常系"
+  description: '来源用例编号: 1972957'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_101
+  name: "【搜索】【黑名单配置】修改已配置的关键词"
+  description: '来源用例编号: 1972543'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_102
+  name: "【搜索】【黑名单配置】在黑名单中的绝对路径下修改文件再搜索"
+  description: '来源用例编号: 1972333'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：black-path-1.txt"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_103
+  name: "【搜索】【黑名单配置】在黑名单路径下新增文件再搜索"
+  description: '来源用例编号: 1972325'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：new-file.txt"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_104
+  name: "【搜索】【黑名单配置】黑名单路径默认路径检查"
+  description: '来源用例编号: 1972321'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_105
+  name: "【搜索】数据盘为xfs文件系统类型时进行搜索"
+  description: '来源用例编号: 1970349'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：a.txt文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_106
+  name: "【搜索】数据盘为btrfs文件系统类型时进行搜索"
+  description: '来源用例编号: 1970347'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：a.txt文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_107
+  name: "【搜索专项优化-v1.1】搜索长文件名"
+  description: '来源用例编号: 1939077'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "桌面上长文件名的名称"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_108
+  name: "【搜索专项优化-v1.0】按退格键删除关键词时，检查搜索结果"
+  description: '来源用例编号: 1932895'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：test"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_109
+  name: "【搜索】重命名后立即添加内容，再搜索"
+  description: '来源用例编号: 1908461'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：今天天气很好"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_110
+  name: "【搜索】搜索过程中并行做其他操作"
+  description: '来源用例编号: 1895137'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "框中输入：kw_500000"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_111
+  name: "【搜索专项优化-v1.0】可搜索不同文件系统类型目录下的文件"
+  description: '来源用例编号: 1888243'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：搜索不同文件系统类型下的文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_112
+  name: "【搜索专项优化-v1.0】cpu和内存有压力情况下进行搜索"
+  description: '来源用例编号: 1888241'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：天ss123空s44下雨lllll 呼龍4s呼 123.456"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_113
+  name: "【搜索专项优化-v1.1】dconfig配置全文检索路径-异常系"
+  description: '来源用例编号: 1884117'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_114
+  name: "【搜索专项优化-v1.1】dconfig配置全文检索路径"
+  description: '来源用例编号: 1884113'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_115
+  name: "【搜索专项优化-v1.1】dconfig配置自动更新索引时间间隔"
+  description: '来源用例编号: 1884111'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_116
+  name: "【搜索专项优化-v1.1】dconfig配置检索文件类型"
+  description: '来源用例编号: 1884109'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_117
+  name: "【搜索专项优化-v1.1】dconfig配置检索文件类型--异常系"
+  description: '来源用例编号: 1884107'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_118
+  name: "【搜索专项优化-v1.1】dconfig配置全文检索开关"
+  description: '来源用例编号: 1884097'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：dde-dconfig-editor"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_119
+  name: "【搜索专项优化-v1.1】增加索引状态提示"
+  description: '来源用例编号: 1884095'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索专项优化-v1.1增加索引状态提示"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_120
+  name: "【搜索专项优化-v1.1】搜索结果中文件内容超出部分显示"
+  description: '来源用例编号: 1884065'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：搜索专项测试"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_121
+  name: "【搜索专项优化-v1.1】文管搜索结果支持图标/列表视图显示"
+  description: '来源用例编号: 1883947'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：搜索专项测试"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_122
+  name: "【搜索专项优化-v1.0】搜索出结果后切换视图，再搜索"
+  description: '来源用例编号: 1881383'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索专项优化-v1.0搜索出结果后切换视"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_123
+  name: "【搜索专项优化-v1.0】不同视图下都能高亮显示命中的搜索内容"
+  description: '来源用例编号: 1881381'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索专项优化-v1.0不同视图下都能高亮"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_124
+  name: "【搜索专项优化-v1.0】剪切十万级别大量文件后再搜索"
+  description: '来源用例编号: 1881375'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "：kw200000"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_125
+  name: "【搜索专项优化-v1.0】命中文件内容后重命名文件，再次搜索"
+  description: '来源用例编号: 1881361'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "全文检索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_126
+  name: "【搜索专项优化-v1.0】支持十个关键词以空格分词"
+  description: '来源用例编号: 1879405'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：天 s s1 23空s44下雨 lll 呼龍 4s呼 123 .456"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_127
+  name: "【搜索专项优化-v1.0】搜索结果只有文件内容"
+  description: '来源用例编号: 1879397'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：天ss123空s44下雨lllll 呼龍4s呼 123.456"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_128
+  name: "【搜索专项优化-v1.0】搜索结果只有文件名"
+  description: '来源用例编号: 1879389'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：测试 搜索 专项"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_129
+  name: "【搜索专项优化-v1.0】搜索结果整合显示"
+  description: '来源用例编号: 1879305'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：deepin-elf-verify服务"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_130
+  name: "【搜索专项优化-v1.0】即输即搜"
+  description: '来源用例编号: 1879267'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：搜索专项优化"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_131
+  name: "【搜索专项优化-v1.0】能搜索GBK编码格式的文件"
+  description: '来源用例编号: 1879263'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：天ss123空s44下雨lllll 呼龍4s呼 123.456"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_132
+  name: "【搜索专项优化-v1.0】搜索结果超过500条"
+  description: '来源用例编号: 1879261'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "键词：1"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_133
+  name: "【搜索专项优化-v1.0】搜索支持的文件格式"
+  description: '来源用例编号: 1878611'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索专项优化-v1.0搜索支持的文件格式"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_134
+  name: "【搜索专项优化-v1.0】裁剪部分功能"
+  description: '来源用例编号: 1878435'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：12"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_135
+  name: "【搜索专项优化-v1.0】可搜索前10M的文件内容"
+  description: '来源用例编号: 1878215'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "内容：搜索专项优化测试文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_136
+  name: "【搜索专项优化-v1.0】文件内容搜索范围为主目录，文件名搜索范围为任意路径"
+  description: '来源用例编号: 1878213'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "内容：搜索专项优化测试文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_137
+  name: "【搜索专项优化-v1.0】开启长文件名搜索"
+  description: '来源用例编号: 1878211'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "内容：前置条件2中创建的文件夹名称"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_138
+  name: "【搜索专项优化-v1.0】搜索出文件后，删除文件，再次搜索"
+  description: '来源用例编号: 1878209'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "内容：搜索专项优化测试文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_139
+  name: "【搜索专项优化-v1.0】搜索隐藏文件"
+  description: '来源用例编号: 1878205'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "内容：搜索专项优化测试文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_140
+  name: "【搜索专项优化-v1.0】成功更新索引时，会保留已经编制的索引"
+  description: '来源用例编号: 1878201'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索专项优化-v1.0成功更新索引时，会"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_141
+  name: "【搜索专项优化-v1.0】更新文件内容，自动更新索引成功后才能搜到"
+  description: '来源用例编号: 1878199'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "内容：搜索专项优化测试文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_142
+  name: "【搜索专项优化-v1.0】更新文件名，立刻能搜索到"
+  description: '来源用例编号: 1878197'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "内容：搜索专项优化测试文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_143
+  name: "【搜索专项优化-v1.0】未自动更新索引时关闭全文检索"
+  description: '来源用例编号: 1878195'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "内容：搜索专项优化测试文档"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_144
+  name: "【搜索专项优化-v1.0】更新索引过程中关闭全文检索"
+  description: '来源用例编号: 1878193'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索专项优化-v1.0更新索引过程中关闭"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_145
+  name: "【搜索专项优化-v1.0】自动更新索引"
+  description: '来源用例编号: 1878189'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：this is a test file*()"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_146
+  name: "【搜索专项优化-v1.0】升级后全文检索开关为打开状态"
+  description: '来源用例编号: 1878187'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索专项优化-v1.0升级后全文检索开关"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_147
+  name: "【搜索】文管全文搜索-索引更新失败"
+  description: '来源用例编号: 1843579'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索文管全文搜索-索引更新失败"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_148
+  name: "【搜索】升级后开启、关闭全文搜索-事件上报"
+  description: '来源用例编号: 1810991'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索升级后开启、关闭全文搜索-事件上报"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_149
+  name: "【搜索】长文件名功能 - 搜索结果，文件右键打开文件所在位置"
+  description: '来源用例编号: 1810589'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "打开文件所在位置"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_150
+  name: "【搜索】长文件名功能 - 搜索结果，文件右键新窗口打开"
+  description: '来源用例编号: 1810585'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "在新窗口打开"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_151
+  name: "【搜索】长文件名功能 - 搜索结果，文件右键剪切粘贴"
+  description: '来源用例编号: 1810577'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索长文件名功能 - 搜索结果，文件右键"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_152
+  name: "【搜索】长文件名功能  - 搜索结果，批量重命名，替换文本"
+  description: '来源用例编号: 1810573'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索长文件名功能  - 搜索结果，批量重"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_153
+  name: "【搜索】长文件名功能 - 搜索结果，文件右键快捷访问"
+  description: '来源用例编号: 1810559'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索长文件名功能 - 搜索结果，文件右键"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_154
+  name: "【搜索】长文件名功能 - 搜索结果，文件右键在终端中打开"
+  description: '来源用例编号: 1810557'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索长文件名功能 - 搜索结果，文件右键"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_155
+  name: "【搜索】长文件名功能 - 全局搜索，搜索成功"
+  description: '来源用例编号: 1810549'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "长文件名进行搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_156
+  name: "[118][core]保险箱-搜索保险箱中"
+  description: '来源用例编号: 1809231'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "118core保险箱-搜索保险箱中"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_157
+  name: "【搜索】搜索打开.sh文件后，打开文件所在位置不会导致文管闪退"
+  description: '来源用例编号: 1805541'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索搜索打开.sh文件后，打开文件所在位"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_158
+  name: "【搜索】全文搜索后，拖动侧边栏滚动条/鼠标滚轮滚动查看结果"
+  description: '来源用例编号: 1805539'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "搜索全文搜索后，拖动侧边栏滚动条/鼠标滚"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_159
+  name: "【搜索】【支持筛选搜索】文管单击\"搜索\"按钮后，输入关键字进行搜索"
+  description: '来源用例编号: 1805535'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框键入关键字"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_160
+  name: "【搜索】对搜索结果文件操作"
+  description: '来源用例编号: 1805513'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "键字进行搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_161
+  name: "【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，输入关键字和筛选过滤条件，进行搜索"
+  description: '来源用例编号: 1805501'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框键入关键字"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_162
+  name: "【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，筛选过滤条件，直接进行筛选"
+  description: '来源用例编号: 1805499'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "键字"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_163
+  name: "【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，输入关键字进行搜索"
+  description: '来源用例编号: 1805497'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框键入关键字"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_164
+  name: "【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，单击&amp;amp;quot;筛选&amp;amp;quot;按钮"
+  description: '来源用例编号: 1805491'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_165
+  name: "【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，&amp;amp;quot;筛选&amp;amp;quot;按钮显示"
+  description: '来源用例编号: 1805487'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_166
+  name: "【搜索】Bug211957转：搜索打开.sh文件后，打开文件所在位置不会导致文管闪退"
+  description: '来源用例编号: 1805483'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索Bug211957转：搜索打开.sh"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_167
+  name: "【搜索】搜索结果-打开文件所在位置，复制面包屑路径_"
+  description: '来源用例编号: 1805481'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索搜索结果-打开文件所在位置，复制面包"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_168
+  name: "【搜索】支持通配符搜索"
+  description: '来源用例编号: 1805471'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框输入deepin*.doc"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_169
+  name: "【搜索】框下拉列表"
+  description: '来源用例编号: 1805467'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框中输入：/"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_170
+  name: "【搜索】搜索-快捷键检查"
+  description: '来源用例编号: 1805461'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "状态"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_171
+  name: "【搜索】全文搜索-混合语言搜索多个文件（仅文件内容包含关键词）"
+  description: '来源用例编号: 1805433'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "中文、繁体组合搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_172
+  name: "【搜索】搜索-不同目录搜索"
+  description: '来源用例编号: 1805405'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: "搜索搜索-不同目录搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_173
+  name: "[t][core]全文搜索-勾选全文搜索配置项"
+  description: '来源用例编号: 1805399'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "tcore全文搜索-勾选全文搜索配置项"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_174
+  name: "【搜索】搜索-全文搜索默认勾选"
+  description: '来源用例编号: 1805397'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索搜索-全文搜索默认勾选"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_175
+  name: "【搜索】搜索-多次搜索"
+  description: '来源用例编号: 1805395'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索搜索-多次搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_176
+  name: "【搜索】全文搜索-中文、英文字母单独/混合进行搜索"
+  description: '来源用例编号: 1805393'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "“天”字进行搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_177
+  name: "【搜索】全文搜索-繁体、数字单独/混合进行搜索"
+  description: '来源用例编号: 1805387'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "“龍”字进行搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_178
+  name: "【搜索】全文搜索-特殊符号进行搜索"
+  description: '来源用例编号: 1805379'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "“天    ss”"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_179
+  name: "【搜索】搜索-特殊路径搜索"
+  description: '来源用例编号: 1805377'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：search:?url=file:///home/hailin/Demo&keyword=%23"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_180
+  name: "【搜索】全文搜索md-输入混合语言匹配单个md"
+  description: '来源用例编号: 1805345'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "“天”进行搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_181
+  name: "【搜索】全文搜索-搜索md加密文件"
+  description: '来源用例编号: 1805343'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "匹配内容关键字搜索加密文件"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_182
+  name: "搜索-anything进程合并"
+  description: '来源用例编号: 1805341'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索-anything进程合并"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_183
+  name: "【搜索】高级搜索-创建时间_"
+  description: '来源用例编号: 1805337'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索-创建时间_"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_184
+  name: "【搜索】高级搜索-访问时间_"
+  description: '来源用例编号: 1805335'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索-访问时间_"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_185
+  name: "搜索地址前缀补全-手动输入完整地址访问共享文件"
+  description: '来源用例编号: 1805333'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框输入“smb://10.8.11.132”按enter进行访问"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_186
+  name: "【搜索】搜索地址前缀补全-IP地址检测"
+  description: '来源用例编号: 1805327'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "框输入"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_187
+  name: "【搜索】搜索地址前缀补全-IP地址补全"
+  description: '来源用例编号: 1805323'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索搜索地址前缀补全-IP地址补全"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_188
+  name: "【搜索】地址前缀补全-挂载共享目录后，存在最近访问标签"
+  description: '来源用例编号: 1805321'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "ip检查下拉框地址显示"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_189
+  name: "【搜索】连接服务器-最近访问标签显示"
+  description: '来源用例编号: 1805319'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "smb://ip"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_190
+  name: "【搜索】地址前缀补全-多次挂载共享目录，检查最近访问标签显示"
+  description: '来源用例编号: 1805313'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索地址前缀补全-多次挂载共享目录，检查"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_191
+  name: "【搜索】搜索地址前缀补全-访问共享地址后检查多窗口最近访问标签显示"
+  description: '来源用例编号: 1805309'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "ip检查下拉框最近标签显示"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_192
+  name: "【搜索】搜索地址前缀补全-最近访问标签7*24小时时效检查"
+  description: '来源用例编号: 1805305'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索搜索地址前缀补全-最近访问标签7*2"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_193
+  name: "【搜索】搜索地址前缀补全-最近访问标签用户隔离"
+  description: '来源用例编号: 1805303'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索搜索地址前缀补全-最近访问标签用户隔"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_194
+  name: "【搜索】高级搜索-重置搜索"
+  description: '来源用例编号: 1805285'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索-重置搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_195
+  name: "【搜索】高级搜索--多标签搜索"
+  description: '来源用例编号: 1805283'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索--多标签搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_196
+  name: "【搜索】高级搜索-随机组合筛选"
+  description: '来源用例编号: 1805281'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索-随机组合筛选"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_197
+  name: "【搜索】高级搜索-文件类型"
+  description: '来源用例编号: 1805279'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索-文件类型"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_198
+  name: "【搜索】高级搜索-文件大小"
+  description: '来源用例编号: 1805277'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索-文件大小"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_199
+  name: "【搜索】高级搜索-选择范围"
+  description: '来源用例编号: 1805275'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "：sh"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx搜索扩展3_200
+  name: "【搜索】高级搜索-修改时间"
+  description: '来源用例编号: 1805273'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "搜索高级搜索-修改时间"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager

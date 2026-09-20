@@ -1,0 +1,84 @@
+name: xlsx严格命令方式补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 命令方式批次中筛选的严格命令行用例，直接执行 dde-file-manager CLI 并断言版本和帮助输出
+module: xlsx严格命令方式补全
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1805549
+  name: 在命令行查看文件管理器版本_
+  description: 'xlsx 用例编号: 1805549
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/命令方式(#132300)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 在终端执行：dde-file-manager -v
+
+    2. 在终端执行：dde-file-manager --version
+
+    预期结果:
+
+    1. 在终端中显示文件管理器的版本
+
+    2. 在终端中显示文件管理器的版本
+
+    严格映射说明: 该用例核心为 CLI 版本参数输出版本信息，直接执行 `dde-file-manager -v` 与 `dde-file-manager --version`，断言输出包含程序名和语义版本号。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805549'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; dde-file-manager -v > /tmp/dfm_at_version_short.out 2>&1; dde-file-manager --version > /tmp/dfm_at_version_long.out 2>&1'
+    wait: 0.3
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; grep -Eq "dde-file-manager[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+" /tmp/dfm_at_version_short.out; grep -Eq "dde-file-manager[[:space:]]+[0-9]+\.[0-9]+\.[0-9]+" /tmp/dfm_at_version_long.out'
+    wait: 0.3
+- id: case_1805547
+  name: 在命令行查看文件管理器帮助信息_
+  description: 'xlsx 用例编号: 1805547
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/命令方式(#132300)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 在终端执行：dde-file-manager -h
+
+    2. 在终端执行：dde-file-manager --help
+
+    预期结果:
+
+    1. 显示出文件管理器的命令帮助选项
+
+    2. 显示出文件管理器的命令帮助选项
+
+    严格映射说明: 该用例核心为 CLI 帮助参数输出命令帮助项，直接执行 `dde-file-manager -h` 与 `dde-file-manager --help`，断言输出包含用法、选项、root/help/version 等关键帮助选项。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805547'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; dde-file-manager -h > /tmp/dfm_at_help_short.out 2>&1; dde-file-manager --help > /tmp/dfm_at_help_long.out 2>&1'
+    wait: 0.3
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; for f in /tmp/dfm_at_help_short.out /tmp/dfm_at_help_long.out; do grep -q "用法" "$f"; grep -q "选项" "$f"; grep -q -- "--root" "$f"; grep -q -- "--help" "$f"; grep -q -- "--version" "$f"; done'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'rm -f /tmp/dfm_at_version_short.out /tmp/dfm_at_version_long.out /tmp/dfm_at_help_short.out /tmp/dfm_at_help_long.out'
+  wait: 0.3
+- action: session_stop

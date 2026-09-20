@@ -1,0 +1,55 @@
+name: 命令方式_suite
+app: dde-file-manager
+description: 从 V25 xlsx 筛选的命令方式 AT-SPI 用例：文件管理器启动命令
+module: 命令方式
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 5.0
+suites:
+- id: case_1805545
+  name: 命令行启动
+  description: 执行 dde-file-manager 命令启动文件管理器，验证进程运行
+  tags: []
+  steps: []
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_1805551
+  name: 命令行新建文件管理器窗口
+  description: 执行 dde-file-manager -n 新建文件管理器窗口，验证进程运行
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager -n
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_1805553
+  name: dde-file-manager -d 无窗口显示
+  description: 执行 dde-file-manager -d 后台启动，验证文件管理器进程运行
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager -d
+    wait: 3.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_1805681
+  name: 入口-通过终端进入回收站
+  description: 执行 dde-file-manager trash:/// 打开回收站，验证回收站入口存在
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager trash:///
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+teardown:
+- action: session_stop

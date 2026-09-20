@@ -1,0 +1,75 @@
+name: xlsx快捷键扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的快捷键扩展用例
+module: xlsx快捷键扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: dde-file-manager --open-home
+  wait: 5.0
+suites:
+- id: case_1808249
+  name: 桌面刷新优化-快捷键-按F5刷新桌面
+  description: 按 xlsx 步骤进入桌面并按 F5 刷新，验证文管保持可用
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: F5
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806861
+  name: 文件操作-在桌面/文管切换隐藏文件显示模式_
+  description: 按 xlsx 步骤进入文档目录并使用 Ctrl+H 切换隐藏文件显示
+  tags: []
+  steps:
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1805063
+  name: '[081]历史导航-快捷键'
+  description: 按 xlsx 步骤使用 Ctrl+L 编辑路径，验证文管保持可用
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: back_button
+- id: case_1990319
+  name: 【桌面图标选中样式优化】 稳定性测试
+  description: 按 xlsx 步骤进入桌面并执行 Ctrl+A，验证文管保持可用
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

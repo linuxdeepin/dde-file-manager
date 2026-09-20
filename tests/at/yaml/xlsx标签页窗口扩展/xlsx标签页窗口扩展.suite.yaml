@@ -1,0 +1,219 @@
+name: xlsx标签页窗口扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的标签页新建、窗口最大化最小化、目录导航用例
+module: xlsx标签页窗口扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: dde-file-manager --open-home
+  wait: 5.0
+suites:
+- id: case_1935239
+  name: 【在新标签页中打开新文件夹】标签页UI检查
+  description: 'xlsx 用例编号: 1935239
+
+    前置条件: 文管设置界面，基础设置-打开行为，勾选"在新标签页中打开新文件夹"
+
+    测试步骤:
+
+    1. 分别访问桌面上30个不同的文件夹，不断新增页签过程中，检查是否从最左侧开始隐藏页签
+
+    2. 最小化和最大化当前文管窗口
+
+    预期结果:
+
+    1. 一个文管窗口中有多个页签
+
+    2. 最小化和最大化正常，文管无卡顿
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1935239'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 0.5
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 0.5
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 0.5
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1935229
+  name: 【在新标签页中打开新文件夹】在文管打开新文件夹
+  description: 'xlsx 用例编号: 1935229
+
+    前置条件: 勾选在新标签页中打开新文件夹，已打开一个文管
+
+    测试步骤:
+
+    1. 双击桌面上的计算机图标进入文管计算机界面
+
+    2. 进入主目录，双击文件夹A，检查是否在新文管窗口中打开文件夹A
+
+    预期结果:
+
+    1. 进入计算机界面
+
+    2. 从当前标签页打开文件夹A
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1935229'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 0.5
+  assert_steps:
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1935225
+  name: 【在新标签页中打开新文件夹】不勾选在新标签页中打开新文件夹
+  description: 'xlsx 用例编号: 1935225
+
+    前置条件: 不勾选在新标签页中打开新文件夹
+
+    测试步骤:
+
+    1. 双击桌面上的文件夹A，检查是否在新文管窗口中打开文件夹A
+
+    2. 双击桌面上的文件夹B，检查是否在新文管窗口中打开文件夹B
+
+    预期结果:
+
+    1. 在新文管窗口中打开文件夹A
+
+    2. 在新文管窗口中打开文件夹B
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1935225'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806347
+  name: 侧边栏最近使用，添加记录，访问桌面
+  description: 'xlsx 用例编号: 1806347
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 桌面双击访问一个文件
+
+    2. 打开文管，侧边栏单击最近使用，检查右侧内容
+
+    预期结果:
+
+    1. 文件被打开
+
+    2. 最近使用目录显示访问的文件记录
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806347'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1808005
+  name: 详情视图展开动效-图标视图
+  description: 'xlsx 用例编号: 1808005
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文件管理器窗口，进入有多文件/文件夹的目录
+
+    预期结果:
+
+    1. 目录文件显示正常
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1808005'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

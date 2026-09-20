@@ -1,0 +1,530 @@
+name: 回收站_suite
+app: dde-file-manager
+description: 回收站模块 AT-SPI 用例
+module: 回收站
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_smoke_回收站_001
+  name: Bug200815转：长文件名开启，回收站还原原始目录已存在同名文件的
+  description: '来源用例编号: 1812081'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_002
+  name: '[t]打开-回收站内选中单个文件夹右键-打开'
+  description: '来源用例编号: 1809267'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_006
+  name: '[t][core]右键菜单-回收站内空白处右键菜单功能正常'
+  description: '来源用例编号: 1805893'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_007
+  name: '[083]右键菜单-回收站内选中多个文件夹呼出右键菜单正常'
+  description: '来源用例编号: 1805887'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_008
+  name: '[082]右键菜单-回收站内选中多个文件呼出右键菜单正常'
+  description: '来源用例编号: 1805885'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_009
+  name: '[081]右键菜单-回收站内同时选中有文件和文件夹呼出右键菜单正常'
+  description: '来源用例编号: 1805883'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_010
+  name: '[080]右键菜单-回收站内文件夹下部分右键菜单灰显不可点击'
+  description: '来源用例编号: 1805881'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_011
+  name: '[078]全部还原-回收站无内容时不可操作'
+  description: '来源用例编号: 1805879'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_012
+  name: '[079]清空回收站-回收站无内容时不可操作'
+  description: '来源用例编号: 1805861'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_013
+  name: 【回收站】清空回收站-回收站有内容时功能正常
+  description: '来源用例编号: 1805859'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_015
+  name: 【回收站】还原-ctrl+Z还原回收站内文件/文件夹
+  description: '来源用例编号: 1805819'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+z
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_016
+  name: '[074]右键菜单-回收站内选择多个文件/文件夹右键菜单功能正常'
+  description: '来源用例编号: 1805809'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_017
+  name: 回收站，切换为列表模式_
+  description: '来源用例编号: 1805763'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_018
+  name: 回收站，空白处右键清空回收站
+  description: '来源用例编号: 1805761'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_019
+  name: 【回收站】入口-通过桌面回收站图标进入回收站
+  description: '来源用例编号: 1805689'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_021
+  name: 【回收站】入口-通过启动器进入回收站
+  description: '来源用例编号: 1805685'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_022
+  name: 【回收站】入口-通过文管窗口进入回收站
+  description: '来源用例编号: 1805683'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 数据盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_023
+  name: '[093]页面检查-回收站无内容时'
+  description: '来源用例编号: 1805677'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_024
+  name: '[094]页面检查-回收站有内容时'
+  description: '来源用例编号: 1805675'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_025
+  name: '[096]页面检查-回收站详细信息展示正确'
+  description: '来源用例编号: 1805667'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 图片
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_回收站_026
+  name: 【回收站】添加数据到回收站-其他本地目录右键删除文件/文件夹
+  description: '来源用例编号: 1805651'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_回收站_027
+  name: '[106]添加数据到回收站-其他本地目录快捷键delete删除文件/文件夹'
+  description: '来源用例编号: 1805635'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Delete
+    wait: 1.0
+  - action: keyboard_press
+    key: Delete
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 回收站
+teardown:
+- action: session_stop

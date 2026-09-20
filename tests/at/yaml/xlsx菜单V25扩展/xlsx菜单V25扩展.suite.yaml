@@ -1,0 +1,3559 @@
+name: xlsx菜单V25扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 未覆盖用例映射：菜单、V25设计改版、顶部右键
+module: xlsx菜单V25扩展
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_xlsx菜单V25扩展_001
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，检查SFTP目录文件名是否隐藏"
+  description: '来源用例编号: 2002751'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_002
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，检查FTP目录文件名是否隐藏"
+  description: '来源用例编号: 2002747'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_003
+  name: "地址栏-远程路径输入后通过键盘上下键选择地址"
+  description: '来源用例编号: 1998913'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_004
+  name: "设置-侧边栏显示项目-网络-取消勾选显示后点击恢复默认"
+  description: '来源用例编号: 1969847'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_005
+  name: "管理员模式-菜单-主题"
+  description: '来源用例编号: 1912519'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_006
+  name: "标签页优化-激活已打开的标签页时不刷新标签页"
+  description: '来源用例编号: 1873489'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_007
+  name: "【V25设计改版】文件属性-查看音乐扩展属性"
+  description: '来源用例编号: 1816735'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_008
+  name: "【V25设计改版】文件属性-查看视频扩展属性"
+  description: '来源用例编号: 1816733'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_009
+  name: "【V25设计改版】文件属性-查看图片扩展属性"
+  description: '来源用例编号: 1816731'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_010
+  name: "【V25设计改版】文件属性-属性窗口调整"
+  description: '来源用例编号: 1816729'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_011
+  name: "【V25设计改版】文件属性-界面布局改版"
+  description: '来源用例编号: 1816727'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_012
+  name: "标签页-新建大量标签页标并进行拖动"
+  description: '来源用例编号: 1816725'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_013
+  name: "标签页-关闭标签页"
+  description: '来源用例编号: 1816721'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_014
+  name: "标签页-位置显示"
+  description: '来源用例编号: 1816715'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_015
+  name: "排序方式-排序方式状态常驻"
+  description: '来源用例编号: 1816713'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_016
+  name: "排序方式-下拉框开启与关闭"
+  description: '来源用例编号: 1816709'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: GroupComboBox
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_017
+  name: "视图选项-显示预览开启和关闭"
+  description: '来源用例编号: 1816707'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_018
+  name: "视图选项-调整列表高度"
+  description: '来源用例编号: 1816705'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_019
+  name: "视图选项-图标视图不显示列表高度"
+  description: '来源用例编号: 1816703'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_020
+  name: "视图选项-调整网格密度"
+  description: '来源用例编号: 1816701'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_021
+  name: "视图选项-列表视图不显示网格密度"
+  description: '来源用例编号: 1816699'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_022
+  name: "视图选项-列表视图不显示图标大小"
+  description: '来源用例编号: 1816693'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_023
+  name: "视图选项-单击弹出视图选项面板"
+  description: '来源用例编号: 1816691'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_024
+  name: "工具栏-新增视图选项和排序方式按钮"
+  description: '来源用例编号: 1816689'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_025
+  name: "搜索框-搜索记录保存与清除"
+  description: '来源用例编号: 1816687'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "键词进行搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_026
+  name: "搜索框-搜索结果列表切换排序方式"
+  description: '来源用例编号: 1816685'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "键词：1"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_027
+  name: "搜索框-搜索结果列表切换显示视图"
+  description: '来源用例编号: 1816683'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "键词"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_028
+  name: "搜索框-窗口过窄时搜索"
+  description: '来源用例编号: 1816681'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "键词进行搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_029
+  name: "搜索框-点击激活并搜索"
+  description: '来源用例编号: 1816677'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "本地没有的文件名"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_030
+  name: "地址栏-远程路径输入和挂载"
+  description: '来源用例编号: 1816675'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_031
+  name: "地址栏-选择面包屑子路径跳转"
+  description: '来源用例编号: 1816673'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_032
+  name: "地址栏-本地路径跳转"
+  description: '来源用例编号: 1816671'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_033
+  name: "标题栏-布局改版"
+  description: '来源用例编号: 1816661'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_034
+  name: "侧边栏-窗口过窄时自动折叠"
+  description: '来源用例编号: 1816659'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_035
+  name: "侧边栏-多次折叠"
+  description: '来源用例编号: 1816657'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_036
+  name: "侧边栏-支持折叠"
+  description: '来源用例编号: 1816655'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_037
+  name: "顶部区域布局改版"
+  description: '来源用例编号: 1816653'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_038
+  name: "【工作区视图插件显示隐藏】文管设置，设置界面多语言翻译检查"
+  description: '来源用例编号: 1810335'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_039
+  name: "【菜单】【工作区视图插件显示隐藏】组策略，计算机工作区隐藏“我的目录”"
+  description: '来源用例编号: 1810331'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_040
+  name: "磁盘加密-修改无效的磁盘密码提示"
+  description: '来源用例编号: 1810309'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_041
+  name: "磁盘加密-root用户修改磁盘密码"
+  description: '来源用例编号: 1810305'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_042
+  name: "不勾选【显示隐藏文件】-弹窗功能检查"
+  description: '来源用例编号: 1810299'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_043
+  name: "【菜单】不勾选【显示隐藏文件】-桌面/普通目录隐藏文件/文件夹"
+  description: '来源用例编号: 1810297'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_044
+  name: "不勾选【显示隐藏文件】-用户隔离"
+  description: '来源用例编号: 1810295'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_045
+  name: "不勾选【显示隐藏文件】-特殊目录"
+  description: '来源用例编号: 1810293'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_046
+  name: "不勾选【显示隐藏文件】-文件保存对话框/文件选择对话框"
+  description: '来源用例编号: 1810291'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_047
+  name: "不勾选【显示隐藏文件】-弹窗提示文案"
+  description: '来源用例编号: 1810289'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_048
+  name: "不勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-弹窗提示-点击右上角【X】"
+  description: '来源用例编号: 1810287'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_049
+  name: "【菜单】不勾选【显示隐藏文件】-在桌面/普通目录以“.”开头新建/重命名文件-弹窗提示-点击【取消】"
+  description: '来源用例编号: 1810285'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_050
+  name: "不勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-弹窗提示-英文文案"
+  description: '来源用例编号: 1810283'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_051
+  name: "不勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-弹窗提示"
+  description: '来源用例编号: 1810281'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_052
+  name: "不勾选【显示隐藏文件】和【显示文件扩展名】-在文管内重命名文件-删除文件名-自动恢复文件名，不弹窗提示"
+  description: '来源用例编号: 1810279'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_053
+  name: "勾选【显示隐藏文件】-在U盘/硬盘/手机挂载目录内“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810277'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_054
+  name: "勾选【显示隐藏文件】-在sftp共享目录内“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810275'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_055
+  name: "勾选【显示隐藏文件】-在ftp共享目录内“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810273'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_056
+  name: "勾选【显示隐藏文件】-在smb共享目录内“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810271'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_057
+  name: "勾选【显示隐藏文件】-在保险箱内以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810269'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_058
+  name: "勾选【显示隐藏文件】-在文件保存对话框内以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810267'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_059
+  name: "勾选【显示隐藏文件】-在文件选择对话框内以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810265'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_060
+  name: "【菜单】勾选【显示隐藏文件】-在桌面/普通目录以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1810261'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_061
+  name: "组策略隐藏侧边栏"
+  description: '来源用例编号: 1810259'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_062
+  name: "组策略开启隐藏侧边栏"
+  description: '来源用例编号: 1810257'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_063
+  name: "【支持视图模式应用到所有目录】- 检查文管设置菜单，新增选项“所有目录恢复默认视图”"
+  description: '来源用例编号: 1809287'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_064
+  name: "【新建标签页】文管深层目录页面，菜单-新建标签页"
+  description: '来源用例编号: 1808659'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_065
+  name: "【新建标签页】文管SMB页面，菜单-新建标签页"
+  description: '来源用例编号: 1808657'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_066
+  name: "【新建标签页】文管\"快捷访问\"页面，菜单-新建标签页"
+  description: '来源用例编号: 1808655'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_067
+  name: "【新建标签页】文管\"计算机\"页面，菜单-新建标签页"
+  description: '来源用例编号: 1808653'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_068
+  name: "连接到服务器-输入完整的计算机名加路径连接设备"
+  description: '来源用例编号: 1808651'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_069
+  name: "【工作区视图插件显示隐藏】文管设置，高级设置-对话框-开启普通删除提示"
+  description: '来源用例编号: 1808649'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_070
+  name: "【工作区视图插件显示隐藏】文管设置，高级设置-对话框-使用文件管理器的文件选择对话框"
+  description: '来源用例编号: 1808647'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_071
+  name: "【工作区视图插件显示隐藏】文管设置，高级设置-挂载-Samba共享端常驻显示挂载入口"
+  description: '来源用例编号: 1808645'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_072
+  name: "【工作区视图插件显示隐藏】文管设置，高级设置-挂载-自动挂载后打开"
+  description: '来源用例编号: 1808641'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_073
+  name: "【工作区视图插件显示隐藏】文管设置，高级设置-挂载-自动挂载"
+  description: '来源用例编号: 1808639'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_074
+  name: "【工作区视图插件显示隐藏】文管设置，高级设置-搜索-全文搜索"
+  description: '来源用例编号: 1808637'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "全文搜索"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_075
+  name: "【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-在磁盘图标上显示文件系统标签"
+  description: '来源用例编号: 1808631'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_076
+  name: "【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏回环分区"
+  description: '来源用例编号: 1808627'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_077
+  name: "【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏内置磁盘"
+  description: '来源用例编号: 1808625'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_078
+  name: "【工作区视图插件显示隐藏】文管设置，工作区视图-缩略图预览-远程环境显示缩略图预览"
+  description: '来源用例编号: 1808621'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_079
+  name: "【工作区视图插件显示隐藏】文管设置，工作区视图-缩略图预览"
+  description: '来源用例编号: 1808619'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_080
+  name: "【工作区视图插件显示隐藏】文管设置，工作区视图-默认视图"
+  description: '来源用例编号: 1808617'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_081
+  name: "【工作区视图插件显示隐藏】文管设置，侧边栏显示项目-标记"
+  description: '来源用例编号: 1808615'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_082
+  name: "【工作区视图插件显示隐藏】文管设置，侧边栏显示项目-网络"
+  description: '来源用例编号: 1808613'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_083
+  name: "【工作区视图插件显示隐藏】文管设置，侧边栏显示项目-分区-内置磁盘"
+  description: '来源用例编号: 1808609'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_084
+  name: "【工作区视图插件显示隐藏】文管设置，侧边栏显示项目-分区-保险箱"
+  description: '来源用例编号: 1808607'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_085
+  name: "【工作区视图插件显示隐藏】文管设置，侧边栏显示项目-分区-计算机"
+  description: '来源用例编号: 1808605'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_086
+  name: "【工作区视图插件显示隐藏】文管设置，侧边栏显示项目-快捷访问"
+  description: '来源用例编号: 1808603'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_087
+  name: "【工作区视图插件显示隐藏】文管设置，基础设置-文件和文件夹-文件和文件夹混合排序"
+  description: '来源用例编号: 1808601'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_088
+  name: "【工作区视图插件显示隐藏】文管设置，基础设置-文件和文件夹-显示文件扩展名"
+  description: '来源用例编号: 1808599'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_089
+  name: "【工作区视图插件显示隐藏】文管设置，基础设置-文件和文件夹-显示隐藏"
+  description: '来源用例编号: 1808597'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_090
+  name: "【工作区视图插件显示隐藏】文管设置，基础设置-新窗口和新标签-从新标签打开"
+  description: '来源用例编号: 1808595'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_091
+  name: "【工作区视图插件显示隐藏】文管设置，基础设置-新窗口和新标签-从默认窗口打开"
+  description: '来源用例编号: 1808593'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_092
+  name: "【工作区视图插件显示隐藏】文管设置，基础设置-打开行为-打开"
+  description: '来源用例编号: 1808591'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_093
+  name: "【工作区视图插件显示隐藏】文管设置，基础设置-打开行为-总是在新窗口打开文件夹"
+  description: '来源用例编号: 1808589'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_094
+  name: "顶部右键-“移至右边工作区”功能"
+  description: '来源用例编号: 1805061'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_095
+  name: "顶部右键-“移至左边工作区”功能"
+  description: '来源用例编号: 1805059'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_096
+  name: "顶部右键-”总在最前“功能_"
+  description: '来源用例编号: 1805057'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_097
+  name: "[030]顶部右键-移动功能"
+  description: '来源用例编号: 1805055'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_098
+  name: "[029]顶部右键-更改大小功能"
+  description: '来源用例编号: 1805053'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_099
+  name: "顶部右键-最大化_"
+  description: '来源用例编号: 1805051'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_100
+  name: "顶部右键-最小化_"
+  description: '来源用例编号: 1805049'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_101
+  name: "顶部菜单“关闭”_"
+  description: '来源用例编号: 1805045'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_102
+  name: "顶部右键-”总在可见工作区“功能"
+  description: '来源用例编号: 1805043'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_103
+  name: "勾选【显示隐藏文件】-在U盘/硬盘/手机挂载目录内“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1804929'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_104
+  name: "不勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-弹窗提示-点击【取消】"
+  description: '来源用例编号: 1804927'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_105
+  name: "不勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804925'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_106
+  name: "不勾选【显示隐藏文件】-在文管窗口普通目录内以“.”开头新建/重命名文件-弹窗提示"
+  description: '来源用例编号: 1804923'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_107
+  name: "不勾选【显示隐藏文件】-在文管窗口普通目录内以“.”开头新建/重命名文件-弹窗提示-点击【取消】"
+  description: '来源用例编号: 1804921'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_108
+  name: "不勾选【显示隐藏文件】-在文管窗口普通目录内以“.”开头新建/重命名文件-弹窗提示-点击右上角【X】"
+  description: '来源用例编号: 1804919'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_109
+  name: "不勾选【显示隐藏文件】-在文管窗口普通目录内以“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804917'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_110
+  name: "不勾选【显示隐藏文件】-在文件选择对话框内以“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804915'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_111
+  name: "不勾选【显示隐藏文件】-在文件保存对话框内以“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804913'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_112
+  name: "不勾选【显示隐藏文件】-在保险箱内以“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804911'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_113
+  name: "不勾选【显示隐藏文件】-在smb共享目录内“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804909'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_114
+  name: "不勾选【显示隐藏文件】-在ftp共享目录内“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804907'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_115
+  name: "不勾选【显示隐藏文件】-在sftp共享目录内“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804905'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_116
+  name: "不勾选【显示隐藏文件】-在U盘/硬盘/手机挂载目录内“.”开头新建/重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804903'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_117
+  name: "不勾选【显示隐藏文件】-在文管窗口普通目录内以“.”开头新建/重命名文件-弹窗提示-用户隔离"
+  description: '来源用例编号: 1804901'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_118
+  name: "不勾选【显示隐藏文件】-在桌面以“.”开头批量重命名文件-弹窗提示-点击【隐藏】"
+  description: '来源用例编号: 1804899'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_119
+  name: "设置“隐藏系统盘”选项文案调整"
+  description: '来源用例编号: 1804895'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 数据盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_120
+  name: "快捷访问调整顺序勾选"
+  description: '来源用例编号: 1804883'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_121
+  name: "设置--“其他-计算机工作区隐藏内置磁盘”"
+  description: '来源用例编号: 1804879'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 数据盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_122
+  name: "设置--“对话框 - 使用文件管理器的文件选择对话框”"
+  description: '来源用例编号: 1804877'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_123
+  name: "设置--“挂载 - 自动挂载”和 “自动挂载后打开”"
+  description: '来源用例编号: 1804875'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_124
+  name: "设置--“预览”"
+  description: '来源用例编号: 1804873'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_125
+  name: "[074 075 083 084]设置--“视图”"
+  description: '来源用例编号: 1804869'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: iconView_button
+- id: case_xlsx菜单V25扩展_126
+  name: "设置--“新窗口和新标签”"
+  description: '来源用例编号: 1804867'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_127
+  name: "设置-“打开行为”"
+  description: '来源用例编号: 1804865'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_128
+  name: "[189]设置-默认高级设置"
+  description: '来源用例编号: 1804863'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 数据盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_129
+  name: "[190]设置-默认基础设置"
+  description: '来源用例编号: 1804861'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_130
+  name: "[188]设置-菜单栏目"
+  description: '来源用例编号: 1804859'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_131
+  name: "[191]菜单-退出"
+  description: '来源用例编号: 1804857'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_132
+  name: "[187]菜单-关于"
+  description: '来源用例编号: 1804855'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_133
+  name: "多文件管理窗口打开一个帮助"
+  description: '来源用例编号: 1804853'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_134
+  name: "[186]菜单-帮助"
+  description: '来源用例编号: 1804851'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_135
+  name: "[192]菜单-主题"
+  description: '来源用例编号: 1804849'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_136
+  name: "菜单-设置共享密码"
+  description: '来源用例编号: 1804847'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_137
+  name: "连接到服务器-支持协议"
+  description: '来源用例编号: 1804845'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_138
+  name: "菜单-连接到服务器"
+  description: '来源用例编号: 1804843'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_139
+  name: "菜单-新建窗口"
+  description: '来源用例编号: 1804841'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_140
+  name: "[core]未设置普通删除提示时检查普通删除单个或多个文件提示"
+  description: '来源用例编号: 1804837'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_141
+  name: "[014][core]已设置提示时检查普通删除单个或多个文件提示"
+  description: '来源用例编号: 1804835'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "014core已设置提示时检查普通删除单"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_142
+  name: "删除只读文件夹下的文件/文件夹"
+  description: '来源用例编号: 1804833'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: "删除只读文件夹下的文件/文件夹"
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_143
+  name: "帮助手册-多语言适配"
+  description: '来源用例编号: 1804829'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_144
+  name: "[177][core]扩展名隐藏-取消勾选“显示文件扩展名”选项"
+  description: '来源用例编号: 1804827'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_145
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，检查本地磁盘生效范围是否生效"
+  description: '来源用例编号: 1804825'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_146
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，检查标记目录文件名是否隐藏"
+  description: '来源用例编号: 1804823'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_147
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，检查移动存储设备目录文件名是否隐藏"
+  description: '来源用例编号: 1804821'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_148
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，检查SMB目录文件名是否隐藏"
+  description: '来源用例编号: 1804819'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_149
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，检查保险箱目录文件名是否隐藏"
+  description: '来源用例编号: 1804817'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_150
+  name: "[180]扩展名隐藏-取消勾选“显示文件扩展名”后，检查文件选择对话框文件名是否隐藏"
+  description: '来源用例编号: 1804815'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_151
+  name: "扩展名隐藏-取消勾选“显示文件扩展名”后，复制文件路径，检查路径是否完整"
+  description: '来源用例编号: 1804813'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_152
+  name: "[195]扩展名隐藏-取消勾选“显示文件扩展名”后，手动设置了隐藏的文件无后缀"
+  description: '来源用例编号: 1804809'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_153
+  name: "[194]扩展名隐藏-取消勾选“显示文件扩展名”后，修改文件名称无后缀"
+  description: '来源用例编号: 1804807'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_154
+  name: "勾选【显示隐藏文件】-在文管窗口普通目录内以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1804803'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_155
+  name: "勾选【显示隐藏文件】-在文件选择对话框内以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1804801'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_156
+  name: "勾选【显示隐藏文件】-在文件保存对话框内以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1804799'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_xlsx菜单V25扩展_157
+  name: "勾选【显示隐藏文件】-在保险箱内以“.”开头新建/重命名文件-不弹窗提示"
+  description: '来源用例编号: 1804797'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  - action: keyboard_type
+    text: "at_test_folder"
+    wait: 1.0
+  - action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager

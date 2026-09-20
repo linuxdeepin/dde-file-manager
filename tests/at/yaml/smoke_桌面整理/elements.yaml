@@ -3,11 +3,18 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 elements:
+  side_bar_view:
+    name: side_bar_view
+    role: tree
+  图片:
+    name: 图片
+    role: table cell
+  显示预览:
+    name: 显示预览
+    role: menu item
   桌面:
     name: 桌面
     role: table cell
-  快捷访问:
-    name: 快捷访问
+  计算机:
+    name: 计算机
     role: table cell
-  side_bar_view:
-    name: side_bar_view
