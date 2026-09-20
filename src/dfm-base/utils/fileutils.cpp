@@ -1257,6 +1257,8 @@ QString FileUtils::trashPathToNormal(const QString &trash)
 QString FileUtils::normalPathToTrash(const QString &normal)
 {
     QString trash = normal;
+    if (trash.startsWith("/"))
+        trash = trash.mid(1);
     trash = trash.replace("/", "\\");
     trash.push_front("/");
     return trash;
