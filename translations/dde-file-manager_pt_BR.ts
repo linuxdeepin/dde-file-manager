@@ -73,7 +73,7 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="209"/>
         <source>The device has been safely removed</source>
-        <translation>O dispositivo foi removido com segurança</translation>
+        <translation>O dispositivo foi ejetado com sucesso</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="226"/>
@@ -6013,7 +6013,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="50"/>
         <source>Once the files are copied, you can unplug the external drive without needing to &quot;Safely Remove&quot; it.</source>
-        <translation>Após copiar os arquivos, você pode desconectar a unidade externa sem precisar usar a opção &quot;Remover com segurança&quot;.</translation>
+        <translation>Após copiar os arquivos, você pode desconectar a unidade externa sem precisar clicar em &quot;Ejetar&quot;.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/settings/operationsettings.cpp" line="61"/>
