@@ -4,6 +4,7 @@
 
 #include "textindexdbus.h"
 #include "ocrindexdbus.h"
+#include "filenameindexdbus.h"
 
 #include <dfm-base/utils/processprioritymanager.h>
 #include <QDBusConnection>
@@ -12,6 +13,7 @@ SERVICETEXTINDEX_USE_NAMESPACE
 
 static TextIndexDBus *textIndexDBus = nullptr;
 static OcrIndexDBus *ocrIndexDBus = nullptr;
+static FileNameIndexDBus *fileNameIndexDBus = nullptr;
 
 // DEBUG:
 // 1. budild a debug so file and copy to isntall path
@@ -33,8 +35,14 @@ extern "C" int DSMRegister(const char *name, void *data)
         fmWarning() << "TextIndex plugin: failed to register OCR index DBus service:" << bus.lastError().message();
     }
 
+    if (!bus.registerService(service_textindex::Defines::kFileNameIndexDBusService)
+        && bus.lastError().type() != QDBusError::NoError) {
+        fmWarning() << "TextIndex plugin: failed to register filename index DBus service:" << bus.lastError().message();
+    }
+
     textIndexDBus = new TextIndexDBus();
     ocrIndexDBus = new OcrIndexDBus();
+    fileNameIndexDBus = new FileNameIndexDBus();
     dfmbase::ProcessPriorityManager::lowerAllAvailablePriorities(true);
 
     return 0;
@@ -44,6 +52,12 @@ extern "C" int DSMUnRegister(const char *name, void *data)
 {
     (void)name;
     (void)data;
+    if (fileNameIndexDBus) {
+        fileNameIndexDBus->cleanup();
+        fileNameIndexDBus->deleteLater();
+        fileNameIndexDBus = nullptr;
+    }
+
     if (ocrIndexDBus) {
         ocrIndexDBus->cleanup();
         ocrIndexDBus->deleteLater();
@@ -57,6 +71,7 @@ extern "C" int DSMUnRegister(const char *name, void *data)
     }
 
     QDBusConnection bus = QDBusConnection::sessionBus();
+    bus.unregisterService(service_textindex::Defines::kFileNameIndexDBusService);
     bus.unregisterService(service_textindex::Defines::kOcrIndexDBusService);
     bus.unregisterService(service_textindex::Defines::kTextIndexDBusService);
     return 0;

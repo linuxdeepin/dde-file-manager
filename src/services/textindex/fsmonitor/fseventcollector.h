@@ -61,6 +61,9 @@ public:
     // Set collection interval in seconds (default: 180 seconds)
     void setCollectionInterval(int seconds);
 
+    // Set collection interval directly in milliseconds
+    void setCollectionIntervalMs(int ms);
+
     // Get current collection interval in seconds
     int collectionInterval() const;
 

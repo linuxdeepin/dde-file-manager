@@ -170,6 +170,32 @@ void IndexStateStore::setCreateInProgress(bool inProgress) const
     writeStatusJson(statusFilePath(), obj);
 }
 
+bool IndexStateStore::isUpdateInProgress() const
+{
+    const QJsonObject obj = readStatusJson(statusFilePath());
+    return obj.contains(Defines::kUpdateInProgressKey) ? obj[Defines::kUpdateInProgressKey].toBool() : false;
+}
+
+void IndexStateStore::setUpdateInProgress(bool inProgress) const
+{
+    QJsonObject obj = readStatusJson(statusFilePath());
+    obj[Defines::kUpdateInProgressKey] = inProgress;
+    writeStatusJson(statusFilePath(), obj);
+}
+
+bool IndexStateStore::isBacklogExceeded() const
+{
+    const QJsonObject obj = readStatusJson(statusFilePath());
+    return obj.value(Defines::kBacklogExceededKey).toBool(false);
+}
+
+void IndexStateStore::setBacklogExceeded(bool exceeded) const
+{
+    QJsonObject obj = readStatusJson(statusFilePath());
+    obj[Defines::kBacklogExceededKey] = exceeded;
+    writeStatusJson(statusFilePath(), obj);
+}
+
 QString IndexStateStore::getLastUpdateTime() const
 {
     const QJsonObject obj = readStatusJson(statusFilePath());

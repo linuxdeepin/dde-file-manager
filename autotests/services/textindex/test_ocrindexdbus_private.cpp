@@ -6,7 +6,7 @@
  * @file test_ocrindexdbus_private.cpp
  * @brief Tests for OcrIndexDBusPrivate methods accessed via d (friend access).
  *        Covers initializeSupportedExtensions, handleConfigChanged, handleMonitoring,
- *        handleSlientStart, canSilentlyRefreshIndex, cleanup.
+ *        handleSilentStart, canSilentlyRefreshIndex, cleanup.
  */
 
 #include <gtest/gtest.h>
@@ -113,10 +113,10 @@ TEST_F(OcrIndexDBusPrivateTest, HandleMonitoring_Start)
     EXPECT_NO_FATAL_FAILURE({ d->handleMonitoring(true); });
 }
 
-// ---- handleSlientStart ----
-TEST_F(OcrIndexDBusPrivateTest, HandleSlientStart)
+// ---- handleSilentStart ----
+TEST_F(OcrIndexDBusPrivateTest, HandleSilentStart)
 {
-    EXPECT_NO_FATAL_FAILURE({ d->handleSlientStart(); });
+    EXPECT_NO_FATAL_FAILURE({ d->handleSilentStart(); });
 }
 
 // ---- handleConfigChanged ----

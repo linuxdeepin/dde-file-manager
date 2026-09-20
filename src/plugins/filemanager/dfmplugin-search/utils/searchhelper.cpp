@@ -121,6 +121,14 @@ bool SearchHelper::shouldEnableSemanticSearch(const QString &keyword)
     if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch())
         return false;
 
+    // 语义搜索依赖文件名索引引擎，文件索引被关闭时随之一并停用
+    // （与设置页智能搜索开关随文件索引置灰的行为一致）。
+    if (!DConfigManager::instance()->value(DConfig::kSearchCfgPath,
+                                           DConfig::kEnableFileIndexSearch, true)
+                 .toBool()) {
+        return false;
+    }
+
     if (!DConfigManager::instance()->value(DConfig::kSearchCfgPath,
                                            DConfig::kEnableSemanticSearch, true)
                  .toBool()) {
@@ -422,6 +430,7 @@ QWidget *SearchHelper::createCheckBoxWithFileIndex(QObject *opt)
     const QString &text = option->data("text").toString();
 
     CheckBoxWithFileIndex *cb = new CheckBoxWithFileIndex;
+    cb->connectToBackend();
     cb->setDisplayText(qApp->translate("QObject", text.toStdString().c_str()));
     cb->setChecked(option->value().toBool());
     cb->initStatusBar();

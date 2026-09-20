@@ -9,9 +9,53 @@
 #include <QDateTime>
 #include <QLoggingCategory>
 
+#include <list>
+
 SERVICETEXTINDEX_USE_NAMESPACE
 using namespace Lucene;
 DFM_SEARCH_USE_NS
+
+namespace {
+
+/// 收集 builder 声明的路径派生字段重算规格；builder 缺省（如部分单测场景）时返回空列表
+std::list<PathDerivedFieldSpec> collectDerivedSpecs(const IndexContext &context)
+{
+    const IndexDocumentBuilder *builder = context.documentBuilder();
+    if (!builder)
+        return {};
+    return builder->pathDerivedFields();
+}
+
+/// 从旧文档复制字段（排除 path/ancestor_paths/路径派生字段），再按新路径补齐：
+/// path 与 ancestor_paths 全量重算；派生字段用声明式重算器更新（纯元数据，零 IO）
+DocumentPtr createMovedDocument(const IndexContext &context, const DocumentPtr &oldDoc,
+                                const QString &toPath, const std::list<PathDerivedFieldSpec> &derivedSpecs)
+{
+    std::vector<Lucene::String> exclude = { context.profile().pathField(), context.profile().ancestorPathsField() };
+    for (const auto &spec : derivedSpecs)
+        exclude.push_back(spec.fieldName);
+
+    DocumentPtr newDoc = DocUtils::copyFieldsExcept(oldDoc, exclude);
+    if (!newDoc)
+        return nullptr;
+
+    newDoc->add(newLucene<Field>(context.profile().pathField(), toPath.toStdWString(),
+                                 Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
+
+    for (const QString &ancestorPath : PathCalculator::extractAncestorPaths(toPath)) {
+        newDoc->add(newLucene<Field>(context.profile().ancestorPathsField(), ancestorPath.toStdWString(),
+                                     Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
+    }
+
+    for (const auto &spec : derivedSpecs) {
+        if (FieldPtr field = spec.rebuild(toPath))
+            newDoc->add(field);
+    }
+
+    return newDoc;
+}
+
+}   // namespace
 
 // FileMoveProcessor implementation
 FileMoveProcessor::FileMoveProcessor(const IndexContext &context, const SearcherPtr &searcher, const IndexWriterPtr &writer)
@@ -55,28 +99,28 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
             return true;   // Not an error, file might not be indexed
         }
 
+        // 按 profile 声明的 move 更新策略分发（策略语义见 IndexProfile::MoveUpdatePolicy）：
+        // 文档字段由路径派生的 profile 必须整体重建，否则旧路径派生的字段值
+        // （如 filename 的 file_name/pinyin）残留导致新名称搜索不到
+        switch (m_context->profile().moveUpdatePolicy()) {
+        case IndexProfile::MoveUpdatePolicy::RebuildDocument:
+            return rebuildDocumentForMove(fromPath, toPath);
+        case IndexProfile::MoveUpdatePolicy::UpdatePathOnly:
+            break;
+        }
+
         DocumentPtr doc = m_searcher->doc(searchResult->scoreDocs[0]->doc);
         if (!doc) {
             fmWarning() << "[FileMoveProcessor::processFileMove] Failed to retrieve document for:" << fromPath;
             return false;
         }
 
-        // Create new document with updated path and ancestor paths
-        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { m_context->profile().pathField(), m_context->profile().ancestorPathsField() });
+        // copy 保留与路径无关的字段（contents/checksum/时间戳等），按新路径
+        // 重算 path/ancestor_paths 及 builder 声明的路径派生字段
+        DocumentPtr newDoc = createMovedDocument(*m_context, doc, toPath, collectDerivedSpecs(*m_context));
         if (!newDoc) {
             fmWarning() << "[FileMoveProcessor::processFileMove] Failed to copy document fields for:" << fromPath;
             return false;
-        }
-
-        // Add new path field
-        newDoc->add(newLucene<Field>(m_context->profile().pathField(), toPath.toStdWString(),
-                                     Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-        // Add new ancestor paths
-        const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(toPath);
-        for (const QString &ancestorPath : ancestorPaths) {
-            newDoc->add(newLucene<Field>(m_context->profile().ancestorPathsField(), ancestorPath.toStdWString(),
-                                         Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
         // Update document in index
@@ -98,6 +142,48 @@ bool FileMoveProcessor::processFileMove(const QString &fromPath, const QString &
     } catch (const std::exception &e) {
         fmWarning() << "[FileMoveProcessor::processFileMove] File move processing failed with exception:"
                     << fromPath << "error:" << e.what();
+        return false;
+    }
+}
+
+bool FileMoveProcessor::rebuildDocumentForMove(const QString &fromPath, const QString &toPath)
+{
+    if (!m_context->documentBuilder()) {
+        fmWarning() << "[FileMoveProcessor::rebuildDocumentForMove] Missing document builder for profile:"
+                    << m_context->profile().id();
+        return false;
+    }
+
+    try {
+        DocumentPtr newDoc = m_context->documentBuilder()->build(toPath, QString());
+        if (!newDoc) {
+            fmWarning() << "[FileMoveProcessor::rebuildDocumentForMove] Failed to rebuild document for:" << toPath;
+            return false;
+        }
+
+        // 以 fromPath 定位更新，避免旧路径文档残留
+        TermPtr oldTerm = newLucene<Term>(m_context->profile().pathField(), fromPath.toStdWString());
+        m_writer->updateDocument(oldTerm, newDoc);
+        m_hasChanges = true;
+
+        m_processedPaths.remove(fromPath);
+        m_processedPaths.insert(toPath);
+
+        fmInfo() << "[FileMoveProcessor::rebuildDocumentForMove] Rebuilt document for move:"
+                 << fromPath << "->" << toPath;
+        return true;
+    } catch (const LuceneException &e) {
+        fmWarning() << "[FileMoveProcessor::rebuildDocumentForMove] Failed with Lucene exception:"
+                    << fromPath << "->" << toPath
+                    << "error:" << QString::fromStdWString(e.getError());
+        return false;
+    } catch (const std::exception &e) {
+        fmWarning() << "[FileMoveProcessor::rebuildDocumentForMove] Failed with exception:"
+                    << fromPath << "->" << toPath << "error:" << e.what();
+        return false;
+    } catch (...) {
+        fmWarning() << "[FileMoveProcessor::rebuildDocumentForMove] Failed with unknown exception:"
+                    << fromPath << "->" << toPath;
         return false;
     }
 }
@@ -141,15 +227,23 @@ bool FileMoveProcessor::processContentUpdate(const QString &filePath)
             return false;
         }
 
-        const int truncationSizeMB = m_context->profile().maxFileTruncationSizeMB();
-        const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
-        const IndexExtractionResult extraction = m_context->extractor()->extract(filePath, maxBytes);
-        if (!extraction.success) {
-            fmInfo() << "[FileMoveProcessor::processContentUpdate] Failed to extract content from file:"
-                     << filePath << "error:" << extraction.error;
+        // filename profile 无内容提取（extractor() == nullptr）：直接用空文本构建文档，
+        // 与 createFileDocument 的处理一致（FileNameDocumentBuilder 忽略 text 参数）。
+        // 此处必须判空：MoveFileList 的 editor-save/fallback 路径在 filename profile 下
+        // 也会进入本函数，对 nullptr 调用 extract() 会直接 SIGSEGV。
+        QString text;
+        if (m_context->extractor()) {
+            const int truncationSizeMB = m_context->profile().maxFileTruncationSizeMB();
+            const size_t maxBytes = static_cast<size_t>(truncationSizeMB) * 1024 * 1024;
+            const IndexExtractionResult extraction = m_context->extractor()->extract(filePath, maxBytes);
+            if (!extraction.success) {
+                fmInfo() << "[FileMoveProcessor::processContentUpdate] Failed to extract content from file:"
+                         << filePath << "error:" << extraction.error;
+            }
+            text = extraction.text;
         }
 
-        DocumentPtr newDoc = m_context->documentBuilder()->build(filePath, extraction.text);
+        DocumentPtr newDoc = m_context->documentBuilder()->build(filePath, text);
 
         // Update the document in index
         TermPtr pathTerm = newLucene<Term>(m_context->profile().pathField(), filePath.toStdWString());
@@ -280,22 +374,16 @@ bool DirectoryMoveProcessor::updateSingleDocumentPath(const DocumentPtr &doc,
             return true;   // No change needed
         }
 
-        // Create new document with updated path and ancestor paths
-        DocumentPtr newDoc = DocUtils::copyFieldsExcept(doc, { m_context->profile().pathField(), m_context->profile().ancestorPathsField() });
+        // 目录改名不改变子文件的 basename（file_name/pinyin/file_ext 等值不变），
+        // 统一走 copy 保留 + 派生字段重算：path/ancestor_paths 全量重算，
+        // is_hidden 等完整路径派生字段由 builder 声明的重算器更新。
+        // 即使 RebuildDocument 策略的 profile（filename）也不整体重建，
+        // 避免百万级子文件的目录改名时逐文档 stat/重建的开销
+        DocumentPtr newDoc = createMovedDocument(*m_context, doc, newPath, collectDerivedSpecs(*m_context));
+
         if (!newDoc) {
-            fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to copy document fields for:" << oldPath;
+            fmWarning() << "[DirectoryMoveProcessor::updateSingleDocumentPath] Failed to build document for:" << newPath;
             return false;
-        }
-
-        // Add new path field
-        newDoc->add(newLucene<Field>(m_context->profile().pathField(), newPath.toStdWString(),
-                                     Field::STORE_YES, Field::INDEX_NOT_ANALYZED));
-
-        // Add new ancestor paths
-        const QStringList ancestorPaths = PathCalculator::extractAncestorPaths(newPath);
-        for (const QString &ancestorPath : ancestorPaths) {
-            newDoc->add(newLucene<Field>(m_context->profile().ancestorPathsField(), ancestorPath.toStdWString(),
-                                         Field::STORE_NO, Field::INDEX_NOT_ANALYZED));
         }
 
         // Update document in index

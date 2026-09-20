@@ -6,6 +6,8 @@
 
 #include <QDir>
 #include <QFileInfo>
+#include <QSocketNotifier>
+#include <QThread>
 #include <QTimer>
 
 #include <libmount.h>
@@ -26,6 +28,10 @@ namespace {
 
 constexpr char kDispatcherSocketPath[] = "/run/deepin-anything/event-dispatcher.sock";
 constexpr size_t kDispatchMaxPathLen = 4096;
+
+// Upper bound of events turned into signals per home-thread wakeup so a huge
+// backlog cannot starve the event loop for seconds.
+constexpr int kMaxEventsPerDrain = 2048;
 
 struct MountEntry
 {
@@ -149,6 +155,181 @@ QString filterDirectPath(const QStringList &rootPaths,
 
 }   // anonymous namespace
 
+// ========== VfsSocketReader ==========
+
+// Lives in a dedicated QThread. Its only job is to drain the dispatcher
+// socket as fast as the kernel delivers packets and park the events in the
+// userspace queue owned by VfsMonitorFileSystemWatcherPrivate.
+//
+// Why a dedicated thread: the dispatcher kicks any client whose kernel
+// receive buffer overflows (send() -> EAGAIN -> "slow client ... kicking",
+// see deepin-anything src/dispatcher/event_dispatcher.c). Kernel buffers are
+// capped by net.core.rmem_max / wmem_max (~416 KiB ≈ ~100 packets of 4 KB),
+// so no setsockopt can absorb a burst of thousands — let alone 300k files —
+// if draining depends on how fast events are processed. Mirrors the daemon's
+// own event_listener (dedicated thread + draining loop, deepin-anything
+// commit f2dd210): keep the read path tiny and buffer in userspace.
+class VfsSocketReader final : public QObject
+{
+public:
+    explicit VfsSocketReader(VfsMonitorFileSystemWatcherPrivate *dd)
+        : d(dd)
+    {
+    }
+
+    // Runs in the reader thread. Adopts a connected fd and starts watching.
+    void begin(int fd)
+    {
+        d->pendingFd.storeRelaxed(-1);   // ownership transferred
+
+        if (notifier) {
+            notifier->setEnabled(false);
+            notifier->deleteLater();
+            notifier = nullptr;
+        }
+        if (socketFd >= 0 && socketFd != fd)
+            ::close(socketFd);
+
+        socketFd = fd;
+        notifier = new QSocketNotifier(fd, QSocketNotifier::Read, this);
+        QObject::connect(notifier, &QSocketNotifier::activated, notifier, [this]() {
+            drainSocket();
+        });
+    }
+
+    // Runs in the reader thread. Releases the socket and the notifier.
+    void shutdown()
+    {
+        if (notifier) {
+            notifier->setEnabled(false);
+            delete notifier;
+            notifier = nullptr;
+        }
+
+        if (socketFd >= 0) {
+            ::close(socketFd);
+            socketFd = -1;
+        }
+    }
+
+private:
+    // Runs in the reader thread (QSocketNotifier callback): drain everything
+    // the kernel has buffered, then return. Level-triggered, so a still-full
+    // buffer re-arms the notifier.
+    void drainSocket()
+    {
+        constexpr size_t kMinMessageSize = offsetof(DispatchEvent, eventPath) + 1;
+
+        while (socketFd >= 0) {
+            DispatchEvent event {};
+            ssize_t received = -1;
+            do {
+                received = ::recv(socketFd, &event, sizeof(event), 0);
+            } while (received < 0 && errno == EINTR);
+
+            if (received == 0) {
+                fmWarning() << "VfsMonitor: event dispatcher connection closed";
+                breakConnection();
+                return;
+            }
+
+            if (received < 0) {
+                if (errno == EAGAIN || errno == EWOULDBLOCK)
+                    break;   // fully drained for now
+
+                fmWarning() << "VfsMonitor: failed to receive dispatcher event:" << std::strerror(errno);
+                // A persistent recv error would spin the notifier. Treat it
+                // like a disconnect so the socket is rebuilt instead of
+                // looping forever.
+                breakConnection();
+                return;
+            }
+
+            if (static_cast<size_t>(received) < kMinMessageSize) {
+                fmWarning() << "VfsMonitor: received short dispatcher message:" << received;
+                continue;
+            }
+
+            event.eventPath[kDispatchMaxPathLen - 1] = '\0';
+
+            const int act = event.action;
+            if (act < ACT_NEW_FILE || act > ACT_CLOSE_WRITE_FILE)
+                continue;
+
+            if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
+                // Mount table refresh is cheap and only touches data owned by
+                // this thread after startup.
+                if (!d->initMountPoints())
+                    fmWarning() << "VfsMonitor: failed to refresh mount point aliases";
+                continue;
+            }
+
+            // RENAME_TO is always forwarded: an unresolved destination means
+            // "renamed out of the monitored roots" for the paired RENAME_FROM,
+            // and a missing pair means "created here" (kept semantics).
+            if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
+                const QString resolved = d->resolveAndFilterFullPath(event.eventPath);
+                enqueueEvent(act, event.cookie, QString(), resolved);
+                continue;
+            }
+
+            const QString resolved = d->resolveAndFilterFullPath(event.eventPath);
+            if (resolved.isNull())
+                continue;
+
+            enqueueEvent(act, event.cookie, resolved, QString());
+        }
+
+        d->scheduleEventDrain();
+    }
+
+    // Runs in the reader thread: append to the userspace queue (dropping on
+    // overflow — never blocking) and make sure the home thread wakes up.
+    void enqueueEvent(int action, uint32_t cookie, QString pathA, QString pathB)
+    {
+        {
+            QMutexLocker locker(&d->queueMutex);
+            if (d->eventQueue.size() >= d->maxQueuedEvents) {
+                if (!d->overflowFlag.fetchAndStoreRelaxed(1)) {
+                    fmWarning() << "VfsMonitor: event queue full (" << d->maxQueuedEvents
+                                << "), dropping events until drained";
+                }
+                return;
+            }
+
+            d->eventQueue.enqueue(QueuedFsEvent { action, cookie, std::move(pathA), std::move(pathB) });
+        }
+
+        d->scheduleEventDrain();
+    }
+
+    // Runs in the reader thread. The notifier must be disabled and destroyed
+    // via deleteLater because this is called from inside its activated()
+    // signal.
+    void breakConnection()
+    {
+        if (notifier) {
+            notifier->setEnabled(false);
+            notifier->deleteLater();
+            notifier = nullptr;
+        }
+
+        if (socketFd >= 0) {
+            ::close(socketFd);
+            socketFd = -1;
+        }
+
+        // Everything delivered while the connection is down is lost; the
+        // service compensates with a full update task (eventsLost fallback).
+        Q_EMIT d->q_ptr->eventsLost();
+        QMetaObject::invokeMethod(d->q_ptr, [d = d]() { d->handleDisconnect(); }, Qt::QueuedConnection);
+    }
+
+    VfsMonitorFileSystemWatcherPrivate *d;
+    QSocketNotifier *notifier { nullptr };
+    int socketFd { -1 };
+};
+
 // ========== VfsMonitorFileSystemWatcherPrivate ==========
 
 VfsMonitorFileSystemWatcherPrivate::VfsMonitorFileSystemWatcherPrivate(
@@ -170,14 +351,24 @@ VfsMonitorFileSystemWatcherPrivate::~VfsMonitorFileSystemWatcherPrivate()
         reconnectTimer->stop();
     }
 
-    if (notifier) {
-        notifier->setEnabled(false);
+    if (readerThread) {
+        if (readerThread->isRunning() && reader) {
+            // Ensure the notifier and the fd owned by the reader thread are
+            // released before the thread is torn down.
+            QMetaObject::invokeMethod(reader, [r = reader]() { r->shutdown(); },
+                                      Qt::BlockingQueuedConnection);
+        }
+        readerThread->quit();
+        readerThread->wait();
     }
 
-    if (socketFd >= 0) {
-        ::close(socketFd);
-        socketFd = -1;
-    }
+    delete reader;
+    reader = nullptr;
+
+    // Close an fd that was connected but never adopted by the reader thread.
+    const int fd = pendingFd.fetchAndStoreRelaxed(-1);
+    if (fd >= 0)
+        ::close(fd);
 }
 
 bool VfsMonitorFileSystemWatcherPrivate::initMountPoints()
@@ -319,15 +510,13 @@ QPair<QString, QString> VfsMonitorFileSystemWatcherPrivate::splitPath(const QStr
     return qMakePair(fi.absolutePath(), fi.fileName());
 }
 
-bool VfsMonitorFileSystemWatcherPrivate::establishConnection()
+int VfsMonitorFileSystemWatcherPrivate::connectDispatcherSocket()
 {
-    Q_Q(VfsMonitorFileSystemWatcher);
-
-    // The notifier runs on the GUI thread, so keep dispatcher reads nonblocking.
-    socketFd = ::socket(AF_UNIX, SOCK_SEQPACKET | SOCK_NONBLOCK, 0);
-    if (socketFd < 0) {
+    // Non-blocking fd: the reader thread drains until EAGAIN.
+    int fd = ::socket(AF_UNIX, SOCK_SEQPACKET | SOCK_NONBLOCK, 0);
+    if (fd < 0) {
         fmWarning() << "VfsMonitor: failed to create dispatcher socket:" << std::strerror(errno);
-        return false;
+        return -1;
     }
 
     sockaddr_un address {};
@@ -335,29 +524,34 @@ bool VfsMonitorFileSystemWatcherPrivate::establishConnection()
     const QByteArray path = socketPath.toUtf8();
     std::strncpy(address.sun_path, path.constData(), sizeof(address.sun_path) - 1);
 
-    if (::connect(socketFd, reinterpret_cast<sockaddr *>(&address), sizeof(address)) != 0) {
+    if (::connect(fd, reinterpret_cast<sockaddr *>(&address), sizeof(address)) != 0) {
         fmWarning() << "VfsMonitor: deepin-anything event dispatcher not available:" << std::strerror(errno);
-        ::close(socketFd);
-        socketFd = -1;
-        return false;
+        ::close(fd);
+        return -1;
     }
 
-    // Enlarge the receive buffer so bursts of 4 KB dispatch events don't fill
-    // the kernel buffer and cause the server to see EAGAIN on send() — which
-    // currently results in the server kicking this client ("slow client").
-    // Mirrors deepin-anything commit 5807fc0 (SO_RCVBUF = 1 MiB).
-    constexpr int kReceiveBufSize = 1 << 20;   // 1 MiB
-    if (::setsockopt(socketFd, SOL_SOCKET, SO_RCVBUF, &kReceiveBufSize,
+    // Enlarge the receive buffer for burst headroom (mirrors deepin-anything
+    // commit f2dd210). Note the kernel caps this at net.core.rmem_max
+    // (default ~416 KiB ≈ ~100 packets of 4 KB) — buffer sizes alone can
+    // never absorb a burst of thousands of events, which is why draining
+    // happens on the dedicated reader thread instead.
+    constexpr int kReceiveBufSize = 4 << 20;
+    if (::setsockopt(fd, SOL_SOCKET, SO_RCVBUF, &kReceiveBufSize,
                      sizeof(kReceiveBufSize)) < 0) {
         fmDebug() << "VfsMonitor: setsockopt(SO_RCVBUF) failed:" << std::strerror(errno);
     }
 
-    notifier = new QSocketNotifier(socketFd, QSocketNotifier::Read, q);
-    QObject::connect(notifier, &QSocketNotifier::activated, q, [this]() {
-        handleSocketMessage();
-    });
+    return fd;
+}
 
-    return true;
+void VfsMonitorFileSystemWatcherPrivate::startReaderThread(int fd)
+{
+    reader = new VfsSocketReader(this);
+    readerThread = new QThread(q_ptr);
+    reader->moveToThread(readerThread);
+    pendingFd.storeRelaxed(fd);
+    readerThread->start();
+    QMetaObject::invokeMethod(reader, [this, fd]() { reader->begin(fd); }, Qt::QueuedConnection);
 }
 
 bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
@@ -375,8 +569,8 @@ bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
     if (socketPath.isEmpty())
         socketPath = QString::fromUtf8(kDispatcherSocketPath);
 
-    // Reconnect timer lives on the same thread as the notifier (the thread
-    // that called create()). It is single-shot and rearmed by attemptReconnect().
+    // Reconnect timer lives on the home thread (the thread that called
+    // create()). It is single-shot and rearmed by attemptReconnect().
     reconnectTimer = new QTimer(q);
     reconnectTimer->setSingleShot(true);
     QObject::connect(reconnectTimer, &QTimer::timeout, q, [this]() {
@@ -384,7 +578,14 @@ bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
     });
     reconnectBackoffMs = 0;
 
-    if (!establishConnection()) {
+    // Queue capacity override for tests and tuning.
+    bool ok = false;
+    const int envQueue = qEnvironmentVariableIntValue("DFM_VFSMONITOR_MAX_QUEUE", &ok);
+    if (ok && envQueue > 0)
+        maxQueuedEvents = envQueue;
+
+    const int fd = connectDispatcherSocket();
+    if (fd < 0) {
         // Initial connection failed: the dispatcher is not running yet.
         // Return false so create() reports the watcher as unavailable and
         // FSMonitorPrivate degrades to inotify-only mode. The auto-reconnect
@@ -394,146 +595,38 @@ bool VfsMonitorFileSystemWatcherPrivate::initDispatcher()
         return false;
     }
 
+    startReaderThread(fd);
+
     fmInfo() << "VfsMonitor: connected to deepin-anything event dispatcher";
     return true;
 }
 
-void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
+void VfsMonitorFileSystemWatcherPrivate::scheduleEventDrain()
 {
-    if (socketFd < 0) {
+    if (!drainScheduled.testAndSetRelaxed(0, 1))
         return;
+
+    QMetaObject::invokeMethod(q_ptr, [this]() { drainQueuedEvents(); }, Qt::QueuedConnection);
+}
+
+void VfsMonitorFileSystemWatcherPrivate::drainQueuedEvents()
+{
+    Q_Q(VfsMonitorFileSystemWatcher);
+
+    // Re-open the gate before checking the queue so an event enqueued while
+    // this drain runs cannot be lost (see scheduleEventDrain).
+    drainScheduled.storeRelaxed(0);
+
+    QVector<QueuedFsEvent> batch;
+    {
+        QMutexLocker locker(&queueMutex);
+        while (!eventQueue.isEmpty() && batch.size() < kMaxEventsPerDrain)
+            batch.append(eventQueue.dequeue());
     }
 
-    auto *q = q_ptr;
-    constexpr size_t kMinMessageSize = offsetof(DispatchEvent, eventPath) + 1;
-
-    // Drain all queued packets for this wakeup so the notifier stays level-safe.
-    while (true) {
-        DispatchEvent event {};
-        ssize_t received = -1;
-        do {
-            received = ::recv(socketFd, &event, sizeof(event), 0);
-        } while (received < 0 && errno == EINTR);
-
-        if (received == 0) {
-            fmWarning() << "VfsMonitor: event dispatcher connection closed";
-            handleDisconnect();
-            return;
-        }
-
-        if (received < 0) {
-            if (errno == EAGAIN || errno == EWOULDBLOCK) {
-                return;
-            }
-
-            fmWarning() << "VfsMonitor: failed to receive dispatcher event:" << std::strerror(errno);
-            // A persistent recv error would spin the notifier. Treat it like a
-            // disconnect so the socket is rebuilt instead of looping forever.
-            handleDisconnect();
-            return;
-        }
-
-        if (static_cast<size_t>(received) < kMinMessageSize) {
-            fmWarning() << "VfsMonitor: received short dispatcher message:" << received;
-            continue;
-        }
-
-        event.eventPath[kDispatchMaxPathLen - 1] = '\0';
-
-        const int act = event.action;
-        const uint32_t cookie = event.cookie;
-        const char *pathCStr = event.eventPath;
-
-        if (act < ACT_NEW_FILE || act > ACT_CLOSE_WRITE_FILE) {
-            continue;
-        }
-
-        if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
-            if (!initMountPoints()) {
-                fmWarning() << "VfsMonitor: failed to refresh mount point aliases";
-            }
-            continue;
-        }
-
-        if (act == ACT_RENAME_FROM_FILE || act == ACT_RENAME_FROM_FOLDER) {
-            QString fullPath = resolveAndFilterFullPath(pathCStr);
-            if (fullPath.isNull())
-                continue;
-
-            auto [parentPath, name] = splitPath(fullPath);
-            RenameFromInfo info;
-            info.path = parentPath;
-            info.name = name;
-            info.isDirectory = (act == ACT_RENAME_FROM_FOLDER);
-            pendingRenames.insert(cookie, info);
-            continue;
-        }
-
-        if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
-            const bool isDir = (act == ACT_RENAME_TO_FOLDER);
-            auto it = pendingRenames.find(cookie);
-            if (it != pendingRenames.end()) {
-                QString fullPath = resolveAndFilterFullPath(pathCStr);
-                if (!fullPath.isNull()) {
-                    auto [parentPath, name] = splitPath(fullPath);
-                    if (isDir)
-                        Q_EMIT q->directoryMoved(it->path, it->name, parentPath, name);
-                    else
-                        Q_EMIT q->fileMoved(it->path, it->name, parentPath, name);
-                } else {
-                    if (isDir)
-                        Q_EMIT q->directoryDeleted(it->path, it->name);
-                    else
-                        Q_EMIT q->fileDeleted(it->path, it->name);
-                }
-                pendingRenames.erase(it);
-            } else {
-                QString fullPath = resolveAndFilterFullPath(pathCStr);
-                if (!fullPath.isNull()) {
-                    auto [parentPath, name] = splitPath(fullPath);
-                    if (isDir)
-                        Q_EMIT q->directoryCreated(parentPath, name);
-                    else
-                        Q_EMIT q->fileCreated(parentPath, name);
-                }
-            }
-            continue;
-        }
-
-        const QString fullPath = resolveAndFilterFullPath(pathCStr);
-        if (fullPath.isNull()) {
-            continue;
-        }
-
-        auto [parentPath, name] = splitPath(fullPath);
-
-        switch (act) {
-        case ACT_NEW_FILE:
-        case ACT_NEW_LINK:
-        case ACT_NEW_SYMLINK:
-            Q_EMIT q->fileCreated(parentPath, name);
-            break;
-        case ACT_NEW_FOLDER:
-            Q_EMIT q->directoryCreated(parentPath, name);
-            break;
-        case ACT_DEL_FILE:
-            Q_EMIT q->fileDeleted(parentPath, name);
-            break;
-        case ACT_DEL_FOLDER:
-            Q_EMIT q->directoryDeleted(parentPath, name);
-            break;
-        case ACT_RENAME_FILE:
-            Q_EMIT q->fileCreated(parentPath, name);
-            break;
-        case ACT_RENAME_FOLDER:
-            Q_EMIT q->directoryCreated(parentPath, name);
-            break;
-        case ACT_CLOSE_WRITE_FILE:
-            Q_EMIT q->fileClosed(parentPath, name);
-            break;
-        default:
-            break;
-        }
+    if (!batch.isEmpty()) {
+        for (const QueuedFsEvent &event : std::as_const(batch))
+            dispatchQueuedEvent(event);
 
         // Clean up orphaned RENAME_FROM entries.
         static constexpr int kPendingRenameCleanupThreshold = 1000;
@@ -543,21 +636,98 @@ void VfsMonitorFileSystemWatcherPrivate::handleSocketMessage()
             pendingRenames.clear();
         }
     }
+
+    {
+        QMutexLocker locker(&queueMutex);
+        if (!eventQueue.isEmpty()) {
+            scheduleEventDrain();
+        }
+    }
+
+    if (overflowFlag.testAndSetRelaxed(1, 0)) {
+        fmWarning() << "VfsMonitor: userspace event queue overflowed, filesystem events were dropped";
+        Q_EMIT q->eventsLost();
+    }
+}
+
+void VfsMonitorFileSystemWatcherPrivate::dispatchQueuedEvent(const QueuedFsEvent &event)
+{
+    auto *q = q_ptr;
+    const int act = event.action;
+
+    if (act == ACT_RENAME_FROM_FILE || act == ACT_RENAME_FROM_FOLDER) {
+        auto [parentPath, name] = splitPath(event.pathA);
+        RenameFromInfo info;
+        info.path = parentPath;
+        info.name = name;
+        info.isDirectory = (act == ACT_RENAME_FROM_FOLDER);
+        pendingRenames.insert(event.cookie, info);
+        return;
+    }
+
+    if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
+        const bool isDir = (act == ACT_RENAME_TO_FOLDER);
+        auto it = pendingRenames.find(event.cookie);
+        if (it != pendingRenames.end()) {
+            if (!event.pathB.isEmpty()) {
+                auto [parentPath, name] = splitPath(event.pathB);
+                if (isDir)
+                    Q_EMIT q->directoryMoved(it->path, it->name, parentPath, name);
+                else
+                    Q_EMIT q->fileMoved(it->path, it->name, parentPath, name);
+            } else {
+                // Destination outside the monitored roots: the source
+                // effectively disappeared from the index.
+                if (isDir)
+                    Q_EMIT q->directoryDeleted(it->path, it->name);
+                else
+                    Q_EMIT q->fileDeleted(it->path, it->name);
+            }
+            pendingRenames.erase(it);
+        } else if (!event.pathB.isEmpty()) {
+            auto [parentPath, name] = splitPath(event.pathB);
+            if (isDir)
+                Q_EMIT q->directoryCreated(parentPath, name);
+            else
+                Q_EMIT q->fileCreated(parentPath, name);
+        }
+        return;
+    }
+
+    auto [parentPath, name] = splitPath(event.pathA);
+
+    switch (act) {
+    case ACT_NEW_FILE:
+    case ACT_NEW_LINK:
+    case ACT_NEW_SYMLINK:
+        Q_EMIT q->fileCreated(parentPath, name);
+        break;
+    case ACT_NEW_FOLDER:
+        Q_EMIT q->directoryCreated(parentPath, name);
+        break;
+    case ACT_DEL_FILE:
+        Q_EMIT q->fileDeleted(parentPath, name);
+        break;
+    case ACT_DEL_FOLDER:
+        Q_EMIT q->directoryDeleted(parentPath, name);
+        break;
+    case ACT_RENAME_FILE:
+        Q_EMIT q->fileCreated(parentPath, name);
+        break;
+    case ACT_RENAME_FOLDER:
+        Q_EMIT q->directoryCreated(parentPath, name);
+        break;
+    case ACT_CLOSE_WRITE_FILE:
+        Q_EMIT q->fileClosed(parentPath, name);
+        break;
+    default:
+        break;
+    }
 }
 
 void VfsMonitorFileSystemWatcherPrivate::handleDisconnect()
 {
-    if (notifier) {
-        notifier->setEnabled(false);
-        notifier->deleteLater();
-        notifier = nullptr;
-    }
-
-    if (socketFd >= 0) {
-        ::close(socketFd);
-        socketFd = -1;
-    }
-
+    // The reader thread has already released the socket and the notifier.
     // Backoff: start at 1 s, double up to 30 s. Reset to 0 on a successful
     // reconnect (attemptReconnect) so the next outage starts fresh.
     if (reconnectBackoffMs <= 0)
@@ -572,7 +742,11 @@ void VfsMonitorFileSystemWatcherPrivate::handleDisconnect()
 
 void VfsMonitorFileSystemWatcherPrivate::attemptReconnect()
 {
-    if (establishConnection()) {
+    const int fd = connectDispatcherSocket();
+    if (fd >= 0) {
+        // Hand the new fd to the reader thread (which owns the notifier).
+        pendingFd.storeRelaxed(fd);
+        QMetaObject::invokeMethod(reader, [this, fd]() { reader->begin(fd); }, Qt::QueuedConnection);
         reconnectBackoffMs = 0;   // success: next outage restarts at 1 s
         fmInfo() << "VfsMonitor: reconnected to deepin-anything event dispatcher";
         return;

@@ -36,6 +36,7 @@ private Q_SLOTS:
     void onFilesMoved(const QHash<QString, QString> &movedPaths);
     void onFlushFinished();
     void onConfigChanged();
+    void onEventsLost();
 
 private:
     void clearCollections();
@@ -48,18 +49,23 @@ Q_SIGNALS:
     void requestProcessFileMoves(const QHash<QString, QString> &movedFiles);
 
     void monitoring(bool start);
-    void requestSlientStart();
+    void requestSilentStart();
+
+    // Emitted (debounced) after the monitor reported lost filesystem events;
+    // runtimes should schedule a full Create/Update task to re-sync.
+    void requestEventsRecovery();
 
 private:
     IndexProfile m_profile;
     bool m_enabled { false };
     bool m_silentlyFlag { false };
     int m_collectorIntervalSecs { 3 };   // FSEventCollector event collection interval (seconds)
-    int m_silentStartDelaySecs { 180 };   // FSEventController silent start delay (seconds)
+    int m_silentStartDelayMs { 180000 };   // FSEventController silent start delay (ms)
     std::unique_ptr<FSEventCollector> m_fsEventCollector;
     QTimer *m_monitoringStartTimer { nullptr };
     QTimer *m_silentStartTimer { nullptr };
     QTimer *m_stopTimer { nullptr };
+    QTimer *m_recoveryTimer { nullptr };
 
     // Collected file events
     QStringList m_collectedCreatedFiles;

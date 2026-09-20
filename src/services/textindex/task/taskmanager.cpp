@@ -6,6 +6,7 @@
 #include "taskqueueutils.h"
 #include "utils/indexutility.h"
 #include "utils/textindexconfig.h"
+#include "utils/threadscheduling.h"
 #include "env/envdetector.h"
 
 #include <QMetaType>
@@ -15,6 +16,7 @@
 #include <QDir>
 #include <QDateTime>
 #include <QFileInfo>
+#include <QTimer>
 
 SERVICETEXTINDEX_USE_NAMESPACE
 
@@ -33,6 +35,10 @@ void registerMetaTypes()
     }
 }
 
+// 突发静默期：距最近一次事件摄入超过该时长即认为上一轮突发已结束，
+// burst 累计清零。须大于 collector 的 1s 收集窗口，容忍波间抖动。
+constexpr qint64 kBurstQuietMs = 5000;
+
 TaskQueueItem createCompensationTaskItem(const QStringList &paths)
 {
     TaskQueueItem item;
@@ -46,14 +52,51 @@ TaskQueueItem createCompensationTaskItem(const QStringList &paths)
 }   // namespace
 
 TaskManager::TaskManager(const IndexContext *context, QObject *parent)
+    : TaskManager(context, nullptr, parent)
+{
+}
+
+TaskManager::TaskManager(const IndexContext *context, BacklogTracker *backlogTracker, QObject *parent)
     : QObject(parent),
-      m_context(context)
+      m_context(context),
+      m_backlogTracker(backlogTracker)
 {
     fmInfo() << "[TaskManager] Initializing TaskManager instance";
     registerMetaTypes();
 
+    // 索引任务属于可让位的后台负载：worker 线程标记为 SCHED_IDLE，
+    // 任务运行期间把 CPU 让给普通线程（含 VfsMonitor 读线程），仅当系统
+    // 空闲时推进。workerThread 可能随任务启停重建，started() 每次都会触发，
+    // 重复设置无副作用；无特权要求，失败仅记录（不影响任务执行）。
+    connect(&workerThread, &QThread::started, &workerThread, []() {
+        QString err;
+        if (!ThreadScheduling::setSelfSchedulerIdle(&err))
+            fmDebug() << "[TaskManager] Failed to mark worker thread SCHED_IDLE:" << err;
+    }, Qt::DirectConnection);
+
     connect(&EnvDetector::instance(), &EnvDetector::envStateChanged,
             this, &TaskManager::onEnvStateChanged);
+
+    // 突发静默期满后的复评定时器（singleShot，restart 天然去重）。
+    m_burstRecheckTimer = new QTimer(this);
+    m_burstRecheckTimer->setSingleShot(true);
+    connect(m_burstRecheckTimer, &QTimer::timeout, this, &TaskManager::updateBacklogState);
+
+    if (m_backlogTracker)
+        m_backlogTracker->onStartup();
+
+    // 启动防御：updateInProgress 正常只能由 finalizeIndexState 在 Update 成功后清除，
+    // 且清除时 state 仍为 dirty（之后才置 Clean）。若启动时读到 state==Clean 且标志仍
+    // 为 true，说明上一会话的 Update 失败/中断后，后续普通增量任务成功时把 state 置
+    // Clean 却不清该标志（finalizeIndexState 的增量分支不处理它）——此后启动检测因
+    // Clean 跳过恢复流程，标志将永久残留，搜索无限期降级 Realtime。防御性重置，与
+    // backlogExceeded 的启动处理（FilenameBacklogTracker::onStartup）对称。
+    if (m_context && m_context->stateStore()
+        && m_context->stateStore()->getIndexState() == IndexUtility::IndexState::Clean
+        && m_context->stateStore()->isUpdateInProgress()) {
+        fmWarning() << "[TaskManager] Stale updateInProgress flag detected on clean state at startup, resetting";
+        m_context->stateStore()->setUpdateInProgress(false);
+    }
 
     fmInfo() << "[TaskManager] TaskManager initialization completed";
 }
@@ -97,14 +140,15 @@ bool TaskManager::startTask(IndexTask::Type type, const QString &path)
 
 // 多路径版本的startTask实现
 bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
-                            IndexTask::Grade grade, bool forceBypass)
+                            IndexTask::Grade grade, bool forceBypass, bool skipStaleCleanup)
 {
     Q_ASSERT_X(type == IndexTask::Type::Create || type == IndexTask::Type::Update,
                "Type error", "Only create and update supported");
 
     fmInfo() << "[TaskManager::startTask] Multi-path task request - type:" << static_cast<int>(type)
              << "paths:" << pathList.size()
-             << "grade:" << static_cast<int>(grade) << "forceBypass:" << forceBypass;
+             << "grade:" << static_cast<int>(grade) << "forceBypass:" << forceBypass
+             << "skipStaleCleanup:" << skipStaleCleanup;
 
     // 如果 grade 未指定，自动判定
     if (grade == IndexTask::Grade::None) {
@@ -154,12 +198,27 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
         }
     }
 
+    // Update 任务是"cleanup + 按 mtime 全量对比"的扫盘过程（恢复 Update / needsRebuild
+    // Update / 手动 ForceUpdateIndex），期间索引滞后不可信。写 updateInProgress 落盘标志，
+    // 让外部（dfm-search isReady/状态映射）在任务启动即可见"scanning"并降级搜索。
+    // 与 createInProgress 一样必须在入队检查之前完成：任务被环境阻塞入队后服务重启，
+    // 队列丢失，标志仍需落盘以覆盖该窗口。
+    // 普通事件增量任务（UpdateFileList/MoveFileList 等）不走此分支，不置位。
+    if (type == IndexTask::Type::Update) {
+        if (m_context && m_context->stateStore()
+            && !m_context->stateStore()->isUpdateInProgress()) {
+            fmInfo() << "[TaskManager::startTask] Update task detected, marking updateInProgress";
+            m_context->stateStore()->setUpdateInProgress(true);
+        }
+    }
+
     // 环境检查：如果当前环境不允许该分级任务运行，入队等待而非直接执行
     {
         TaskQueueItem item;
         item.type = type;
         item.grade = grade;
         item.forceBypass = forceBypass;
+        item.skipStaleCleanup = skipStaleCleanup;
         item.path = primaryPath;
         item.pathList = pathList;
         if (tryEnqueueIfBlocked(grade, forceBypass, item))
@@ -185,9 +244,11 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
         item.type = type;
         item.grade = grade;
         item.forceBypass = forceBypass;
+        item.skipStaleCleanup = skipStaleCleanup;
         item.path = primaryPath;   // 保留主路径用于兼容现有代码
         item.pathList = pathList;   // 保存所有路径
         taskQueue.enqueue(item);
+        updateBacklogState();
 
         fmInfo() << "[TaskManager::startTask] Task queued successfully, will execute after current task stops";
         // 返回true表示任务已经被接受，将在当前任务停止后执行
@@ -213,7 +274,7 @@ bool TaskManager::startTask(IndexTask::Type type, const QStringList &pathList,
     }
 
     // 获取对应的任务处理器
-    TaskHandler handler = getTaskHandler(type);
+    TaskHandler handler = getTaskHandler(type, skipStaleCleanup);
     if (!handler) {
         fmCritical() << "[TaskManager::startTask] Unknown task type:" << static_cast<int>(type);
         return false;
@@ -283,6 +344,23 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
         return false;
     }
 
+    // 索引库尚未建立（首次创建前 / 版本升级等待重建）且没有任务在运行时，增量
+    // 事件无法落盘也不需要落盘：待执行的 Create 是 deleteAll + 按磁盘现状全量
+    // 重扫，必然覆盖这些变化（与 force-bypass 全量任务清空增量队列同一语义，
+    // 见 startTask）。此时若放行，handler 在不存在的索引上打开 IndexReader 会
+    // 抛 LuceneException 导致任务失败，m_lastTaskFailed 置位后状态会从
+    // WaitingUpgrade 误变为 Failed，故直接跳过（返回 true 表示已受理）。
+    // 注意有任务运行时不能跳过：全量扫描窗口内新建/修改的文件不在扫描结果里，
+    // 事件必须正常入队，在全量任务完成后按序补偿执行。
+    if (!currentTask && !isIndexDatabaseReady()) {
+        fmInfo() << "[TaskManager::startFileListTask] Index database not ready, skipping incremental task"
+                 << "- type:" << static_cast<int>(type) << "files:" << fileList.size()
+                 << "(changes will be covered by the pending full create)";
+        return true;
+    }
+
+    recordIngestedFiles(fileList.size());
+
     // RemoveFileList 始终视为轻量任务，与大小和总数无关
     const IndexTask::Grade grade = (type == IndexTask::Type::RemoveFileList)
             ? IndexTask::Grade::Light
@@ -316,6 +394,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
         item.path = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.fileList = fileList;
         taskQueue.enqueue(item);
+        updateBacklogState();
 
         fmDebug() << "[TaskManager::startFileListTask] File list task queued successfully with grade:" << static_cast<int>(item.grade);
         return true;
@@ -343,7 +422,7 @@ bool TaskManager::startFileListTask(IndexTask::Type type, const QStringList &fil
     }
 
     QString pathId = QString("FileList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
-    launchTask(new IndexTask(type, pathId, handler), grade, bypassEnv);
+    launchTask(new IndexTask(type, pathId, handler), grade, bypassEnv, fileList.size());
     fmDebug() << "[TaskManager::startFileListTask] File list task started successfully in worker thread";
     return true;
 }
@@ -356,6 +435,17 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
         fmWarning() << "[TaskManager::startFileMoveTask] Cannot start task - moved files list is empty";
         return false;
     }
+
+    // 与 startFileListTask 同理：仅当没有任务在运行且索引库未建立时跳过增量
+    // move 事件（由待执行的全量 Create 覆盖）；有任务运行时事件照常入队补偿。
+    if (!currentTask && !isIndexDatabaseReady()) {
+        fmInfo() << "[TaskManager::startFileMoveTask] Index database not ready, skipping incremental task"
+                 << "- moves:" << movedFiles.size()
+                 << "(changes will be covered by the pending full create)";
+        return true;
+    }
+
+    recordIngestedFiles(movedFiles.size());
 
     const QStringList compensationPaths = applyDirectoryMovePlans(movedFiles);
 
@@ -386,6 +476,7 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
         item.path = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
         item.movedFiles = movedFiles;
         taskQueue.enqueue(item);
+        updateBacklogState();
         enqueueCompensationTask(compensationPaths);
 
         fmDebug() << "[TaskManager::startFileMoveTask] File move task queued successfully";
@@ -402,14 +493,15 @@ bool TaskManager::startFileMoveTask(const QHash<QString, QString> &movedFiles)
     }
 
     QString pathId = QString("MoveList-%1").arg(QDateTime::currentDateTime().toString("yyyyMMdd-hhmmss"));
-    launchTask(new IndexTask(IndexTask::Type::MoveFileList, pathId, handler), IndexTask::Grade::Light, true);
+    launchTask(new IndexTask(IndexTask::Type::MoveFileList, pathId, handler), IndexTask::Grade::Light, true,
+               movedFiles.size());
     fmDebug() << "[TaskManager::startFileMoveTask] File move task started successfully in worker thread";
 
     enqueueCompensationTask(compensationPaths);
     return true;
 }
 
-TaskHandler TaskManager::getTaskHandler(IndexTask::Type type)
+TaskHandler TaskManager::getTaskHandler(IndexTask::Type type, bool skipStaleCleanup)
 {
     if (!m_context)
         return nullptr;
@@ -420,7 +512,7 @@ TaskHandler TaskManager::getTaskHandler(IndexTask::Type type)
     case IndexTask::Type::Update:
         if (m_context->stateStore() && m_context->stateStore()->isCreateInProgress())
             return TaskHandlers::CreateResumeHandler(*m_context);
-        return TaskHandlers::UpdateIndexHandler(*m_context);
+        return TaskHandlers::UpdateIndexHandler(*m_context, skipStaleCleanup);
     default:
         fmWarning() << "[TaskManager::getTaskHandler] Unknown task type:" << static_cast<int>(type);
         return nullptr;
@@ -456,6 +548,13 @@ void TaskManager::onTaskProgress(IndexTask::Type type, qint64 count, qint64 tota
     }
 
     emit taskProgressChanged(typeToString(type), currentTask->taskPath(), count, total);
+    if (m_backlogTracker && (type == IndexTask::Type::CreateFileList
+                             || type == IndexTask::Type::UpdateFileList
+                             || type == IndexTask::Type::RemoveFileList
+                             || type == IndexTask::Type::MoveFileList)) {
+        m_currentIncrementalPending = qMax<qint64>(0, total - count);
+        updateBacklogState();
+    }
 }
 
 void TaskManager::onTaskPaused(IndexTask::Type type, HandlerResult result)
@@ -487,8 +586,11 @@ void TaskManager::onTaskPaused(IndexTask::Type type, HandlerResult result)
     }
 
     taskQueue.enqueue(item);
+    updateBacklogState();
 
     cleanupTask();
+
+    updateBacklogState();
     emit indexStatusChanged(currentIndexStatus(), gradeToString(grade));
 
     // Try to schedule the next runnable task
@@ -532,6 +634,10 @@ bool TaskManager::canRun(IndexTask::Grade grade, bool forceBypass, const EnvStat
     if (forceBypass)
         return true;
 
+    // Profiles with checkEnvPolicy disabled (e.g. filename index) bypass env checks
+    if (m_context && !m_context->profile().shouldCheckEnvPolicy())
+        return true;
+
     switch (grade) {
     case IndexTask::Grade::Manual:
     case IndexTask::Grade::Light:
@@ -544,6 +650,20 @@ bool TaskManager::canRun(IndexTask::Grade grade, bool forceBypass, const EnvStat
     }
     }
 
+// 与 TextIndexDBus::IndexDatabaseExists() 保持同一判定口径：索引文件可用且
+// status.json 中版本兼容、lastUpdateTime 非空。任一条件不满足即视为"索引库
+// 未就绪"，增量事件交给待执行的全量 Create 覆盖。
+bool TaskManager::isIndexDatabaseReady() const
+{
+    if (!m_context || !m_context->stateStore())
+        return false;
+    if (!m_context->profile().isIndexAvailable())
+        return false;
+    if (!m_context->stateStore()->isCompatibleVersion())
+        return false;
+    return !m_context->stateStore()->getLastUpdateTime().isEmpty();
+}
+
 void TaskManager::pauseCurrentTask()
 {
     if (currentTask) {
@@ -553,10 +673,12 @@ void TaskManager::pauseCurrentTask()
     }
 }
 
-void TaskManager::launchTask(IndexTask *task, IndexTask::Grade grade, bool forceBypass)
+void TaskManager::launchTask(IndexTask *task, IndexTask::Grade grade, bool forceBypass,
+                             qint64 initialIncrementalPending)
 {
     Q_ASSERT(!currentTask);
     currentTask = task;
+    m_currentIncrementalPending = initialIncrementalPending;
     currentTask->setGrade(grade);
     currentTask->setForceBypass(forceBypass);
     currentTask->moveToThread(&workerThread);
@@ -572,6 +694,7 @@ void TaskManager::launchTask(IndexTask *task, IndexTask::Grade grade, bool force
 
     emit startTaskInThread();
     emit indexStatusChanged("Running", gradeToString(grade));
+    updateBacklogState();
 }
 
 bool TaskManager::tryEnqueueIfBlocked(IndexTask::Grade grade, bool forceBypass, const TaskQueueItem &item)
@@ -584,6 +707,7 @@ bool TaskManager::tryEnqueueIfBlocked(IndexTask::Grade grade, bool forceBypass, 
              << ", queuing task - battery:" << env.onBattery
              << "powerSave:" << env.powerSaveMode << "idle:" << env.idle;
     taskQueue.enqueue(item);
+    updateBacklogState();
 
     // A task being blocked means there's pending index work that hasn't been
     // reflected in the index yet.  Mark the state Dirty so that:
@@ -647,9 +771,9 @@ void TaskManager::startQueuedTask(const TaskQueueItem &item)
     } else if (item.type == IndexTask::Type::MoveFileList) {
         startFileMoveTask(item.movedFiles);
     } else if (!item.pathList.isEmpty()) {
-        startTask(item.type, item.pathList, item.grade, item.forceBypass);
+        startTask(item.type, item.pathList, item.grade, item.forceBypass, item.skipStaleCleanup);
     } else {
-        startTask(item.type, QStringList { item.path }, item.grade, item.forceBypass);
+        startTask(item.type, QStringList { item.path }, item.grade, item.forceBypass, item.skipStaleCleanup);
     }
 }
 
@@ -739,7 +863,7 @@ QString TaskManager::currentIndexStatus() const
     // until the silent-start timer fires, instead of "WaitingUpgrade".
     //
     // The status shown to the user depends on the *effective grade* of the
-    // pending work, mirroring gradeUpdateTask() / handleSlientStart() logic:
+    // pending work, mirroring gradeUpdateTask() / handleSilentStart() logic:
     //
     //   isCreateInProgress() → Heavy (resume interrupted full build)
     //   DB doesn't exist      → Heavy (fresh Create / version mismatch)
@@ -898,6 +1022,15 @@ void TaskManager::finalizeIndexState(IndexTask::Type type, const HandlerResult &
     if (!result.success || result.interrupted)
         return;
 
+    // 全量对比型 Update 已成功完成：本次对比扫盘的"索引滞后"窗口结束。
+    // 无论队列中是否还有后续任务（后续 Update 会在 startTask 时重新置位），
+    // 都立即清除 updateInProgress，避免搜索长期降级为 Realtime。
+    if (type == IndexTask::Type::Update && m_context && m_context->stateStore()
+        && m_context->stateStore()->isUpdateInProgress()) {
+        m_context->stateStore()->setUpdateInProgress(false);
+        fmInfo() << "[TaskManager::onTaskFinished] Update task completed, updateInProgress cleared";
+    }
+
     // 全量任务（Create/Update）成功即事实终结：createInProgress 的语义是
     // "创建/恢复进行中"（startTask 在入队检查前就写入，以保证服务重启后的
     // 恢复判定），与队列是否还有后续任务无关，必须先于队列检查清除。否则
@@ -922,6 +1055,8 @@ void TaskManager::finalizeIndexState(IndexTask::Type type, const HandlerResult &
     if (isFullScanTask(type)) {
         if (m_context && m_context->stateStore())
             m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
+        if (m_backlogTracker)
+            m_backlogTracker->onFullScanFinished();
         fmInfo() << "[TaskManager::onTaskFinished] Full-scan task completed, index state set to clean";
     } else if (!m_recoveryPending) {
         if (m_context && m_context->stateStore())
@@ -990,6 +1125,8 @@ void TaskManager::cleanupTask()
         disconnect(this, &TaskManager::startTaskInThread, currentTask, &IndexTask::start);
         currentTask->deleteLater();
         currentTask = nullptr;
+        m_currentIncrementalPending = 0;
+        updateBacklogState();
         fmDebug() << "[TaskManager::cleanupTask] Task cleanup completed";
     }
 }
@@ -997,6 +1134,64 @@ void TaskManager::cleanupTask()
 bool TaskManager::isFullScanTask(IndexTask::Type type) const
 {
     return type == IndexTask::Type::Create || type == IndexTask::Type::Update;
+}
+
+qint64 TaskManager::queuedIncrementalCount() const
+{
+    qint64 count = 0;
+    for (const auto &item : taskQueue) {
+        switch (item.type) {
+        case IndexTask::Type::CreateFileList:
+        case IndexTask::Type::UpdateFileList:
+        case IndexTask::Type::RemoveFileList:
+            count += item.fileList.size();
+            break;
+        case IndexTask::Type::MoveFileList:
+            count += item.movedFiles.size();
+            break;
+        default:
+            break;
+        }
+    }
+    return count;
+}
+
+void TaskManager::recordIngestedFiles(qint64 count)
+{
+    if (count <= 0)
+        return;
+
+    const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (m_lastIngestMsecs > 0 && now - m_lastIngestMsecs > kBurstQuietMs)
+        m_burstFiles = 0;
+
+    m_burstFiles += count;
+    m_lastIngestMsecs = now;
+}
+
+void TaskManager::updateBacklogState()
+{
+    if (!m_backlogTracker)
+        return;
+
+    const qint64 now = QDateTime::currentMSecsSinceEpoch();
+    if (m_burstFiles > 0 && m_lastIngestMsecs > 0
+        && now - m_lastIngestMsecs > kBurstQuietMs) {
+        m_burstFiles = 0;
+    }
+
+    // 口径取两者较大值：排队+运行是 task 层瞬时积压，burst 是静默期内的
+    // 突发体量（含已入队部分），取 max 避免同一批文件被重复计入。
+    const qint64 instantPending = queuedIncrementalCount() + m_currentIncrementalPending;
+    const qint64 pending = qMax(instantPending, m_burstFiles);
+    m_backlogTracker->update(pending, 0, hasRunningTask());
+
+    // task 层已排空但突发静默期未满：之后没有任何任务事件会再触发评估，
+    // 若不补一次复评，最后一轮任务完成后 backlogExceeded 将残留为 true。
+    if (m_burstFiles > 0 && !hasRunningTask() && taskQueue.isEmpty()) {
+        const qint64 remaining = kBurstQuietMs - (now - m_lastIngestMsecs) + 100;
+        m_burstRecheckTimer->start(int(qMax<qint64>(100, remaining)));
+    }
 }
 
 void TaskManager::removeDuplicateFullScanTasks(IndexTask::Type type, const QStringList &pathList)
@@ -1025,9 +1220,11 @@ void TaskManager::removeDuplicateFullScanTasks(IndexTask::Type type, const QStri
 IndexTask::Grade TaskManager::gradeFileListTask(const QStringList &fileList) const
 {
     auto &config = TextIndexConfig::instance();
-    int countThreshold = isOcrProfile()
-            ? config.lightIncrementOcrFileCountThreshold()
-            : config.lightIncrementFileCountThreshold();
+    // 阈值优先取 profile 声明（如 OCR 单文件提取成本高，阈值更小），
+    // 未声明时回退全局配置；声明为函数式 provider，保持 dconfig 动态性
+    int countThreshold = m_context ? m_context->profile().lightGradeFileCountThreshold() : 0;
+    if (countThreshold <= 0)
+        countThreshold = config.lightIncrementFileCountThreshold();
 
     if (fileList.size() > countThreshold)
         return IndexTask::Grade::Medium;
@@ -1050,11 +1247,6 @@ IndexTask::Grade TaskManager::gradeUpdateTask() const
     return IndexTask::Grade::Light;
 }
 
-bool TaskManager::isOcrProfile() const
-{
-    return m_context && m_context->profile().type() == IndexProfile::Type::Ocr;
-}
-
 bool TaskManager::enqueueCompensationTask(const QStringList &paths)
 {
     if (paths.isEmpty()) {
@@ -1064,6 +1256,9 @@ bool TaskManager::enqueueCompensationTask(const QStringList &paths)
     taskQueue.enqueue(createCompensationTaskItem(paths));
     fmInfo() << "[TaskManager::enqueueCompensationTask] Queued directory compensation update for"
              << paths.size() << "path(s), primary:" << paths.first();
+
+    recordIngestedFiles(paths.size());
+    updateBacklogState();
     return true;
 }
 

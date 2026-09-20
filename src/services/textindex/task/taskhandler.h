@@ -34,7 +34,13 @@ using TaskHandler = std::function<HandlerResult(const QString &path, TaskState &
 // 工厂函数，返回具体的任务处理器
 namespace TaskHandlers {
 TaskHandler CreateIndexHandler(const IndexContext &context);
-TaskHandler UpdateIndexHandler(const IndexContext &context);
+
+/// @param skipStaleCleanup 内部恢复类 Update（Dirty/断连恢复、needsRebuild 静默更新）
+///     传 true：跳过开头的 cleanupIndexs 全库清理（数百万条目时为分钟级 I/O）。
+///     删除本应由增量事件维护，cleanup 只是事件丢失/黑名单变更的兜底；跳过后
+///     丢失窗口内被删文件会在索引中残留 ghost 条目，由下一次用户手动
+///     "更新索引"（skipStaleCleanup=false）清理。用户经 DBus 触发的更新保持默认 false。
+TaskHandler UpdateIndexHandler(const IndexContext &context, bool skipStaleCleanup = false);
 
 /// Handler for resuming an interrupted Create task. Skips cleanupIndexs, uses cached
 /// file list + checkpoint from IndexStateStore when available, or falls back to BFS.

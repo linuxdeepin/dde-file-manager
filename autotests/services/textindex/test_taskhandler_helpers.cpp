@@ -23,6 +23,7 @@
 #include "dfm_test_main.h"
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/profile/indexprofile.h"
+#include "services/textindex/profile/lowercasengramanalyzer.h"
 #include "services/textindex/core/indexruntime.h"
 #include "services/textindex/task/taskhandler.h"
 #include "services/textindex/utils/taskstate.h"
@@ -49,15 +50,15 @@ protected:
 
     IndexProfile makeProfile()
     {
-        return IndexProfile(IndexProfile::Type::Content,
-                            "th_helpers_test",
-                            "th_helpers_status.json",
-                            "th_helpers_version",
-                            1,
-                            [this]() -> QString { return tmp.path(); },
-                            []() -> bool { return true; },
-                            [](const QString &) -> bool { return true; },
-                            [](const QString &) -> bool { return true; });
+        return IndexProfile({ IndexProfile::Type::Content,
+                              "th_helpers_test",
+                              "th_helpers_status.json",
+                              "th_helpers_version",
+                              1 },
+                            { [this]() -> QString { return tmp.path(); },
+                              []() -> bool { return true; },
+                              [](const QString &) -> bool { return true; },
+                              [](const QString &) -> bool { return true; } });
     }
 
     void SetUp() override
@@ -244,6 +245,83 @@ TEST_F(TaskHandlerHelpersTest, ProgressReporter_Coverage)
     // The ProgressReporter destructor is called when the handler returns,
     // exercising the destructor's commit logic
     SUCCEED();
+}
+
+// ===========================================================================
+// Incremental tasks use the original batch-count commit and final commit.
+// ===========================================================================
+
+TEST_F(TaskHandlerHelpersTest, IncrementalHandler_FilenameProfile_UsesExistingCommitMechanism)
+{
+    // A small filename task must still complete through the existing final commit.
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DFMSEARCH::Global, fileNameIndexDirectory),
+                   [this]() -> QString {
+                       __DBG_STUB_INVOKE__
+                       return tmp.path() + "/fnidx";
+                   });
+    stub.set_lamda(ADDR(DFMSEARCH::Global, isFileNameIndexDirectoryAvailable),
+                   []() -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+    stub.set_lamda(ADDR(DFMSEARCH::Global, isPathInFileNameIndexDirectory),
+                   [this](const QString &path) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return path.startsWith(tmp.path());
+                   });
+    stub.set_lamda(ADDR(DFMSEARCH::Global, contentIndexDirectory),
+                   [this]() -> QString {
+                       __DBG_STUB_INVOKE__
+                       return tmp.path() + "/cidx";
+                   });
+    stub.set_lamda(ADDR(DFMSEARCH::Global, ocrTextIndexDirectory),
+                   [this]() -> QString {
+                       __DBG_STUB_INVOKE__
+                       return tmp.path() + "/oidx";
+                   });
+    stub.set_lamda(ADDR(DFMSEARCH::Global, defaultBlacklistPaths),
+                   []() -> QStringList {
+                       __DBG_STUB_INVOKE__
+                       return QStringList();
+                   });
+
+    auto runtime = std::make_unique<IndexRuntime>(IndexProfile::filename());
+
+    // Create an index first so the file-list handler can open the writer.
+    {
+        TaskHandler createH = TaskHandlers::CreateIndexHandler(runtime->context());
+        TaskState st;
+        st.start();
+        createH(tmp.path(), st);
+    }
+
+    // Now run an incremental file-list task — its destructor performs final commit.
+    QStringList files { tmp.path() + "/a.txt", tmp.path() + "/b.txt" };
+    TaskHandler h = TaskHandlers::CreateOrUpdateFileListHandler(runtime->context(), files);
+    TaskState state;
+    state.start();
+    EXPECT_NO_FATAL_FAILURE({ (void)h(tmp.path(), state); });
+}
+
+TEST_F(TaskHandlerHelpersTest, IncrementalHandler_ContentProfile_UsesExistingCommitMechanism)
+{
+    // Content profile keeps the same batch-count-only commit behavior.
+    auto runtime = std::make_unique<IndexRuntime>(makeProfile());
+
+    // Create an index first.
+    {
+        TaskHandler createH = TaskHandlers::CreateIndexHandler(runtime->context());
+        TaskState st;
+        st.start();
+        createH(tmp.path(), st);
+    }
+
+    QStringList files { tmp.path() + "/a.txt" };
+    TaskHandler h = TaskHandlers::CreateOrUpdateFileListHandler(runtime->context(), files);
+    TaskState state;
+    state.start();
+    EXPECT_NO_FATAL_FAILURE({ (void)h(tmp.path(), state); });
 }
 
 // --- Test PathExcludeMatcher directly (used by shouldSkipExcludedFile) ---

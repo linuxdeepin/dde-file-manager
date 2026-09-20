@@ -28,15 +28,15 @@ protected:
 
     IndexProfile makeProfile(IndexProfile::Type type)
     {
-        return IndexProfile(type,
-                            "runtime_test",
-                            "runtime_status.json",
-                            "runtime_version",
-                            1,
-                            [this]() -> QString { return tmp.path(); },
-                            []() -> bool { return true; },
-                            [](const QString &) -> bool { return true; },
-                            [](const QString &) -> bool { return true; });
+        return IndexProfile({ type,
+                              "runtime_test",
+                              "runtime_status.json",
+                              "runtime_version",
+                              1 },
+                            { [this]() -> QString { return tmp.path(); },
+                              []() -> bool { return true; },
+                              [](const QString &) -> bool { return true; },
+                              [](const QString &) -> bool { return true; } });
     }
 };
 

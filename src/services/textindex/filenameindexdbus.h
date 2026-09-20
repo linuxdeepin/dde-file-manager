@@ -1,0 +1,54 @@
+// SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+//
+// SPDX-License-Identifier: GPL-3.0-or-later
+
+#ifndef FILENAMEINDEXDBUS_H
+#define FILENAMEINDEXDBUS_H
+
+#include "service_textindex_global.h"
+
+#include <QObject>
+#include <QDBusContext>
+#include <QStringList>
+#include <QHash>
+#include <QVariantMap>
+
+SERVICETEXTINDEX_BEGIN_NAMESPACE
+class FileNameIndexDBusPrivate;
+SERVICETEXTINDEX_END_NAMESPACE
+
+class FileNameIndexDBus : public QObject, public QDBusContext
+{
+    Q_OBJECT
+    Q_CLASSINFO("D-Bus Interface", "org.deepin.Filemanager.FileNameIndex")
+
+public:
+    explicit FileNameIndexDBus(QObject *parent = nullptr);
+    ~FileNameIndexDBus();
+
+    void cleanup();
+
+public Q_SLOTS:
+    bool IsEnabled();
+    void SetEnabled(bool enabled);
+    bool CreateIndexTask(const QStringList &paths, const QVariantMap &options = QVariantMap());
+    bool UpdateIndexTask(const QStringList &paths, const QVariantMap &options = QVariantMap());
+    bool StopCurrentTask();
+    bool HasRunningTask();
+    bool IndexDatabaseExists();
+    QString GetLastUpdateTime();
+    bool ProcessFileChanges(const QStringList &createdFiles, const QStringList &modifiedFiles, const QStringList &deletedFiles);
+    bool ProcessFileMoves(const QHash<QString, QString> &movedFiles);
+    QVariantMap GetIndexStatus();
+    bool ForceUpdateIndex(const QStringList &paths, const QVariantMap &options = QVariantMap());
+
+Q_SIGNALS:
+    void TaskFinished(const QString &type, const QString &path, bool success);
+    void TaskProgressChanged(const QString &type, const QString &path, qint64 count, qint64 total);
+    void IndexStatusChanged(const QString &state, const QString &grade);
+
+private:
+    QScopedPointer<SERVICETEXTINDEX_NAMESPACE::FileNameIndexDBusPrivate> d;
+};
+
+#endif   // FILENAMEINDEXDBUS_H

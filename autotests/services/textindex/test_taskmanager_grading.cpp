@@ -34,6 +34,7 @@
 #include "services/textindex/task/indextask.h"
 #include "services/textindex/env/envdetector.h"
 #include "services/textindex/utils/indexutility.h"
+#include "services/textindex/utils/textindexconfig.h"
 
 using namespace SERVICETEXTINDEX_NAMESPACE;
 
@@ -52,12 +53,11 @@ protected:
     {
         ASSERT_TRUE(tmp.isValid());
         runtime = std::make_unique<IndexRuntime>(
-            IndexProfile(IndexProfile::Type::Content, "grade", "grade_status.json",
-                         "grade_ver", 1,
-                         [this]() -> QString { return tmp.path(); },
-                         []() -> bool { return true; },
-                         [](const QString &) -> bool { return true; },
-                         [](const QString &) -> bool { return true; }));
+            IndexProfile({ IndexProfile::Type::Content, "grade", "grade_status.json", "grade_ver", 1 },
+                         { [this]() -> QString { return tmp.path(); },
+                           []() -> bool { return true; },
+                           [](const QString &) -> bool { return true; },
+                           [](const QString &) -> bool { return true; } }));
         mgr = runtime->taskManager();
         ASSERT_NE(mgr, nullptr);
 
@@ -293,13 +293,17 @@ protected:
     void SetUp() override
     {
         ASSERT_TRUE(tmp.isValid());
+        // 与 IndexProfile::ocr() 工厂一致：通过 profile 声明 Light 分级阈值
+        // （函数式 provider），分级逻辑不再感知具体 profile 类型
         runtime = std::make_unique<IndexRuntime>(
-            IndexProfile(IndexProfile::Type::Ocr, "ocr_grade", "ocr_grade_status.json",
-                         "ocr_grade_ver", 1,
-                         [this]() -> QString { return tmp.path(); },
-                         []() -> bool { return true; },
-                         [](const QString &) -> bool { return true; },
-                         [](const QString &) -> bool { return true; }));
+            IndexProfile({ IndexProfile::Type::Ocr, "ocr_grade", "ocr_grade_status.json", "ocr_grade_ver", 1 },
+                         { [this]() -> QString { return tmp.path(); },
+                           []() -> bool { return true; },
+                           [](const QString &) -> bool { return true; },
+                           [](const QString &) -> bool { return true; } },
+                         IndexProfile::RuntimePolicy{}, IndexProfile::FilterPolicy{},
+                         { IndexProfile::MoveUpdatePolicy::UpdatePathOnly, true,
+                           []() -> int { return TextIndexConfig::instance().lightIncrementOcrFileCountThreshold(); } }));
         mgr = runtime->taskManager();
         ASSERT_NE(mgr, nullptr);
     }

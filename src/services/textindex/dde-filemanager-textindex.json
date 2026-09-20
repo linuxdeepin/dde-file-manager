@@ -10,6 +10,9 @@
         },
         {
             "path": "/org/deepin/Filemanager/OcrIndex"
+        },
+        {
+            "path": "/org/deepin/Filemanager/FileNameIndex"
         }
     ]
-} 
+}

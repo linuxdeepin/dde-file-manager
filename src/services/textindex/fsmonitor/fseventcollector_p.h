@@ -114,6 +114,13 @@ public:
 
     // Marker for deleted directories
     QSet<QString> deletedDirectoriesMarker;
+
+    // Per-window cache for isDirectory() lookups. During a burst every event
+    // scans the current set (isChildOfAnyPath) with one stat per entry — an
+    // O(n²) syscall storm that can starve the home thread and back up the
+    // whole event pipeline. Dir-ness is stable within a collection window;
+    // the cache is cleared on every flush.
+    mutable QHash<QString, bool> directoryHintCache;
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

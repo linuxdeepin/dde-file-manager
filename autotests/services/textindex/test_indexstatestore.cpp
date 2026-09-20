@@ -25,15 +25,15 @@ protected:
     {
         ASSERT_TRUE(tmpDir.isValid());
         indexDir = tmpDir.path();
-        profile = IndexProfile(IndexProfile::Type::Content,
-                               "statetest",
-                               "state_status.json",
-                               "state_version",
-                               1,
-                               [this]() -> QString { return indexDir; },
-                               []() -> bool { return true; },
-                               [](const QString &) -> bool { return true; },
-                               [](const QString &) -> bool { return true; });
+        profile = IndexProfile({ IndexProfile::Type::Content,
+                                 "statetest",
+                                 "state_status.json",
+                                 "state_version",
+                                 1 },
+                               { [this]() -> QString { return indexDir; },
+                                 []() -> bool { return true; },
+                                 [](const QString &) -> bool { return true; },
+                                 [](const QString &) -> bool { return true; } });
         store.reset(new IndexStateStore(profile));
     }
 
@@ -150,4 +150,137 @@ TEST_F(IndexStateStoreTest, SetCreateInProgress)
     EXPECT_TRUE(store->isCreateInProgress());
     store->setCreateInProgress(false);
     EXPECT_FALSE(store->isCreateInProgress());
+}
+
+// ===========================================================================
+// updateInProgress (design 变更 8) — lifecycle of the full-comparison Update task
+// ===========================================================================
+
+TEST_F(IndexStateStoreTest, UpdateInProgress_DefaultFalse)
+{
+    EXPECT_FALSE(store->isUpdateInProgress());
+}
+
+TEST_F(IndexStateStoreTest, UpdateInProgress_SetTruePersists)
+{
+    store->setUpdateInProgress(true);
+    EXPECT_TRUE(store->isUpdateInProgress());
+    // Verify persisted across a fresh store on the same directory/file
+    std::unique_ptr<IndexStateStore> store2(new IndexStateStore(profile));
+    EXPECT_TRUE(store2->isUpdateInProgress());
+}
+
+TEST_F(IndexStateStoreTest, UpdateInProgress_SetFalsePersists)
+{
+    store->setUpdateInProgress(true);
+    ASSERT_TRUE(store->isUpdateInProgress());
+    store->setUpdateInProgress(false);
+    EXPECT_FALSE(store->isUpdateInProgress());
+    std::unique_ptr<IndexStateStore> store2(new IndexStateStore(profile));
+    EXPECT_FALSE(store2->isUpdateInProgress());
+}
+
+TEST_F(IndexStateStoreTest, UpdateInProgress_DoesNotAffectOtherFields)
+{
+    // Set baseline state
+    store->setIndexState(IndexUtility::IndexState::Dirty);
+    store->setNeedsRebuild(true);
+    store->setCreateInProgress(true);
+    QDateTime now = QDateTime::currentDateTime();
+    store->saveIndexStatus(now);
+
+    // Now toggle updateInProgress — other fields must remain intact
+    store->setUpdateInProgress(true);
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Dirty);
+    EXPECT_TRUE(store->needsRebuild());
+    EXPECT_TRUE(store->isCreateInProgress());
+    EXPECT_TRUE(store->isUpdateInProgress());
+
+    store->setUpdateInProgress(false);
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Dirty);
+    EXPECT_TRUE(store->needsRebuild());
+    EXPECT_TRUE(store->isCreateInProgress());
+    EXPECT_FALSE(store->isUpdateInProgress());
+}
+
+TEST_F(IndexStateStoreTest, UpdateInProgress_RoundTripViaFreshStore)
+{
+    store->setUpdateInProgress(true);
+    std::unique_ptr<IndexStateStore> store2(new IndexStateStore(profile));
+    EXPECT_TRUE(store2->isUpdateInProgress());
+    store2->setUpdateInProgress(false);
+    std::unique_ptr<IndexStateStore> store3(new IndexStateStore(profile));
+    EXPECT_FALSE(store3->isUpdateInProgress());
+}
+
+TEST_F(IndexStateStoreTest, UpdateInProgress_RemoveIndexStatusFileResetsToDefault)
+{
+    store->setUpdateInProgress(true);
+    ASSERT_TRUE(store->isUpdateInProgress());
+    store->removeIndexStatusFile();
+    EXPECT_FALSE(store->isUpdateInProgress());
+}
+
+// --- Simulated recovery-Update lifecycle (design 变更 8 table) ---
+//
+//   1. Service starts, dirty detected → recoveryPending=true
+//   2. Recovery Update starts → setUpdateInProgress(true)
+//   3. Update succeeds → finalizeIndexState: setUpdateInProgress(false) + state=clean
+//   4. Ordinary event increment (UpdateFileList) → does NOT touch updateInProgress
+//
+TEST_F(IndexStateStoreTest, RecoveryUpdateLifecycle_OnSuccessClearsFlag)
+{
+    // Step 2: Update starts
+    store->setUpdateInProgress(true);
+    store->setIndexState(IndexUtility::IndexState::Dirty);
+    ASSERT_TRUE(store->isUpdateInProgress());
+
+    // Step 3: Update succeeds (finalizeIndexState clears flag + sets clean)
+    store->setUpdateInProgress(false);
+    store->setIndexState(IndexUtility::IndexState::Clean);
+
+    EXPECT_FALSE(store->isUpdateInProgress());
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Clean);
+}
+
+TEST_F(IndexStateStoreTest, RecoveryUpdateLifecycle_OnFailureKeepsFlagAndDirty)
+{
+    // Update starts
+    store->setUpdateInProgress(true);
+    store->setIndexState(IndexUtility::IndexState::Dirty);
+
+    // Update fails/interrupted — flag stays true, state stays dirty
+    EXPECT_TRUE(store->isUpdateInProgress());
+    EXPECT_EQ(store->getIndexState(), IndexUtility::IndexState::Dirty);
+
+    // Next restart: still true → search remains degraded until recovery succeeds
+    std::unique_ptr<IndexStateStore> store2(new IndexStateStore(profile));
+    EXPECT_TRUE(store2->isUpdateInProgress());
+    EXPECT_EQ(store2->getIndexState(), IndexUtility::IndexState::Dirty);
+}
+
+TEST_F(IndexStateStoreTest, OrdinaryIncrementalTask_DoesNotSetUpdateInProgress)
+{
+    // Ordinary event incremental tasks (UpdateFileList/MoveFileList) do NOT set
+    // updateInProgress — only full-comparison Update tasks do (design 变更 8).
+    store->setIndexState(IndexUtility::IndexState::Dirty);
+    EXPECT_FALSE(store->isUpdateInProgress());
+
+    // Even after dirty state set, updateInProgress stays false
+    store->setIndexState(IndexUtility::IndexState::Dirty);
+    EXPECT_FALSE(store->isUpdateInProgress());
+
+    // And after clean (incremental succeeded)
+    store->setIndexState(IndexUtility::IndexState::Clean);
+    EXPECT_FALSE(store->isUpdateInProgress());
+}
+
+TEST_F(IndexStateStoreTest, BacklogExceeded_PersistsAndClears)
+{
+    store->setBacklogExceeded(true);
+    EXPECT_TRUE(store->isBacklogExceeded());
+    std::unique_ptr<IndexStateStore> store2(new IndexStateStore(profile));
+    EXPECT_TRUE(store2->isBacklogExceeded());
+    store2->setBacklogExceeded(false);
+    EXPECT_FALSE(store2->isBacklogExceeded());
 }

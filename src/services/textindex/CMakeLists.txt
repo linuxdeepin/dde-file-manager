@@ -44,3 +44,11 @@ install(FILES
     DESTINATION
     lib/systemd/user/deepin-service-plugin@org.deepin.Filemanager.TextIndex.service.d/
 )
+
+# pinyin 字典：install 路径与编译期注入的运行时路径保持单一来源（K_PINYIN_DICT_INSTALL_DIR），
+# 避免两处手工同步出错。
+set(TEXINDEX_PINYIN_INSTALL_DIR "share/deepin/dde-file-manager")
+install(FILES resources/pinyin.txt DESTINATION ${TEXINDEX_PINYIN_INSTALL_DIR})
+target_compile_definitions(${PROJECT_NAME} PRIVATE
+    PINYIN_DICT_INSTALL_DIR="${CMAKE_INSTALL_PREFIX}/${TEXINDEX_PINYIN_INSTALL_DIR}"
+)

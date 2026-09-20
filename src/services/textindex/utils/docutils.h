@@ -20,7 +20,7 @@ namespace DocUtils {
  * @return New document with copied fields
  */
 Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
-                                     std::initializer_list<Lucene::String> excludeFieldNames);
+                                     const std::vector<Lucene::String> &excludeFieldNames);
 
 }   // namespace DocUtils
 

@@ -28,6 +28,10 @@ inline const QString kTextIndexDBusService = QLatin1String("org.deepin.Filemanag
 inline const QString kTextIndexDBusObjectPath = QLatin1String("/org/deepin/Filemanager/TextIndex");
 inline const QString kOcrIndexDBusService = QLatin1String("org.deepin.Filemanager.OcrIndex");
 inline const QString kOcrIndexDBusObjectPath = QLatin1String("/org/deepin/Filemanager/OcrIndex");
+inline const QString kFileNameIndexServiceName =
+        QLatin1String("deepin-service-plugin@org.deepin.Filemanager.FileNameIndex.service");
+inline const QString kFileNameIndexDBusService = QLatin1String("org.deepin.Filemanager.FileNameIndex");
+inline const QString kFileNameIndexDBusObjectPath = QLatin1String("/org/deepin/Filemanager/FileNameIndex");
 
 // Dconfig
 namespace DConf {
@@ -77,13 +81,20 @@ inline constexpr int kTextIndexVersion { 6 };
 // Version 3: add new field "file_ext"
 inline constexpr int kOcrIndexVersion { 3 };
 
+// Filename index version history:
+// Version 1: initial filename index schema
+inline constexpr int kFilenameIndexVersion { 1 };
+
 // json - key
 inline const QString kTextVersionKey = QLatin1String("version");
 inline const QString kOcrVersionKey = QLatin1String("version");
+inline const QString kFilenameVersionKey = QLatin1String("version");
 inline const QString kLastUpdateTimeKey = QLatin1String("lastUpdateTime");
 inline const QString kStateKey = QLatin1String("state");
 inline const QString kNeedsRebuildKey = QLatin1String("needsRebuild");
 inline const QString kCreateInProgressKey = QLatin1String("createInProgress");
+inline const QString kUpdateInProgressKey = QLatin1String("updateInProgress");
+inline const QString kBacklogExceededKey = QLatin1String("backlogExceeded");
 
 // json - value
 inline const QString kStateClean = QLatin1String("clean");   // state

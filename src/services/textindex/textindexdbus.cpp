@@ -63,10 +63,14 @@ void TextIndexDBusPrivate::initConnect()
                      q, [this](bool start) {
                          handleMonitoring(start);
                      });
-    QObject::connect(runtime->fsEventController(), &FSEventController::requestSlientStart,
+    QObject::connect(runtime->fsEventController(), &FSEventController::requestSilentStart,
                      q, [this]() {
-                         handleSlientStart();
+                         handleSilentStart();
                      });
+
+    // 丢事件（dispatcher 断连/事件队列溢出）时不做补偿更新：content 全量
+    // UPDATE 代价过高，索引误差留给监控恢复后的增量事件与既有对账机制收敛。
+    // 补偿语义仅由 FileNameIndexDBus 承担（见其 requestEventsRecovery 连接）。
 
     // Connect to TextIndexConfig changes
     QObject::connect(&TextIndexConfig::instance(), &TextIndexConfig::configChanged,
@@ -96,7 +100,7 @@ void TextIndexDBusPrivate::handleMonitoring(bool start)
     runtime->fsEventController()->startFSMonitoring();
 }
 
-void TextIndexDBusPrivate::handleSlientStart()
+void TextIndexDBusPrivate::handleSilentStart()
 {
     // NOTE: Used only for silent updates after the service is started for the first time!
     static std::once_flag flag;
@@ -138,7 +142,9 @@ void TextIndexDBusPrivate::handleSlientStart()
         if (needsRebuild || needsRecovery) {
             fmInfo() << "TextIndexDBus: Starting update task - needsRebuild:" << needsRebuild
                      << "needsRecovery:" << needsRecovery << "for:" << pathsToProcess;
-            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess);
+            // 内部恢复（Dirty/needsRebuild）静默更新：跳过全库清理，见 UpdateIndexHandler 注释
+            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess,
+                                              IndexTask::Grade::None, false, true);
             return;
         }
 
@@ -364,7 +370,9 @@ void TextIndexDBusPrivate::handleConfigChanged()
         // Only start update task if index database exists
         if (q->IndexDatabaseExists()) {
             fmInfo() << "TextIndexDBus: Starting index update task due to supported file extensions change for paths:" << pathsToProcess;
-            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess);
+            // 内部配置变更更新：跳过全库清理，见 UpdateIndexHandler 注释
+            runtime->taskManager()->startTask(IndexTask::Type::Update, pathsToProcess,
+                                              IndexTask::Grade::None, false, true);
         } else {
             fmWarning() << "TextIndexDBus: Cannot start index update task, index database does not exist";
         }

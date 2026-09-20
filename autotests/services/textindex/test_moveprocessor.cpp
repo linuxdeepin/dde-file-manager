@@ -30,15 +30,15 @@ struct MoveProcTest : public testing::Test
 
     IndexProfile makeProfile()
     {
-        return IndexProfile(IndexProfile::Type::Content,
-                            "moveproc_test",
-                            "moveproc_status.json",
-                            "moveproc_version",
-                            1,
-                            [this]() -> QString { return tmp.path(); },
-                            []() -> bool { return true; },
-                            [](const QString &) -> bool { return true; },
-                            [](const QString &p) -> bool { return p.endsWith(".txt") || p.endsWith(".md"); });
+        return IndexProfile({ IndexProfile::Type::Content,
+                              "moveproc_test",
+                              "moveproc_status.json",
+                              "moveproc_version",
+                              1 },
+                            { [this]() -> QString { return tmp.path(); },
+                              []() -> bool { return true; },
+                              [](const QString &) -> bool { return true; },
+                              [](const QString &p) -> bool { return p.endsWith(".txt") || p.endsWith(".md"); } });
     }
 
     std::unique_ptr<IndexRuntime> makeRuntime()

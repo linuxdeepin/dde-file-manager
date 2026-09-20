@@ -52,6 +52,7 @@ function(dfm_setup_search_dbus_interfaces target_name)
     
     set(TEXTINDEX_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.TextIndex.xml")
     set(OCRINDEX_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.OcrIndex.xml")
+    set(FILENAMEINDEX_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.FileNameIndex.xml")
     set(INTERFACE_SOURCES)
 
     if(EXISTS "${TEXTINDEX_DBUS_INTERFACE_FILE}")
@@ -66,6 +67,13 @@ function(dfm_setup_search_dbus_interfaces target_name)
         qt_add_dbus_interface(INTERFACE_SOURCES ${OCRINDEX_DBUS_INTERFACE_FILE} ocrindex_interface)
     else()
         message(WARNING "DFM: OcrIndex DBus interface file not found: ${OCRINDEX_DBUS_INTERFACE_FILE}")
+    endif()
+
+    if(EXISTS "${FILENAMEINDEX_DBUS_INTERFACE_FILE}")
+        message(STATUS "DFM: Found FileNameIndex DBus interface file: ${FILENAMEINDEX_DBUS_INTERFACE_FILE}")
+        qt_add_dbus_interface(INTERFACE_SOURCES ${FILENAMEINDEX_DBUS_INTERFACE_FILE} filenameindex_interface)
+    else()
+        message(WARNING "DFM: FileNameIndex DBus interface file not found: ${FILENAMEINDEX_DBUS_INTERFACE_FILE}")
     endif()
 
     if(INTERFACE_SOURCES)

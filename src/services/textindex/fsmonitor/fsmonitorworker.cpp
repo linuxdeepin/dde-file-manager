@@ -95,15 +95,11 @@ void FSMonitorWorker::tryFastDirectoryScan()
     auto capturedExclusionChecker = exclusionChecker;
 
     auto scanOperation = [capturedMaxResults, capturedExclusionChecker]() -> QStringList {
-        auto status = DFMSEARCH::Global::fileNameIndexStatus();
-
-        if (!status.has_value()) {
-            return {};
-        }
-
-        const QString currentStatus = status.value();
-        if (currentStatus == "closed") {
-            fmWarning() << "FSMonitorWorker: Cannot use fast directory scan, index status is:" << currentStatus;
+        // 旧逻辑为 status == "closed"（anything-daemon 未运行）时回退遍历。
+        // 新架构中无独立进程，改为直接判断索引就绪：
+        // 索引存在且可用（无 create/updateInProgress）→ 快速扫描；否则 → 回退传统遍历。
+        if (!DFMSEARCH::Global::isFileNameIndexReadyForSearch()) {
+            fmWarning() << "FSMonitorWorker: Cannot use fast directory scan, filename index not ready";
             return {};
         }
 

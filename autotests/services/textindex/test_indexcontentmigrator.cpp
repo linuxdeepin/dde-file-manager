@@ -25,15 +25,15 @@ using namespace SERVICETEXTINDEX_NAMESPACE;
 
 static IndexProfile makeMigratorProfile()
 {
-    return IndexProfile(IndexProfile::Type::Content,
-                        "migrator_test",
-                        "migrator_status.json",
-                        "migrator_version",
-                        1,
-                        []() -> QString { return "/tmp/dfm_migrator_test"; },
-                        []() -> bool { return true; },
-                        [](const QString &) -> bool { return true; },
-                        [](const QString &) -> bool { return true; });
+    return IndexProfile({ IndexProfile::Type::Content,
+                          "migrator_test",
+                          "migrator_status.json",
+                          "migrator_version",
+                          1 },
+                        { []() -> QString { return "/tmp/dfm_migrator_test"; },
+                          []() -> bool { return true; },
+                          [](const QString &) -> bool { return true; },
+                          [](const QString &) -> bool { return true; } });
 }
 
 TEST(IndexContentMigratorTest, DefaultNotActive)

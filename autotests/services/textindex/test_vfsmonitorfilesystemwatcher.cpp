@@ -11,6 +11,7 @@
 #include <QSet>
 #include <QElapsedTimer>
 #include <QSocketNotifier>
+#include <QThread>
 
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -18,6 +19,7 @@
 
 #include <cerrno>
 #include <cstring>
+#include <thread>
 
 #include "services/textindex/service_textindex_global.h"
 #include "services/textindex/fsmonitor/vfsmonitorwatcher.h"
@@ -544,6 +546,13 @@ static int acceptOneClient(int listenFd)
     return fd;
 }
 
+// 接受一个阻塞模式的客户端连接：send() 在内核缓冲区满时阻塞，
+// 由 watcher 的读线程持续排空形成真实背压（用于灌包压测）。
+static int acceptOneClientBlocking(int listenFd)
+{
+    return ::accept4(listenFd, nullptr, nullptr, 0);
+}
+
 class TestVfsMonitorReconnect : public ::testing::Test
 {
 protected:
@@ -617,8 +626,8 @@ TEST_F(TestVfsMonitorReconnect, DISABLED_ReconnectsAfterServerClosesConnection)
     ::close(clientFd);
     clientFd = -1;
 
-    // 给 watcher 的事件循环一点时间，让 QSocketNotifier 触发 handleSocketMessage()。
-    // handleSocketMessage 在收到 recv()==0 后调用 handleDisconnect，后者以 1s
+    // 给 watcher 的事件循环一点时间，让读线程触发断连处理。
+    // 读线程在收到 recv()==0 后通过 eventsLost 上报并调度 handleDisconnect，后者以 1s
     // 退避启动 reconnectTimer。我们等待 ~2.5s 容纳事件循环 + 1s 退避。
     int newClientFd = waitForAccept(listenFd, 5000);
     ASSERT_GE(newClientFd, 0)
@@ -747,4 +756,221 @@ TEST_F(TestVfsMonitorReconnect, DISABLED_BackoffResetsAfterSuccessfulReconnect)
         << "Reconnect took too long; backoff was not reset after success";
 
     ::close(finalReconnectFd);
+}
+
+// ======================================================================
+// 高吞吐压力测试
+// 通过 mock dispatcher 从独立线程灌入海量事件（blocking send 形成天然
+// 背压），验证 watcher 的专用读线程能持续排空 socket：
+//   1. 10 万级事件突发不断连、不丢事件（此前 ~100 个事件即被踢）；
+//   2. 用户态队列溢出时丢弃并发出 eventsLost（UPDATE 补偿的触发点）；
+//   3. 服务端断连时发出 eventsLost 并自动重连。
+// ======================================================================
+
+// 与 vfsmonitorwatcher.cpp 中 DispatchEvent 对齐的报文布局
+struct MockDispatchEvent
+{
+    int32_t action;
+    uint32_t cookie;
+    char eventPath[4096];
+};
+
+static QByteArray makeDispatchPacket(int action, uint32_t cookie, const QByteArray &path)
+{
+    const QByteArray truncated = path.left(4095);
+    QByteArray packet;
+    packet.resize(int(offsetof(MockDispatchEvent, eventPath)) + truncated.size() + 1);
+    auto *evt = reinterpret_cast<MockDispatchEvent *>(packet.data());
+    evt->action = action;
+    evt->cookie = cookie;
+    std::memcpy(evt->eventPath, truncated.constData(), size_t(truncated.size()) + 1);
+    return packet;
+}
+
+// 从独立线程灌入 count 个 ACT_NEW_FILE 事件。accepted fd 是阻塞的，
+// send() 在内核缓冲区满时自然阻塞，由 watcher 的读线程持续排空。
+// 返回成功写入的事件数（连接断开时提前返回）。
+static int floodFileCreatedEvents(int fd, const QString &dir, int count, int startIdx)
+{
+    int sent = 0;
+    for (int i = 0; i < count; ++i) {
+        const QByteArray packet = makeDispatchPacket(
+                ACT_NEW_FILE, 0, QString("%1/f_%2.txt").arg(dir).arg(startIdx + i).toUtf8());
+        const char *buf = packet.constData();
+        size_t left = size_t(packet.size());
+        while (left > 0) {
+            ssize_t n = ::send(fd, buf, left, MSG_NOSIGNAL);
+            if (n < 0) {
+                if (errno == EINTR)
+                    continue;
+                fmWarning() << "flood: send failed at" << sent << "errno =" << errno
+                            << "(" << std::strerror(errno) << ")";
+                return sent;   // connection broke
+            }
+            buf += n;
+            left -= size_t(n);
+        }
+        ++sent;
+    }
+    return sent;
+}
+
+class TestVfsMonitorThroughput : public ::testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        QString templatePath = QDir::homePath() + "/Documents/.test_vfsthroughput_XXXXXX";
+        testDir = std::make_unique<QTemporaryDir>(templatePath);
+        ASSERT_TRUE(testDir->isValid());
+
+        mockSocketPath = testDir->path() + "/mock-dispatcher.sock";
+        listenFd = createMockDispatcher(mockSocketPath);
+        ASSERT_GE(listenFd, 0) << "Failed to create mock dispatcher";
+
+        qputenv("DFM_VFSMONITOR_SOCKET_PATH", mockSocketPath.toUtf8());
+
+        watcher = VfsMonitorFileSystemWatcher::create({ testDir->path() }, {}, nullptr);
+        ASSERT_NE(watcher, nullptr) << "Watcher creation failed";
+
+        clientFd = waitForAccept(listenFd, 3000);
+        ASSERT_GE(clientFd, 0) << "Mock dispatcher did not accept initial connection";
+    }
+
+    void TearDown() override
+    {
+        // clientFd 可能已被 watcher 自身（重连/析构）接管或关闭
+        if (clientFd >= 0)
+            ::close(clientFd);
+        if (listenFd >= 0)
+            ::close(listenFd);
+        ::unlink(mockSocketPath.toUtf8().constData());
+        qunsetenv("DFM_VFSMONITOR_SOCKET_PATH");
+        qunsetenv("DFM_VFSMONITOR_MAX_QUEUE");
+        delete watcher;
+        watcher = nullptr;
+        testDir.reset();
+    }
+
+    int waitForAccept(int fd, int timeoutMs)
+    {
+        QElapsedTimer timer;
+        timer.start();
+        while (!timer.hasExpired(timeoutMs)) {
+            // 阻塞模式 fd：灌包压测依赖 send() 阻塞形成背压
+            int cfd = acceptOneClientBlocking(fd);
+            if (cfd >= 0)
+                return cfd;
+            QTest::qWait(50);
+        }
+        return -1;
+    }
+
+    std::unique_ptr<QTemporaryDir> testDir;
+    QString mockSocketPath;
+    int listenFd { -1 };
+    int clientFd { -1 };
+    VfsMonitorFileSystemWatcher *watcher { nullptr };
+};
+// 10 万事件突发：不断连（eventsLost 不触发）、事件全部送达、连接仍可用
+TEST_F(TestVfsMonitorThroughput, HighThroughputBurstDoesNotDisconnect)
+{
+    ASSERT_NE(watcher, nullptr);
+
+    QSignalSpy createdSpy(watcher, &VfsMonitorFileSystemWatcher::fileCreated);
+    QSignalSpy lostSpy(watcher, &VfsMonitorFileSystemWatcher::eventsLost);
+    ASSERT_TRUE(createdSpy.isValid());
+    ASSERT_TRUE(lostSpy.isValid());
+
+    constexpr int kEventCount = 100000;
+
+    int sent = 0;
+    std::thread sender([&] {
+        sent = floodFileCreatedEvents(clientFd, testDir->path(), kEventCount, 0);
+    });
+    sender.join();
+    ASSERT_EQ(sent, kEventCount) << "connection broke during the burst";
+
+    // 等待全部事件被消费并转为信号
+    QElapsedTimer timer;
+    timer.start();
+    while (createdSpy.count() < kEventCount && !timer.hasExpired(30000))
+        QTest::qWait(100);
+
+    EXPECT_EQ(createdSpy.count(), kEventCount)
+            << "expected all burst events to be delivered";
+    EXPECT_EQ(lostSpy.count(), 0) << "no disconnect should happen during the burst";
+
+    // 连接仍存活：再发一个事件应正常送达
+    const QByteArray tail = makeDispatchPacket(
+            ACT_NEW_FILE, 0, QString("%1/f_tail.txt").arg(testDir->path()).toUtf8());
+    ASSERT_EQ(::send(clientFd, tail.constData(), size_t(tail.size()), MSG_NOSIGNAL),
+              qint64(tail.size()));
+    timer.restart();
+    while (createdSpy.count() < kEventCount + 1 && !timer.hasExpired(5000))
+        QTest::qWait(100);
+    EXPECT_EQ(createdSpy.count(), kEventCount + 1);
+    EXPECT_EQ(lostSpy.count(), 0);
+}
+
+// 用户态队列溢出：丢弃新事件并发出 eventsLost（UPDATE 补偿触发点），连接不断
+TEST_F(TestVfsMonitorThroughput, QueueOverflowTriggersEventsLost)
+{
+    // 用小容量队列重建 watcher（cap=100）
+    qputenv("DFM_VFSMONITOR_MAX_QUEUE", "100");
+    clientFd = -1;   // 旧 fd 归属旧 watcher，由其析构关闭
+    delete watcher;
+    watcher = VfsMonitorFileSystemWatcher::create({ testDir->path() }, {}, nullptr);
+    ASSERT_NE(watcher, nullptr);
+    clientFd = waitForAccept(listenFd, 3000);
+    ASSERT_GE(clientFd, 0);
+
+    QSignalSpy createdSpy(watcher, &VfsMonitorFileSystemWatcher::fileCreated);
+    QSignalSpy lostSpy(watcher, &VfsMonitorFileSystemWatcher::eventsLost);
+    ASSERT_TRUE(createdSpy.isValid());
+    ASSERT_TRUE(lostSpy.isValid());
+
+    constexpr int kEventCount = 2000;
+
+    // 主线程阻塞期间（不处理事件）灌入 2000 个事件，队列(cap=100)必然溢出
+    int sent = 0;
+    std::thread sender([&] {
+        sent = floodFileCreatedEvents(clientFd, testDir->path(), kEventCount, 0);
+    });
+    QTest::qSleep(500);
+    sender.join();
+    ASSERT_EQ(sent, kEventCount) << "flood should complete (blocking send + draining reader)";
+
+    // 恢复事件循环，让队列被消费、溢出被上报
+    QElapsedTimer timer;
+    timer.start();
+    while (lostSpy.count() == 0 && !timer.hasExpired(10000))
+        QTest::qWait(100);
+
+    EXPECT_GE(lostSpy.count(), 1) << "eventsLost must be emitted on queue overflow";
+    EXPECT_LT(createdSpy.count(), kEventCount) << "overflow must drop events";
+    EXPECT_GE(createdSpy.count(), 1) << "pre-overflow events must still be delivered";
+}
+
+// 服务端断连（等同被 dispatcher 踢掉/重启）：eventsLost 触发 + 自动重连
+TEST_F(TestVfsMonitorThroughput, DisconnectEmitsEventsLostAndReconnects)
+{
+    ASSERT_NE(watcher, nullptr);
+
+    QSignalSpy lostSpy(watcher, &VfsMonitorFileSystemWatcher::eventsLost);
+    ASSERT_TRUE(lostSpy.isValid());
+
+    // 模拟服务端踢掉客户端
+    ::close(clientFd);
+    clientFd = -1;
+
+    QElapsedTimer timer;
+    timer.start();
+    while (lostSpy.count() == 0 && !timer.hasExpired(5000))
+        QTest::qWait(100);
+    EXPECT_EQ(lostSpy.count(), 1) << "eventsLost must be emitted exactly once on disconnect";
+
+    int reconnectedFd = waitForAccept(listenFd, 6000);
+    ASSERT_GE(reconnectedFd, 0) << "watcher did not reconnect after disconnect";
+    ::close(reconnectedFd);
 }

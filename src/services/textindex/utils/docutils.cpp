@@ -7,12 +7,14 @@
 #include <lucene++/NumericField.h>
 #include <boost/shared_ptr.hpp>
 
+#include <vector>
+
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
 namespace DocUtils {
 
 Lucene::DocumentPtr copyFieldsExcept(const Lucene::DocumentPtr &sourceDoc,
-                                     std::initializer_list<Lucene::String> excludeFieldNames)
+                                     const std::vector<Lucene::String> &excludeFieldNames)
 {
     using namespace Lucene;
 

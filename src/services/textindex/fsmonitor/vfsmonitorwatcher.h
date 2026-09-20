@@ -34,7 +34,8 @@ class VfsMonitorFileSystemWatcher : public QObject
 
 public:
     // Predicate for path exclusion. Return true to suppress the event.
-    // Called from the main thread via Qt event loop.
+    // Called from the socket reader thread (not the home thread); it must
+    // only touch thread-safe state (syscalls, atomics, const data).
     using PathExcludePredicate = std::function<bool(const QString &fullPath)>;
 
     ~VfsMonitorFileSystemWatcher() override;
@@ -56,6 +57,12 @@ Q_SIGNALS:
     void directoryMoved(const QString &fromPath, const QString &fromName,
                         const QString &toPath, const QString &toName);
     void fileClosed(const QString &path, const QString &name);
+
+    // Emitted when filesystem events were lost and cannot be replayed:
+    // either the dispatcher connection dropped (events during the outage)
+    // or the internal event queue overflowed under an extreme burst.
+    // Consumers should schedule a full index update to re-sync.
+    void eventsLost();
 
 private:
     explicit VfsMonitorFileSystemWatcher(const QStringList &rootPaths,

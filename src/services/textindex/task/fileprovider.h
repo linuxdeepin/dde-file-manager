@@ -7,6 +7,7 @@
 
 #include "service_textindex_global.h"
 #include "profile/indexprofile.h"
+#include "utils/pathexcludematcher.h"
 #include "utils/taskstate.h"
 
 #include <dfm-search/searchresult.h>
@@ -43,6 +44,7 @@ public:
 private:
     IndexProfile m_profile;
     QString m_rootPath;
+    PathExcludeMatcher m_excludeMatcher;   // per-profile 黑名单（filename: anything + 索引目录），无 pattern 时不过滤
 };
 
 // 直接文件列表提供者
@@ -72,6 +74,7 @@ public:
 private:
     IndexProfile m_profile;
     QStringList m_pathList;
+    PathExcludeMatcher m_excludeMatcher;   // per-profile 黑名单（filename: anything + 索引目录），无 pattern 时不过滤
 };
 
 SERVICETEXTINDEX_END_NAMESPACE

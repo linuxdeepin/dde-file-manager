@@ -62,6 +62,7 @@ function(dfm_setup_textindex_dbus_interfaces target_name)
     # Define the DBus interface file path using DFM_ASSETS_DIR
     set(DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.TextIndex.xml")
     set(OCR_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.OcrIndex.xml")
+    set(FILENAME_DBUS_INTERFACE_FILE "${DFM_ASSETS_DIR}/dbus/org.deepin.Filemanager.FileNameIndex.xml")
     
     # Check if the DBus interface file exists
     if(EXISTS "${DBUS_INTERFACE_FILE}")
@@ -98,6 +99,20 @@ function(dfm_setup_textindex_dbus_interfaces target_name)
         endif()
     else()
         message(WARNING "DFM: OcrIndex DBus interface file not found: ${OCR_DBUS_INTERFACE_FILE}")
+    endif()
+
+    if(EXISTS "${FILENAME_DBUS_INTERFACE_FILE}")
+        message(STATUS "DFM: Found FileNameIndex DBus interface file: ${FILENAME_DBUS_INTERFACE_FILE}")
+
+        qt6_add_dbus_adaptor(FILENAME_ADAPTOR_SOURCES ${FILENAME_DBUS_INTERFACE_FILE}
+            filenameindexdbus.h FileNameIndexDBus)
+
+        if(FILENAME_ADAPTOR_SOURCES)
+            target_sources(${target_name} PRIVATE ${FILENAME_ADAPTOR_SOURCES})
+            message(STATUS "DFM: Added FileNameIndex DBus adaptor sources to target")
+        endif()
+    else()
+        message(WARNING "DFM: FileNameIndex DBus interface file not found: ${FILENAME_DBUS_INTERFACE_FILE}")
     endif()
 endfunction()
 

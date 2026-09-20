@@ -112,7 +112,12 @@ class ProgressReporter
 {
 public:
     explicit ProgressReporter(IndexWriterPtr writer = nullptr)
-        : processedCount(0), totalCount(0), lastReportTime(QDateTime::currentDateTime()), m_writer(writer), m_batchCommitInterval(TextIndexConfig::instance().batchCommitInterval()), m_lastCommitCount(0)
+        : processedCount(0),
+          totalCount(0),
+          lastReportTime(QDateTime::currentDateTime()),
+          m_writer(writer),
+          m_batchCommitInterval(TextIndexConfig::instance().batchCommitInterval()),
+          m_lastCommitCount(0)
     {
         fmDebug() << "[ProgressReporter] Initialized progress reporter with batch commit interval:" << m_batchCommitInterval;
     }
@@ -153,8 +158,11 @@ public:
     {
         ++processedCount;
 
-        // 检查是否需要批量提交
-        if (m_writer && (processedCount - m_lastCommitCount) >= m_batchCommitInterval) {
+        // Commit using the existing file-count boundary. The destructor provides
+        // the final commit for small incremental tasks.
+        const bool countThresholdReached = (processedCount - m_lastCommitCount) >= m_batchCommitInterval;
+
+        if (m_writer && countThresholdReached) {
             try {
                 m_writer->commit();
                 m_lastCommitCount = processedCount;
@@ -207,9 +215,17 @@ DocumentPtr createFileDocument(const IndexContext &context, const QString &file,
                                const IndexContentMigrator *migrator = nullptr)
 {
     try {
-        if (!context.extractor() || !context.documentBuilder()) {
-            fmCritical() << "[createFileDocument] Missing extractor or document builder for profile:" << context.profile().id();
+        if (!context.documentBuilder()) {
+            fmCritical() << "[createFileDocument] Missing document builder for profile:" << context.profile().id();
             return nullptr;
+        }
+
+        // filename profile 无内容提取（extractor() == nullptr）：直接用空文本构建文档，
+        // 跳过 ProcessExtractor::extract（避免全盘遍历逐文件读内容）。FileNameDocumentBuilder
+        // 忽略 text 参数，仅依据文件元数据构建。
+        if (!context.extractor()) {
+            BuilderOptions options;
+            return context.documentBuilder()->build(file, QString(), options);
         }
 
         const int truncationSizeMB = context.profile().maxFileTruncationSizeMB();
@@ -644,7 +660,8 @@ void removeDirectoryIndex(const IndexContext &context, const QString &dirPath, c
 
 /// RAII wrapper that opens IndexReader + IndexWriter on construction and closes them on destruction.
 /// Eliminates duplicated ScopeGuard boilerplate across handler lambdas.
-struct IndexAccessor {
+struct IndexAccessor
+{
     IndexReaderPtr reader;
     IndexWriterPtr writer;
 
@@ -660,17 +677,22 @@ struct IndexAccessor {
 
     ~IndexAccessor()
     {
-        try { if (reader) reader->close(); } catch (...) {
+        try {
+            if (reader) reader->close();
+        } catch (...) {
             fmWarning() << "[IndexAccessor] Exception closing index reader";
         }
-        try { if (writer) writer->close(); } catch (...) {
+        try {
+            if (writer) writer->close();
+        } catch (...) {
             fmWarning() << "[IndexAccessor] Exception closing index writer";
         }
     }
 };
 
 /// Result of resolving the file list for a Create-resume task.
-struct CreateResumeFileList {
+struct CreateResumeFileList
+{
     QStringList fileList;
     int checkpoint { 0 };
     bool useAnything { false };
@@ -747,11 +769,11 @@ CreateResumeFileList resolveFileListForCreateResume(const IndexContext &context,
  * 遇到暂停请求或中断时立即退出循环。
  */
 void processFileListWithCheckpoint(const IndexContext &context, const QStringList &fileList,
-                                    int checkpoint, bool createInProgress,
-                                    const PathExcludeMatcher &excludeMatcher,
-                                    const IndexReaderPtr &reader, const IndexWriterPtr &writer,
-                                    ProgressReporter &reporter, const IndexContentMigrator &migrator,
-                                    TaskState &running)
+                                   int checkpoint, bool createInProgress,
+                                   const PathExcludeMatcher &excludeMatcher,
+                                   const IndexReaderPtr &reader, const IndexWriterPtr &writer,
+                                   ProgressReporter &reporter, const IndexContentMigrator &migrator,
+                                   TaskState &running)
 {
     int fileIndex = checkpoint;
     for (int i = checkpoint; i < fileList.size(); ++i) {
@@ -924,10 +946,11 @@ TaskHandler TaskHandlers::CreateIndexHandler(const IndexContext &context)
     };
 }
 
-TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
+TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context, bool skipStaleCleanup)
 {
-    return [context](const QString &path, TaskState &running) -> HandlerResult {
-        fmInfo() << "[UpdateIndexHandler] Starting index update for path:" << path;
+    return [context, skipStaleCleanup](const QString &path, TaskState &running) -> HandlerResult {
+        fmInfo() << "[UpdateIndexHandler] Starting index update for path:" << path
+                 << "skipStaleCleanup:" << skipStaleCleanup;
         HandlerResult result { false, false, false };
 
         QString indexDir = context.profile().indexDirectory();
@@ -942,14 +965,17 @@ TaskHandler TaskHandlers::UpdateIndexHandler(const IndexContext &context)
             IndexAccessor accessor(indexDir, context);
             ProgressReporter reporter(accessor.writer);
 
-            if (!cleanupIndexs(context, accessor.reader, accessor.writer, running, &reporter)) {
+            if (skipStaleCleanup) {
+                // 内部恢复类更新：删除条目由增量事件维护，跳过全库清理以避免
+                // 大索引下的分钟级清理开销。丢失窗口内被删文件的 ghost 条目
+                // 留待下一次用户手动更新（默认执行清理）。
+                fmInfo() << "[UpdateIndexHandler] Skipping stale-entry cleanup (internal recovery update)";
+            } else if (!cleanupIndexs(context, accessor.reader, accessor.writer, running, &reporter)) {
                 fmCritical() << "[UpdateIndexHandler] Index cleanup failed, aborting update";
                 result.success = false;
                 result.fatal = true;
                 return result;
-            }
-
-            if (running.isPauseRequested()) {
+            } else if (running.isPauseRequested()) {
                 fmInfo() << "[UpdateIndexHandler] Index update paused during index cleanup";
                 accessor.writer->commit();
                 result.paused = true;
@@ -1258,6 +1284,7 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, con
             fmDebug() << "[RemoveFileListHandler] Index reader and writer initialized for directory:" << indexDir;
 
             ProgressReporter reporter(writer);
+            reporter.setTotal(fileList.size());
             fmInfo() << "[RemoveFileListHandler] Starting file removal processing, total items:" << fileList.size();
 
             SearcherPtr searcher = newLucene<IndexSearcher>(reader);
@@ -1280,6 +1307,9 @@ TaskHandler TaskHandlers::RemoveFileListHandler(const IndexContext &context, con
                 if (result->totalHits > 0) {
                     // 有子文件，是目录
                     removeDirectoryIndex(context, itemPath, writer, reader, &reporter);
+                    // 目录自身的文档（ancestor_paths 不含自身，上面的查询覆盖不到）；
+                    // 对不存在的路径 deleteDocuments 是幂等 no-op
+                    removeFile(context, itemPath, writer, &reporter);
                     directoriesRemoved++;
                     fmDebug() << "[RemoveFileListHandler] Processed directory removal:" << itemPath;
                 } else {
@@ -1386,9 +1416,14 @@ TaskHandler TaskHandlers::MoveFileListHandler(const IndexContext &context, const
                 bool success = false;
                 if (PathCalculator::isDirectoryMove(toPath)) {
                     success = directoryMoveProcessor.processDirectoryMove(fromPath, toPath, running);
+                    // 目录自身的文档随路径同步（ancestor 查询覆盖不到目录自身）；
+                    // 仅对索引目录的 profile（filename）处理，避免 Content/Ocr
+                    // 走 fallback 路径把目录误建为内容文档
+                    if (context.profile().filterPolicy().indexDirectories)
+                        fileMoveProcessor.processFileMove(fromPath, toPath);
                     if (success) {
                         directoryMoves++;
-                        if (directoryMoveProcessor.hasChanges())
+                        if (directoryMoveProcessor.hasChanges() || fileMoveProcessor.hasChanges())
                             reporter.markIndexChanged();
                     } else {
                         failedMoves++;

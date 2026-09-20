@@ -44,15 +44,15 @@ struct TaskHandlerIndexTest : public testing::Test
 
     IndexProfile makeProfile()
     {
-        return IndexProfile(IndexProfile::Type::Content,
-                            "thidx_test",
-                            "thidx_status.json",
-                            "thidx_version",
-                            1,
-                            [this]() -> QString { return indexDir; },
-                            []() -> bool { return true; },
-                            [](const QString &) -> bool { return true; },
-                            [](const QString &p) -> bool { return p.endsWith(".txt") || p.endsWith(".md"); });
+        return IndexProfile({ IndexProfile::Type::Content,
+                              "thidx_test",
+                              "thidx_status.json",
+                              "thidx_version",
+                              1 },
+                            { [this]() -> QString { return indexDir; },
+                              []() -> bool { return true; },
+                              [](const QString &) -> bool { return true; },
+                              [](const QString &p) -> bool { return p.endsWith(".txt") || p.endsWith(".md"); } });
     }
 
     void SetUp() override
