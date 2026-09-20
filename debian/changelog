@@ -1,3 +1,29 @@
+dde-file-manager (6.6.6) unstable; urgency=medium
+
+  * fix: support MIME type aliases for ISO image recognition
+  * fix: add notifyFileChangeManual to deleteFilesByFts for remote mount refresh
+  * fix: trigger async emblem detection on cache hit to fix stale emblems
+  * fix: remove unused icon-emblems cache dead code from BaseItemDelegate
+  * fix: validate timezone from /etc/timezone before setting TZ
+  * fix: add expand/collapse animation for search box
+  * fix: change keepBackendAlive() to async D-Bus call to prevent daemon event loop blocking
+  * fix: remove FTS_NOSTAT to fix SMB directory deletion failure
+  * fix: fix terminal open for paths ending with space
+  * fix: fix settings signal not emitted on first write
+  * fix: handle group header index in drag-drop
+  * fix: add directory write permission check in validateExportPath
+  * fix: harden disk encrypt service and move recovery key export to user session
+  * refactor: remove Init method and streamline index startup
+  * fix: correct trash path conversion for absolute paths
+  * fix: fix use-after-free in DeviceWatcher pooled usage query
+  * test: remove process-wide QThread::currentThread stubs in recent tests
+  * fix: remove redundant Q_ASSERT_X in sqlite helper
+  * fix: fix null deref and uninit return in 5 places
+  * fix: resolve clang static analysis warnings
+  * fix: replace deprecated APIs and remove dead/unused code
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sun, 20 Sep 2026 17:12:22 +0800
+
 dde-file-manager (6.6.5) unstable; urgency=medium
 
   * fix: add metadata::emblems to GIO file attributes query
