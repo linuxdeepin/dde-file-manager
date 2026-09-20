@@ -1237,9 +1237,13 @@ QUrl FileUtils::bindUrlTransform(const QUrl &url)
         return tmp;
     }
 
-    auto path = FileUtils::trashPathToNormal(url.path());
-    path = FileUtils::bindPathTransform(path, false);
-    path = FileUtils::normalPathToTrash(path);
+    auto normalPath = FileUtils::trashPathToNormal(url.path());
+    auto transformedPath = FileUtils::bindPathTransform(normalPath, false);
+
+    if (transformedPath == normalPath)
+        return url;
+
+    auto path = FileUtils::normalPathToTrash(transformedPath);
     tmp.setPath(path);
     return tmp;
 }
@@ -1257,6 +1261,8 @@ QString FileUtils::trashPathToNormal(const QString &trash)
 QString FileUtils::normalPathToTrash(const QString &normal)
 {
     QString trash = normal;
+    while (trash.startsWith("/"))
+        trash = trash.mid(1);
     trash = trash.replace("/", "\\");
     trash.push_front("/");
     return trash;
