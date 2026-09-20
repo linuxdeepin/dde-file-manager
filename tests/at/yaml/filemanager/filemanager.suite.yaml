@@ -1394,5 +1394,272 @@ suites:
     action: assert_element
     selector:
       name: ScrollArea
+- id: suite_filemanager_025_s1
+  name: 保险箱密钥文件导入与路径选择完整流程
+  description: 通过主菜单打开加密管理，导入密钥文件并设置文件路径与加密类型，验证完成按钮与取消按钮可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 磁盘
+    - 加密管理
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: KeyFileEdit
+      role: text
+    text: /home/user/keys/import.key
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: FilePathEdit
+      role: text
+    text: /home/user/encrypted_data
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinishedBtn
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CancelBtn
+      role: push button
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyFileEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FilePathEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinishedBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CancelBtn
+      role: push button
+- id: suite_filemanager_026_s1
+  name: 磁盘加密类型切换与双密钥输入验证流程
+  description: 打开加密管理对话框，切换加密类型下拉框，变更解锁方式按钮，输入两段加密密钥并导出，验证全部加密控件可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 磁盘
+    - 加密管理
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChgUnlockType
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: EncType
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: EncKeyEdit1
+      role: text
+    text: SecretKey_Part1
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: EncKeyEdit2
+      role: text
+    text: SecretKey_Part2
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: KeyExportInput
+      role: text
+    text: /home/user/keys/export.key
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChgUnlockType
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncType
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit1
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EncKeyEdit2
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyExportInput
+      role: text
+- id: suite_filemanager_027_s1
+  name: 保险箱旧密码修改与新密码确认完整流程
+  description: 打开保险箱密码修改对话框，输入旧密码与新密码并填写密码提示，验证密码修改全部控件可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 保险箱
+    - 修改密码
+    wait: 2.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: OldPasswordEdit
+    text: OldVaultPwd_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPasswordEdit
+    text: NewVaultPwd_2026
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PasswordHintEdit
+      role: text
+    text: MyVaultHint
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinishedBtn
+      role: push button
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OldPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NewPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordHintEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinishedBtn
+      role: push button
+- id: suite_filemanager_028_s1
+  name: 服务器连接协议方案选择与添加综合流程
+  description: 打开连接到服务器对话框，选择协议方案与服务器类型，点击添加按钮并进入下一步，验证服务器连接控件可定位
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 连接到服务器
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SchemeComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ServerComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TheAddButton
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: NextBtn
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionServerView
+      role: list
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SchemeComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ServerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TheAddButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NextBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionServerView
+      role: list
 teardown:
 - action: session_stop

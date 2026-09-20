@@ -729,5 +729,146 @@ suites:
     selector:
       name: HFpaletteEdit
       role: text
+- id: suite_dde_file_manager_preview_012_s1
+  name: 音乐预览元数据与播放控制综合验证流程
+  description: 在音乐预览面板中验证艺术家与专辑元数据标签，操作播放控制按钮与进度滑块，验证全部音乐预览控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ArtistLabel
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: ArtistValue
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumLabel
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumValue
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: PlayControlButton
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ProgressSlider
+      role: slider
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ArtistLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ArtistValue
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AlbumLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AlbumValue
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PlayControlButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ProgressSlider
+      role: slider
+- id: suite_dde_file_manager_preview_013_s1
+  name: 图片预览缩略图列表翻页与尺寸标签验证流程
+  description: 在图片预览中操作缩略图列表与翻页按钮，验证尺寸与类型标签可定位，确认图片列表父容器可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: View_ImageList
+      role: list
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Nextbutton
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SizeLabel
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: TypeLabel
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: ItemViewParent
+      role: list
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: View_ImageList
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Nextbutton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SizeLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TypeLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
 teardown:
 - action: session_stop

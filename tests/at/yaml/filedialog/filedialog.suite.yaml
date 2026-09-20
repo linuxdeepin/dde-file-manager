@@ -307,5 +307,61 @@ suites:
     selector:
       name: CurRejectButton
       role: push button
+- id: suite_filedialog_005_s1
+  name: 文件对话框面包屑导航与文件选择组合流程
+  description: 在文件对话框中操作面包屑导航编辑框与文件输入框，点击文件选择器与确认按钮，验证全部对话框导航控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CrumbEdit
+    do: focus
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: Edit_2
+      role: text
+    text: /home/user/Documents/report.txt
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileChooser
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckButton
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CancelButton
+      role: push button
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Edit_2
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileChooser
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CancelButton
+      role: push button
 teardown:
 - action: session_stop

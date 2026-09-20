@@ -435,5 +435,127 @@ suites:
     action: assert_element
     selector:
       name: BtnStop
+- id: suite_dialogs_009_s1
+  name: 网络认证域用户名与记住选择综合流程
+  description: 在网络认证对话框中输入域用户名与密码，勾选不再询问复选框，切换到注册模式，验证全部认证控件可定位
+  steps:
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: UsernameLineEdit
+      role: text
+    text: domain_user
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: DomainLineEdit
+      role: text
+    text: WORKGROUP
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: PasswordEdit_2
+    text: DomainPwd_2026
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: RegisterButton
+      role: push button
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordEdit_2
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RegisterButton
+      role: push button
+- id: suite_dialogs_010_s1
+  name: 文件冲突跳过与共存选择决策流程
+  description: 在文件冲突对话框中依次操作跳过、共存、删除、替换按钮，验证冲突决策全部控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnSkip
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnCoexist
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnDelete
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnReplace
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: click
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnSkip
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnReplace
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
 teardown:
 - action: session_stop

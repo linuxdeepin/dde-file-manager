@@ -239,5 +239,61 @@ suites:
     selector:
       name: KeyEdit
       role: text
+- id: suite_misc_ui_006_s1
+  name: 提示标签与工具提示显示控制综合流程
+  description: 验证提示标签与文本标签可定位，操作提示按钮与工具提示控件，验证提示显示控件全部可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Tooltip
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsBtn
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsLabel
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TextLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Tooltip
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsBtn
 teardown:
 - action: session_stop

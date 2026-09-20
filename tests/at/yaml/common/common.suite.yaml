@@ -1023,5 +1023,208 @@ suites:
     action: assert_element
     selector:
       name: SetPasswordBt
+- id: suite_common_019_s1
+  name: 文件属性所有者组与权限标签综合设置流程
+  description: 打开文件属性对话框，选择所有者与用户组下拉框，设置其他用户权限，验证属性滚动区域与名称图标可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: OwnerComboBox
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: GroupComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: OtherComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameEditIcon
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll pane
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OwnerComboBox
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: GroupComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OtherComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NameEditIcon
+- id: suite_common_020_s1
+  name: 光盘刻录校验与弹出高级设置完整流程
+  description: 在光盘刻录对话框中勾选校验光盘与弹出光盘复选框，勾选终结光盘复选框，点击高级按钮展开设置，验证全部刻录选项控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckdiscCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChecksumCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: EjectCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AdvanceBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckdiscCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChecksumCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EjectCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AdvanceBtn
+      role: push button
+- id: suite_common_021_s1
+  name: 打开方式默认设置与可执行属性组合流程
+  description: 在打开方式对话框中聚焦应用列表与按钮组，勾选设为默认程序复选框，勾选可执行属性，点击文件选择按钮，验证全部打开方式控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithListWidget
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithBtnGroup
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenFileChooseButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithBtnGroup
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenFileChooseButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithDialog-QScrollArea
+      role: scroll pane
 teardown:
 - action: session_stop
