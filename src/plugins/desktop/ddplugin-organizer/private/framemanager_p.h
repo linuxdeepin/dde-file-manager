@@ -29,6 +29,7 @@ public:
     void clearSurface();
     SurfacePointer createSurface(QWidget *root);
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
+    void refreshCollectionViews();
     void buildOrganizer();
     QList<SurfacePointer> surfaces() const;
 

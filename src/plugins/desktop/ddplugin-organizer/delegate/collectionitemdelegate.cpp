@@ -28,6 +28,8 @@
 #include <QScrollBar>
 #include <QPainterPath>
 
+#include <QFontMetricsF>
+
 #include <cmath>
 #include <mutex>
 #include <linux/limits.h>
@@ -70,6 +72,12 @@ ElideTextLayout *CollectionItemDelegatePrivate::createTextlayout(const QModelInd
                               : index.data(Global::ItemRoles::kItemFileBaseNameOfRenameRole).toString();
     ElideTextLayout *layout = new ElideTextLayout(name);
     int lineHeight = UniversalUtils::getTextLineHeight(index, q->parent()->fontMetrics());
+    // A monitor hotplug can leave the view without a usable font engine for a moment, and
+    // fontMetrics() then reports zero. A zero line height makes the layout place every line
+    // at the same position (overlapping names) and lets the text vanish, so fall back to
+    // the float metrics bound to the view.
+    if (lineHeight <= 0)
+        lineHeight = static_cast<int>(std::ceil(QFontMetricsF(q->parent()->font(), q->parent()).height()));
     layout->setAttribute(ElideTextLayout::kWrapMode, (uint)QTextOption::WrapAtWordBoundaryOrAnywhere);
     layout->setAttribute(ElideTextLayout::kLineHeight, lineHeight);
     layout->setAttribute(ElideTextLayout::kAlignment, Qt::AlignHCenter);
@@ -626,7 +634,16 @@ QRect CollectionItemDelegate::textPaintRect(const QStyleOptionViewItem &option, 
 
 void CollectionItemDelegate::updateItemSizeHint() const
 {
-    d->textLineHeight = parent()->fontMetrics().height();
+    // A monitor hotplug rebuilds the desktop frame, and during that window the view may
+    // not resolve a usable font engine yet: QWidget::fontMetrics() then reports zero.
+    // Caching that zero collapses the item height and leaves the file name without any
+    // drawing room, so fall back to the float metrics and keep the last valid value.
+    int lineHeight = parent()->fontMetrics().height();
+    if (lineHeight <= 0)
+        lineHeight = static_cast<int>(std::ceil(QFontMetricsF(parent()->font(), parent()).height()));
+    if (lineHeight <= 0)
+        return;
+    d->textLineHeight = lineHeight;
     // old style
     int width = parent()->iconSize().width() * 17 / 10;
     // Use UniversalUtils::getTextLineHeight for text area height to stay consistent
