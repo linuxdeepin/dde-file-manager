@@ -73,7 +73,10 @@ void SideBarEventReceiver::bindEvents()
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Remove", this, &SideBarEventReceiver::handleItemRemove);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Update", this, &SideBarEventReceiver::handleItemUpdate);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Insert", this, &SideBarEventReceiver::handleItemInsert);
-    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Hidden", this, &SideBarEventReceiver::handleItemHidden);
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Hidden", this,
+                            static_cast<void (SideBarEventReceiver::*)(const QUrl &, bool)>(&SideBarEventReceiver::handleItemHidden));
+    dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_Hidden", this,
+                            static_cast<void (SideBarEventReceiver::*)(quint64, const QUrl &, bool)>(&SideBarEventReceiver::handleItemHidden));
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Item_TriggerEdit", this, &SideBarEventReceiver::handleItemTriggerEdit);
     dpfSlotChannel->connect(kCurrentEventSpace, "slot_Sidebar_UpdateSelection", this, &SideBarEventReceiver::handleSidebarUpdateSelection);
 }
@@ -83,6 +86,15 @@ void SideBarEventReceiver::handleItemHidden(const QUrl &url, bool visible)
     QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
     for (SideBarWidget *sidebar : allSideBar)
         sidebar->setItemVisiable(url, visible);
+}
+
+void SideBarEventReceiver::handleItemHidden(quint64 winId, const QUrl &url, bool visible)
+{
+    QList<SideBarWidget *> allSideBar = SideBarHelper::allSideBar();
+    for (SideBarWidget *sidebar : allSideBar) {
+        if (SideBarHelper::windowId(sidebar) == winId)
+            sidebar->setItemVisiable(url, visible);
+    }
 }
 
 void SideBarEventReceiver::handleItemTriggerEdit(quint64 winId, const QUrl &url)
