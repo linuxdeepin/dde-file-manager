@@ -34,6 +34,12 @@ void CoreEventsCaller::setSidebarItemVisible(const QUrl &url, bool visible)
                          url, visible);
 }
 
+void CoreEventsCaller::setSidebarItemVisible(quint64 winId, const QUrl &url, bool visible)
+{
+    dpfSlotChannel->push("dfmplugin_sidebar", "slot_Item_Hidden",
+                         winId, url, visible);
+}
+
 void CoreEventsCaller::setSelectionMode(QWidget *sender, const QAbstractItemView::SelectionMode mode)
 {
     quint64 id = FMWindowsIns.findWindowId(sender);
