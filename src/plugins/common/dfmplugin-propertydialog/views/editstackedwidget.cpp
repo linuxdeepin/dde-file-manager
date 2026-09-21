@@ -193,11 +193,13 @@ void NameTextEdit::keyPressEvent(QKeyEvent *event)
     Q_UNUSED(modifiers)
     if (event->key() == Qt::Key_Escape) {
         setIsCanceled(true);
+        clearFocus();
         emit editFinished();
         return;
     }
     if (event->key() == Qt::Key_Return || event->key() == Qt::Key_Enter) {
         setIsCanceled(false);
+        clearFocus();
         emit editFinished();
         return;
     }
@@ -270,6 +272,7 @@ void EditStackedWidget::initTextShowFrame(QString fileName)
     nameEditIcon->setIcon(QIcon::fromTheme("dfm_rename"));
     nameEditIcon->setIconSize({ 12, 12 });
     nameEditIcon->setFixedSize(30, 30);
+    nameEditIcon->setFocusPolicy(Qt::NoFocus);
 
     connect(nameEditIcon, &QPushButton::clicked, this, &EditStackedWidget::renameFile);
 
