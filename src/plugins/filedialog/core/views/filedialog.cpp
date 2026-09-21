@@ -561,7 +561,8 @@ void FileDialog::urlSchemeEnable(const QString &scheme, bool enable)
     url.setScheme(scheme);
     url.setPath("/");
     url.setHost("");
-    CoreEventsCaller::setSidebarItemVisible(url, enable);
+    quint64 winId = FMWindowsIns.findWindowId(this);
+    CoreEventsCaller::setSidebarItemVisible(winId, url, enable);
 }
 
 void FileDialog::setCurrentInputName(const QString &name)
