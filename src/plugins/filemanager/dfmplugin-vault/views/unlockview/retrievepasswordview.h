@@ -107,7 +107,6 @@ private:
     QString validationResults;
 
     QGridLayout *funLayout { nullptr };
-    DTK_WIDGET_NAMESPACE::DFileDialog *fileDialog { nullptr };
     QWidget *m_parent { Q_NULLPTR };
     DTK_WIDGET_NAMESPACE::DSpinner *spinner { nullptr };
 
