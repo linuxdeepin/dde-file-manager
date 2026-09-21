@@ -50,6 +50,13 @@ QPoint NormalizedModePrivate::findValidPos(int &currentIndex, const int width, c
     if (currentIndex > q->surfaces.count())
         currentIndex = q->surfaces.count();
 
+    // Defensive: the search index is 1-based, so anything below 1 would read before the
+    // first surface. Callers are expected to skip layout when no surface is available.
+    if (currentIndex <= 0) {
+        fmWarning() << "invalid surface index" << currentIndex << "surfaces" << q->surfaces.count();
+        return { -1, -1 };
+    }
+
     auto sur = q->surfaces.at(currentIndex - 1);
     Q_ASSERT(sur);
 
@@ -547,6 +554,14 @@ void NormalizedMode::reset()
 
 void NormalizedMode::layout()
 {
+    // A monitor hotplug clears the surfaces before the new screen becomes available.
+    // Laying collections out at that moment has no target surface, and the placement
+    // search would index outside the surface list.
+    if (surfaces.isEmpty()) {
+        fmWarning() << "no surface to layout collections, skip.";
+        return;
+    }
+
     auto holders = d->holders.values();
     {
         const QStringList &ordered = d->classifier->classes();

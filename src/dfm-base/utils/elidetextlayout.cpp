@@ -5,6 +5,7 @@
 #include "elidetextlayout.h"
 
 #include <QPainter>
+#include <QFontMetricsF>
 #include <QtMath>
 #include <QPainterPath>
 #include <QTextDocument>
@@ -328,6 +329,14 @@ QList<QRectF> ElideTextLayout::layout(const QRectF &rect, Qt::TextElideMode elid
 
     initLayoutOption(lay);
     int textLineHeight = attribute<int>(kLineHeight);
+    if (textLineHeight <= 0) {
+        // Defensive: a degenerate line height would divide by zero below and stack every
+        // line at the same position. Derive one from the font that is actually used.
+        const QFont layoutFont = attribute<QFont>(kFont);
+        textLineHeight = static_cast<int>(std::ceil(QFontMetricsF(layoutFont, painter ? painter->device() : nullptr).height()));
+        if (textLineHeight <= 0)
+            textLineHeight = qMax(1, document->defaultFont().pointSize());
+    }
     QSizeF size = rect.size();
     QPointF offset = rect.topLeft();
     qreal curHeight = 0;

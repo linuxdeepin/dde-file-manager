@@ -9,6 +9,7 @@
 #include "interface/canvasviewshell.h"
 #include "desktoputils/ddplugin_eventinterface_helper.h"
 #include "menus/extendcanvasscene.h"
+#include "view/collectionview.h"
 
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
 
@@ -46,9 +47,8 @@ FrameManagerPrivate::FrameManagerPrivate(FrameManager *qq)
     layoutTimer->setInterval(1000);
     layoutTimer->setSingleShot(true);
     connect(layoutTimer, &QTimer::timeout, this, [this] {
-        if (organizer) {
-            organizer->layout();
-        }
+        if (q)
+            q->layout();
     });
 
     hideAllNotifyExpireTimer = new QTimer(this);
@@ -141,6 +141,20 @@ void FrameManagerPrivate::layoutSurface(QWidget *root, SurfacePointer surface, b
     } else {
         surface->setParent(root);
         surface->setGeometry(QRect(QPoint(0, 0), root->geometry().size()));
+    }
+}
+
+void FrameManagerPrivate::refreshCollectionViews()
+{
+    for (const auto &surface : surfaceWidgets) {
+        if (!surface)
+            continue;
+
+        const auto views = surface->findChildren<CollectionView *>();
+        for (auto *view : views) {
+            view->updateRegionView();
+            view->viewport()->update();
+        }
     }
 }
 
@@ -389,8 +403,12 @@ bool FrameManager::initialize()
 
 void FrameManager::layout()
 {
-    if (d->organizer)
+    if (d->organizer) {
         d->organizer->layout();
+        // A screen geometry change may leave collection frames at the same size,
+        // so their resizeEvent cannot refresh cached item and text metrics.
+        d->refreshCollectionViews();
+    }
 }
 
 void FrameManager::switchMode(OrganizerMode mode)
@@ -538,7 +556,6 @@ void FrameManager::onGeometryChanged()
             d->layoutSurface(win, surface);
     }
 
-    // layout collection widgets
-    if (d->organizer)
-        d->organizer->layout();
+    // layout collection widgets and refresh their cached item metrics
+    layout();
 }
