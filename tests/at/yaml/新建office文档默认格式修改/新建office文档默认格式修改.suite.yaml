@@ -1,0 +1,72 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 新建office文档默认格式修改_suite
+app: dde-file-manager
+description: 新建office文档默认格式修改模块 AT-SPI 用例
+module: 新建office文档默认格式修改
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 新建office文档默认格式修改_0001_s1
+  name: 【新建office文档默认格式修改】网络共享目录中新建office文档属性查看
+  description: 【新建office文档默认格式修改】网络共享目录中新建office文档属性查看
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 网络
+- id: 新建office文档默认格式修改_0002_s1
+  name: 【新建office文档默认格式修改】U盘里新建office文档属性查看
+  description: 【新建office文档默认格式修改】U盘里新建office文档属性查看
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 新建office文档默认格式修改_0003_s1
+  name: 【新建office文档默认格式修改】新建office文档属性查看
+  description: 【新建office文档默认格式修改】新建office文档属性查看
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+teardown:
+- action: session_stop

@@ -1,0 +1,148 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 同步流程_suite
+app: dde-file-manager
+description: 同步流程模块 AT-SPI 用例
+module: 同步流程
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 同步流程_0001_s1
+  name: 自动同步
+  description: 自动同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+  - action: assert_element
+    ref: 网络
+- id: 同步流程_0002_s1
+  name: 云盘同步规则检测_ 场景1
+  description: 云盘同步规则检测_ 场景1
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 同步流程_0003_s1
+  name: 云盘同步规则检测_ 场景2_本地更新
+  description: 云盘同步规则检测_ 场景2_本地更新
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步流程_0004_s1
+  name: 云盘同步规则检测_ 场景2_还原
+  description: 云盘同步规则检测_ 场景2_还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 同步流程_0005_s1
+  name: 云盘同步规则检测_ 场景2_本地操作1
+  description: 云盘同步规则检测_ 场景2_本地操作1
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 同步流程_0006_s1
+  name: 云盘同步规则检测_ 场景2_本地操作2
+  description: 云盘同步规则检测_ 场景2_本地操作2
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 同步流程_0007_s1
+  name: 云盘同步规则检测_ 场景3_本地操作
+  description: 云盘同步规则检测_ 场景3_本地操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 同步流程_0008_s1
+  name: 云盘同步规则检测_ 场景3_各端操作2
+  description: 云盘同步规则检测_ 场景3_各端操作2
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 同步流程_0009_s1
+  name: 云盘状态检测
+  description: 云盘状态检测
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

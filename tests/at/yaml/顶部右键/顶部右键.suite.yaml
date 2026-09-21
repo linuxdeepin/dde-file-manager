@@ -1,0 +1,126 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 顶部右键_suite
+app: dde-file-manager
+description: 顶部右键模块 AT-SPI 用例
+module: 顶部右键
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 顶部右键_0001_s1
+  name: 顶部右键-“移至右边工作区”功能
+  description: 顶部右键-“移至右边工作区”功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 顶部右键_0002_s1
+  name: 顶部右键-“移至左边工作区”功能
+  description: 顶部右键-“移至左边工作区”功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 顶部右键_0003_s1
+  name: 顶部右键-”总在最前“功能_
+  description: 顶部右键-”总在最前“功能_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 顶部右键_0004_s1
+  name: '[030]顶部右键-移动功能'
+  description: '[030]顶部右键-移动功能'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 顶部右键_0005_s1
+  name: '[029]顶部右键-更改大小功能'
+  description: '[029]顶部右键-更改大小功能'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 顶部右键_0006_s1
+  name: 顶部右键-最大化_
+  description: 顶部右键-最大化_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 顶部右键_0007_s1
+  name: 顶部右键-最小化_
+  description: 顶部右键-最小化_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 顶部右键_0008_s1
+  name: 顶部菜单“关闭”_
+  description: 顶部菜单“关闭”_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 顶部右键_0009_s1
+  name: 顶部右键-”总在可见工作区“功能
+  description: 顶部右键-”总在可见工作区“功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

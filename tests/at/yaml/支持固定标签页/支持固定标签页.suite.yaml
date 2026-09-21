@@ -1,0 +1,282 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 支持固定标签页_suite
+app: dde-file-manager
+description: 支持固定标签页模块 AT-SPI 用例
+module: 支持固定标签页
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 支持固定标签页_0001_s1
+  name: 【支持固定标签页】添加自定义目录后打开文管，切换目录
+  description: 【支持固定标签页】添加自定义目录后打开文管，切换目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: TabBar
+- id: 支持固定标签页_0002_s1
+  name: 【支持固定标签页】打开多文管窗口后自定义目录失效
+  description: 【支持固定标签页】打开多文管窗口后自定义目录失效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: TabBar
+- id: 支持固定标签页_0003_s1
+  name: 【支持固定标签页】添加特殊权限的目录为固定目录
+  description: 【支持固定标签页】添加特殊权限的目录为固定目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: TabBar
+- id: 支持固定标签页_0004_s1
+  name: 【支持固定标签页】多用户添加固定标签页
+  description: 【支持固定标签页】多用户添加固定标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 支持固定标签页_0005_s1
+  name: 【支持固定标签页】固定目录已被打开后删除固定目录
+  description: 【支持固定标签页】固定目录已被打开后删除固定目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 支持固定标签页_0006_s1
+  name: 【支持固定标签页】新窗口自定义目录路径过长
+  description: 【支持固定标签页】新窗口自定义目录路径过长
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 支持固定标签页_0007_s1
+  name: 【支持固定标签页】文件选择/保存对话框中的固定标签页
+  description: 【支持固定标签页】文件选择/保存对话框中的固定标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 支持固定标签页_0008_s1
+  name: 【支持固定标签页】稳定性测试
+  description: 【支持固定标签页】稳定性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 支持固定标签页_0009_s1
+  name: 【支持固定标签页】性能测试
+  description: 【支持固定标签页】性能测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 支持固定标签页_0010_s1
+  name: 【支持固定标签页】安全性测试
+  description: 【支持固定标签页】安全性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 支持固定标签页_0011_s1
+  name: 【支持固定标签页】新窗口指定目录异常系测试
+  description: 【支持固定标签页】新窗口指定目录异常系测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 网络
+- id: 支持固定标签页_0012_s1
+  name: 【支持固定标签页】新窗口指定目录失效
+  description: 【支持固定标签页】新窗口指定目录失效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 支持固定标签页_0013_s1
+  name: 【支持固定标签页】新窗口自定义目录异常系测试
+  description: 【支持固定标签页】新窗口自定义目录异常系测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 网络
+- id: 支持固定标签页_0014_s1
+  name: 【支持固定标签页】新窗口自定义目录失效
+  description: 【支持固定标签页】新窗口自定义目录失效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: TabBar
+- id: 支持固定标签页_0015_s1
+  name: 【支持固定标签页】默认配置测试
+  description: 【支持固定标签页】默认配置测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

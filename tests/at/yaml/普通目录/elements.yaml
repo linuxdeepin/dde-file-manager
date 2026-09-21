@@ -1,0 +1,23 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+elements:
+  桌面:
+    name: 桌面
+    role: table cell
+  side_bar_view:
+    name: side_bar_view
+    role: tree
+  网络:
+    name: 网络
+    role: table cell
+  视频:
+    name: 视频
+    role: table cell
+  文档:
+    name: 文档
+  下载:
+    name: 下载
+  音乐:
+    name: 音乐

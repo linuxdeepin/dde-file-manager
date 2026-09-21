@@ -1,0 +1,249 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 拖拽文件至工作区边缘滚动列表_suite
+app: dde-file-manager
+description: 拖拽文件至工作区边缘滚动列表模块 AT-SPI 用例
+module: 拖拽文件至工作区边缘滚动列表
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 拖拽文件至工作区边缘滚动列表_0001_s1
+  name: 【拖拽文件至边缘滚动列表】拖拽移动硬盘/光驱/手机上的文件至边缘滚动
+  description: 【拖拽文件至边缘滚动列表】拖拽移动硬盘/光驱/手机上的文件至边缘滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: StatusBar
+  - action: assert_element
+    ref: BottomBar
+- id: 拖拽文件至工作区边缘滚动列表_0002_s1
+  name: 【拖拽文件至边缘滚动列表】拖拽U盘上的文件至边缘滚动
+  description: 【拖拽文件至边缘滚动列表】拖拽U盘上的文件至边缘滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: StatusBar
+  - action: assert_element
+    ref: BottomBar
+- id: 拖拽文件至工作区边缘滚动列表_0003_s1
+  name: 【拖拽文件至边缘滚动列表】拖拽虚拟目录中的文件至边缘滚动
+  description: 【拖拽文件至边缘滚动列表】拖拽虚拟目录中的文件至边缘滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: StatusBar
+- id: 拖拽文件至工作区边缘滚动列表_0004_s1
+  name: 【拖拽文件至边缘滚动列表】目录中有50W个文件时拖拽文件触发滚动
+  description: 【拖拽文件至边缘滚动列表】目录中有50W个文件时拖拽文件触发滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 拖拽文件至工作区边缘滚动列表_0005_s1
+  name: 【拖拽文件至边缘滚动列表】拖拽ftp/sftp/dav/davs/nfs上的文件至边缘滚动
+  description: 【拖拽文件至边缘滚动列表】拖拽ftp/sftp/dav/davs/nfs上的文件至边缘滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: StatusBar
+- id: 拖拽文件至工作区边缘滚动列表_0006_s1
+  name: 【拖拽文件至边缘滚动列表】加/减速滚动
+  description: 【拖拽文件至边缘滚动列表】加/减速滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 拖拽文件至工作区边缘滚动列表_0007_s1
+  name: 【拖拽文件至边缘滚动列表】延迟50ms滚动
+  description: 【拖拽文件至边缘滚动列表】延迟50ms滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 拖拽文件至工作区边缘滚动列表_0008_s1
+  name: 【拖拽文件至边缘滚动列表】文件拖动到 热区外不触发滚动
+  description: 【拖拽文件至边缘滚动列表】文件拖动到 热区外不触发滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 拖拽文件至工作区边缘滚动列表_0009_s1
+  name: 【拖拽文件至边缘滚动列表】列表视图模式下向上/下/左/右滚动
+  description: 【拖拽文件至边缘滚动列表】列表视图模式下向上/下/左/右滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: side_bar_view
+- id: 拖拽文件至工作区边缘滚动列表_0010_s1
+  name: 【拖拽文件至边缘滚动列表】多次滚动
+  description: 【拖拽文件至边缘滚动列表】多次滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

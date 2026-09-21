@@ -1,0 +1,607 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 2500U1需求_suite
+app: dde-file-manager
+description: 2500U1需求模块 AT-SPI 用例
+module: 2500U1需求
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 2500U1需求_0001_s1
+  name: 【在新标签页中打开新文件夹】修改从新标签打开默认目录
+  description: 【在新标签页中打开新文件夹】修改从新标签打开默认目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 桌面
+- id: 2500U1需求_0002_s1
+  name: 【home目录支持长文件名】在home目录下创建长文件名文件
+  description: 【home目录支持长文件名】在home目录下创建长文件名文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 2500U1需求_0003_s1
+  name: 【无法删除时彻底删除文件】清理空间后再删除文件
+  description: 【无法删除时彻底删除文件】清理空间后再删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 2500U1需求_0004_s1
+  name: 【拖拽文件至边缘滚动列表】拖拽smb上的文件至边缘滚动
+  description: 【拖拽文件至边缘滚动列表】拖拽smb上的文件至边缘滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: StatusBar
+- id: 2500U1需求_0005_s1
+  name: 【拖拽文件至边缘滚动列表】树形视图模式下向上/下/左/右滚动
+  description: 【拖拽文件至边缘滚动列表】树形视图模式下向上/下/左/右滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: side_bar_view
+- id: 2500U1需求_0006_s1
+  name: 【拖拽文件至边缘滚动列表】图标视图模式下向上/下滚动
+  description: 【拖拽文件至边缘滚动列表】图标视图模式下向上/下滚动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 2500U1需求_0007_s1
+  name: 【复制文件地址】复制U盘里的文件地址
+  description: 【复制文件地址】复制U盘里的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 文档
+- id: 2500U1需求_0008_s1
+  name: 【复制文件地址】复制桌面上的文件地址
+  description: 【复制文件地址】复制桌面上的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 2500U1需求_0009_s1
+  name: 【复制文件地址】复制smb上的文件地址
+  description: 【复制文件地址】复制smb上的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 文档
+- id: 2500U1需求_0010_s1
+  name: 【文件列表支持分组】按照类型进行分组
+  description: 【文件列表支持分组】按照类型进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 2500U1需求_0011_s1
+  name: 【文件列表支持分组】按照大小进行分组
+  description: 【文件列表支持分组】按照大小进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: side_bar_view
+- id: 2500U1需求_0012_s1
+  name: 【文件列表支持分组】按照修改/创建时间进行分组
+  description: 【文件列表支持分组】按照修改/创建时间进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 2500U1需求_0013_s1
+  name: 【文件列表支持分组】按照名称进行分组
+  description: 【文件列表支持分组】按照名称进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: 2500U1需求_0014_s1
+  name: 【支持固定标签页】新窗口默认目录设置为指定目录
+  description: 【支持固定标签页】新窗口默认目录设置为指定目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 2500U1需求_0015_s1
+  name: 【支持固定标签页】新窗口添加/删除多个自定义目录
+  description: 【支持固定标签页】新窗口添加/删除多个自定义目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: TabBar
+- id: 2500U1需求_0016_s1
+  name: 【支持固定标签页】新窗口添加1个自定义目录
+  description: 【支持固定标签页】新窗口添加1个自定义目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 计算机
+- id: 2500U1需求_0017_s1
+  name: 【支持固定标签页】修改新窗口打开默认目录
+  description: 【支持固定标签页】修改新窗口打开默认目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 桌面
+- id: 2500U1需求_0018_s1
+  name: 【在新标签页中打开新文件夹】在桌面打开新文件夹后再打开其子文件夹
+  description: 【在新标签页中打开新文件夹】在桌面打开新文件夹后再打开其子文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: TabBar
+- id: 2500U1需求_0019_s1
+  name: 【在新标签页中打开新文件夹】不勾选在新标签页中打开新文件夹
+  description: 【在新标签页中打开新文件夹】不勾选在新标签页中打开新文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 2500U1需求_0020_s1
+  name: 【在新标签页中打开新文件夹】在桌面打开新文件夹
+  description: 【在新标签页中打开新文件夹】在桌面打开新文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_element
+    ref: 桌面
+- id: 2500U1需求_0021_s1
+  name: 【文件粉碎】支持文件粉碎的文件类型检查
+  description: 【文件粉碎】支持文件粉碎的文件类型检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 视频
+- id: 2500U1需求_0022_s1
+  name: 【文件粉碎】非虚拟目录中文件粉碎
+  description: 【文件粉碎】非虚拟目录中文件粉碎
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 2500U1需求_0023_s1
+  name: 【外设支持实时同步】拷贝时性能优先
+  description: 【外设支持实时同步】拷贝时性能优先
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 视频
+- id: 2500U1需求_0024_s1
+  name: 【外设支持实时同步】拷贝时数据实时同步
+  description: 【外设支持实时同步】拷贝时数据实时同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 视频
+- id: 2500U1需求_0025_s1
+  name: 【文件排序支持同类型聚合排序】外部存储设备、网络存储路径按类型排序结果验证
+  description: 【文件排序支持同类型聚合排序】外部存储设备、网络存储路径按类型排序结果验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 2500U1需求_0026_s1
+  name: 【文件排序支持同类型聚合排序】同mimetype文件排序规则验证
+  description: 【文件排序支持同类型聚合排序】同mimetype文件排序规则验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 2500U1需求_0027_s1
+  name: 【文件排序支持同类型聚合排序】按类型排序结果验证
+  description: 【文件排序支持同类型聚合排序】按类型排序结果验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 2500U1需求_0028_s1
+  name: 【有任务时禁止待机】往外设拷贝时不能自动待机
+  description: 【有任务时禁止待机】往外设拷贝时不能自动待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 2500U1需求_0029_s1
+  name: 【有任务时禁止待机】有拷贝任务时不能自动待机
+  description: 【有任务时禁止待机】有拷贝任务时不能自动待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 2500U1需求_0030_s1
+  name: 【网络共享目录设置备注】smb不合并入口时设置备注
+  description: 【网络共享目录设置备注】smb不合并入口时设置备注
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

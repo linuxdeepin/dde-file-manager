@@ -1,0 +1,36 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 右键菜单_suite
+app: dde-file-manager
+description: 右键菜单模块 AT-SPI 用例
+module: 右键菜单
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 右键菜单_0001_s1
+  name: 桌面空白处，右键菜单点击【显示设置】
+  description: 桌面空白处，右键菜单点击【显示设置】
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 设置
+teardown:
+- action: session_stop

@@ -1,0 +1,179 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 预览_suite
+app: dde-file-manager
+description: 预览模块 AT-SPI 用例
+module: 预览
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 预览_0001_s1
+  name: 显示uab包预览
+  description: 显示uab包预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 预览_0002_s1
+  name: 预览含有大量文件目录中的文件
+  description: 预览含有大量文件目录中的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0003_s1
+  name: 长文件名功能  - 压缩文件预览
+  description: 长文件名功能  - 压缩文件预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0004_s1
+  name: '[core]音频支持缩略图-未设置“音乐预览”，勾选后功能后，存在缩略图的音频文件缩略图即时生效'
+  description: '[core]音频支持缩略图-未设置“音乐预览”，勾选后功能后，存在缩略图的音频文件缩略图即时生效'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 设置
+- id: 预览_0005_s1
+  name: 音频支持缩略图-设置“音乐预览”，检查损坏的有封面缩略图的音频
+  description: 音频支持缩略图-设置“音乐预览”，检查损坏的有封面缩略图的音频
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0006_s1
+  name: 预览开关-关闭预览
+  description: 预览开关-关闭预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: 回收站
+- id: 预览_0007_s1
+  name: 预览开关-存在预览窗口时关闭预览
+  description: 预览开关-存在预览窗口时关闭预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0008_s1
+  name: 预览开关-文管打开多个标签关闭开启预览
+  description: 预览开关-文管打开多个标签关闭开启预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0009_s1
+  name: 预览开关-文管打开多个窗口关闭开启预览
+  description: 预览开关-文管打开多个窗口关闭开启预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0010_s1
+  name: 预览开关-多用户关闭预览
+  description: 预览开关-多用户关闭预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0011_s1
+  name: 预览-预览文件名包含特殊字符的文件
+  description: 预览-预览文件名包含特殊字符的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 预览_0012_s1
+  name: 预览-图片缩略图预览
+  description: 预览-图片缩略图预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+teardown:
+- action: session_stop

@@ -1,0 +1,115 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 云盘目录_suite
+app: dde-file-manager
+description: 云盘目录模块 AT-SPI 用例
+module: 云盘目录
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 云盘目录_0001_s1
+  name: 云盘目录-状态栏文件数量显示
+  description: 云盘目录-状态栏文件数量显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: StatusBar
+  - action: assert_element
+    ref: BottomBar
+- id: 云盘目录_0002_s1
+  name: 云盘目录-子标题栏选项检查
+  description: 云盘目录-子标题栏选项检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: StatusBar
+  - action: assert_element
+    ref: BottomBar
+- id: 云盘目录_0003_s1
+  name: 目录视图-图标视图显示-切换不同排序
+  description: 目录视图-图标视图显示-切换不同排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 云盘目录_0004_s1
+  name: 目录视图-列表视图显示-切换不同排序
+  description: 目录视图-列表视图显示-切换不同排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 云盘目录_0005_s1
+  name: 目录视图-树形视图显示-切换不同排序
+  description: 目录视图-树形视图显示-切换不同排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 云盘目录_0006_s1
+  name: 目录视图-树形视图显示-跨目录操作文件-打开
+  description: 目录视图-树形视图显示-跨目录操作文件-打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

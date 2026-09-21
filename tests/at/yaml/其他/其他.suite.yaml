@@ -1,0 +1,469 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 其他_suite
+app: dde-file-manager
+description: 其他模块 AT-SPI 用例
+module: 其他
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 其他_0001_s1
+  name: 右键菜单点击优化
+  description: 右键菜单点击优化
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 其他_0002_s1
+  name: 应用图标重命名
+  description: 应用图标重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0003_s1
+  name: 【右键菜单增加反选选项】组策略开启反选后，不影响反选快捷键
+  description: 【右键菜单增加反选选项】组策略开启反选后，不影响反选快捷键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0004_s1
+  name: 长文件名功能  - 文件夹，以新窗口打开
+  description: 长文件名功能  - 文件夹，以新窗口打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0005_s1
+  name: 长文件名功能  - 文件夹，以新标签打开
+  description: 长文件名功能  - 文件夹，以新标签打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0006_s1
+  name: 长文件名功能  - 文件夹/文件，以打开方式打开
+  description: 长文件名功能  - 文件夹/文件，以打开方式打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0007_s1
+  name: 长文件名功能  - 文件夹，以管理员身份打开
+  description: 长文件名功能  - 文件夹，以管理员身份打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0008_s1
+  name: 长文件名功能  - 粘贴字符数超出新规则
+  description: 长文件名功能  - 粘贴字符数超出新规则
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0009_s1
+  name: 长文件名功能  - 强制删除
+  description: 长文件名功能  - 强制删除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0010_s1
+  name: 长文件名功能  - 删除、撤销
+  description: 长文件名功能  - 删除、撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0011_s1
+  name: 长文件名功能(关闭) - 文件夹，以新窗口打开
+  description: 长文件名功能(关闭) - 文件夹，以新窗口打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0012_s1
+  name: 长文件名功能(关闭) - 文件夹，以新标签打开
+  description: 长文件名功能(关闭) - 文件夹，以新标签打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0013_s1
+  name: 长文件名功能(关闭) - 文件夹/文件，以打开方式打开
+  description: 长文件名功能(关闭) - 文件夹/文件，以打开方式打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0014_s1
+  name: 长文件名功能(关闭)  - 文件夹，以管理员身份打开
+  description: 长文件名功能(关闭)  - 文件夹，以管理员身份打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0015_s1
+  name: 长文件名功能(关闭) - 剪切，粘贴字符数超出规则
+  description: 长文件名功能(关闭) - 剪切，粘贴字符数超出规则
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0016_s1
+  name: 长文件名功能(关闭) - 拖拽
+  description: 长文件名功能(关闭) - 拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0017_s1
+  name: 长文件名功能(关闭) - 剪贴板
+  description: 长文件名功能(关闭) - 剪贴板
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0018_s1
+  name: 长文件名功能(关闭)  - 批量重命名，添加文本
+  description: 长文件名功能(关闭)  - 批量重命名，添加文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0019_s1
+  name: 长文件名功能(关闭)  - 批量重命名，自定义文本
+  description: 长文件名功能(关闭)  - 批量重命名，自定义文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0020_s1
+  name: 长文件名功能(关闭)  - 删除、撤销
+  description: 长文件名功能(关闭)  - 删除、撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0021_s1
+  name: 长文件名功能(关闭)  - 文件和文件夹混合排序
+  description: 长文件名功能(关闭)  - 文件和文件夹混合排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 其他_0022_s1
+  name: 长文件名功能(关闭) - 复制，剪切，拖拽到/tmp目录
+  description: 长文件名功能(关闭) - 复制，剪切，拖拽到/tmp目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0023_s1
+  name: 长文件名功能(关闭) - 在终端中打开
+  description: 长文件名功能(关闭) - 在终端中打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0024_s1
+  name: 长文件名功能(关闭) - 共享文件夹
+  description: 长文件名功能(关闭) - 共享文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0025_s1
+  name: 长文件名功能(关闭) - 病毒查杀
+  description: 长文件名功能(关闭) - 病毒查杀
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0026_s1
+  name: 【其他】外设-卸载移动硬盘
+  description: 【其他】外设-卸载移动硬盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0027_s1
+  name: 【其他】磁盘插件适配任务栏托盘区-将磁盘插件在托盘窗口和任务栏托盘区之间反复拖拽
+  description: 【其他】磁盘插件适配任务栏托盘区-将磁盘插件在托盘窗口和任务栏托盘区之间反复拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0028_s1
+  name: 【其他】托盘区域磁盘插件右键操作
+  description: 【其他】托盘区域磁盘插件右键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 其他_0029_s1
+  name: 【其他】任务栏托盘区域磁盘插件右键操作
+  description: 【其他】任务栏托盘区域磁盘插件右键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 其他_0030_s1
+  name: 【其他】磁盘插件适配任务栏托盘区-磁盘插件在托盘窗口内可任一拖拽切换位置
+  description: 【其他】磁盘插件适配任务栏托盘区-磁盘插件在托盘窗口内可任一拖拽切换位置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0031_s1
+  name: 【其他】磁盘插件适配任务栏托盘区
+  description: 【其他】磁盘插件适配任务栏托盘区
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 其他_0032_s1
+  name: 【其他】文件复制剪切过程中-强制移除可移动储存设备提示
+  description: 【其他】文件复制剪切过程中-强制移除可移动储存设备提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0033_s1
+  name: 【其他】文件复制/剪切完成后-安全移除可移动储存设备提示
+  description: 【其他】文件复制/剪切完成后-安全移除可移动储存设备提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0034_s1
+  name: Bug186751转：长文件名-/tmp目录删除新建
+  description: Bug186751转：长文件名-/tmp目录删除新建
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: 其他_0035_s1
+  name: 【重复打开文件夹】默认勾选：在单独的进程中打开文件窗口
+  description: 【重复打开文件夹】默认勾选：在单独的进程中打开文件窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 其他_0036_s1
+  name: 文件名称分词优化-桌面图标大小为小，文件名称为英文，检查文件显示
+  description: 文件名称分词优化-桌面图标大小为小，文件名称为英文，检查文件显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

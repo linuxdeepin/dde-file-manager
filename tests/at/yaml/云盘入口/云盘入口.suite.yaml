@@ -1,0 +1,101 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 云盘入口_suite
+app: dde-file-manager
+description: 云盘入口模块 AT-SPI 用例
+module: 云盘入口
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 云盘入口_0001_s1
+  name: 云盘插件-已登录时右键菜单-暂停同步/继续同步
+  description: 云盘插件-已登录时右键菜单-暂停同步/继续同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 计算机
+- id: 云盘入口_0002_s1
+  name: 云盘插件-已登录时右键菜单-云盘回收站
+  description: 云盘插件-已登录时右键菜单-云盘回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 云盘入口_0003_s1
+  name: 云盘插件-名称显示-个人账号
+  description: 云盘插件-名称显示-个人账号
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 云盘入口_0004_s1
+  name: 云盘插件入口-计算机磁盘点击进入-已登录
+  description: 云盘插件入口-计算机磁盘点击进入-已登录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 设置
+teardown:
+- action: session_stop

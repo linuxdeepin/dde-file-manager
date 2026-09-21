@@ -1,0 +1,888 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 回收站_suite
+app: dde-file-manager
+description: 回收站模块 AT-SPI 用例
+module: 回收站
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 回收站_0001_s1
+  name: 长文件名功能  - 长文件名功能开启状态，删除文件后，回收站属性的数量和大小正确_
+  description: 长文件名功能  - 长文件名功能开启状态，删除文件后，回收站属性的数量和大小正确_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0002_s1
+  name: Bug200815转：长文件名开启，回收站还原原始目录已存在同名文件的
+  description: Bug200815转：长文件名开启，回收站还原原始目录已存在同名文件的
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0003_s1
+  name: '[t]打开-回收站内选中单个文件夹右键-打开'
+  description: '[t]打开-回收站内选中单个文件夹右键-打开'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 回收站_0004_s1
+  name: '[029~032]右键菜单-桌面回收站图标右键菜单检查'
+  description: '[029~032]右键菜单-桌面回收站图标右键菜单检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0005_s1
+  name: '[024~028]右键菜单-左侧侧边栏回收站右键菜单检查'
+  description: '[024~028]右键菜单-左侧侧边栏回收站右键菜单检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0006_s1
+  name: 回收站图标右键菜单
+  description: 回收站图标右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0007_s1
+  name: 回收站，文件和文件夹右键属性页面没有标记信息
+  description: 回收站，文件和文件夹右键属性页面没有标记信息
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 桌面
+- id: 回收站_0008_s1
+  name: '[086][core]添加数据到回收站-从桌面拖拽文件/文件夹到dock栏回收站图标上'
+  description: '[086][core]添加数据到回收站-从桌面拖拽文件/文件夹到dock栏回收站图标上'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0009_s1
+  name: '[124]添加数据到回收站-从smb目录下拖拽文件/文件夹到dock栏回收站图标上'
+  description: '[124]添加数据到回收站-从smb目录下拖拽文件/文件夹到dock栏回收站图标上'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0010_s1
+  name: 添加数据到回收站-添加同一属组不同用户的文件/文件夹到回收站
+  description: 添加数据到回收站-添加同一属组不同用户的文件/文件夹到回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0011_s1
+  name: 添加数据到回收站-多次删除文件到回收站
+  description: 添加数据到回收站-多次删除文件到回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0012_s1
+  name: 添加数据到回收站-连续删除重名文件/文件夹
+  description: 添加数据到回收站-连续删除重名文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0013_s1
+  name: 添加数据到回收站-删除多层级目录到回收站
+  description: 添加数据到回收站-删除多层级目录到回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0014_s1
+  name: '[t][core]右键菜单-回收站内空白处右键菜单功能正常'
+  description: '[t][core]右键菜单-回收站内空白处右键菜单功能正常'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0015_s1
+  name: '[083]右键菜单-回收站内选中多个文件夹呼出右键菜单正常'
+  description: '[083]右键菜单-回收站内选中多个文件夹呼出右键菜单正常'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 回收站_0016_s1
+  name: '[082]右键菜单-回收站内选中多个文件呼出右键菜单正常'
+  description: '[082]右键菜单-回收站内选中多个文件呼出右键菜单正常'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 回收站_0017_s1
+  name: '[081]右键菜单-回收站内同时选中有文件和文件夹呼出右键菜单正常'
+  description: '[081]右键菜单-回收站内同时选中有文件和文件夹呼出右键菜单正常'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 回收站_0018_s1
+  name: '[080]右键菜单-回收站内文件夹下部分右键菜单灰显不可点击'
+  description: '[080]右键菜单-回收站内文件夹下部分右键菜单灰显不可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0019_s1
+  name: '[078]全部还原-回收站无内容时不可操作'
+  description: '[078]全部还原-回收站无内容时不可操作'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0020_s1
+  name: 全部还原-原路径不存在时功能正常
+  description: 全部还原-原路径不存在时功能正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0021_s1
+  name: '[079]清空回收站-回收站无内容时不可操作'
+  description: '[079]清空回收站-回收站无内容时不可操作'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 回收站_0022_s1
+  name: 【回收站】清空回收站-回收站有内容时功能正常
+  description: 【回收站】清空回收站-回收站有内容时功能正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 回收站_0023_s1
+  name: '[t]排序-回收站点击列表头切换排序_'
+  description: '[t]排序-回收站点击列表头切换排序_'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 回收站_0024_s1
+  name: '[t]还原-原路径下存在同名文件/文件夹时功能正常_'
+  description: '[t]还原-原路径下存在同名文件/文件夹时功能正常_'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0025_s1
+  name: 还原-原路径改为只读时不能还原
+  description: 还原-原路径改为只读时不能还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0026_s1
+  name: 还原-选中大量文件/文件夹功能正常
+  description: 还原-选中大量文件/文件夹功能正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0027_s1
+  name: 还原-选中大文件/文件夹功能正常
+  description: 还原-选中大文件/文件夹功能正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 回收站_0028_s1
+  name: 【回收站】还原-ctrl+Z还原回收站内文件/文件夹
+  description: 【回收站】还原-ctrl+Z还原回收站内文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0029_s1
+  name: '[074]右键菜单-回收站内选择多个文件/文件夹右键菜单功能正常'
+  description: '[074]右键菜单-回收站内选择多个文件/文件夹右键菜单功能正常'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 回收站_0030_s1
+  name: '[126]回收站内拖拽文件/文件夹到文件夹下'
+  description: '[126]回收站内拖拽文件/文件夹到文件夹下'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0031_s1
+  name: 多窗口操作回收站
+  description: 多窗口操作回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0032_s1
+  name: 回收站，切换为列表模式_
+  description: 回收站，切换为列表模式_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0033_s1
+  name: 回收站，空白处右键清空回收站
+  description: 回收站，空白处右键清空回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0034_s1
+  name: '[core]彻底删除，shift+delete删除nas外置盘内文件/文件夹，文件/文件夹不进回收站'
+  description: '[core]彻底删除，shift+delete删除nas外置盘内文件/文件夹，文件/文件夹不进回收站'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0035_s1
+  name: 【回收站】入口-通过桌面回收站图标进入回收站
+  description: 【回收站】入口-通过桌面回收站图标进入回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0036_s1
+  name: 【回收站】入口-通过dock栏回收站图标进入回收站
+  description: 【回收站】入口-通过dock栏回收站图标进入回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 回收站_0037_s1
+  name: 【回收站】入口-通过启动器进入回收站
+  description: 【回收站】入口-通过启动器进入回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 回收站_0038_s1
+  name: 【回收站】入口-通过文管窗口进入回收站
+  description: 【回收站】入口-通过文管窗口进入回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 回收站_0039_s1
+  name: '[077]入口-通过终端进入回收站'
+  description: '[077]入口-通过终端进入回收站'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 回收站_0040_s1
+  name: '[093]页面检查-回收站无内容时'
+  description: '[093]页面检查-回收站无内容时'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0041_s1
+  name: '[094]页面检查-回收站有内容时'
+  description: '[094]页面检查-回收站有内容时'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0042_s1
+  name: '[095]页面检查-回收站内同名文件/文件夹的tooltips显示正确'
+  description: '[095]页面检查-回收站内同名文件/文件夹的tooltips显示正确'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0043_s1
+  name: '[127]页面检查-回收站有内容且超过1屏'
+  description: '[127]页面检查-回收站有内容且超过1屏'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 回收站_0044_s1
+  name: '[t]页面检查-回收站勾选/取消勾选表头显示正确'
+  description: '[t]页面检查-回收站勾选/取消勾选表头显示正确'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 回收站_0045_s1
+  name: '[096]页面检查-回收站详细信息展示正确'
+  description: '[096]页面检查-回收站详细信息展示正确'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: StatusBar
+- id: 回收站_0046_s1
+  name: 【回收站】添加数据到回收站-其他本地目录右键删除文件/文件夹
+  description: 【回收站】添加数据到回收站-其他本地目录右键删除文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 视频
+- id: 回收站_0047_s1
+  name: '[106]添加数据到回收站-其他本地目录快捷键delete删除文件/文件夹'
+  description: '[106]添加数据到回收站-其他本地目录快捷键delete删除文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 回收站
+teardown:
+- action: session_stop

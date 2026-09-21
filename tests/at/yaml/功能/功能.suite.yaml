@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 功能_suite
+app: dde-file-manager
+description: 功能模块 AT-SPI 用例
+module: 功能
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 功能_0001_s1
+  name: 添加并共享打印机
+  description: 添加并共享打印机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 功能_0002_s1
+  name: 验证打印权限设置
+  description: 验证打印权限设置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 功能_0003_s1
+  name: 【samba专项】【功能】验证 Samba 的用户认证机制
+  description: 【samba专项】【功能】验证 Samba 的用户认证机制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

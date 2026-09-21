@@ -1,0 +1,836 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 专业版水印_suite
+app: dde-file-manager
+description: 专业版水印模块 AT-SPI 用例
+module: 专业版水印
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 专业版水印_0001_s1
+  name: 水印支持配置-自定义水印支持格式和大小检查
+  description: 水印支持配置-自定义水印支持格式和大小检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 专业版水印_0002_s1
+  name: 水印支持配置-组策略关闭自定义水印
+  description: 水印支持配置-组策略关闭自定义水印
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0003_s1
+  name: 水印支持配置-自定义水印与系统水印重叠时，在系统水印上方
+  description: 水印支持配置-自定义水印与系统水印重叠时，在系统水印上方
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 专业版水印_0004_s1
+  name: 水印支持配置-组策略修改自定义水印参数
+  description: 水印支持配置-组策略修改自定义水印参数
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0005_s1
+  name: 水印支持配置-组策略添加自定义水印
+  description: 水印支持配置-组策略添加自定义水印
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0006_s1
+  name: 桌面水印优化-密安授权适配水印检查
+  description: 桌面水印优化-密安授权适配水印检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0007_s1
+  name: 桌面水印优化-企业授权适配水印检查
+  description: 桌面水印优化-企业授权适配水印检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0008_s1
+  name: 桌面水印优化-政务授权适配水印检查
+  description: 桌面水印优化-政务授权适配水印检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0009_s1
+  name: 桌面水印优化-试用期时修改文字字号和颜色
+  description: 桌面水印优化-试用期时修改文字字号和颜色
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0010_s1
+  name: 桌面水印优化-未授权时修改文字字号和颜色
+  description: 桌面水印优化-未授权时修改文字字号和颜色
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0011_s1
+  name: 桌面水印优化-专业版激活水印检查
+  description: 桌面水印优化-专业版激活水印检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0012_s1
+  name: 桌面水印优化-试用期水印检查
+  description: 桌面水印优化-试用期水印检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0013_s1
+  name: 桌面水印优化-未授权水印检查
+  description: 桌面水印优化-未授权水印检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0014_s1
+  name: 密安授权-双屏下检查图标展示
+  description: 密安授权-双屏下检查图标展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0015_s1
+  name: 密安授权-修改分辨率和所放比，检查图标展示
+  description: 密安授权-修改分辨率和所放比，检查图标展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0016_s1
+  name: 密安授权-使用密安授权后切换为其他授权
+  description: 密安授权-使用密安授权后切换为其他授权
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0017_s1
+  name: 密安授权-使用只有密安授权的激活码激活
+  description: 密安授权-使用只有密安授权的激活码激活
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0018_s1
+  name: 密安授权-使用企业授权后，切换为密安授权的激活码激活
+  description: 密安授权-使用企业授权后，切换为密安授权的激活码激活
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0019_s1
+  name: 密安授权-使用政务授权后，切换为密安授权的激活码激活
+  description: 密安授权-使用政务授权后，切换为密安授权的激活码激活
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0020_s1
+  name: 密安授权-桌面水印语言适配
+  description: 密安授权-桌面水印语言适配
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0021_s1
+  name: 密安授权-计算机属性语言适配
+  description: 密安授权-计算机属性语言适配
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0022_s1
+  name: 政务版-架构兼容_
+  description: 政务版-架构兼容_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0023_s1
+  name: 政务版-多屏/多分辨下桌面授权版本水印_
+  description: 政务版-多屏/多分辨下桌面授权版本水印_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0024_s1
+  name: 政务版-桌面授权版本水印-多语言适配_
+  description: 政务版-桌面授权版本水印-多语言适配_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0025_s1
+  name: 政务版-计算机属性-版本字段_
+  description: 政务版-计算机属性-版本字段_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0026_s1
+  name: 企业版-计算机属性-版本字段
+  description: 企业版-计算机属性-版本字段
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0027_s1
+  name: 企业版-桌面授权版本水印-多语言适配
+  description: 企业版-桌面授权版本水印-多语言适配
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0028_s1
+  name: 企业版-多屏/多分辨下桌面授权版本水印
+  description: 企业版-多屏/多分辨下桌面授权版本水印
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0029_s1
+  name: 政务版-多用户桌面授权版本水印和计算机属性检查
+  description: 政务版-多用户桌面授权版本水印和计算机属性检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0030_s1
+  name: 企业版-多用户桌面授权版本水印和计算机属性检查
+  description: 企业版-多用户桌面授权版本水印和计算机属性检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0031_s1
+  name: 系统未激活-UOSlogo右下角显示“未授权”水印
+  description: 系统未激活-UOSlogo右下角显示“未授权”水印
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0032_s1
+  name: 系统试用期-UOSlogo右下角显示“试用期”水印（保留原有实现）
+  description: 系统试用期-UOSlogo右下角显示“试用期”水印（保留原有实现）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0033_s1
+  name: 系统试用期过期-UOSlogo右下角显示“试用期过期”水印（保留原有实现）
+  description: 系统试用期过期-UOSlogo右下角显示“试用期过期”水印（保留原有实现）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0034_s1
+  name: 政务版-普通激活码激活后切换政务版激活码激活
+  description: 政务版-普通激活码激活后切换政务版激活码激活
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0035_s1
+  name: 企业版-使用普通激活码激活后切换企业版激活码激活
+  description: 企业版-使用普通激活码激活后切换企业版激活码激活
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0036_s1
+  name: 企业版-使用政务版激活后切换企业版激活码激活
+  description: 企业版-使用政务版激活后切换企业版激活码激活
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0037_s1
+  name: 企业版-激活后切换政务版激活码激活
+  description: 企业版-激活后切换政务版激活码激活
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0038_s1
+  name: 普通激活码激活系统-切换为未激活状态
+  description: 普通激活码激活系统-切换为未激活状态
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0039_s1
+  name: 政务版-激活后切换为未激活状态
+  description: 政务版-激活后切换为未激活状态
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0040_s1
+  name: 企业版-激活后切换为未激活状态
+  description: 企业版-激活后切换为未激活状态
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0041_s1
+  name: 企业版-架构兼容
+  description: 企业版-架构兼容
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 专业版水印_0042_s1
+  name: 控制中心-切换旋转方向水印显示正常
+  description: 控制中心-切换旋转方向水印显示正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0043_s1
+  name: 控制中心-切换缩放比例水印显示正常
+  description: 控制中心-切换缩放比例水印显示正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0044_s1
+  name: 控制中心-切换分辨率水印显示正常
+  description: 控制中心-切换分辨率水印显示正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0045_s1
+  name: 控制中心-切换字号水印不受影响
+  description: 控制中心-切换字号水印不受影响
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0046_s1
+  name: 控制中心-切换字体水印不受影响
+  description: 控制中心-切换字体水印不受影响
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0047_s1
+  name: 切换用户-水印显示一致
+  description: 切换用户-水印显示一致
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0048_s1
+  name: 多屏模式-水印显示一致
+  description: 多屏模式-水印显示一致
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 专业版水印_0049_s1
+  name: 切换工作区-水印显示一致
+  description: 切换工作区-水印显示一致
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

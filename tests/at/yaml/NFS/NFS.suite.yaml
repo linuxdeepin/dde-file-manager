@@ -1,0 +1,45 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: NFS_suite
+app: dde-file-manager
+description: NFS模块 AT-SPI 用例
+module: NFS
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: NFS_0001_s1
+  name: 【DAVS】复制文件时断网再恢复，可继续复制
+  description: 【DAVS】复制文件时断网再恢复，可继续复制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+- id: NFS_0002_s1
+  name: 外设和网络路径删除文件，NFS内部彻底删除文件
+  description: 外设和网络路径删除文件，NFS内部彻底删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+teardown:
+- action: session_stop

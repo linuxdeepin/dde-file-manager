@@ -1,0 +1,497 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: V25设计改版_suite
+app: dde-file-manager
+description: V25设计改版模块 AT-SPI 用例
+module: V25设计改版
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: V25设计改版_0001_s1
+  name: 地址栏-远程路径输入后通过键盘上下键选择地址
+  description: 地址栏-远程路径输入后通过键盘上下键选择地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0002_s1
+  name: 标签页优化-激活已打开的标签页时不刷新标签页
+  description: 标签页优化-激活已打开的标签页时不刷新标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0003_s1
+  name: 【V25设计改版】文件属性-查看音乐扩展属性
+  description: 【V25设计改版】文件属性-查看音乐扩展属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+- id: V25设计改版_0004_s1
+  name: 【V25设计改版】文件属性-查看视频扩展属性
+  description: 【V25设计改版】文件属性-查看视频扩展属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: V25设计改版_0005_s1
+  name: 【V25设计改版】文件属性-查看图片扩展属性
+  description: 【V25设计改版】文件属性-查看图片扩展属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: V25设计改版_0006_s1
+  name: 【V25设计改版】文件属性-属性窗口调整
+  description: 【V25设计改版】文件属性-属性窗口调整
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0007_s1
+  name: 【V25设计改版】文件属性-界面布局改版
+  description: 【V25设计改版】文件属性-界面布局改版
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0008_s1
+  name: 标签页-新建大量标签页标并进行拖动
+  description: 标签页-新建大量标签页标并进行拖动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_element
+    ref: 桌面
+- id: V25设计改版_0009_s1
+  name: 标签页-关闭标签页
+  description: 标签页-关闭标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: TabBar
+- id: V25设计改版_0010_s1
+  name: 标签页-位置显示
+  description: 标签页-位置显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: TabBar
+- id: V25设计改版_0011_s1
+  name: 排序方式-排序方式状态常驻
+  description: 排序方式-排序方式状态常驻
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0012_s1
+  name: 排序方式-下拉框开启与关闭
+  description: 排序方式-下拉框开启与关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0013_s1
+  name: 视图选项-显示预览开启和关闭
+  description: 视图选项-显示预览开启和关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: V25设计改版_0014_s1
+  name: 视图选项-调整列表高度
+  description: 视图选项-调整列表高度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: V25设计改版_0015_s1
+  name: 视图选项-图标视图不显示列表高度
+  description: 视图选项-图标视图不显示列表高度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: V25设计改版_0016_s1
+  name: 视图选项-调整网格密度
+  description: 视图选项-调整网格密度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: V25设计改版_0017_s1
+  name: 视图选项-列表视图不显示网格密度
+  description: 视图选项-列表视图不显示网格密度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: V25设计改版_0018_s1
+  name: 视图选项-列表视图不显示图标大小
+  description: 视图选项-列表视图不显示图标大小
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: V25设计改版_0019_s1
+  name: 视图选项-单击弹出视图选项面板
+  description: 视图选项-单击弹出视图选项面板
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0020_s1
+  name: 工具栏-新增视图选项和排序方式按钮
+  description: 工具栏-新增视图选项和排序方式按钮
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0021_s1
+  name: 搜索框-搜索记录保存与清除
+  description: 搜索框-搜索记录保存与清除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0022_s1
+  name: 搜索框-搜索结果列表切换排序方式
+  description: 搜索框-搜索结果列表切换排序方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0023_s1
+  name: 搜索框-搜索结果列表切换显示视图
+  description: 搜索框-搜索结果列表切换显示视图
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0024_s1
+  name: 搜索框-窗口过窄时搜索
+  description: 搜索框-窗口过窄时搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0025_s1
+  name: 搜索框-点击激活并搜索
+  description: 搜索框-点击激活并搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0026_s1
+  name: 地址栏-选择面包屑子路径跳转
+  description: 地址栏-选择面包屑子路径跳转
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: V25设计改版_0027_s1
+  name: 地址栏-本地路径跳转
+  description: 地址栏-本地路径跳转
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0028_s1
+  name: 标题栏-布局改版
+  description: 标题栏-布局改版
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddBtn
+- id: V25设计改版_0029_s1
+  name: 侧边栏-窗口过窄时自动折叠
+  description: 侧边栏-窗口过窄时自动折叠
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: AddressBar
+- id: V25设计改版_0030_s1
+  name: 侧边栏-多次折叠
+  description: 侧边栏-多次折叠
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: V25设计改版_0031_s1
+  name: 侧边栏-支持折叠
+  description: 侧边栏-支持折叠
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: V25设计改版_0032_s1
+  name: 顶部区域布局改版
+  description: 顶部区域布局改版
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop
