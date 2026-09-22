@@ -5,8 +5,7 @@
 /**
  * @file test_shortcut_new.cpp
  * @brief Unit tests for Shortcut (shortcut/shortcut.cpp) — ctor + toStr.
- *        (The old tests live under autotests/old/; this new file adds coverage
- *        in the active test-dfm-base target.)
+ *        This file adds coverage in the active test-dfm-base target.
  */
 
 #include <gtest/gtest.h>
