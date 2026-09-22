@@ -35,12 +35,8 @@
 #include "utils/indexstatuscheckbox.h"
 #include "utils/indexclientdescriptor.h"
 
-#define private public
-#define protected public
 #include "utils/abstractindexclient.h"
 #include "utils/indexstatuscontroller.h"
-#undef private
-#undef protected
 
 using namespace dfmplugin_search;
 

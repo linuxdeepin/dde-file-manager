@@ -49,11 +49,7 @@
 #include "searchmanager/searchmanager.h"
 #include "utils/indexstatuscheckbox.h"
 
-#define private public
-#define protected public
 #include "utils/checkboxwithfileindex.h"
-#undef private
-#undef protected
 
 using namespace dfmplugin_search;
 
