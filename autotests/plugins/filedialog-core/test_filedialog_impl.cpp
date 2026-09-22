@@ -107,7 +107,7 @@ protected:
                        [](QWidget *, const QList<QAbstractItemView::SelectionMode> &) {
                            __DBG_STUB_INVOKE__
                        });
-        stub.set_lamda(&CoreEventsCaller::setSidebarItemVisible,
+        stub.set_lamda(static_cast<void (*)(const QUrl &, bool)>(&CoreEventsCaller::setSidebarItemVisible),
                        [](const QUrl &, bool) {
                            __DBG_STUB_INVOKE__
                        });
