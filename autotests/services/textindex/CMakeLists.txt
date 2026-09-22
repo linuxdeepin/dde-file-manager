@@ -11,6 +11,17 @@ file(GLOB_RECURSE TEST_SOURCES
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h"
 )
 
+# The system-installed dfm6-search/field_names.h only defines kFileExt under
+# the FileName namespace. The textindex source files reference
+# Content::kFileExt and OcrText::kFileExt, causing a compilation failure.
+# Force-include a test-only compatibility header into the library build so
+# those symbols resolve without modifying production source files.
+if(TARGET dde-filemanager-textindex)
+    target_compile_options(dde-filemanager-textindex PRIVATE
+        -include "${CMAKE_CURRENT_SOURCE_DIR}/field_names_compat.h"
+    )
+endif()
+
 dfm_add_test(ut-textindex
     SOURCES ${TEST_SOURCES}
     LINK_LIBRARIES dde-filemanager-textindex dde-file-manager-extractor-lib dfm6-search Qt6::Core Qt6::Test PkgConfig::NL
