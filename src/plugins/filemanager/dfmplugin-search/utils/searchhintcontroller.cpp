@@ -368,7 +368,7 @@ QVariantMap SearchHintController::buildHintContent(quint64 winId, HintType type)
     case HintType::IndexWaitingUpgrade:
         content[QStringLiteral("icon")] = QStringLiteral("waiting");
         content[QStringLiteral("text")] = tr("Waiting for index service upgrade. Some content indexing has been paused.");
-        actions.append(QVariantMap { { "id", "retry-update" }, { "label", tr("Update index now") } });
+        actions.append(QVariantMap { { "id", "retry-update" }, { "label", tr("Retry update") } });
         actions.append(QVariantMap { { "id", "view-status" }, { "label", tr("View") } });
         break;
     case HintType::IndexUpdating:
