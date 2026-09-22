@@ -809,14 +809,19 @@ void TaskManager::onTaskFinished(IndexTask::Type type, HandlerResult result)
     emit taskFinished(typeToString(type), taskPath, result.success);
     cleanupTask();
 
-    emit indexStatusChanged(currentIndexStatus(), gradeToString(IndexTask::Grade::None));
-
-    schedule();
-
+    // finalizeIndexState 必须先于 schedule()：若 schedule() 从队列拉起了后续
+    // 任务，hasRunningTask() 变为 true，尾部的 finalize 会被整体跳过，状态
+    // 文件将停留在本任务完成前的旧值。cleanupTask 已同步置空 currentTask，
+    // 此处守卫恒为真，仅保留防御意义。
     if (!hasRunningTask()) {
         fmDebug() << "[TaskManager::onTaskFinished] No more runnable tasks";
         finalizeIndexState(type, result);
     }
+
+    // emit 随 finalize 后移，indexStatusChanged 反映 finalize 后的准确状态。
+    emit indexStatusChanged(currentIndexStatus(), gradeToString(IndexTask::Grade::None));
+
+    schedule();
 }
 
 bool TaskManager::handleCorruptedIndex(IndexTask::Type type, const HandlerResult &result, const QString &taskPath)
@@ -893,19 +898,30 @@ void TaskManager::finalizeIndexState(IndexTask::Type type, const HandlerResult &
     if (!result.success || result.interrupted)
         return;
 
+    // 全量任务（Create/Update）成功即事实终结：createInProgress 的语义是
+    // "创建/恢复进行中"（startTask 在入队检查前就写入，以保证服务重启后的
+    // 恢复判定），与队列是否还有后续任务无关，必须先于队列检查清除。否则
+    // 期间入队的任务会让标记残留在 status.json 中，重启后被恢复逻辑误判为
+    // 创建中断，触发不必要的 Heavy 全量重建。
+    if (isFullScanTask(type)) {
+        m_recoveryPending = false;
+        if (m_context && m_context->stateStore()) {
+            m_context->stateStore()->setCreateInProgress(false);
+            m_context->stateStore()->setCreateFileListCache({});
+            m_context->stateStore()->setCreateCheckpoint(0);
+        }
+    }
+
+    // setIndexState(Clean) 仍要求队列已空：还有排队任务就意味着有未完成的
+    // 索引工作，保持 Dirty，由最后一个完成的任务置 Clean。
     if (!taskQueue.isEmpty()) {
         fmInfo() << "[TaskManager::onTaskFinished] Tasks still queued, keeping Dirty state";
         return;
     }
 
     if (isFullScanTask(type)) {
-        m_recoveryPending = false;
-        if (m_context && m_context->stateStore()) {
+        if (m_context && m_context->stateStore())
             m_context->stateStore()->setIndexState(IndexUtility::IndexState::Clean);
-            m_context->stateStore()->setCreateInProgress(false);
-            m_context->stateStore()->setCreateFileListCache({});
-            m_context->stateStore()->setCreateCheckpoint(0);
-        }
         fmInfo() << "[TaskManager::onTaskFinished] Full-scan task completed, index state set to clean";
     } else if (!m_recoveryPending) {
         if (m_context && m_context->stateStore())
