@@ -1,0 +1,14 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+# SPDX-License-Identifier: GPL-3.0-or-later
+#
+# LSan suppressions for unit tests
+# Suppress known false-positive leaks from Qt/DTK frameworks.
+# Add project-specific suppressions below.
+#
+# Syntax: leak:<function_name_pattern>
+#
+# Qt6 DBus / event-loop deferred cleanup (freed at process exit, reported as leak)
+leak:QDBusConnectionManager
+leak:QDBusServiceWatcher
+leak:QMetaType
+leak:QFactoryLoader

@@ -98,3 +98,9 @@ path = "tests/at/*"
 precedence = "aggregate"
 SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
 SPDX-License-Identifier = "CC0-1.0"
+
+[[annotations]]
+path = ["autotests/.ut-inventory.json", "autotests/.ut-inventory-summary.md"]
+precedence = "aggregate"
+SPDX-FileCopyrightText = "2026 UnionTech Software Technology Co., Ltd."
+SPDX-License-Identifier = "GPL-3.0-or-later"
