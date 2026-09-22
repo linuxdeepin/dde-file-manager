@@ -11,9 +11,8 @@ autotests/
 ├── run-ut.sh            # One-click build + test + coverage
 ├── dfm_test_main.h      # DFM_TEST_MAIN() macro (GTest + QApplication)
 ├── dfm_asan_helper.h    # ASAN report helper
-├── libs/                # Library unit tests
-│   └── dfm-framework/   # dfm-framework tests
-└── old/                 # Archived old tests (not in use)
+└── libs/                # Library unit tests
+    └── dfm-framework/   # dfm-framework tests
 ```
 
 ## Build & Run
