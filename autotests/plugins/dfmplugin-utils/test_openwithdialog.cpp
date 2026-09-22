@@ -157,7 +157,9 @@ TEST_F(UT_OpenWithDialogListItem, initUiForSizeMode_SetsSize)
 
     item->initUiForSizeMode();
 
-    EXPECT_EQ(item->width(), 220);
+    // both DTKWIDGET_CLASS_DSizeMode branches in initUiForSizeMode() call
+    // setFixedSize(224, ...), so the actual fixed width is 224.
+    EXPECT_EQ(item->width(), 224);
 
     delete item;
 }
