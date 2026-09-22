@@ -298,7 +298,13 @@ void DialogManager::showSetingsDialog(FileManagerWindow *window, const QString &
     }
 
     if (window->property("isSettingDialogShown").toBool()) {
-        qCWarning(logDFMBase) << "isSettingDialogShown true";
+        // The settings dialog is already open for this window: bring it to the
+        // front instead of silently ignoring the repeated request.
+        if (auto *dsd = window->findChild<DSettingsDialog *>()) {
+            dsd->show();
+            dsd->raise();
+            dsd->activateWindow();
+        }
         return;
     }
 
