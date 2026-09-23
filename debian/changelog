@@ -1,3 +1,13 @@
+dde-file-manager (6.5.174) unstable; urgency=medium
+
+  * fix: fix settings signal not emitted on first write
+  * fix: skip hide/show for unchanged screen windows
+  * fix: refresh recent visibility in open dialog on config change
+  * fix: show at least two crumb levels in narrow windows
+  * fix: use built-in file dialog of DFileChooserEdit for vault key file selection
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 23 Sep 2026 19:02:59 +0800
+
 dde-file-manager (6.5.173) unstable; urgency=medium
 
   * fix: validate timezone from /etc/timezone before setting TZ
