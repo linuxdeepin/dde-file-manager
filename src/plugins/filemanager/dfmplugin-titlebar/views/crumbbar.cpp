@@ -39,6 +39,7 @@ DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
 
 static constexpr int kCrumbBarRectRadius { 8 };
+static constexpr int kMaxElidedWidth { 50 };
 
 /*!
  * \class CrumbBarPrivate
@@ -137,7 +138,7 @@ void CrumbBarPrivate::initUI()
     // Crumb Bar Layout
     crumbBarLayout = new QHBoxLayout(q);
     crumbBarLayout->addStretch(1);
-    crumbBarLayout->setContentsMargins(kItemMargin / 2, 3, kItemMargin * 10, 3);
+    crumbBarLayout->setContentsMargins(kItemMargin / 2, 3, kItemMargin * 4, 3);
     crumbBarLayout->setSpacing(0);
     q->setLayout(crumbBarLayout);
 
@@ -171,6 +172,63 @@ void CrumbBarPrivate::appendWidget(QWidget *widget, int stretch)
     crumbBarLayout->insertWidget(crumbBarLayout->count() - 1, widget, stretch);
 }
 
+int CrumbBarPrivate::calculateAvailableWidth(const QMargins &margins) const
+{
+    int width = q->width();
+    if (q->parent()) {
+        auto titleBar = qobject_cast<TitleBarWidget *>(q->parent());
+        if (titleBar)
+            width = titleBar->calculateRemainingWidth();
+    }
+    width -= margins.right();
+    width -= kItemMargin * 3;
+    return width;
+}
+
+void CrumbBarPrivate::compressThreeButtons(const QMargins &margins, QList<CrumbData> &stackedDatas, QList<UrlPushButton *> &buttonsToShow)
+{
+    int availableWidth = calculateAvailableWidth(margins);
+    availableWidth -= navButtons[0]->minimumWidth();
+    if (!stackedDatas.isEmpty()) {
+        availableWidth -= navButtons[1]->minimumWidth();
+    }
+
+    UrlPushButton *lastBtn = navButtons.last();
+    UrlPushButton *secondLastBtn = navButtons[navButtons.size() - 2];
+
+    int lastMinWidth = lastBtn->minimumWidth();
+    if (lastMinWidth > kMaxElidedWidth)
+        lastMinWidth = kMaxElidedWidth;
+    int secondLastMinWidth = secondLastBtn->minimumWidth();
+    if (secondLastMinWidth > kMaxElidedWidth)
+        secondLastMinWidth = kMaxElidedWidth;
+
+    if ((availableWidth - lastMinWidth - secondLastMinWidth) < 0) {
+        // Not enough space for both; hide second-to-last and let the
+        // size == 2 branch below handle the last button.
+        secondLastBtn->hide();
+        buttonsToShow.removeOne(secondLastBtn);
+        for (auto data : secondLastBtn->crumbDatas()) {
+            stackedDatas.push_front(data);
+        }
+    } else {
+        // Distribute remaining width between the two buttons, setting
+        // min/max widths to trigger middle-elision in the paint code.
+        int extra = availableWidth - lastMinWidth - secondLastMinWidth;
+        int lastWidth = lastMinWidth + extra / 2;
+        int secondLastWidth = secondLastMinWidth + extra - extra / 2;
+
+        if (lastWidth < lastBtn->minimumWidth()) {
+            lastBtn->setMinimumWidth(lastWidth);
+            lastBtn->setMaximumWidth(lastWidth);
+        }
+        if (secondLastWidth < secondLastBtn->minimumWidth()) {
+            secondLastBtn->setMinimumWidth(secondLastWidth);
+            secondLastBtn->setMaximumWidth(secondLastWidth);
+        }
+    }
+}
+
 void CrumbBarPrivate::updateButtonVisibility()
 {
     const int buttonsCount = navButtons.count();
@@ -187,8 +245,15 @@ void CrumbBarPrivate::updateButtonVisibility()
     int stackedWidth = navButtons[1]->minimumWidth();
 
     bool isLastButton = true;
+    bool isSecondLastButton = false;
     QList<CrumbData> stackedDatas;
     navButtons.last()->updateWidth();
+    // navButtons layout: [0]=root, [1]=stacked/hidden, [2..N-2]=path, [N-1]=last.
+    // Only update the second-to-last when it is a real path button (index >= 2),
+    // i.e. when there are more than 3 buttons; otherwise it is the stacked button
+    // (index 1) whose width is already tracked as stackedWidth.
+    if (navButtons.size() > 3)
+        navButtons[navButtons.size() - 2]->updateWidth();
     for (int i = navButtons.size() - 1; i > 1; --i) {
         UrlPushButton *button = navButtons[i];
         availableWidth -= button->minimumWidth();
@@ -197,7 +262,7 @@ void CrumbBarPrivate::updateButtonVisibility()
             availableWidth -= stackedWidth;
         if (i == 0) {
             buttonsToShow.append(button);
-        } else if ((availableWidth <= 0) && !isLastButton) {
+        } else if ((availableWidth <= 0) && !isLastButton && !isSecondLastButton) {
             button->hide();
             for (auto data : button->crumbDatas()) {
                 stackedDatas.push_front(data);
@@ -205,27 +270,32 @@ void CrumbBarPrivate::updateButtonVisibility()
         } else {
             buttonsToShow.append(button);
         }
-        isLastButton = false;
+        if (isLastButton) {
+            isLastButton = false;
+            isSecondLastButton = true;
+        } else {
+            isSecondLastButton = false;
+        }
+    }
+
+    // When exactly three buttons survived (root + last + second-to-last),
+    // try to keep both path levels visible by compressing them with
+    // middle-elision instead of hiding the second-to-last entirely.
+    if (buttonsToShow.size() == 3) {
+        compressThreeButtons(margins, stackedDatas, buttonsToShow);
     }
 
     // Calculate remaining width
     if (buttonsToShow.size() == 2) {
-        availableWidth = q->width();
-        if (q->parent()) {
-            auto titleBar = qobject_cast<TitleBarWidget *>(q->parent());
-            if (titleBar)
-                availableWidth = titleBar->calculateRemainingWidth();
-        }
         // Reserve the right-side clickable area (layout right margin) so users
         // can always click the blank space on the right to enter address editing mode.
-        availableWidth -= margins.right();
-        availableWidth -= kItemMargin * 3;
+        availableWidth = calculateAvailableWidth(margins);
         if (!stackedDatas.isEmpty()) {
             availableWidth -= navButtons[1]->minimumWidth();
         }
         int lastButtonMinWidth = navButtons.last()->minimumWidth();
-        if (lastButtonMinWidth > 50)
-            lastButtonMinWidth = 50;
+        if (lastButtonMinWidth > kMaxElidedWidth)
+            lastButtonMinWidth = kMaxElidedWidth;
         if ((availableWidth - lastButtonMinWidth) < 0) {
             auto lastButton = buttonsToShow.takeLast();
             lastButton->hide();
