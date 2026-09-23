@@ -31,6 +31,7 @@
 #include <QJsonObject>
 #include <QCursor>
 #include <QIcon>
+#include <QPainterPath>
 #include <QUuid>
 #include <QUrlQuery>
 #include <QScreen>
@@ -39,11 +40,21 @@
 #include <unistd.h>
 #include <functional>
 
-inline constexpr int kTabMaxWidth { 240 };
+inline constexpr int kTabMaxWidth { 150 };
 inline constexpr int kTabMinWidth { 90 };
 inline constexpr int kItemButtonSize { 20 };
 inline constexpr int kItemButtonIconSize { 14 };
 inline constexpr int kItemButtonMargin { 4 };
+inline constexpr qreal kTabHorizontalInset { 2.0 };
+inline constexpr int kTabTopInset { 5 };
+inline constexpr int kHoverBottomInset { 5 };
+inline constexpr int kLeadingHoverInsetWithoutPaging { 10 };
+inline constexpr int kLeadingSelectedInsetWithoutPaging { 10 };
+inline constexpr int kTabCornerRadius { 8 };
+inline constexpr int kSelectedTabCornerRadius { 8 };
+inline constexpr int kTabSeparatorHeight { 16 };
+inline constexpr int kTabTextHorizontalPadding { 12 };
+inline constexpr int kSelectedTabMinLeftPadding { 3 };
 
 using namespace dfmplugin_titlebar;
 DWIDGET_USE_NAMESPACE
@@ -84,6 +95,8 @@ public:
     void handlePinnedTabsChanged(const QString &config, const QString &key);
     void handleTabMoved(int from, int to);
     void updatePinnedTabsOrder();
+    void updateHoveredTabIndex(int index);
+    void updateTabVisual(int index);
 
     QString tabDisplayName(const QUrl &url) const;
     QUrl determineRedirectUrl(const QUrl &currentUrl, const QUrl &targetUrl) const;
@@ -92,6 +105,17 @@ public:
     void paintTabLabel(QPainter *painter, int index, const QStyleOptionTab &option);
     void paintTabButton(DIconButton *btn);
     void paintTabItemButton(QPainter *painter, int index, const QStyleOptionTab &option);
+    QColor hoverBackgroundColor() const;
+    QColor separatorColor() const;
+    bool isTabHovered(int index) const;
+    bool isTabHighlighted(int index) const;
+    bool shouldShowSeparator(int index) const;
+    bool hasPagingButtonVisible() const;
+    qreal tabLeadingInset(int index) const;
+    qreal tabTrailingInset() const;
+    QRectF tabVisualRect(int index, const QRect &tabRect) const;
+    qreal hoverTrailingInset(int index) const;
+    QRect tabItemButtonRect(int index, const QRect &tabRect) const;
 
     Tab tabInfo(int index) const;
     bool updateTabInfo(int index, std::function<void(Tab &)> modifier);
@@ -110,10 +134,12 @@ public:
     TabBar *q;
     DIconButton *addBtn { nullptr };
     DIconButton *leftBtn { nullptr };
+    DIconButton *rightBtn { nullptr };
     QTabBar *tabBar { nullptr };
 
     int nextTabUniqueId { 0 };
     int currentTabIndex { -1 };
+    int hoveredTabIndex { -1 };
     QTimer *updateConfigTimer { nullptr };
     int lastTooltipTabIndex { -1 };
     bool lastTooltipOnButton { false };
@@ -131,6 +157,9 @@ void TabBarPrivate::initUI()
     q->setTabsClosable(false);
     q->setVisibleAddButton(true);
     q->setDragable(true);
+    q->setDrawBase(false);
+    q->setAutoFillBackground(false);
+    q->setAttribute(Qt::WA_TranslucentBackground);
     q->setFocusPolicy(Qt::NoFocus);
     q->installEventFilter(q);
 
@@ -160,7 +189,7 @@ void TabBarPrivate::initUI()
     leftBtn->setFlat(true);
     leftBtn->installEventFilter(q);
 
-    auto rightBtn = q->findChild<DIconButton *>("rightButton");
+    rightBtn = q->findChild<DIconButton *>("rightButton");
     Q_ASSERT(rightBtn);
     rightBtn->setFocusPolicy(Qt::NoFocus);
     rightBtn->setFixedSize(30, 30);
@@ -173,6 +202,9 @@ void TabBarPrivate::initUI()
         tabBar->setObjectName("TabBar");
         tabBar->setAccessibleName("TabBar");
         tabBar->setMouseTracking(true);
+        tabBar->setDrawBase(false);
+        tabBar->setAutoFillBackground(false);
+        tabBar->setAttribute(Qt::WA_TranslucentBackground);
         tabBar->installEventFilter(q);
     }
 }
@@ -237,10 +269,7 @@ void TabBarPrivate::handleLastTabClose(const QUrl &currentUrl, const QUrl &targe
 
 bool TabBarPrivate::isItemButtonHovered(int index)
 {
-    auto rect = q->tabRect(index);
-    const QRect btnRect(rect.right() - kItemButtonSize - kItemButtonMargin,
-                        rect.y() + (rect.height() - kItemButtonSize) / 2,
-                        kItemButtonSize, kItemButtonSize);
+    const QRect btnRect = tabItemButtonRect(index, q->tabRect(index));
     auto pos = q->mapFromGlobal(QCursor::pos());
     return btnRect.contains(pos);
 }
@@ -340,6 +369,8 @@ void TabBarPrivate::handleIndexChanged(int index)
     if (currentTabIndex == index)
         return;
 
+    const int oldIndex = currentTabIndex;
+
     const auto &tab = tabInfo(index);
     if (tab.isInactive) {
         Q_EMIT q->requestCreateView(tab.uniqueId);
@@ -352,6 +383,9 @@ void TabBarPrivate::handleIndexChanged(int index)
     if (!hasDragPreviewTab())
         Q_EMIT q->currentTabChanged(currentTabIndex, index);
     currentTabIndex = index;
+
+    for (int tabIndex : { oldIndex - 1, oldIndex, oldIndex + 1, index - 1, index, index + 1 })
+        updateTabVisual(tabIndex);
 }
 
 void TabBarPrivate::updateToolTip(int index, bool visible)
@@ -482,6 +516,28 @@ void TabBarPrivate::updatePinnedTabsOrder()
     DConfigManager::instance()->setValue(kViewDConfName, kPinnedTabs, pinnedTabs);
 }
 
+void TabBarPrivate::updateHoveredTabIndex(int index)
+{
+    if (hoveredTabIndex == index)
+        return;
+
+    const int oldIndex = hoveredTabIndex;
+    hoveredTabIndex = index;
+
+    for (int tabIndex : { oldIndex - 1, oldIndex, oldIndex + 1, index - 1, index, index + 1,
+                          currentTabIndex - 1, currentTabIndex, currentTabIndex + 1 }) {
+        updateTabVisual(tabIndex);
+    }
+}
+
+void TabBarPrivate::updateTabVisual(int index)
+{
+    if (index < 0 || index >= q->count())
+        return;
+
+    q->update(q->tabRect(index));
+}
+
 QString TabBarPrivate::tabDisplayName(const QUrl &url) const
 {
     if (UrlRoute::isRootUrl(url))
@@ -563,59 +619,110 @@ QUrl TabBarPrivate::findValidParentPath(const QUrl &url) const
     return parentUrl;
 }
 
+QColor TabBarPrivate::hoverBackgroundColor() const
+{
+    const bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+    return isDarkTheme ? QColor(255, 255, 255, qRound(255 * 0.04))
+                       : QColor(0, 0, 0, qRound(255 * 0.08));
+}
+
+QColor TabBarPrivate::separatorColor() const
+{
+    const bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+    return isDarkTheme ? QColor(255, 255, 255, qRound(255 * 0.08))
+                       : QColor(0, 0, 0, qRound(255 * 0.10));
+}
+
+bool TabBarPrivate::isTabHovered(int index) const
+{
+    return hoveredTabIndex == index;
+}
+
+bool TabBarPrivate::isTabHighlighted(int index) const
+{
+    return index >= 0 && (q->currentIndex() == index || hoveredTabIndex == index);
+}
+
+bool TabBarPrivate::shouldShowSeparator(int index) const
+{
+    if (index < 0 || index >= q->count() - 1)
+        return false;
+
+    return !isTabHighlighted(index) && !isTabHighlighted(index + 1);
+}
+
+bool TabBarPrivate::hasPagingButtonVisible() const
+{
+    return (leftBtn && leftBtn->isVisible()) || (rightBtn && rightBtn->isVisible());
+}
+
+qreal TabBarPrivate::tabLeadingInset(int index) const
+{
+    if (index == 0 && !hasPagingButtonVisible())
+        return kLeadingSelectedInsetWithoutPaging;
+
+    return kTabHorizontalInset;
+}
+
+qreal TabBarPrivate::tabTrailingInset() const
+{
+    return kTabHorizontalInset;
+}
+
+QRectF TabBarPrivate::tabVisualRect(int index, const QRect &tabRect) const
+{
+    return QRectF(tabRect).adjusted(tabLeadingInset(index), 0.0, -tabTrailingInset(), 0.0);
+}
+
+qreal TabBarPrivate::hoverTrailingInset(int index) const
+{
+    return (isTabHovered(index) || q->isPinned(index)) ? tabTrailingInset() : 0;
+}
+
+QRect TabBarPrivate::tabItemButtonRect(int index, const QRect &tabRect) const
+{
+    const QRectF visualRect = tabVisualRect(index, tabRect);
+    return QRect(qRound(visualRect.x() + visualRect.width() - kItemButtonMargin - kItemButtonSize),
+                 tabRect.y() + (tabRect.height() - kItemButtonSize) / 2,
+                 kItemButtonSize, kItemButtonSize);
+}
+
 void TabBarPrivate::paintTabBackground(QPainter *painter, int index, const QStyleOptionTab &option)
 {
     painter->save();
 
     const QRect rect = option.rect;
     const bool isSelected = option.state & QStyle::State_Selected;
-    const bool isHovered = option.state & QStyle::State_MouseOver;
-
-    // 获取主题颜色
-    DPalette pal = DPaletteHelper::instance()->palette(q);
-    const bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
-
-    // 绘制背景
-    if (isHovered) {
-        QColor bgColor = isDarkTheme ? QColor(255, 255, 255, qRound(255 * 0.05)) : QColor(0, 0, 0, qRound(255 * 0.05));
-        painter->setBrush(bgColor);
-    } else {
-        painter->setBrush(pal.color(QPalette::Active, QPalette::Base));
-    }
+    const bool isHovered = isTabHovered(index) && !isSelected;
+    const DPalette pal = DPaletteHelper::instance()->palette(q);
 
     painter->setPen(Qt::NoPen);
-    painter->setRenderHint(QPainter::Antialiasing);
-    painter->drawRect(rect);
+    painter->setRenderHint(QPainter::Antialiasing, true);
 
-    // 绘制边框
-    QColor borderColor = isDarkTheme ? QColor(255, 255, 255, 20) : QColor(0, 0, 0, 20);
-    painter->setPen(borderColor);
-    painter->setBrush(Qt::NoBrush);
+    const QRectF visualRect = tabVisualRect(index, rect);
     if (isSelected) {
-        QPainterPath path;
-        if (index == 0) {
-            // Skip the left vertical line: start directly from top-left
-            path.moveTo(rect.topLeft());
-        } else {
-            path.moveTo(rect.bottomLeft());
-            path.lineTo(rect.topLeft());
-        }
-        path.lineTo(rect.topRight());
-        path.lineTo(rect.bottomRight());
-        painter->drawPath(path);
-    } else {
-        if (index == 0) {
-            // Draw top, right, and bottom lines; omit the left vertical line
-            painter->drawLine(rect.topLeft(), rect.topRight());
-            painter->drawLine(rect.topRight(), rect.bottomRight());
-            painter->drawLine(rect.bottomRight(), rect.bottomLeft());
-        } else {
-            painter->drawRect(rect);
+        const QRectF selectedRect = visualRect.adjusted(0.0, kTabTopInset, 0.0, 0.0);
+        const QPalette::ColorGroup bgGroup = q->isActiveWindow() ? QPalette::Active : QPalette::Inactive;
+        painter->setBrush(pal.color(bgGroup, QPalette::Base));
+        painter->drawRoundedRect(selectedRect, kSelectedTabCornerRadius, kSelectedTabCornerRadius);
+    } else if (isHovered) {
+        const QRectF hoverRect = visualRect.adjusted(0.0, kTabTopInset, 0.0, -kHoverBottomInset);
+        if (hoverRect.width() > 0 && hoverRect.height() > 0) {
+            painter->setBrush(hoverBackgroundColor());
+            painter->drawRoundedRect(hoverRect, kTabCornerRadius, kTabCornerRadius);
         }
     }
-    // 对中间的tabbar尾后加一根明显的线
-    if (QStyleOptionTab::End != option.position && QStyleOptionTab::OnlyOneTab != option.position) {
-        painter->drawLine(rect.topRight(), rect.bottomRight());
+
+    if (shouldShowSeparator(index)) {
+        painter->setRenderHint(QPainter::Antialiasing, false);
+        QPen pen(separatorColor());
+        pen.setWidth(1);
+        pen.setCosmetic(true);
+        painter->setPen(pen);
+        const int separatorX = rect.right();
+        const int separatorY = rect.y() + (rect.height() - kTabSeparatorHeight) / 2;
+        painter->drawLine(QPoint(separatorX, separatorY),
+                          QPoint(separatorX, separatorY + kTabSeparatorHeight - 1));
     }
 
     painter->restore();
@@ -626,42 +733,36 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
     painter->save();
     const QRect rect = option.rect;
     const bool isSelected = option.state & QStyle::State_Selected;
-    const bool isItemBtnShowed = (option.state & QStyle::State_MouseOver) || q->isPinned(index);
+    const bool isItemBtnShowed = isTabHovered(index) || q->isPinned(index);
+    const QRectF visualRect = tabVisualRect(index, rect);
 
-    // 获取主题颜色
     DPalette pal = DPaletteHelper::instance()->palette(q);
 
-    // 计算布局参数
     const int tabMargin = 10;
     const int blueMarkerWidth = isSelected ? 6 : 0;
     const int blueMarkerMargin = isSelected ? 4 : 0;
     const int btnSize = isItemBtnShowed ? kItemButtonSize : 0;
-    const int btnMargin = isItemBtnShowed ? kItemButtonMargin : 0;
 
-    // 计算文本可用宽度（考虑蓝色标记和关闭按钮）
     const int textMargin = blueMarkerWidth + blueMarkerMargin;
     const int leftSpace = tabMargin / 2 + textMargin;
-    const int rightSpace = isItemBtnShowed ? (btnSize + btnMargin) : 0;
-    const int availableTextWidth = rect.width() - leftSpace;
-
-    // 截断文本以适应可用宽度
+    const int availableTextWidth = qMax(0, qFloor(visualRect.width()) - leftSpace);
     QString elidedText = option.fontMetrics.elidedText(option.text, Qt::ElideRight, availableTextWidth);
 
-    // 计算文本居中位置
     const int textWidth = option.fontMetrics.horizontalAdvance(elidedText);
-    const int textX = rect.x() + (rect.width() - option.fontMetrics.horizontalAdvance(elidedText) - textMargin) / 2 + textMargin;
+    const int minTextX = qRound(visualRect.x()) + kSelectedTabMinLeftPadding + textMargin;
+    const int centeredTextX = qRound(visualRect.x() + (visualRect.width() - textWidth - textMargin) / 2.0 + textMargin);
+    const int textX = isSelected
+            ? qMax(centeredTextX, minTextX)
+            : centeredTextX;
     const int textY = rect.y() + (rect.height() - option.fontMetrics.height()) / 2 + option.fontMetrics.ascent();
 
     if (isItemBtnShowed) {
-        int textEndX = textX + textWidth;
-        int buttonStartX = rect.right() - rightSpace;
-        if (textEndX > buttonStartX) {
-            // 重新计算文本宽度，确保不重叠
+        const int textEndX = textX + textWidth;
+        const int buttonStartX = qRound(visualRect.x() + visualRect.width()) - kItemButtonMargin - btnSize;
+        if (textEndX > buttonStartX)
             elidedText = option.fontMetrics.elidedText(option.text, Qt::ElideRight, buttonStartX - textX);
-        }
     }
 
-    // 设置tooltip，只有省略时才显示
     const auto &tooltip = tabInfo(index).tabTipText;
     if (option.text != elidedText && tooltip != option.text) {
         updateTabInfo(index, [option](Tab &tab) {
@@ -673,10 +774,9 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
         });
     }
 
-    // 绘制蓝色标记
     if (isSelected) {
         painter->save();
-        QColor blueColor = pal.color(QPalette::Active, QPalette::Highlight);
+        QColor blueColor = pal.color(q->isActiveWindow() ? QPalette::Active : QPalette::Inactive, QPalette::Highlight);
         painter->setPen(Qt::NoPen);
         painter->setBrush(blueColor);
 
@@ -687,8 +787,8 @@ void TabBarPrivate::paintTabLabel(QPainter *painter, int index, const QStyleOpti
         painter->restore();
     }
 
-    // 绘制文本
-    QColor textColor = isSelected ? pal.color(QPalette::Active, QPalette::Text) : pal.color(QPalette::Inactive, QPalette::Text);
+    const bool activeText = isSelected && q->isActiveWindow();
+    QColor textColor = pal.color(activeText ? QPalette::Active : QPalette::Inactive, QPalette::Text);
     painter->setPen(textColor);
     painter->drawText(textX, textY, elidedText);
     painter->restore();
@@ -725,7 +825,7 @@ void TabBarPrivate::paintTabButton(DIconButton *btn)
 void TabBarPrivate::paintTabItemButton(QPainter *painter, int index, const QStyleOptionTab &option)
 {
     const bool isPinned = q->isPinned(index);
-    const bool isHovered = option.state & QStyle::State_MouseOver;
+    const bool isHovered = isTabHovered(index);
 
     QIcon btnIcon;
     if (isPinned) {
@@ -740,22 +840,21 @@ void TabBarPrivate::paintTabItemButton(QPainter *painter, int index, const QStyl
     painter->save();
     painter->setRenderHint(QPainter::Antialiasing);
 
-    const QRect rect = option.rect;
-    const QRect btnRect(rect.right() - kItemButtonMargin - kItemButtonSize,
-                        rect.y() + (rect.height() - kItemButtonSize) / 2,
-                        kItemButtonSize, kItemButtonSize);
+    const QRect btnRect = tabItemButtonRect(index, option.rect);
 
     // Draw hover background circle
     if (isItemButtonHovered(index)) {
         const bool isDark = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
         painter->setPen(Qt::NoPen);
-        painter->setBrush(isDark ? QColor(255, 255, 255, 26) : QColor(0, 0, 0, 26));
+        painter->setBrush(isDark ? QColor(255, 255, 255, qRound(255 * 0.10))
+                                 : QColor(0, 0, 0, qRound(255 * 0.10)));
         painter->drawEllipse(btnRect);
     }
 
     const bool isSelected = option.state & QStyle::State_Selected;
     const DPalette pal = DPaletteHelper::instance()->palette(q);
-    const QPalette::ColorGroup colorGroup = (isPinned && !isSelected) ? QPalette::Inactive : QPalette::Active;
+    const bool activeGroup = !(isPinned && !isSelected) && q->isActiveWindow();
+    const QPalette::ColorGroup colorGroup = activeGroup ? QPalette::Active : QPalette::Inactive;
     const QColor iconColor = pal.color(colorGroup, QPalette::Text);
 
     const QPixmap iconPixmap = createColoredIcon(btnIcon, iconColor, QSize(kItemButtonIconSize, kItemButtonIconSize));
@@ -1161,6 +1260,14 @@ bool TabBar::isPinned(int index) const
     return d->tabInfo(index).isPinned;
 }
 
+QMarginsF TabBar::tabVisualMargins(int index) const
+{
+    if (index < 0 || index >= count())
+        return {};
+
+    return QMarginsF(d->tabLeadingInset(index), 0.0, d->tabTrailingInset(), 0.0);
+}
+
 void TabBar::activateNextTab()
 {
     if (currentIndex() == count() - 1)
@@ -1323,13 +1430,15 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
     if (obj == d->tabBar) {
         if (eventType == QEvent::MouseMove) {
             const int index = tabAt(mapFromGlobal(QCursor::pos()));
+            d->updateHoveredTabIndex(index);
             if (index != -1) {
-                update(tabRect(index));
+                d->updateTabVisual(index);
                 d->updateToolTip(index, true);
             } else {
                 d->updateToolTip(-1, false);
             }
         } else if (eventType == QEvent::Leave) {
+            d->updateHoveredTabIndex(-1);
             d->updateToolTip(-1, false);
         } else if (eventType == QEvent::MouseButtonPress) {
             d->updateToolTip(-1, false);
