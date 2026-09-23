@@ -32,6 +32,7 @@
 #include <DPushButton>
 #include <DSuggestButton>
 #include <DLabel>
+#include <DToolTip>
 #include <DCheckBox>
 #include <DCommandLinkButton>
 #include <DHorizontalLine>
@@ -60,6 +61,9 @@ OpenWithDialogListItem::OpenWithDialogListItem(const QString &iconName, const QS
     checkButton->setFixedSize(15, 15);
     checkButton->setFlat(true);
     label->setText(text);
+    label->setElideMode(Qt::ElideMiddle);
+    label->setToolTip(text);
+    DToolTip::setToolTipShowMode(label, DToolTip::ShowWhenElided);
     iconLabel->setAlignment(Qt::AlignCenter);
 
     QHBoxLayout *layout = new QHBoxLayout(this);
@@ -291,8 +295,10 @@ void OpenWithDialog::initUI()
 
     recommandLayout = new DFlowLayout;
     recommandLayout->setHorizontalSpacing(10);
+    recommandLayout->setContentsMargins(0, 0, 0, 0);
     otherLayout = new DFlowLayout;
     otherLayout->setHorizontalSpacing(10);
+    otherLayout->setContentsMargins(0, 0, 0, 0);
 
     openFileChooseButton = new DCommandLinkButton(tr("Add other programs"), this);
     openFileChooseButton->setObjectName("OpenFileChooseButton");
@@ -599,7 +605,7 @@ void OpenWithDialog::showEvent(QShowEvent *event)
 {
     BaseDialog::showEvent(event);
 
-    recommandLayout->parentWidget()->setFixedWidth(scrollArea->width());
+    recommandLayout->parentWidget()->setFixedWidth(scrollArea->viewport()->width());
     recommandLayout->parentWidget()->resize(recommandLayout->parentWidget()->layout()->sizeHint());
 }
 
