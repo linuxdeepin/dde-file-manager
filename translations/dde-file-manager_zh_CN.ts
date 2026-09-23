@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="zh_CN">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="zh_CN">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -1020,7 +1018,7 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/fileutils.cpp" line="1115"/>
         <source>This system wallpaper is locked. Please contact your admin.</source>
-        <translation>当前系统壁纸已被锁定，请联系管理员。</translation>
+        <translation>当前系统壁纸已被锁定，请联系管理员</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="139"/>
@@ -2046,6 +2044,16 @@ You need to upgrade this vault to continue using it.</source>
         <translation>侧边栏</translation>
     </message>
     <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <source>Sidebar tree directory</source>
+        <translation>侧边栏树形目录</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="250"/>
+        <source>Display sidebar disk partitions as a tree structure</source>
+        <translation>侧边栏磁盘分区以树形结构显示</translation>
+    </message>
+    <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="28"/>
         <source>or</source>
@@ -2084,7 +2092,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="592"/>
         <source>Recovery key export path cannot be a symlink or non-directory!</source>
-        <translation>恢复密钥导出路径不能是符号链接或非目录！</translation>
+        <translation> 恢复密钥导出路径不能是符号链接或非目录！</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="600"/>
@@ -2094,12 +2102,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="606"/>
         <source>The export path directory is world-writable, please choose a safer location!</source>
-        <translation>导出路径目录为全局可写，请选择一个更安全的位置！</translation>
+        <translation>导出路径目录为全局可写状态，请选择一个更安全的位置！</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="612"/>
         <source>The export path directory is not writable, please choose a writable directory!</source>
-        <translation>导出路径目录不可写，请选择一个可写的目录！</translation>
+        <translation>导出路径目录不可写，请选择一个可写目录！</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
@@ -2114,7 +2122,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="661"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation>该分区已加密，请导出至非加密分区或外部设备（如U盘）。</translation>
+        <translation>该分区已加密，请导出到未加密的分区或外部设备（如U盘）。</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="897"/>
@@ -2328,16 +2336,6 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="59"/>
         <source>Tree view</source>
         <translation>树形视图</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
-        <source>Sidebar tree directory</source>
-        <translation>侧边栏树形目录</translation>
-    </message>
-    <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="250"/>
-        <source>Display sidebar disk partitions as a tree structure</source>
-        <translation>侧边栏磁盘分区以树形结构显示</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
@@ -3592,12 +3590,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="658"/>
         <source>After revocation, it will be completely deleted %1, do you want to delete it completely?</source>
-        <translation>撤销后将会彻底删除&#xa0;%1&#xa0;，您确定要彻底删除？</translation>
+        <translation>撤销后将会彻底删除 %1 ，您确定要彻底删除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="661"/>
         <source>These %1 contents will be completely deleted after revocation. Do you want to delete them completely?</source>
-        <translation>撤销后将会彻底删除这&#xa0;%1&#xa0;项内容，您确定要彻底删除？</translation>
+        <translation>撤销后将会彻底删除这 %1 项内容，您确定要彻底删除？</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="686"/>
@@ -3794,11 +3792,6 @@ You need to upgrade this vault to continue using it.</source>
         <translation>总是在新窗口打开文件夹</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
-        <source>Open new folder in a new tab</source>
-        <translation>在新标签打开新文件夹</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="263"/>
         <source>Open file:</source>
         <translation>打开文件：</translation>
@@ -3812,16 +3805,6 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="265"/>
         <source>Double click</source>
         <translation>双击</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
-        <source>Display when launching a new window:</source>
-        <translation>启动新窗口时显示：</translation>
-    </message>
-    <message>
-        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
-        <source>Default Directory</source>
-        <translation>默认目录</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="277"/>
@@ -3947,6 +3930,11 @@ You need to upgrade this vault to continue using it.</source>
         <translation>图标视图</translation>
     </message>
     <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
+        <source>Open new folder in a new tab</source>
+        <translation>在新标签打开新文件夹</translation>
+    </message>
+    <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
         <source>Activate existing window when reopening folder</source>
         <translation>重复打开文件夹时激活已有窗口</translation>
@@ -3955,6 +3943,16 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="269"/>
         <source>New window</source>
         <translation>新窗口</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="272"/>
+        <source>Display when launching a new window:</source>
+        <translation>启动新窗口时显示：</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="275"/>
+        <source>Default Directory</source>
+        <translation>默认目录</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="296"/>
@@ -4781,7 +4779,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="84"/>
         <source>All files in the disc will be packaged and created as an ISO image file.</source>
-        <translation>当前光盘驱动器内全盘文件，将被打包创建为ISO镜像文件。</translation>
+        <translation>当前光盘驱动器内全盘文件，将被打包创建为ISO镜像文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/dumpisooptdialog.cpp" line="95"/>
@@ -5446,7 +5444,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="434"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="441"/>
         <source>Failed to get TPM information. Please check whether TPM is available.</source>
-        <translation>获取TPM信息失败，请检查TPM是否可用。</translation>
+        <translation>获取 TPM 信息失败。请检查 TPM 是否可用。</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="710"/>
@@ -5852,7 +5850,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="832"/>
         <source>A previous configuration of Partition Encryption Non-Reboot Mode was interrupted and has been rolled back to the disabled state. Please reboot your system to ensure consistency. You may re-enable the feature after reboot if needed.</source>
-        <translation>分区加密非重启模式的先前配置已中断，并已回滚至禁用状态。请重启系统以确保一致性。如有需要，您可在重启后重新启用该功能。</translation>
+        <translation>分区加密非重启模式的上一次配置被中断，已回滚至禁用状态。请重启系统以确保一致性。如果需要，您可以在重启后重新启用该功能。</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="841"/>
@@ -6114,12 +6112,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="188"/>
         <source>Copy or Cut File failed! Retry copy this file again!</source>
-        <translation>拷贝或剪贴文件失败！重试执行重新拷贝当前文件！</translation>
+        <translation>拷贝或剪贴文件失败！重试执行重新拷贝当前文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="190"/>
         <source>Can&apos;t access file!</source>
-        <translation>不能访问当前文件！</translation>
+        <translation>不能访问当前文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="211"/>
@@ -6149,7 +6147,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="224"/>
         <source>Failed to move the file %1 to trash, cause: %2</source>
-        <translation>移动文件 %1 到回收站失败，原因： %2</translation>
+        <translation>移动文件 %1 到回收站失败，原因： %2 </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="226"/>
@@ -6169,17 +6167,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="246"/>
         <source>Copy or Cut File failed, cause: %1</source>
-        <translation>拷贝或剪贴文件失败，原因： %1</translation>
+        <translation>拷贝或剪贴文件失败，原因： %1 </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="248"/>
         <source>Copy or Cut File failed, cause: %1. Retry copy this file again!</source>
-        <translation>拷贝或剪贴文件失败，原因： %1。重试执行重新拷贝当前文件！</translation>
+        <translation>拷贝或剪贴文件失败，原因： %1 .重试执行重新拷贝当前文件</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="250"/>
         <source>Copy or Cut File failed, cause: %1.</source>
-        <translation>拷贝或剪贴文件失败，原因： %1.</translation>
+        <translation>拷贝或剪贴文件失败，原因： %1. </translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/errormessageandaction.cpp" line="267"/>
@@ -7293,7 +7291,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="347"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="371"/>
         <source>Retry update</source>
-        <translation>重新更新</translation>
+        <translation>立即更新</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="348"/>
