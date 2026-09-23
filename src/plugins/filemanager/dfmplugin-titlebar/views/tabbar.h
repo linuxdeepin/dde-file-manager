@@ -9,6 +9,7 @@
 
 #include <DTabBar>
 
+#include <QMargins>
 #include <QUrl>
 
 namespace dfmplugin_titlebar {
@@ -38,6 +39,7 @@ public:
     void setTabUserData(int index, const QString &key, const QVariant &userData);
     bool isInactiveTab(int index) const;
     bool isPinned(int index) const;
+    QMarginsF tabVisualMargins(int index) const;
 
 public Q_SLOTS:
     void activateNextTab();

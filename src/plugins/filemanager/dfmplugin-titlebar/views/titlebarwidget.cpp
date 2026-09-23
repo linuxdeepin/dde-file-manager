@@ -39,6 +39,8 @@
 #include <QGuiApplication>
 #include <QInputMethod>
 #include <QMetaObject>
+#include <QPainter>
+#include <QPainterPath>
 #include <QResizeEvent>
 #include <QTimer>
 
@@ -51,6 +53,12 @@ using namespace GlobalDConfDefines::BaseConfig;
 
 inline constexpr int kSpacing { 10 };
 inline constexpr char kIsCustomTab[] { "isCustomTab" };
+inline constexpr qreal kTopBarOverlayAlphaLight { 0.04 };
+inline constexpr qreal kTopBarOverlayAlphaDark { 0.10 };
+inline constexpr int kSelectedTabTopInset { 5 };
+inline constexpr int kLeadingSelectedInsetWithoutPaging { 10 };
+inline constexpr int kSelectedTabTopCornerRadius { 8 };
+inline constexpr int kSelectedTabBottomOuterRadius { 13 };
 
 TitleBarWidget::TitleBarWidget(QFrame *parent)
     : AbstractFrame(parent)
@@ -296,6 +304,10 @@ void TitleBarWidget::initializeUi()
 
     // titlebar
     topBar = new DTitlebar;
+    topBar->setBackgroundTransparent(true);
+    topBar->setSeparatorVisible(false);
+    topBar->setAutoFillBackground(false);
+    topBar->setAttribute(Qt::WA_TranslucentBackground);
     topBar->setFixedHeight(DSizeModeHelper::element(24, 40));
     auto topBarLayout = topBar->layout();
     if (topBarLayout) {
@@ -304,6 +316,8 @@ void TitleBarWidget::initializeUi()
     }
 
     QWidget *topCustomWidget = new QWidget(topBar);
+    topCustomWidget->setAutoFillBackground(false);
+    topCustomWidget->setAttribute(Qt::WA_TranslucentBackground);
     topBarCustomLayout = new QHBoxLayout;
     topBarCustomLayout->setContentsMargins(0, 0, 0, 0);
     topBarCustomLayout->setSpacing(0);
@@ -386,6 +400,61 @@ void TitleBarWidget::initializeUi()
     updateUiForSizeMode();
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
     showCrumbBar();
+}
+
+void TitleBarWidget::paintEvent(QPaintEvent *event)
+{
+    AbstractFrame::paintEvent(event);
+
+    if (!topBar)
+        return;
+
+    const bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
+    const int alpha = qRound(255 * (isDarkTheme ? kTopBarOverlayAlphaDark : kTopBarOverlayAlphaLight));
+
+    QPainter painter(this);
+    painter.setRenderHint(QPainter::Antialiasing);
+    painter.setPen(Qt::NoPen);
+    painter.setBrush(QColor(0, 0, 0, alpha));
+    painter.drawRect(topBar->geometry());
+
+    if (!bottomBar || bottomBar->count() <= 0)
+        return;
+
+    const int currentIndex = bottomBar->currentIndex();
+    if (currentIndex < 0 || currentIndex >= bottomBar->count())
+        return;
+
+    const QRect tabRect = bottomBar->tabRect(currentIndex);
+    if (!tabRect.isValid())
+        return;
+
+    const QMarginsF visualMargins = bottomBar->tabVisualMargins(currentIndex);
+    const QPoint tabTopLeft = bottomBar->mapTo(this, tabRect.topLeft());
+    const QRectF selectedRect = QRectF(QRect(tabTopLeft, tabRect.size())).adjusted(visualMargins.left(), kSelectedTabTopInset,
+                                                                                    -visualMargins.right(), 0.0);
+    const qreal left = selectedRect.left();
+    const qreal top = selectedRect.top();
+    const qreal right = selectedRect.right();
+    const qreal joinY = topBar->geometry().bottom() + 1.0;
+    const qreal topRadius = kSelectedTabTopCornerRadius;
+    const qreal bottomRadius = kSelectedTabBottomOuterRadius;
+
+    QPainterPath selectedPath;
+    selectedPath.moveTo(left - bottomRadius, joinY);
+    selectedPath.quadTo(left, joinY, left, joinY - bottomRadius);
+    selectedPath.lineTo(left, top + topRadius);
+    selectedPath.quadTo(left, top, left + topRadius, top);
+    selectedPath.lineTo(right - topRadius, top);
+    selectedPath.quadTo(right, top, right, top + topRadius);
+    selectedPath.lineTo(right, joinY - bottomRadius);
+    selectedPath.quadTo(right, joinY, right + bottomRadius, joinY);
+    selectedPath.lineTo(right + bottomRadius, height());
+    selectedPath.lineTo(left - bottomRadius, height());
+    selectedPath.closeSubpath();
+
+    const QPalette::ColorGroup group = isActiveWindow() ? QPalette::Active : QPalette::Inactive;
+    painter.fillPath(selectedPath, palette().color(group, QPalette::Base));
 }
 
 int TitleBarWidget::calculateRemainingWidth() const
@@ -471,6 +540,9 @@ void TitleBarWidget::initConnect()
         updateUiForSizeMode();
     });
 #endif
+    connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::themeTypeChanged, this, [this]() {
+        update();
+    });
 }
 
 void TitleBarWidget::updateUiForSizeMode()
@@ -643,17 +715,20 @@ void TitleBarWidget::handleCreateView(const QString &uniqueId)
 void TitleBarWidget::onTabCreated()
 {
     curNavWidget->addHistroyStack();
+    update();
 }
 
 void TitleBarWidget::onTabAboutToRemove(int oldIndex, int nextIndex)
 {
     TitleBarEventCaller::sendTabRemoved(this, tabBar()->tabUniqueId(oldIndex), tabBar()->tabUniqueId(nextIndex));
     curNavWidget->removeNavStackAt(oldIndex);
+    update();
 }
 
 void TitleBarWidget::onTabMoved(int from, int to)
 {
     curNavWidget->moveNavStacks(from, to);
+    update();
 }
 
 void TitleBarWidget::resizeEvent(QResizeEvent *event)
@@ -704,6 +779,8 @@ void TitleBarWidget::onTabCurrentChanged(int oldIndex, int newIndex)
         TitleBarEventCaller::sendChangeCurrentUrl(this, tabBar()->tabUrl(newIndex));
         restoreTitleBarState(tabBar()->tabUniqueId(newIndex));
     }
+
+    update();
 }
 
 void TitleBarWidget::onTabCloseRequested(int index)
