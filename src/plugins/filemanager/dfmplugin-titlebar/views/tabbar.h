@@ -40,6 +40,9 @@ public:
     bool isInactiveTab(int index) const;
     bool isPinned(int index) const;
     QMarginsF tabVisualMargins(int index) const;
+    void ensureLayoutUpdated();
+    QRect visibleTabRect(int index) const;
+    QRect tabViewportRect() const;
 
 public Q_SLOTS:
     void activateNextTab();
@@ -52,6 +55,7 @@ Q_SIGNALS:
     void newTabCreated();
     void requestCreateView(const QString &uniqueId);
     void tabAboutToRemove(int oldIndex, int nextIndex);
+    void viewportScrolled();
 
 protected:
     void paintTab(QPainter *painter, int index, const QStyleOptionTab &option) const override;
