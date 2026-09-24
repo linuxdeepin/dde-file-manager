@@ -2,6 +2,10 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
+#ifndef _GNU_SOURCE
+#define _GNU_SOURCE   // recvmmsg
+#endif
+
 #include "vfsmonitorwatcher_p.h"
 
 #include <QDir>
@@ -21,6 +25,7 @@
 #include <cstddef>
 #include <cstring>
 #include <algorithm>
+#include <vector>
 
 SERVICETEXTINDEX_BEGIN_NAMESPACE
 
@@ -169,12 +174,33 @@ QString filterDirectPath(const QStringList &rootPaths,
 // if draining depends on how fast events are processed. Mirrors the daemon's
 // own event_listener (dedicated thread + draining loop, deepin-anything
 // commit f2dd210): keep the read path tiny and buffer in userspace.
+//
+// Because the dispatcher closes the connection on the very first EAGAIN,
+// this hot loop must stay as cheap as physically possible:
+//   - recvmmsg() gathers up to kReceiveBatch packets per syscall instead of
+//     one recv() per packet (syscalls dominate the per-event cost);
+//   - received slots are never re-zeroed (a 4 KiB memset per packet); each
+//     message is delimited by its actual length and NUL-terminated in place;
+//   - mount/unmount notifications only set a flag — the mount-table refresh
+//     (parsing /proc/self/mountinfo plus alias stat()s) runs once after the
+//     drain loop instead of stalling it mid-burst;
+//   - resolved events are parked in a reusable batch vector and pushed into
+//     the userspace queue under a single lock acquisition.
 class VfsSocketReader final : public QObject
 {
 public:
     explicit VfsSocketReader(VfsMonitorFileSystemWatcherPrivate *dd)
         : d(dd)
     {
+        receiveSlots.resize(kReceiveBatch);
+        msgHeaders.resize(kReceiveBatch);
+        iovs.resize(kReceiveBatch);
+        for (int i = 0; i < kReceiveBatch; ++i) {
+            iovs[i].iov_base = &receiveSlots[i];
+            iovs[i].iov_len = sizeof(DispatchEvent);
+            msgHeaders[i].msg_hdr.msg_iov = &iovs[i];
+            msgHeaders[i].msg_hdr.msg_iovlen = 1;
+        }
     }
 
     // Runs in the reader thread. Adopts a connected fd and starts watching.
@@ -219,86 +245,120 @@ private:
     void drainSocket()
     {
         constexpr size_t kMinMessageSize = offsetof(DispatchEvent, eventPath) + 1;
+        constexpr size_t kPathOffset = offsetof(DispatchEvent, eventPath);
 
         while (socketFd >= 0) {
-            DispatchEvent event {};
-            ssize_t received = -1;
-            do {
-                received = ::recv(socketFd, &event, sizeof(event), 0);
-            } while (received < 0 && errno == EINTR);
-
-            if (received == 0) {
-                fmWarning() << "VfsMonitor: event dispatcher connection closed";
-                breakConnection();
-                return;
+            // The kernel advances iov_base/iov_len while consuming a
+            // message, so restore them before every batch.
+            for (int i = 0; i < kReceiveBatch; ++i) {
+                iovs[i].iov_base = &receiveSlots[i];
+                iovs[i].iov_len = sizeof(DispatchEvent);
             }
 
+            const int received = ::recvmmsg(socketFd, msgHeaders.data(),
+                                            static_cast<unsigned>(msgHeaders.size()),
+                                            0, nullptr);
             if (received < 0) {
+                if (errno == EINTR)
+                    continue;
+
                 if (errno == EAGAIN || errno == EWOULDBLOCK)
                     break;   // fully drained for now
 
                 fmWarning() << "VfsMonitor: failed to receive dispatcher event:" << std::strerror(errno);
-                // A persistent recv error would spin the notifier. Treat it
-                // like a disconnect so the socket is rebuilt instead of
-                // looping forever.
+                flushPendingBatch();
                 breakConnection();
                 return;
             }
 
-            if (static_cast<size_t>(received) < kMinMessageSize) {
-                fmWarning() << "VfsMonitor: received short dispatcher message:" << received;
-                continue;
-            }
+            for (int i = 0; i < received; ++i) {
+                const size_t length = msgHeaders[i].msg_len;
 
-            event.eventPath[kDispatchMaxPathLen - 1] = '\0';
+                if (length == 0) {
+                    // SEQPACKET EOF: the dispatcher closed the connection.
+                    fmWarning() << "VfsMonitor: event dispatcher connection closed";
+                    flushPendingBatch();
+                    breakConnection();
+                    return;
+                }
 
-            const int act = event.action;
-            if (act < ACT_NEW_FILE || act > ACT_CLOSE_WRITE_FILE)
-                continue;
+                if (length < kMinMessageSize) {
+                    fmWarning() << "VfsMonitor: received short dispatcher message:" << length;
+                    continue;
+                }
 
-            if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
-                // Mount table refresh is cheap and only touches data owned by
-                // this thread after startup.
-                if (!d->initMountPoints())
-                    fmWarning() << "VfsMonitor: failed to refresh mount point aliases";
-                continue;
-            }
+                DispatchEvent &event = receiveSlots[i];
 
-            // RENAME_TO is always forwarded: an unresolved destination means
-            // "renamed out of the monitored roots" for the paired RENAME_FROM,
-            // and a missing pair means "created here" (kept semantics).
-            if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
+                // The sender transmits offsetof(eventPath) + strlen + 1 bytes
+                // (NUL included), so terminate in place at the received
+                // length instead of clearing the whole 4 KiB slot.
+                event.eventPath[std::min<size_t>(length - kPathOffset,
+                                                 kDispatchMaxPathLen - 1)] = '\0';
+
+                const int act = event.action;
+                if (act < ACT_NEW_FILE || act > ACT_CLOSE_WRITE_FILE)
+                    continue;
+
+                if (act == ACT_MOUNT || act == ACT_UNMOUNT) {
+                    // Refreshing the mount table (mtab parse + alias stats)
+                    // inside this loop would stall the drain mid-burst long
+                    // enough for the dispatcher to overflow and kick us;
+                    // coalesce and run it once after the loop instead.
+                    mountRefreshPending = true;
+                    continue;
+                }
+
+                // RENAME_TO is always forwarded: an unresolved destination
+                // means "renamed out of the monitored roots" for the paired
+                // RENAME_FROM, and a missing pair means "created here"
+                // (kept semantics).
+                if (act == ACT_RENAME_TO_FILE || act == ACT_RENAME_TO_FOLDER) {
+                    const QString resolved = d->resolveAndFilterFullPath(event.eventPath);
+                    pendingBatch.append(QueuedFsEvent { act, event.cookie, QString(), resolved });
+                    continue;
+                }
+
                 const QString resolved = d->resolveAndFilterFullPath(event.eventPath);
-                enqueueEvent(act, event.cookie, QString(), resolved);
-                continue;
+                if (resolved.isNull())
+                    continue;
+
+                pendingBatch.append(QueuedFsEvent { act, event.cookie, resolved, QString() });
             }
 
-            const QString resolved = d->resolveAndFilterFullPath(event.eventPath);
-            if (resolved.isNull())
-                continue;
+            flushPendingBatch();
+        }
 
-            enqueueEvent(act, event.cookie, resolved, QString());
+        if (mountRefreshPending) {
+            mountRefreshPending = false;
+            if (!d->initMountPoints())
+                fmWarning() << "VfsMonitor: failed to refresh mount point aliases";
         }
 
         d->scheduleEventDrain();
     }
 
-    // Runs in the reader thread: append to the userspace queue (dropping on
-    // overflow — never blocking) and make sure the home thread wakes up.
-    void enqueueEvent(int action, uint32_t cookie, QString pathA, QString pathB)
+    // Pushes the events collected since the last flush into the userspace
+    // queue in one locked pass (dropping on overflow — never blocking).
+    // Runs in the reader thread.
+    void flushPendingBatch()
     {
+        if (pendingBatch.isEmpty())
+            return;
+
         {
             QMutexLocker locker(&d->queueMutex);
-            if (d->eventQueue.size() >= d->maxQueuedEvents) {
-                if (!d->overflowFlag.fetchAndStoreRelaxed(1)) {
-                    fmWarning() << "VfsMonitor: event queue full (" << d->maxQueuedEvents
-                                << "), dropping events until drained";
+            for (QueuedFsEvent &event : pendingBatch) {
+                if (d->eventQueue.size() >= d->maxQueuedEvents) {
+                    if (!d->overflowFlag.fetchAndStoreRelaxed(1)) {
+                        fmWarning() << "VfsMonitor: event queue full (" << d->maxQueuedEvents
+                                    << "), dropping events until drained";
+                    }
+                    break;
                 }
-                return;
+                d->eventQueue.enqueue(std::move(event));
             }
-
-            d->eventQueue.enqueue(QueuedFsEvent { action, cookie, std::move(pathA), std::move(pathB) });
         }
+        pendingBatch.clear();
 
         d->scheduleEventDrain();
     }
@@ -328,6 +388,19 @@ private:
     VfsMonitorFileSystemWatcherPrivate *d;
     QSocketNotifier *notifier { nullptr };
     int socketFd { -1 };
+
+    // Reused recvmmsg buffers: one syscall collects up to kReceiveBatch
+    // packets (kDispatchMaxPathLen-sized each). The iovec pointers are
+    // reset before every call because the kernel advances them while
+    // consuming a message.
+    static constexpr int kReceiveBatch = 64;
+    std::vector<DispatchEvent> receiveSlots;
+    std::vector<mmsghdr> msgHeaders;
+    std::vector<iovec> iovs;
+    // Events decoded since the last flush, parked in reader-thread-owned
+    // storage so the userspace queue is filled under one lock per batch.
+    QVector<QueuedFsEvent> pendingBatch;
+    bool mountRefreshPending { false };
 };
 
 // ========== VfsMonitorFileSystemWatcherPrivate ==========
