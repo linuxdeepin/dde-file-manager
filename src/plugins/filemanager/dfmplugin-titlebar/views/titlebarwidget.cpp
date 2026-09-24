@@ -425,14 +425,23 @@ void TitleBarWidget::paintEvent(QPaintEvent *event)
     if (currentIndex < 0 || currentIndex >= bottomBar->count())
         return;
 
-    const QRect tabRect = bottomBar->tabRect(currentIndex);
-    if (!tabRect.isValid())
+    // The parent paints before the child TabBar, while QTabBar may still hold
+    // a stale pending layout (e.g. right after a tab was appended). Flush it
+    // so tabRect() reflects the up-to-date geometry (fixes 1->2 tab shift).
+    bottomBar->ensureLayoutUpdated();
+    const QRect fullRect = bottomBar->tabRect(currentIndex);
+    if (!fullRect.isValid())
+        return;
+
+    // An empty result means the selected tab is scrolled completely out of
+    // the viewport, so there is nothing visible left to highlight.
+    const QRect visibleRect = bottomBar->visibleTabRect(currentIndex);
+    if (visibleRect.isEmpty())
         return;
 
     const QMarginsF visualMargins = bottomBar->tabVisualMargins(currentIndex);
-    const QPoint tabTopLeft = bottomBar->mapTo(this, tabRect.topLeft());
-    const QRectF selectedRect = QRectF(QRect(tabTopLeft, tabRect.size())).adjusted(visualMargins.left(), kSelectedTabTopInset,
-                                                                                    -visualMargins.right(), 0.0);
+    const QPoint tabTopLeft = bottomBar->mapTo(this, fullRect.topLeft());
+    const QRectF selectedRect = QRectF(QRect(tabTopLeft, fullRect.size())).adjusted(visualMargins.left(), kSelectedTabTopInset, -visualMargins.right(), 0.0);
     const qreal left = selectedRect.left();
     const qreal top = selectedRect.top();
     const qreal right = selectedRect.right();
@@ -453,8 +462,23 @@ void TitleBarWidget::paintEvent(QPaintEvent *event)
     selectedPath.lineTo(left - bottomRadius, height());
     selectedPath.closeSubpath();
 
+    // When the selected tab is partially scrolled out, the path must not leak
+    // into the paging buttons or beyond the tab strip. Clip to the viewport's
+    // x range only: the path intentionally extends below the viewport (down to
+    // the window bottom) and protrudes horizontally by bottomRadius at the
+    // joins, so a full rect clip would wrongly cut those areas in the normal,
+    // non-scrolled case.
     const QPalette::ColorGroup group = isActiveWindow() ? QPalette::Active : QPalette::Inactive;
-    painter.fillPath(selectedPath, palette().color(group, QPalette::Base));
+    if (visibleRect != fullRect) {
+        const QRect viewportRect = bottomBar->tabViewportRect();
+        const QPoint viewportTopLeft = bottomBar->mapTo(this, viewportRect.topLeft());
+        painter.save();
+        painter.setClipRect(QRect(viewportTopLeft.x(), 0, viewportRect.width(), height()));
+        painter.fillPath(selectedPath, palette().color(group, QPalette::Base));
+        painter.restore();
+    } else {
+        painter.fillPath(selectedPath, palette().color(group, QPalette::Base));
+    }
 }
 
 int TitleBarWidget::calculateRemainingWidth() const
@@ -534,6 +558,10 @@ void TitleBarWidget::initConnect()
     connect(bottomBar, &TabBar::currentTabChanged, this, &TitleBarWidget::onTabCurrentChanged);
     connect(bottomBar, &TabBar::tabCloseRequested, this, &TitleBarWidget::onTabCloseRequested);
     connect(bottomBar, &TabBar::tabAddRequested, this, &TitleBarWidget::onTabAddButtonClicked);
+    // The selected-tab highlight is painted here and extends below the tab
+    // strip's viewport, while internal scrolling repaints that viewport only;
+    // re-run this paintEvent whenever the visible tab geometry shifts.
+    connect(bottomBar, &TabBar::viewportScrolled, this, QOverload<>::of(&TitleBarWidget::update));
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {
@@ -591,13 +619,15 @@ void TitleBarWidget::showCrumbBar()
         addressBar->clear();
         addressBar->hide();
     }
-    QMetaObject::invokeMethod(this, [this] {
-        QWidget *focusWidget = QApplication::focusWidget();
-        if (!focusWidget || focusWidget == addressBar
-            || addressBar->isAncestorOf(focusWidget)) {
-            setFocus();
-        }
-    }, Qt::QueuedConnection);
+    QMetaObject::invokeMethod(
+            this, [this] {
+                QWidget *focusWidget = QApplication::focusWidget();
+                if (!focusWidget || focusWidget == addressBar
+                    || addressBar->isAncestorOf(focusWidget)) {
+                    setFocus();
+                }
+            },
+            Qt::QueuedConnection);
 }
 
 void TitleBarWidget::showSearchFilterButton(bool visible)

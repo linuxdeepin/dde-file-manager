@@ -143,6 +143,7 @@ public:
     QTimer *updateConfigTimer { nullptr };
     int lastTooltipTabIndex { -1 };
     bool lastTooltipOnButton { false };
+    QRect lastFirstTabRect;
 };
 }
 
@@ -1268,6 +1269,53 @@ QMarginsF TabBar::tabVisualMargins(int index) const
     return QMarginsF(d->tabLeadingInset(index), 0.0, d->tabTrailingInset(), 0.0);
 }
 
+void TabBar::ensureLayoutUpdated()
+{
+    // QTabBar rebuilds its tab geometry lazily (layoutDirty flag), e.g. right
+    // after addTab(). layout()->activate() is the load-bearing step here: it
+    // re-applies the outer box layout geometry to the inner QTabBar widget,
+    // which a built-in flush inside QTabBar::tabRect() cannot fix on its own.
+    // Querying sizeHint() afterwards flushes the inner lazy layout as a
+    // redundant safety net (QTabBar::tabRect() also flushes internally, so
+    // this only covers callers that skip tabRect()). Without all this, a
+    // parent widget reading tabRect() before the tab bar's own paint event
+    // gets stale rects (tab 1->2 misalignment).
+    if (layout())
+        layout()->activate();
+    (void)sizeHint();
+}
+
+QRect TabBar::visibleTabRect(int index) const
+{
+    if (index < 0 || index >= count())
+        return {};
+
+    // DTabBar::tabRect() already maps the inner tab rect into this widget's
+    // coordinates (with the scroll offset applied), but it never clips it to
+    // the viewport, so a fully scrolled-out tab still reports a valid rect
+    // outside this widget. The inner QTabBar widget IS the scrolling viewport:
+    // its geometry here is exactly the visible area in our coordinate space.
+    QTabBar *inner = d->tabBar;
+    if (!inner)
+        return DTabBar::tabRect(index);
+
+    const QRect viewport = inner->geometry();
+    const QRect visible = DTabBar::tabRect(index).intersected(viewport);
+    if (visible.isEmpty())
+        return {};
+
+    return visible;
+}
+
+QRect TabBar::tabViewportRect() const
+{
+    // The inner QTabBar widget IS the scrolling viewport; its geometry is
+    // expressed in this widget's coordinates (it is a direct child).
+    if (QTabBar *inner = d->tabBar)
+        return inner->geometry();
+    return rect();
+}
+
 void TabBar::activateNextTab()
 {
     if (currentIndex() == count() - 1)
@@ -1422,6 +1470,25 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
     if (eventType == QEvent::Paint) {
         if (auto btn = qobject_cast<DIconButton *>(obj)) {
             d->paintTabButton(btn);
+        } else if (obj == d->tabBar) {
+            // Internal scrolling (paging buttons, drag auto-scroll or wheel)
+            // only invalidates the inner tab bar's own viewport; the parent
+            // title bar paints a selected-tab highlight that extends below
+            // the viewport and would otherwise keep the stale highlight.
+            // Compare the first tab's viewport-relative rect between paints:
+            // scrolling shifts every tab, so a pure translation is the tell.
+            // Reporting the change here (before the base paint) is both the
+            // earliest reliable point and re-entrant safe: tabRect() itself
+            // never paints, so the signal cannot recurse into this branch.
+            const QRect firstTabRect = tabRect(0);
+            if (!firstTabRect.isEmpty()
+                && d->lastFirstTabRect.isValid()
+                && d->lastFirstTabRect != firstTabRect) {
+                d->lastFirstTabRect = firstTabRect;
+                Q_EMIT viewportScrolled();
+            } else if (!firstTabRect.isEmpty()) {
+                d->lastFirstTabRect = firstTabRect;
+            }
         }
         return DTabBar::eventFilter(obj, e);
     }
@@ -1564,7 +1631,11 @@ void TabBar::insertFromMimeDataOnDragEnter(int index, const QMimeData *source)
 
 void TabBar::resizeEvent(QResizeEvent *e)
 {
-    // 临时修改方案：通过调用setIconSize()，更新内部的layoutDirty标识，强制重新刷新标签页布局
-    setIconSize(iconSize());
     DTabBar::resizeEvent(e);
+    // The base-class resize triggers a fresh tab layout pass internally; flush
+    // the remaining pending geometry through the shared entry point so that
+    // consumers of tabRect() outside the paint cycle always read up-to-date
+    // rects (replaces the former setIconSize() dirty-flag hack, which forced a
+    // redundant full relayout on every resize).
+    ensureLayoutUpdated();
 }
