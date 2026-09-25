@@ -1,0 +1,200 @@
+name: xlsx视图导航扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的视图、搜索激活、历史导航和固定目录入口扩展用例
+module: xlsx视图导航扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_1816679
+  name: 搜索框-快捷键激活并搜索
+  description: 按 xlsx 步骤使用 Ctrl+F 激活搜索框并验证筛选入口存在
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AdvancedButton
+- id: case_1881383
+  name: 【搜索专项优化-v1.0】搜索出结果后切换视图，再搜索
+  description: 按 xlsx 步骤先搜索，再切换图标和列表视图
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.5
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: listView_button
+- id: case_1850153
+  name: 图标展示、列表展示
+  description: 按 xlsx 步骤验证图标视图和列表视图可切换
+  tags: []
+  steps:
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+- id: case_1808931
+  name: 【文管列表视图交互优化】列表顶部和表头之间增加10px空白区域
+  description: 按 xlsx 步骤进入任意目录并切换为列表视图
+  tags: []
+  steps:
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1808011
+  name: 文管内切换目录动效-切换上一级目录
+  description: 按 xlsx 步骤在目录间切换并验证后退入口存在
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: back_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+- id: case_1805065
+  name: 历史导航-顶部功能区UI检查
+  description: 按 xlsx 步骤检查顶部功能区常用元素存在
+  tags: []
+  steps: []
+  assert_steps:
+  - action: assert_element
+    ref: back_button
+  - action: assert_element
+    ref: forword_button
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: listView_button
+- id: case_1816723
+  name: 标签页-调整标签页顺序
+  description: 按 xlsx 步骤新建多个标签页，验证新建入口仍可用
+  tags: []
+  steps:
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddBtn
+- id: case_1806205
+  name: 主目录图标 - 桌面默认显示主目录图标_
+  description: 按 xlsx 固定目录场景验证主目录入口存在且可进入
+  tags: []
+  steps:
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1805677
+  name: '[093]页面检查-回收站无内容时'
+  description: 按 xlsx 回收站页面检查场景进入回收站并验证入口存在
+  tags: []
+  steps:
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1812225
+  name: 长文件名功能-最近使用
+  description: 按 xlsx 固定目录场景进入最近使用并验证入口存在
+  tags: []
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

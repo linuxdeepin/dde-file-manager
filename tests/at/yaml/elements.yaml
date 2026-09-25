@@ -1,15 +1,28 @@
 # SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
 #
 # SPDX-License-Identifier: GPL-3.0-or-later
+
 elements:
-  IconLabel:
-    name: IconLabel
+  AddBtn:
+    name: AddBtn
+    role: push button
+  AddressBar:
+    name: AddressBar
+    role: text
+  AdvanceBtn:
+    name: AdvanceBtn
+    role: push button
+  AlbumLabel:
+    name: AlbumLabel
     role: label
-  NameLabel:
-    name: NameLabel
+  AlbumValue:
+    name: AlbumValue
     role: label
-  CloseBtn:
-    name: CloseBtn
+  AlertTooltip:
+    name: AlertTooltip
+    role: tool tip
+  AnonymousButton:
+    name: AnonymousButton
     role: push button
   ArtistLabel:
     name: ArtistLabel
@@ -17,382 +30,421 @@ elements:
   ArtistValue:
     name: ArtistValue
     role: label
-  AlbumLabel:
-    name: AlbumLabel
-    role: label
-  AlbumValue:
-    name: AlbumValue
-    role: label
-  ModeCom:
-    name: ModeCom
-    role: combo box
   AvailableSizeCombo:
     name: AvailableSizeCombo
     role: combo box
-  CustomSizeEdit:
-    name: CustomSizeEdit
-    role: text
-  ForegroundPaletteEdit:
-    name: ForegroundPaletteEdit
-    role: text
   BackgroundPaletteEdit:
     name: BackgroundPaletteEdit
     role: text
-  HightlightPaletteEdit:
-    name: HightlightPaletteEdit
-    role: text
-  HFpaletteEdit:
-    name: HFpaletteEdit
-    role: text
-  ControlButton:
-    name: ControlButton
-    role: push button
-  ItemViewParent:
-    name: ItemViewParent
-    role: list
-  AddressBar:
-    name: AddressBar
-    role: text
-  StatusBar:
-    name: StatusBar
-    role: status bar
-  PlayControlButton:
-    name: PlayControlButton
-    role: push button
-  ProgressSlider:
-    name: ProgressSlider
-    role: slider
-  Slider_2:
-    name: Slider_2
-    role: slider
-  View_ImageList:
-    name: View_ImageList
-    role: list
-  Nextbutton:
-    name: Nextbutton
-    role: push button
-  SizeLabel:
-    name: SizeLabel
-    role: label
-  TypeLabel:
-    name: TypeLabel
-    role: label
-  ThemeCom:
-    name: ThemeCom
-    role: combo box
-  AnonymousButton:
-    name: AnonymousButton
-    role: push button
-  RegisterButton:
-    name: RegisterButton
-    role: push button
-  UsernameLineEdit:
-    name: UsernameLineEdit
-    role: text
-  DomainLineEdit:
-    name: DomainLineEdit
-    role: text
-  PasswordCheckBox:
-    name: PasswordCheckBox
-    role: check box
-  PasswordButtonGroup:
-    name: PasswordButtonGroup
-  ChkboxNotAskAgain:
-    name: ChkboxNotAskAgain
-    role: check box
+  BottomBar:
+    name: BottomBar
+    role: page tab
   BtnCoexist:
     name: BtnCoexist
+    role: push button
+  BtnDelete:
+    name: BtnDelete
+  BtnPause:
+    name: BtnPause
+  BtnReplace:
+    name: BtnReplace
     role: push button
   BtnSkip:
     name: BtnSkip
     role: push button
-  BtnDelete:
-    name: BtnDelete
-  BtnReplace:
-    name: BtnReplace
-    role: push button
-  TaskListWidget:
-    name: TaskListWidget
-  BtnPause:
-    name: BtnPause
   BtnStop:
     name: BtnStop
-  PasswordEdit_2:
-    name: PasswordEdit_2
-  TitleLabel:
-    name: TitleLabel
-    role: label
-  FileNameEdit:
-    name: FileNameEdit
-    role: text
-  FileNameLabel:
-    name: FileNameLabel
-    role: label
-  FiltersLabel:
-    name: FiltersLabel
-    role: label
-  FiltersComboBox:
-    name: FiltersComboBox
-    role: combo box
-  CurAcceptButton:
-    name: CurAcceptButton
-  CurRejectButton:
-    name: CurRejectButton
+  CancelBtn:
+    name: CancelBtn
     role: push button
-  IconButton:
-    name: IconButton
-  CloseButton:
-    name: CloseButton
-  Slider:
-    name: Slider
-    role: slider
-  SwitchBtn:
-    name: SwitchBtn
-  KeyEdit:
-    name: KeyEdit
-    role: text
-  TextLabel:
-    name: TextLabel
-    role: label
-  TipsLabel:
-    name: TipsLabel
-  RightValueEdit:
-    name: RightValueEdit
-  FileChooser:
-    name: FileChooser
+  CancelButton:
+    name: CancelButton
+    role: push button
+  CharsetComboBox:
+    name: CharsetComboBox
+    role: combo box
+  CheckBox:
+    name: CheckBox
+    role: check box
+  CheckButton:
+    name: CheckButton
+    role: push button
   CheckdiscCheckbox:
     name: CheckdiscCheckbox
     role: check box
   ChecksumCheckbox:
     name: ChecksumCheckbox
     role: check box
-  EjectCheckbox:
-    name: EjectCheckbox
+  ChgUnlockType:
+    name: ChgUnlockType
+    role: push button
+  ChkboxNotAskAgain:
+    name: ChkboxNotAskAgain
     role: check box
-  AdvanceBtn:
-    name: AdvanceBtn
-    role: push button
-  CreateImgBtn:
-    name: CreateImgBtn
-    role: push button
   ChooseButton:
     name: ChooseButton
-  CheckButton:
-    name: CheckButton
+  CloseBtn:
+    name: CloseBtn
     role: push button
-  CancelButton:
-    name: CancelButton
+  CloseButton:
+    name: CloseButton
+  CollectionServerView:
+    name: CollectionServerView
+    role: list
+  CollectionView:
+    name: CollectionView
+  ComboBox:
+    name: ComboBox
+    role: combo box
+  ControlButton:
+    name: ControlButton
     role: push button
-  CrumbEdit:
-    name: CrumbEdit
-  Edit_2:
-    name: Edit_2
-    role: text
-  AlertTooltip:
-    name: AlertTooltip
-    role: tool tip
-  ExecutableCheckBox:
-    name: ExecutableCheckBox
-    role: check box
-  DevicesListView:
-    name: DevicesListView
   CopyNetAddr:
     name: CopyNetAddr
     role: push button
   CopyUserNameBt:
     name: CopyUserNameBt
     role: push button
-  OpenWithListWidget:
-    name: OpenWithListWidget
-  OpenWithDialog-QScrollArea:
-    name: OpenWithDialog-QScrollArea
-    role: scroll pane
-  OpenWithBtnGroup:
-    name: OpenWithBtnGroup
-  SetToDefaultCheckBox:
-    name: SetToDefaultCheckBox
-    role: check box
-  OpenFileChooseButton:
-    name: OpenFileChooseButton
-  HideFile_2:
-    name: HideFile_2
-  HideFile:
-    name: HideFile
-    role: check box
-  FsComb:
-    name: FsComb
-  FinalizeDiscCheckbox:
-    name: FinalizeDiscCheckbox
-    role: check box
-  ShareNameEditor:
-    name: ShareNameEditor
-    role: text
-  ShareAnonymousSelector:
-    name: ShareAnonymousSelector
-    role: combo box
-  SetPasswordBt:
-    name: SetPasswordBt
-  ShareSwitcher:
-    name: ShareSwitcher
-  SharePermissionSelector:
-    name: SharePermissionSelector
-    role: combo box
-  TagLable:
-    name: TagLable
-  TagLeftLable:
-    name: TagLeftLable
-  ToolTip:
-    name: ToolTip
-  VolnameEdit:
-    name: VolnameEdit
-  WritespeedComb:
-    name: WritespeedComb
-  OwnerComboBox:
-    name: OwnerComboBox
-  GroupComboBox:
-    name: GroupComboBox
-    role: combo box
-  OtherComboBox:
-    name: OtherComboBox
-    role: combo box
-  NameEditIcon:
-    name: NameEditIcon
-  dde-file-manager:
-    name: dde-file-manager
-  BottomBar:
-    name: BottomBar
-    role: page tab
-  AddBtn:
-    name: AddBtn
+  CreateImgBtn:
+    name: CreateImgBtn
     role: push button
-  CollectionServerView:
-    name: CollectionServerView
-    role: list
-  CharsetComboBox:
-    name: CharsetComboBox
-    role: combo box
+  CrumbEdit:
+    name: AddressToolBar
+  CurAcceptButton:
+    name: CurAcceptButton
+  CurRejectButton:
+    name: CurRejectButton
+    role: push button
+  CustomSizeEdit:
+    name: CustomSizeEdit
+    role: text
+  DevicesListView:
+    name: DevicesListView
+  DomainLineEdit:
+    name: DomainLineEdit
+    role: text
+  Edit_2:
+    name: Edit_2
+    role: text
   Editor_2:
     name: Editor_2
     role: text
-  ChgUnlockType:
-    name: ChgUnlockType
-    role: push button
-  EncType:
-    name: EncType
-    role: combo box
+  EjectCheckbox:
+    name: EjectCheckbox
+    role: check box
   EncKeyEdit1:
     name: EncKeyEdit1
     role: text
   EncKeyEdit2:
     name: EncKeyEdit2
     role: text
-  KeyExportInput:
-    name: KeyExportInput
+  EncType:
+    name: EncType
+    role: combo box
+  ExecutableCheckBox:
+    name: ExecutableCheckBox
+    role: check box
+  FileChooser:
+    name: FileChooser
+  FileNameEdit:
+    name: FileNameEdit
     role: text
-  FinishedBtn:
-    name: FinishedBtn
-    role: push button
-  KeyFileEdit:
-    name: KeyFileEdit
-    role: text
+  FileNameLabel:
+    name: FileNameLabel
+    role: label
   FilePathEdit:
     name: FilePathEdit
     role: text
-  ComboBox:
-    name: ComboBox
+  FiltersComboBox:
+    name: FiltersComboBox
     role: combo box
-  CancelBtn:
-    name: CancelBtn
-    role: push button
-  CheckBox:
-    name: CheckBox
+  FiltersLabel:
+    name: FiltersLabel
+    role: label
+  FinalizeDiscCheckbox:
+    name: FinalizeDiscCheckbox
     role: check box
-  LeftBtn:
-    name: LeftBtn
+  FinishedBtn:
+    name: FinishedBtn
     role: push button
-  Placeholder:
-    name: Placeholder
+  ForegroundPaletteEdit:
+    name: ForegroundPaletteEdit
+    role: text
+  FsComb:
+    name: FsComb
+  GroupComboBox:
+    name: GroupComboBox
+    role: combo box
+  HFpaletteEdit:
+    name: HFpaletteEdit
+    role: text
+  HideFile:
+    name: HideFile
+    role: check box
+  HideFile_2:
+    name: HideFile_2
+  HightlightPaletteEdit:
+    name: HightlightPaletteEdit
+    role: text
+  IconButton:
+    name: IconButton
+  IconLabel:
+    name: IconLabel
+    role: label
+  ItemViewParent:
+    name: ItemViewParent
+    role: list
+  KeyEdit:
+    name: KeyEdit
+    role: text
+  KeyExportInput:
+    name: KeyExportInput
+    role: text
+  KeyFileEdit:
+    name: KeyFileEdit
+    role: text
+  LeftBtn:
+    name: back_button
+    role: button
   MenuPtr:
     name: MenuPtr
     role: menu
-  NextBtn:
-    name: NextBtn
-  PasswordEdit:
-    name: PasswordEdit
-  OldPasswordEdit:
-    name: OldPasswordEdit
+  ModeCom:
+    name: ModeCom
+    role: combo box
+  NameEditIcon:
+    name: NameEditIcon
+  NameLabel:
+    name: NameLabel
+    role: label
+  NewPass1:
+    name: NewPass1
+  NewPass2:
+    name: NewPass2
   NewPasswordEdit:
     name: NewPasswordEdit
+  NewPwdEdit:
+    name: NewPwdEdit
+  NextBtn:
+    name: NextBtn
+  Nextbutton:
+    name: Nextbutton
+    role: push button
+  OldPass:
+    name: OldPass
+  OldPasswordEdit:
+    name: OldPasswordEdit
+  OldPwdEdit:
+    name: OldPwdEdit
+  OpenFileChooseButton:
+    name: OpenFileChooseButton
+  OpenWithBtnGroup:
+    name: OpenWithBtnGroup
+  OpenWithDialog-QScrollArea:
+    name: OpenWithDialog-QScrollArea
+    role: scroll pane
+  OpenWithListWidget:
+    name: OpenWithListWidget
+  OtherComboBox:
+    name: OtherComboBox
+    role: combo box
+  OwnerComboBox:
+    name: OwnerComboBox
+  PasswordButtonGroup:
+    name: PasswordButtonGroup
+  PasswordCheckBox:
+    name: PasswordCheckBox
+    role: check box
+  PasswordEdit:
+    name: PasswordEdit
+  PasswordEdit_2:
+    name: PasswordEdit_2
   PasswordHintEdit:
     name: PasswordHintEdit
     role: text
   PasswordLineEdit:
     name: PasswordLineEdit
-  OldPass:
-    name: OldPass
-  NewPass1:
-    name: NewPass1
-  NewPass2:
-    name: NewPass2
-  OldPwdEdit:
-    name: OldPwdEdit
-  NewPwdEdit:
-    name: NewPwdEdit
   PbBurn:
     name: PbBurn
     role: push button
   PbDump:
     name: PbDump
     role: push button
-  SideBarView:
-    name: SideBarView
-  TabBar:
-    name: TabBar
-    role: page tab
-  SchemeComboBox:
-    name: SchemeComboBox
-    role: combo box
-  ServerComboBox:
-    name: ServerComboBox
-    role: combo box
-  TheAddButton:
-    name: TheAddButton
+  Placeholder:
+    name: Placeholder
+  PlayControlButton:
+    name: PlayControlButton
+    role: push button
+  ProgressSlider:
+    name: ProgressSlider
+    role: slider
   PropertyDialog-QScrollArea:
     name: PropertyDialog-QScrollArea
   PwdEdit:
     name: PwdEdit
+  RecSwitch:
+    name: RecSwitch
   RecoveryKeyEdit:
     name: RecoveryKeyEdit
     role: text
-  RepeatPasswordEdit:
-    name: RepeatPasswordEdit
-  RenameEditor:
-    name: RenameEditor
+  RegisterButton:
+    name: RegisterButton
+    role: push button
   RenameBtn:
     name: RenameBtn
+  RenameEditor:
+    name: RenameEditor
+  RepeatPasswordEdit:
+    name: RepeatPasswordEdit
   RepeatPwdEdit:
     name: RepeatPwdEdit
+  RightValueEdit:
+    name: RightValueEdit
   SaveBtn:
     name: SaveBtn
-  ScrollArea:
-    name: ScrollArea
-  RecSwitch:
-    name: RecSwitch
   ScaleSlider:
     name: ScaleSlider
     role: slider
-  TypeCombo:
-    name: TypeCombo
+  SchemeComboBox:
+    name: SchemeComboBox
+    role: combo box
+  ScrollArea:
+    name: ScrollArea
+  ServerComboBox:
+    name: ServerComboBox
+    role: combo box
+  SetPasswordBt:
+    name: SetPasswordBt
+  SetToDefaultCheckBox:
+    name: SetToDefaultCheckBox
+    role: check box
+  ShareAnonymousSelector:
+    name: ShareAnonymousSelector
+    role: combo box
+  ShareNameEditor:
+    name: ShareNameEditor
+    role: text
+  SharePermissionSelector:
+    name: SharePermissionSelector
+    role: combo box
+  ShareSwitcher:
+    name: ShareSwitcher
+  SideBarView:
+    name: side_bar_view
+  SizeLabel:
+    name: SizeLabel
+    role: label
+  Slider:
+    name: Slider
+    role: slider
+  Slider_2:
+    name: Slider_2
+    role: slider
+  StatusBar:
+    name: StatusBar
+    role: status bar
+  SwitchBtn:
+    name: SwitchBtn
+  TabBar:
+    name: TabBar
+    role: page tab
+  TagLable:
+    name: TagLable
+  TagLeftLable:
+    name: TagLeftLable
+  TaskListWidget:
+    name: TaskListWidget
+  TextLabel:
+    name: TextLabel
+    role: label
+  TheAddButton:
+    name: TheAddButton
+  ThemeCom:
+    name: ThemeCom
+    role: combo box
+  TipsBtn:
+    name: TipsBtn
+  TipsButton:
+    name: TipsButton
   TipsEdit:
     name: TipsEdit
     role: text
-  TipsButton:
-    name: TipsButton
+  TipsLabel:
+    name: TipsLabel
+  TitleLabel:
+    name: TitleLabel
+    role: label
+  ToggleModeBtn:
+    name: viewoptions_button
+  ToolTip:
+    name: ToolTip
   Tooltip:
     name: Tooltip
-  TipsBtn:
-    name: TipsBtn
-  ToggleModeBtn:
-    name: ToggleModeBtn
-  CollectionView:
-    name: CollectionView
+  TypeCombo:
+    name: TypeCombo
+  TypeLabel:
+    name: TypeLabel
+    role: label
+  UsernameLineEdit:
+    name: UsernameLineEdit
+    role: text
+  View_ImageList:
+    name: View_ImageList
+    role: list
+  VolnameEdit:
+    name: VolnameEdit
+  WritespeedComb:
+    name: WritespeedComb
+  dde-file-manager:
+    name: dde-file-manager
+  side_bar_view:
+    name: side_bar_view
+    role: tree
+  下载:
+    name: 下载
+    role: table cell
+  主目录:
+    name: 主目录
+    role: table cell
+  保险箱:
+    name: 保险箱
+    role: table cell
+  回收站:
+    name: 回收站
+    role: table cell
+  图片:
+    name: 图片
+    role: table cell
+  快捷访问:
+    name: 快捷访问
+    role: table cell
+  数据盘:
+    name: 数据盘
+    role: table cell
+  文档:
+    name: 文档
+    role: table cell
+  显示预览:
+    name: 显示预览
+    role: menu item
+  最近使用:
+    name: 最近使用
+    role: table cell
+  桌面:
+    name: 桌面
+    role: table cell
+  系统盘:
+    name: 系统盘
+    role: table cell
+  网络:
+    name: 网络
+    role: table cell
+  视频:
+    name: 视频
+    role: table cell
+  计算机:
+    name: 计算机
+    role: table cell
+  音乐:
+    name: 音乐
+    role: table cell

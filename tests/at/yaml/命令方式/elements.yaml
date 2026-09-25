@@ -3,11 +3,6 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 
 elements:
-  桌面:
-    name: 桌面
+  回收站:
+    name: 回收站
     role: table cell
-  快捷访问:
-    name: 快捷访问
-    role: table cell
-  side_bar_view:
-    name: side_bar_view

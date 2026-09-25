@@ -1,0 +1,252 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: xlsx候选_suite
+app: dde-file-manager
+description: '从 V25 xlsx 筛选的低风险 AT-SPI 候选用例：侧边栏固定目录入口'
+module: xlsx候选
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: dde-file-manager --open-home
+  wait: 5.0
+suites:
+- id: case_1806345
+  name: 侧边栏最近使用，点击进入
+  description: '打开文管，侧边栏单击最近使用，验证最近使用入口存在并可进入'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: case_1806089
+  name: 侧边栏固定目录，点击后跳转
+  description: '打开文管，侧边栏点击固定目录，验证固定目录入口可访问'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: case_1805953
+  name: 我的目录-目录默认顺序检查
+  description: '检查我的目录中本地目录展示项存在'
+  tags: []
+  steps: []
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 下载
+- id: case_1805683
+  name: 回收站入口-通过文管窗口进入回收站
+  description: '打开文件管理器，通过侧边栏进入回收站'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: case_1805067
+  name: 历史导航-浏览路径当前目录匹配侧边栏栏目
+  description: '进入文件管理器，进入栏目桌面，验证侧边栏栏目存在'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: case_1810445
+  name: 视图-默认视图模式
+  description: '进入文件管理器，验证默认侧边栏树视图存在'
+  tags: []
+  steps: []
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806199
+  name: 主目录图标-从文管桌面路径进入主目录
+  description: '打开文管，从侧边栏进入主目录入口'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: case_1806355
+  name: 最近使用-默认视图
+  description: '打开文管，从侧边栏进入最近使用目录，验证最近使用入口存在'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: case_1806109
+  name: 侧边栏固定目录，文件夹，双击打开
+  description: '打开文管，侧边栏选择视频固定目录，验证目录入口可点击'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: case_1806107
+  name: 侧边栏固定目录，文本文件，双击打开
+  description: '打开文管，侧边栏选择文档固定目录，验证目录入口可点击'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: case_1805975
+  name: 计算机-系统盘-单击侧边栏系统盘
+  description: '单击侧边栏系统盘，验证系统盘入口存在并可进入'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: case_1810369
+  name: 重复打开文件夹-计算机页面入口
+  description: '在文件管理器中侧边栏点击计算机，验证计算机入口可访问'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: case_1810367
+  name: 重复打开文件夹-指定目录入口
+  description: '在文件管理器中侧边栏点击非计算机页面，验证视频目录入口可访问'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: case_1810365
+  name: 重复打开文件夹-启动器打开前的指定目录入口
+  description: '在文件管理器中侧边栏点击非计算机页面，验证音乐目录入口可访问'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+- id: case_1805207
+  name: 文管顶部区域，点击图标视图
+  description: '打开文管，选择视频目录，验证视频目录入口可访问'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: case_1935235
+  name: 在新标签页中打开新文件夹-从侧边栏打开新文件夹
+  description: '打开文管，依次点击左侧栏的文档、下载、图片目录'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_1808009
+  name: 文管内切换目录动效-切换到其他目录
+  description: '打开文件管理器窗口，点击左侧边栏快捷访问栏目，验证目录入口存在'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: case_1809159
+  name: 侧边栏目录显示优化-侧边栏目录选中
+  description: '打开文管，单击侧边栏任意目录，验证选中目录仍可访问'
+  tags: []
+  steps:
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: case_1816653
+  name: 顶部区域布局改版
+  description: '打开文件管理器，验证主窗口侧边栏基础布局元素存在'
+  tags: []
+  steps: []
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

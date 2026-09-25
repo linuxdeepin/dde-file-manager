@@ -1,0 +1,35 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+elements:
+  ToggleModeBtn:
+    name: viewoptions_button
+    role: button
+  side_bar_view:
+    name: side_bar_view
+    role: tree
+  主目录:
+    name: 主目录
+    role: table cell
+  图片:
+    name: 图片
+    role: table cell
+  文档:
+    name: 文档
+    role: table cell
+  显示预览:
+    name: 显示预览
+    role: menu item
+  桌面:
+    name: 桌面
+    role: table cell
+  视频:
+    name: 视频
+    role: table cell
+  计算机:
+    name: 计算机
+    role: table cell
+  音乐:
+    name: 音乐
+    role: table cell

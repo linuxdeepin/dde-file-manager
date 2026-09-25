@@ -1,0 +1,255 @@
+name: xlsx搜索筛选扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的搜索筛选入口和快捷键用例
+module: xlsx搜索筛选扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_1805487
+  name: 【搜索】【支持筛选搜索】文管单击&quot;搜索&quot;按钮后，&quot;筛选&quot;按钮显示
+  description: 'xlsx 用例编号: 1805487
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，顶部工具栏，单击"搜索"按钮
+
+    预期结果:
+
+    1. 显示搜索输入框，输入框旁显示"筛选"按钮
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805487'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.8
+  assert_steps:
+  - action: assert_element
+    ref: AdvancedButton
+- id: case_1805533
+  name: 【搜索】【支持筛选搜索】文管单击“搜索”按钮后，筛选过滤条件，直接进行筛选
+  description: 'xlsx 用例编号: 1805533
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，顶部工具栏，单击"搜索"按钮
+
+    2. 单击"筛选"按钮，不输入关键字，选择筛选过滤条件(如：文件类型为文档/图片)
+
+    预期结果:
+
+    1. 显示搜索输入框，输入框旁显示"筛选"按钮
+
+    2. 当前目录文件，根据筛选条件进行筛选显示
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805533'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.8
+  - action: element_action
+    ref: AdvancedButton
+    do: click
+    wait: 0.8
+  assert_steps:
+  - action: assert_element
+    ref: AdvancedButton
+- id: case_1805269
+  name: 【搜索】高级搜索-打开/关闭
+  description: 'xlsx 用例编号: 1805269
+
+    前置条件: 打开文管，已在搜索输入关键字搜索
+
+    测试步骤:
+
+    1. 点击输入框后漏斗状“高级搜索”按钮
+
+    2. 在高级搜索状态下再次点击漏斗按钮
+
+    3. 在高级搜索收起状态下按：Ctrl+f
+
+    4. 在高级搜索状态下按：Ctrl+f
+
+    预期结果:
+
+    1. 高级搜索模式打开
+
+    2. 高级搜索模式收起
+
+    3. 高级搜索模式打开
+
+    4. 高级搜索模式收起
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805269'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.8
+  - action: keyboard_type
+    text: sh
+    wait: 1.0
+  - action: element_action
+    ref: AdvancedButton
+    do: click
+    wait: 0.8
+  - action: element_action
+    ref: AdvancedButton
+    do: click
+    wait: 0.8
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.8
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.8
+  assert_steps:
+  - action: assert_element
+    ref: AdvancedButton
+- id: case_1805461
+  name: 【搜索】搜索-快捷键检查
+  description: 'xlsx 用例编号: 1805461
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 进入搜索
+
+    2. 聚焦到地址栏并进入输入状态
+
+    3. 移动光标到最左边
+
+    4. 移动光标到最右边
+
+    5. 向左移动一个
+
+    6. 向右移动一个
+
+    7. 从当前光标选中到输入栏最左边
+
+    8. 从当前光标选中到输入栏最右边
+
+    9. 从当前光标向左选中
+
+    10. 从当前光标向右选中
+
+    11. 删除一个
+
+    12. 退出输入
+
+    预期结果:
+
+    1. ctrl+f
+
+    2. ctrl+l
+
+    3. home
+
+    4. end
+
+    5. left
+
+    6. right
+
+    7. shift+home
+
+    8. shift+end
+
+    9. shift+left
+
+    10. shift+right
+
+    11. backspace
+
+    12. esc
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805461'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.8
+  - action: keyboard_type
+    text: abc123
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.8
+  - action: keyboard_press
+    key: home
+    wait: 0.2
+  - action: keyboard_press
+    key: end
+    wait: 0.2
+  - action: keyboard_press
+    key: left
+    wait: 0.2
+  - action: keyboard_press
+    key: right
+    wait: 0.2
+  - action: keyboard_hot_key
+    key: shift+home
+    wait: 0.2
+  - action: keyboard_hot_key
+    key: shift+end
+    wait: 0.2
+  - action: keyboard_hot_key
+    key: shift+left
+    wait: 0.2
+  - action: keyboard_hot_key
+    key: shift+right
+    wait: 0.2
+  - action: keyboard_press
+    key: backspace
+    wait: 0.2
+  - action: keyboard_press
+    key: escape
+    wait: 0.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

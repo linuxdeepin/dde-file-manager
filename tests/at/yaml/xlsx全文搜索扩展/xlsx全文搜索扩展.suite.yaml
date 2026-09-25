@@ -1,0 +1,162 @@
+name: xlsx全文搜索扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的全文搜索和视图切换扩展用例
+module: xlsx全文搜索扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_1805441
+  name: 【搜索】全文搜索-搜索隐藏
+  description: 'xlsx 用例编号: 1805441
+
+    前置条件: 文管设置中已勾选全文搜索和显示隐藏文件
+
+    测试步骤:
+
+    1. 输入隐藏文件的文件名进行搜索
+
+    2. 输入包含隐藏文件内容的关键字进行搜索
+
+    预期结果:
+
+    1. 可匹配出隐藏文件
+
+    2. 不可匹配出隐藏文件
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805441'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: .hidden
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1805433
+  name: 【搜索】全文搜索-混合语言搜索多个文件
+  description: 'xlsx 用例编号: 1805433
+
+    前置条件: 勾选全文搜索
+
+    测试步骤:
+
+    1. 输入中文、繁体组合搜索
+
+    2. 输入中文、英文组合搜索
+
+    3. 输入繁体、英文组合搜索
+
+    预期结果:
+
+    1. 可正常搜索出当前路径/子路径搜索结果
+
+    2. 可正常搜索出当前路径/子路径搜索结果
+
+    3. 可正常搜索出当前路径/子路径搜索结果
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805433'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 天ss
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 呼龍4
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1805379
+  name: 【搜索】全文搜索-特殊符号进行搜索
+  description: 'xlsx 用例编号: 1805379
+
+    前置条件: 已勾选全文搜索
+
+    测试步骤:
+
+    1. 输入"天    ss"
+
+    2. 输入"呼 mm22"
+
+    3. 输入 m     m搜索
+
+    预期结果:
+
+    1. 可正确搜索文件中有天的和文件中有ss的
+
+    2. 可正确搜索文件中有呼的，文件中有mm22的
+
+    3. 可以搜索到有m的文件
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805379'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 天ss
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 呼mm22
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

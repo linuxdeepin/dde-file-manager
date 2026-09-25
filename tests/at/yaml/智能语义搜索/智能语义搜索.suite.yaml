@@ -1,0 +1,2068 @@
+name: 智能语义搜索_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的智能语义搜索用例：进入目录后输入真实语义关键词并验证文管不崩溃
+module: 智能语义搜索
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_2021319
+  name: 【智能语义搜索】时间槽-精确时间-本年精确日期
+  description: 进入图片，在搜索框输入语义关键词「5月1日创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 5月1日创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021317
+  name: 【智能语义搜索】时间槽-精确时间-本年精确月份
+  description: 进入图片，在搜索框输入语义关键词「5月创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 5月创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021315
+  name: 【智能语义搜索】时间槽-精确时间-精确年份
+  description: 进入图片，在搜索框输入语义关键词「2025年创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 2025年创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021313
+  name: 【智能语义搜索】时间槽-精确时间-绝对日期
+  description: 进入图片，在搜索框输入语义关键词「2026年5月1日创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 2026年5月1日创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021301
+  name: 【智能语义搜索】时间槽-本月泛化库：这个月/ 当月
+  description: 进入计算机，在搜索框输入语义关键词「这个月创建的excel表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 这个月创建的excel表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021299
+  name: 【智能语义搜索】时间槽-本月
+  description: 进入计算机，在搜索框输入语义关键词「本月创建的excel表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 本月创建的excel表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021297
+  name: 【智能语义搜索】时间槽-上周泛化库：上个星期/上星期
+  description: 进入计算机，在搜索框输入语义关键词「上个星期创建的pdf」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 上个星期创建的pdf
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021295
+  name: 【智能语义搜索】时间槽-上周
+  description: 进入计算机，在搜索框输入语义关键词「上周创建的pdf」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 上周创建的pdf
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021293
+  name: 【智能语义搜索】时间槽-本周泛化库：这周/这个星期
+  description: 进入计算机，在搜索框输入语义关键词「这周创建的Word文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 这周创建的Word文档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021291
+  name: 【智能语义搜索】时间槽-本周
+  description: 进入计算机，在搜索框输入语义关键词「本周创建的Word文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 本周创建的Word文档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019753
+  name: 【智能语义搜索】位置槽-微信接受泛化库：微信, vx, 微信里, 微信群, 微信发我的
+  description: 进入计算机，在搜索框输入语义关键词「今天微信的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天微信的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019751
+  name: 【智能语义搜索】位置槽-微信接受
+  description: 进入计算机，在搜索框输入语义关键词「今天微信接受的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天微信接受的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019737
+  name: 【智能语义搜索】类型槽-设计源文件，搜索指定后缀文件
+  description: 进入桌面，在搜索框输入语义关键词「文档目录里的sketch文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录里的sketch文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019223
+  name: 【智能语义搜索】位置槽-图片目录泛化库：相册里, 图片库
+  description: 进入图片，在搜索框输入语义关键词「相册里的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 相册里的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019221
+  name: 【智能语义搜索】位置槽-图片目录
+  description: 进入图片，在搜索框输入语义关键词「图片目录的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 图片目录的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019217
+  name: 【智能语义搜索】位置槽-文档目录泛化库：文档里, 文档库
+  description: 进入图片，在搜索框输入语义关键词「文档里的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档里的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019177
+  name: 【智能语义搜索】位置槽-文档目录
+  description: 进入图片，在搜索框输入语义关键词「我的文档里的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 我的文档里的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019153
+  name: 【智能语义搜索】位置槽-下载目录
+  description: 进入桌面，在搜索框输入语义关键词「今天下载文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天下载文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018925
+  name: 【智能语义搜索】属性槽-动态精准大小泛化词：超过1G、100MB以内、大于500MB
+  description: 进入桌面，在搜索框输入语义关键词「今天创建的超过1G的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天创建的超过1G的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018851
+  name: 【智能语义搜索】属性槽-动态精准大小大于500M
+  description: 进入桌面，在搜索框输入语义关键词「大于500M的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 大于500M的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018831
+  name: 【智能语义搜索】关键词包含泛化词及文件后缀
+  description: 进入桌面，在搜索框输入语义关键词「昨天创建的psd源文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天创建的psd源文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018829
+  name: 【智能语义搜索】类型槽-设计源文件泛化库：设计稿, psd, 矢量图, 工程文件
+  description: 进入桌面，在搜索框输入语义关键词「昨天创建的设计稿」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天创建的设计稿
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018827
+  name: 【智能语义搜索】类型槽-设计源文件：源文件
+  description: 进入桌面，在搜索框输入语义关键词「昨天创建的源文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天创建的源文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018823
+  name: 【智能语义搜索】类型槽-应用程序：安装包
+  description: 进入桌面，在搜索框输入语义关键词「昨天创建的安装包」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天创建的安装包
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018813
+  name: 【智能语义搜索】类型槽-视频-搜索特性类型视频
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录下wmv的录像」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录下wmv的录像
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018723
+  name: 【智能语义搜索】时间槽-精确时间-完整精确日期
+  description: 进入图片，在搜索框输入语义关键词「2025年3月16日创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 2025年3月16日创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018721
+  name: 【智能语义搜索】时间槽-精确时间-精确年月
+  description: 进入图片，在搜索框输入语义关键词「2025年3月创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 2025年3月创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018719
+  name: 【智能语义搜索】时间槽-精确时间-精确月份
+  description: 进入图片，在搜索框输入语义关键词「2025年3月创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 2025年3月创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018713
+  name: 【智能语义搜索】时间槽-精准时间-绝对月份
+  description: 进入音乐，在搜索框输入语义关键词「2025年7月点开过的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 2025年7月点开过的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018707
+  name: 【智能语义搜索】关键词中含有某个槽位部分关键词
+  description: 进入音乐，在搜索框输入语义关键词「上点开过的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 上点开过的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018705
+  name: 【智能语义搜索】时间槽-上个月及泛化词：上月
+  description: 进入音乐，在搜索框输入语义关键词「上个月点开过的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 上个月点开过的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018703
+  name: 【智能语义搜索】时间槽-去年泛化词：上一年/去年一整年
+  description: 进入下载，在搜索框输入语义关键词「上一年浏览过的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 上一年浏览过的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018701
+  name: 【智能语义搜索】时间槽-去年
+  description: 进入下载，在搜索框输入语义关键词「去年浏览过的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 去年浏览过的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018699
+  name: 【智能语义搜索】关键词有空格
+  description: 进入计算机，在搜索框输入语义关键词「今天新建的ppt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天新建的ppt
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018687
+  name: 【智能语义搜索】对搜索结果进行高级筛选
+  description: 进入桌面，在搜索框输入语义关键词「今天创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2022847
+  name: 【智能语义搜索】隐藏文件扩展名进行搜索
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的pdf」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的pdf
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021431
+  name: 【智能语义搜索】类型槽-音频
+  description: 进入计算机，在搜索框输入语义关键词「mp3的歌」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: mp3的歌
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021429
+  name: 【智能语义搜索】类型槽-视频泛化库：录像, 电影, 动画, 短片, 片子
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的录像」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的录像
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021427
+  name: 【智能语义搜索】类型槽-视频-wmv视频
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的wmv视频」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的wmv视频
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021425
+  name: 【智能语义搜索】类型槽-视频
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的视频」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的视频
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021421
+  name: 【智能语义搜索】类型槽-照片-指定gif格式
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的gif图片」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的gif图片
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021419
+  name: 【智能语义搜索】类型槽-照片
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的照片」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的照片
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2023317
+  name: 【智能语义搜索】中文数字转换
+  description: 进入计算机，在搜索框输入语义关键词「25年十二月创建的表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 25年十二月创建的表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2023303
+  name: 【智能语义搜索】时间槽-两种时间叠加搜索
+  description: 进入计算机，在搜索框输入语义关键词「去年12月创建的表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 去年12月创建的表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021439
+  name: 【智能语义搜索】类型槽-压缩包泛化库：归档, 源码包, 打包文件, zip, rar
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的归档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的归档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021437
+  name: 【智能语义搜索】类型槽-压缩包
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的压缩包」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的压缩包
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021435
+  name: 【智能语义搜索】类型槽-音频泛化库：音频, 音乐, 录音, 歌, 语音
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的音频」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的音频
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021433
+  name: 【智能语义搜索】类型槽-音频-音乐目录里的歌
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的歌」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的歌
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021311
+  name: 【智能语义搜索】时间槽-去年
+  description: 进入计算机，在搜索框输入语义关键词「去年创建的表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 去年创建的表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021309
+  name: 【智能语义搜索】时间槽-今年泛化库：本年/这年
+  description: 进入计算机，在搜索框输入语义关键词「本年创建的表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 本年创建的表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021307
+  name: 【智能语义搜索】时间槽-今年
+  description: 进入计算机，在搜索框输入语义关键词「今年创建的表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今年创建的表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021289
+  name: 【智能语义搜索】时间槽-前天
+  description: 进入计算机，在搜索框输入语义关键词「前天创建的文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 前天创建的文档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021287
+  name: 【智能语义搜索】时间槽-昨天泛化库：昨日/昨晚
+  description: 进入计算机，在搜索框输入语义关键词「昨日创建的文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨日创建的文档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021285
+  name: 【智能语义搜索】时间槽-昨天
+  description: 进入计算机，在搜索框输入语义关键词「昨天创建的文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天创建的文档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019159
+  name: 【智能语义搜索】位置槽-下载目录泛化库：下载的, 下载目录, 下下来的, 浏览器下载
+  description: 进入桌面，在搜索框输入语义关键词「今天下载的」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天下载的
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019141
+  name: 【智能语义搜索】搜索框中输入：关键词+位置槽
+  description: 进入计算机，在搜索框输入语义关键词「桌面上的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 桌面上的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018825
+  name: 【智能语义搜索】类型槽-应用程序泛化库：软件, 应用, 脚本, 程序, 包
+  description: 进入桌面，在搜索框输入语义关键词「昨天创建的软件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天创建的软件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018759
+  name: 【智能语义搜索】类型槽-表格泛化库：统计表, 报表, 名单, 数据表, 数据, 明细
+  description: 进入桌面，在搜索框输入语义关键词「昨天的统计表」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天的统计表
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018753
+  name: 【智能语义搜索】类型槽-表格
+  description: 进入桌面，在搜索框输入语义关键词「昨天的表格」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天的表格
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018747
+  name: 【智能语义搜索】关闭智能搜索索引授权提醒
+  description: 进入计算机，在搜索框输入语义关键词「500M」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 500M
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018745
+  name: 【智能语义搜索】一键授权开启智能搜索
+  description: 进入计算机，在搜索框输入语义关键词「500M」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 500M
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018697
+  name: 【智能语义搜索】行为槽-创建泛化词：新建的/存下来的/保存的/新加的
+  description: 进入计算机，在搜索框输入语义关键词「昨天新建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天新建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018695
+  name: 【智能语义搜索】行为槽-创建
+  description: 进入计算机，在搜索框输入语义关键词「昨天创建的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天创建的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018685
+  name: 【智能语义搜索】时间槽-今天泛化词：今日/今日份
+  description: 进入桌面，在搜索框输入语义关键词「今日创建的文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今日创建的文档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018683
+  name: 【智能语义搜索】时间槽-今天
+  description: 进入桌面，在搜索框输入语义关键词「今天创建的文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天创建的文档
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018553
+  name: 【智能语义搜索】支持智能语义搜索所有文件类型检查
+  description: 进入桌面，在搜索框输入语义关键词「今天创建的word」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天创建的word
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021439_s2
+  name: 【智能语义搜索】类型槽-压缩包泛化库：源码包
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的源码包」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的源码包
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021439_s3
+  name: 【智能语义搜索】类型槽-压缩包泛化库：打包文件
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的打包文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的打包文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021439_s4
+  name: 【智能语义搜索】类型槽-压缩包泛化库：zip
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的zip」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的zip
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021439_s5
+  name: 【智能语义搜索】类型槽-压缩包泛化库：rar
+  description: 进入计算机，在搜索框输入语义关键词「音乐目录里的rar」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的rar
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021437_s2
+  name: 【智能语义搜索】类型槽-压缩包：回收站
+  description: 进入计算机，在搜索框输入语义关键词「回收站里的压缩包」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 回收站里的压缩包
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021435_s2
+  name: 【智能语义搜索】类型槽-音频泛化库：音乐
+  description: 进入音乐，在搜索框输入语义关键词「音乐目录里的音乐」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的音乐
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021435_s3
+  name: 【智能语义搜索】类型槽-音频泛化库：录音
+  description: 进入音乐，在搜索框输入语义关键词「音乐目录里的录音」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的录音
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021435_s4
+  name: 【智能语义搜索】类型槽-音频泛化库：语音
+  description: 进入音乐，在搜索框输入语义关键词「音乐目录里的语音」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 音乐目录里的语音
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021429_s2
+  name: 【智能语义搜索】类型槽-视频泛化库：电影
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的电影」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的电影
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021429_s3
+  name: 【智能语义搜索】类型槽-视频泛化库：动画
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的动画」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的动画
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021429_s4
+  name: 【智能语义搜索】类型槽-视频泛化库：短片
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的短片」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的短片
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021429_s5
+  name: 【智能语义搜索】类型槽-视频泛化库：片子
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的片子」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的片子
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021423_s2
+  name: 【智能语义搜索】类型槽-照片泛化库：截图
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的截图」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的截图
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021423_s3
+  name: 【智能语义搜索】类型槽-照片泛化库：图
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的图」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的图
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021423_s4
+  name: 【智能语义搜索】类型槽-照片泛化库：壁纸
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的壁纸」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的壁纸
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021423_s5
+  name: 【智能语义搜索】类型槽-照片泛化库：海报
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的海报」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的海报
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021423_s6
+  name: 【智能语义搜索】类型槽-照片泛化库：相片
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的相片」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的相片
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2021423_s7
+  name: 【智能语义搜索】类型槽-照片泛化库：表情包
+  description: 进入计算机，在搜索框输入语义关键词「文档目录下的表情包」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档目录下的表情包
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019223_s2
+  name: 【智能语义搜索】位置槽-图片目录泛化库：图片库
+  description: 进入图片，在搜索框输入语义关键词「图片库的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 图片库的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019217_s2
+  name: 【智能语义搜索】位置槽-文档目录泛化库：文档库
+  description: 进入文档，在搜索框输入语义关键词「文档库的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 文档库的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019159_s2
+  name: 【智能语义搜索】位置槽-下载目录泛化库：下载目录
+  description: 进入下载，在搜索框输入语义关键词「下载目录」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 下载目录
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019159_s3
+  name: 【智能语义搜索】位置槽-下载目录泛化库：下下来的
+  description: 进入下载，在搜索框输入语义关键词「昨天下下来的」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 昨天下下来的
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019159_s4
+  name: 【智能语义搜索】位置槽-下载目录泛化库：浏览器下载的图片
+  description: 进入下载，在搜索框输入语义关键词「今天浏览器下载的图片」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 今天浏览器下载的图片
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2019159_s5
+  name: 【智能语义搜索】位置槽-下载目录泛化库：浏览器下载的文件
+  description: 进入下载，在搜索框输入语义关键词「浏览器下载的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 浏览器下载的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018925_s2
+  name: 【智能语义搜索】属性槽-动态精准大小泛化词：100MB以内
+  description: 进入桌面，在搜索框输入语义关键词「100MB以内的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 100MB以内的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018713_s2
+  name: 【智能语义搜索】时间槽-精准时间-绝对月份：7月
+  description: 进入最近使用，在搜索框输入语义关键词「7月点开过的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 7月点开过的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2018713_s3
+  name: 【智能语义搜索】时间槽-精准时间-绝对月份：七月
+  description: 进入最近使用，在搜索框输入语义关键词「七月点开过的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: 七月点开过的文件
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

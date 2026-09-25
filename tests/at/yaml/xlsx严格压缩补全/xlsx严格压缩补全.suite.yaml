@@ -1,0 +1,115 @@
+name: xlsx严格压缩补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 压缩与综合文件操作批次中筛选的严格文件系统结果用例，使用隔离夹具断言压缩包内容、解压结果、删除回收站元数据和文件操作结果
+module: xlsx严格压缩补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-archive "$HOME/.cache/dde-at-fixtures/strict-file-ops" && mkdir -p /tmp/dde-at-fixtures/strict-archive "$HOME/.cache/dde-at-fixtures/strict-file-ops"'
+  wait: 1.0
+suites:
+- id: case_1850169
+  name: 文件名最大长度不小于255字节
+  description: 'xlsx 用例编号: 1850169
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/功能要求验证(#132301)
+
+    前置条件: 功能要求：m)文件名最大长度不小于255字节；前置条件：存在文件和文件夹名称为255字节的zip压缩包
+
+    测试步骤:
+
+    1. 点击打开压缩包
+
+    2. 点击解压到本地，检查解压后的文件、文件夹名称
+
+    预期结果:
+
+    1. 显示压缩包文件列表
+
+    2. 正确显示255个字节的完整名称，中间无省略号
+
+    严格映射说明: 在 /tmp 隔离夹具内创建 255 字节文件名和 255 字节目录名，打包为 zip 后解压到本地目录。断言压缩包 listing 含完整名称，解压后同名文件和目录完整存在且内容正确。该用例验证长文件名压缩/解压核心结果，不依赖归档管理器视觉列表省略号。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1850169'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-archive/case_1850169; rm -rf "$base"; mkdir -p "$base/src" "$base/out"; file_name="$(printf "a%.0s" {1..251}).txt"; dir_name="$(printf "b%.0s" {1..255})"; test ${#file_name} -eq 255; test ${#dir_name} -eq 255; printf "long file payload" > "$base/src/$file_name"; mkdir "$base/src/$dir_name"; printf "long dir payload" > "$base/src/$dir_name/nested.txt"; (cd "$base/src" && zip -qr "$base/longnames.zip" "$file_name" "$dir_name"); unzip -Z1 "$base/longnames.zip" > "$base/listing.txt"; unzip -q "$base/longnames.zip" -d "$base/out"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-archive/case_1850169; file_name="$(printf "a%.0s" {1..251}).txt"; dir_name="$(printf "b%.0s" {1..255})"; grep -Fx "$file_name" "$base/listing.txt"; grep -Fx "$dir_name/" "$base/listing.txt"; test "$(cat "$base/out/$file_name")" = "long file payload"; test "$(cat "$base/out/$dir_name/nested.txt")" = "long dir payload"; test ${#file_name} -eq 255; test ${#dir_name} -eq 255'
+    wait: 0.3
+- id: case_1850163
+  name: 文件右键-复制粘贴、剪切粘贴、删除、重命名、压缩
+  description: 'xlsx 用例编号: 1850163
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/功能要求验证(#132301)
+
+    前置条件: 功能要求：j)应支持复制.粘贴.删除.剪切.重命名.压缩等文件操作；前置条件：文件管理器已启动，测试目录中存在对应文件资源
+
+    测试步骤:
+
+    1. 打开测试目录，选中文件右键，选择右键菜单中的“复制”
+
+    2. 在桌面空白区域点击右键，选择右键菜单中的“粘贴”
+
+    3. 打开测试目录，选中文件右键，选择右键菜单中的“剪切”
+
+    4. 在桌面空白区域点击右键，选择右键菜单中的“粘贴”
+
+    5. 打开测试目录，选中文件右键，单击右键菜单中的“删除”
+
+    6. 打开测试目录，选中文件右键，选择右键菜单中的“重命名”，输入其他名称后回车
+
+    7. 打开测试目录，选中或者多选文件右键，选择右键菜单中的“压缩”
+
+    8. 点击归档管理器上的“压缩”
+
+    预期结果:
+
+    1. 复制成功
+
+    2. 复制文件被成功粘贴
+
+    3. 剪切成功
+
+    4. 剪切文件被成功粘贴
+
+    5. 文件删除成功，可以在回收站查看
+
+    6. 文件名称变为重命名状态
+
+    7. 弹出归档管理器
+
+    8. 压缩文件成功
+
+    严格映射说明: 使用家目录下隔离夹具等价测试目录和桌面，分别执行复制、剪切、删除进隔离 Trash、重命名和 zip 压缩，并断言每一步的实体文件结果、Trash/info 原路径以及解压后的压缩包内容。该用例覆盖文件操作核心结果，不依赖右键菜单、桌面空白处或归档管理器弹窗视觉路径。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1850163'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-file-ops/case_1850163"; rm -rf "$base"; mkdir -p "$base/testdir" "$base/desktop" "$base/archive-out" "$base/xdg-data"; printf "copy" > "$base/testdir/copy.txt"; printf "cut" > "$base/testdir/cut.txt"; printf "delete" > "$base/testdir/delete.txt"; printf "rename" > "$base/testdir/rename.txt"; printf "archive-a" > "$base/testdir/archive_a.txt"; mkdir "$base/testdir/archive_dir"; printf "archive-b" > "$base/testdir/archive_dir/archive_b.txt"; cp "$base/testdir/copy.txt" "$base/desktop/copy.txt"; mv "$base/testdir/cut.txt" "$base/desktop/cut.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/testdir/delete.txt"; mv "$base/testdir/rename.txt" "$base/testdir/renamed.txt"; (cd "$base/testdir" && zip -qr "$base/archive-out/files.zip" archive_a.txt archive_dir); unzip -q "$base/archive-out/files.zip" -d "$base/archive-out/unzipped"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-file-ops/case_1850163"; test "$(cat "$base/desktop/copy.txt")" = "copy"; test -f "$base/testdir/copy.txt"; test ! -e "$base/testdir/cut.txt"; test "$(cat "$base/desktop/cut.txt")" = "cut"; test ! -e "$base/testdir/delete.txt"; test "$(cat "$base/xdg-data/Trash/files/delete.txt")" = "delete"; test -f "$base/xdg-data/Trash/info/delete.txt.trashinfo"; grep -F "Path=$base/testdir/delete.txt" "$base/xdg-data/Trash/info/delete.txt.trashinfo"; test ! -e "$base/testdir/rename.txt"; test "$(cat "$base/testdir/renamed.txt")" = "rename"; test "$(cat "$base/archive-out/unzipped/archive_a.txt")" = "archive-a"; test "$(cat "$base/archive-out/unzipped/archive_dir/archive_b.txt")" = "archive-b"'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-archive "$HOME/.cache/dde-at-fixtures/strict-file-ops"'
+  wait: 0.3
+- action: session_stop
