@@ -1,0 +1,237 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件右键_suite
+app: dde-file-manager
+description: 文件右键模块 AT-SPI 用例
+module: 文件右键
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件右键_0001_s1
+  name: 右键菜单部分隐藏，无扩展菜单时，配置隐藏扩展菜单，检查文件选择对话框右键菜单情况
+  description: 右键菜单部分隐藏，无扩展菜单时，配置隐藏扩展菜单，检查文件选择对话框右键菜单情况
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件右键_0002_s1
+  name: 【多选图片右键打印】选中多张文件和其他文件，右键菜单点击"打印"
+  description: 【多选图片右键打印】选中多张文件和其他文件，右键菜单点击"打印"
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件右键_0003_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文件保存对话框内右键菜单显示快捷键
+  description: 文管右键菜单显示快捷键-快捷键功能-文件保存对话框内右键菜单显示快捷键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件右键_0004_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文件选择对话框内右键菜单显示快捷键
+  description: 文管右键菜单显示快捷键-快捷键功能-文件选择对话框内右键菜单显示快捷键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件右键_0005_s1
+  name: 文件右键-分别打开多个对象的属性窗口
+  description: 文件右键-分别打开多个对象的属性窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: 文件右键_0006_s1
+  name: 【右键菜单增加反选选项】文管支持反选的作用域
+  description: 【右键菜单增加反选选项】文管支持反选的作用域
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 最近使用
+- id: 文件右键_0007_s1
+  name: 检查U盘目录-列表模式-留白处右键菜单
+  description: 检查U盘目录-列表模式-留白处右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件右键_0008_s1
+  name: 检查root用户文管-列表模式-留白处右键菜单
+  description: 检查root用户文管-列表模式-留白处右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: 主目录
+- id: 文件右键_0009_s1
+  name: 检查保险箱-列表模式-留白处右键菜单
+  description: 检查保险箱-列表模式-留白处右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: 文件右键_0010_s1
+  name: 自定义右键菜单-配置菜单项支持的文件类型MimeType
+  description: 自定义右键菜单-配置菜单项支持的文件类型MimeType
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件右键_0011_s1
+  name: '[core]右键菜单整体隐藏后恢复整体显示'
+  description: '[core]右键菜单整体隐藏后恢复整体显示'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件右键_0012_s1
+  name: 打开方式页面-主目录存在icon同名文件夹检查右键打开方式应用图标显示
+  description: 打开方式页面-主目录存在icon同名文件夹检查右键打开方式应用图标显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 文件右键_0013_s1
+  name: 重命名支持殊符号-搜索特殊符号文件和文件夹
+  description: 重命名支持殊符号-搜索特殊符号文件和文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddressBar
+- id: 文件右键_0014_s1
+  name: 重命名支持殊符号-不支持特殊符号
+  description: 重命名支持殊符号-不支持特殊符号
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

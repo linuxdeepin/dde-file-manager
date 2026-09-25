@@ -1,0 +1,342 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 标签页支持右键固定_suite
+app: dde-file-manager
+description: 标签页支持右键固定模块 AT-SPI 用例
+module: 标签页支持右键固定
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 标签页支持右键固定_0001_s1
+  name: 【标签页支持右键固定】拖拽固定标签页合入其他文管窗口
+  description: 【标签页支持右键固定】拖拽固定标签页合入其他文管窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0002_s1
+  name: 【标签页支持右键固定】管理员固定标签页
+  description: 【标签页支持右键固定】管理员固定标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0003_s1
+  name: 【标签页支持右键固定】固定深层级目录
+  description: 【标签页支持右键固定】固定深层级目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0004_s1
+  name: 【标签页支持右键固定】以新标签页打开固定标签页搜索结果中的文件夹
+  description: 【标签页支持右键固定】以新标签页打开固定标签页搜索结果中的文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 标签页支持右键固定_0005_s1
+  name: 【标签页支持右键固定】固定标签页+自定义目录+设置默认目录
+  description: 【标签页支持右键固定】固定标签页+自定义目录+设置默认目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: TabBar
+- id: 标签页支持右键固定_0006_s1
+  name: 【标签页支持右键固定】固定标签页+不勾选“总是在新窗口打开文件夹”配置
+  description: 【标签页支持右键固定】固定标签页+不勾选“总是在新窗口打开文件夹”配置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 标签页支持右键固定_0007_s1
+  name: 【标签页支持右键固定】固定标签页+勾选“总是在新窗口打开文件夹”配置
+  description: 【标签页支持右键固定】固定标签页+勾选“总是在新窗口打开文件夹”配置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 标签页支持右键固定_0008_s1
+  name: 【标签页支持右键固定】安全测试
+  description: 【标签页支持右键固定】安全测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0009_s1
+  name: 【标签页支持右键固定】稳定性测试
+  description: 【标签页支持右键固定】稳定性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0010_s1
+  name: 【标签页支持右键固定】性能测试
+  description: 【标签页支持右键固定】性能测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0011_s1
+  name: 【标签页支持右键固定】重复固定
+  description: 【标签页支持右键固定】重复固定
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 标签页支持右键固定_0012_s1
+  name: 【标签页支持右键固定】固定目录删除/移动/重命名
+  description: 【标签页支持右键固定】固定目录删除/移动/重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0013_s1
+  name: 【标签页支持右键固定】拖出固定标签页形成新窗口
+  description: 【标签页支持右键固定】拖出固定标签页形成新窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0014_s1
+  name: 【标签页支持右键固定】固定标签页后使用快捷键操作
+  description: 【标签页支持右键固定】固定标签页后使用快捷键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: side_bar_view
+- id: 标签页支持右键固定_0015_s1
+  name: 【标签页支持右键固定】固定标签页记忆排序
+  description: 【标签页支持右键固定】固定标签页记忆排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 标签页支持右键固定_0016_s1
+  name: 【标签页支持右键固定】固定20个标签页
+  description: 【标签页支持右键固定】固定20个标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 标签页支持右键固定_0017_s1
+  name: 【标签页支持右键固定】固定/取消固定标签页UI界面检查
+  description: 【标签页支持右键固定】固定/取消固定标签页UI界面检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0018_s1
+  name: 【标签页支持右键固定】固定标签页后操作
+  description: 【标签页支持右键固定】固定标签页后操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_element
+    ref: AddressBar
+- id: 标签页支持右键固定_0019_s1
+  name: 【标签页支持右键固定】多开标签页同步取消固定状态
+  description: 【标签页支持右键固定】多开标签页同步取消固定状态
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页支持右键固定_0020_s1
+  name: 【标签页支持右键固定】新开文管窗口显示所有固定标签页
+  description: 【标签页支持右键固定】新开文管窗口显示所有固定标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 下载
+- id: 标签页支持右键固定_0021_s1
+  name: 【标签页支持右键固定】固定/取消固定1个标签页
+  description: 【标签页支持右键固定】固定/取消固定1个标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+teardown:
+- action: session_stop

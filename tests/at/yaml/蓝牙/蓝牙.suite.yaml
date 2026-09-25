@@ -1,0 +1,417 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 蓝牙_suite
+app: dde-file-manager
+description: 蓝牙模块 AT-SPI 用例
+module: 蓝牙
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 蓝牙_0001_s1
+  name: 多用户-root用户蓝牙传输
+  description: 多用户-root用户蓝牙传输
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0002_s1
+  name: 传输中断-文件传输过程中锁屏/切换用户
+  description: 传输中断-文件传输过程中锁屏/切换用户
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0003_s1
+  name: 传输中断-传输U盘文件过程中拔出U盘
+  description: 传输中断-传输U盘文件过程中拔出U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0004_s1
+  name: 传输中断-文件传输过程中重命名原文件
+  description: 传输中断-文件传输过程中重命名原文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0005_s1
+  name: 传输中断-文件传输过程中删除原文件
+  description: 传输中断-文件传输过程中删除原文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0006_s1
+  name: 传输中断-传输多个文件接收端点击取消
+  description: 传输中断-传输多个文件接收端点击取消
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0007_s1
+  name: 传输中断-传输多个文件发送端点击关闭
+  description: 传输中断-传输多个文件发送端点击关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0008_s1
+  name: 传输中断-传输多个文件发送端点击取消
+  description: 传输中断-传输多个文件发送端点击取消
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0009_s1
+  name: 多任务传输-接收端关闭部分任务
+  description: 多任务传输-接收端关闭部分任务
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0010_s1
+  name: 多任务传输-发送端关闭部分任务
+  description: 多任务传输-发送端关闭部分任务
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0011_s1
+  name: 多任务传输-接收端处于文件接收状态再向同意设备发送文件
+  description: 多任务传输-接收端处于文件接收状态再向同意设备发送文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0012_s1
+  name: 多任务传输-接收端处于等待状态uos再向同一设备发送文件
+  description: 多任务传输-接收端处于等待状态uos再向同一设备发送文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0013_s1
+  name: 多任务传输-发送端同时发送和接收
+  description: 多任务传输-发送端同时发送和接收
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0014_s1
+  name: 多任务传输-同一发送端向不同接收端发送文件
+  description: 多任务传输-同一发送端向不同接收端发送文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0015_s1
+  name: 多任务传输-发送端选择同一文件多次选择发送到蓝牙
+  description: 多任务传输-发送端选择同一文件多次选择发送到蓝牙
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0016_s1
+  name: 多任务传输-发送端存在多个蓝牙设备选择弹窗再选一个窗口发送文件
+  description: 多任务传输-发送端存在多个蓝牙设备选择弹窗再选一个窗口发送文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0017_s1
+  name: 文件类型-传输不同类型的文件
+  description: 文件类型-传输不同类型的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 视频
+- id: 蓝牙_0018_s1
+  name: 文件类型-传输大于2G的文件
+  description: 文件类型-传输大于2G的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0019_s1
+  name: 【蓝牙】文件类型-传输小于2G的文件
+  description: 【蓝牙】文件类型-传输小于2G的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0020_s1
+  name: 传输进度-传输多个文件进度检查
+  description: 传输进度-传输多个文件进度检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0021_s1
+  name: 【蓝牙】[smoke]传输进度-传输单个文件进度检查
+  description: 【蓝牙】[smoke]传输进度-传输单个文件进度检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0022_s1
+  name: 发送接收-接收端处于繁忙状态一直不处理同意或拒绝
+  description: 发送接收-接收端处于繁忙状态一直不处理同意或拒绝
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0023_s1
+  name: 发送接收-接收端一直不处理同意或拒绝
+  description: 发送接收-接收端一直不处理同意或拒绝
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0024_s1
+  name: 【蓝牙】发送接收-接受端拒绝文件传输
+  description: 【蓝牙】发送接收-接受端拒绝文件传输
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0025_s1
+  name: 【蓝牙】UOS与不同设备互相传输
+  description: 【蓝牙】UOS与不同设备互相传输
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0026_s1
+  name: 【蓝牙】入口-蓝牙选项列表页面设备类型检查
+  description: 【蓝牙】入口-蓝牙选项列表页面设备类型检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 蓝牙_0027_s1
+  name: 【蓝牙】[smoke]入口-有发送到选项已连接蓝牙时检查桌面/文管右键菜单
+  description: 【蓝牙】[smoke]入口-有发送到选项已连接蓝牙时检查桌面/文管右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 蓝牙_0028_s1
+  name: 【蓝牙】入口-无发送到选项连接蓝牙设备检查桌面/文管右键菜单
+  description: 【蓝牙】入口-无发送到选项连接蓝牙设备检查桌面/文管右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 蓝牙_0029_s1
+  name: 蓝牙-桌面/文管右键菜单入口检查
+  description: 蓝牙-桌面/文管右键菜单入口检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 设置
+- id: 蓝牙_0030_s1
+  name: 入口-无发送到选项未连接蓝牙时检查桌面/文管右键菜单
+  description: 入口-无发送到选项未连接蓝牙时检查桌面/文管右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 设置
+- id: 蓝牙_0031_s1
+  name: 入口-右键菜单发送到选项顺序检查
+  description: 入口-右键菜单发送到选项顺序检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 蓝牙_0032_s1
+  name: 入口-主机未接入蓝牙外设时检查发送到选项
+  description: 入口-主机未接入蓝牙外设时检查发送到选项
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

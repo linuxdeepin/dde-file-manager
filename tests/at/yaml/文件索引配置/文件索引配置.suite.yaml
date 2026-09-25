@@ -1,0 +1,337 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件索引配置_suite
+app: dde-file-manager
+description: 文件索引配置模块 AT-SPI 用例
+module: 文件索引配置
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件索引配置_0001_s1
+  name: 【文件索引配置】安全编译检查
+  description: 【文件索引配置】安全编译检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0002_s1
+  name: 【文件索引配置】内存泄漏检查
+  description: 【文件索引配置】内存泄漏检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0003_s1
+  name: 【文件索引配置】连续切换开关20次
+  description: 【文件索引配置】连续切换开关20次
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0004_s1
+  name: 【文件索引配置】连续10次点击更新索引
+  description: 【文件索引配置】连续10次点击更新索引
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0005_s1
+  name: 【文件索引配置】快速搜索响应时间
+  description: 【文件索引配置】快速搜索响应时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 文件索引配置_0006_s1
+  name: 【文件索引配置】100万文件中搜索特定文件
+  description: 【文件索引配置】100万文件中搜索特定文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 文件索引配置_0007_s1
+  name: 【文件索引配置】anything服务崩溃恢复后自动继续更新索引
+  description: 【文件索引配置】anything服务崩溃恢复后自动继续更新索引
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0008_s1
+  name: 【文件索引配置】更新过程中注销后登录
+  description: 【文件索引配置】更新过程中注销后登录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0009_s1
+  name: 【文件索引配置】更新过程中待机恢复
+  description: 【文件索引配置】更新过程中待机恢复
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0010_s1
+  name: 【文件索引配置】更新过程中锁屏后恢复
+  description: 【文件索引配置】更新过程中锁屏后恢复
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0011_s1
+  name: 【文件索引配置】开启与关闭搜索速度对比
+  description: 【文件索引配置】开启与关闭搜索速度对比
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0012_s1
+  name: 【文件索引配置】更新过程中新增文件搜索
+  description: 【文件索引配置】更新过程中新增文件搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0013_s1
+  name: 【文件索引配置】立即更新索引按钮功能验证
+  description: 【文件索引配置】立即更新索引按钮功能验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0014_s1
+  name: 【文件索引配置】搜索隐藏文件
+  description: 【文件索引配置】搜索隐藏文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 文件索引配置_0015_s1
+  name: 【文件索引配置】搜索长文件名文件
+  description: 【文件索引配置】搜索长文件名文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 文件索引配置_0016_s1
+  name: 【文件索引配置】删除后创建同名文件索引
+  description: 【文件索引配置】删除后创建同名文件索引
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0017_s1
+  name: 【文件索引配置】删除文件立即索引
+  description: 【文件索引配置】删除文件立即索引
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0018_s1
+  name: 【文件索引配置】新建后重命名立即索引
+  description: 【文件索引配置】新建后重命名立即索引
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 文件索引配置_0019_s1
+  name: 【文件索引配置】新建文件时立马搜索
+  description: 【文件索引配置】新建文件时立马搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: dir-new
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 文件索引配置_0020_s1
+  name: 【文件索引配置】关闭文件索引配置
+  description: 【文件索引配置】关闭文件索引配置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 设置
+- id: 文件索引配置_0021_s1
+  name: 【文件索引配置】立即更新索引按钮功能
+  description: 【文件索引配置】立即更新索引按钮功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0022_s1
+  name: 【文件索引配置】更新失败提示及重试功能
+  description: 【文件索引配置】更新失败提示及重试功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0023_s1
+  name: 【文件索引配置】更新中/更新失败提示检查
+  description: 【文件索引配置】更新中/更新失败提示检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件索引配置_0024_s1
+  name: 【文件索引配置】未开启时提示文案检查
+  description: 【文件索引配置】未开启时提示文案检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件索引配置_0025_s1
+  name: 【文件索引配置】配置项位置检查
+  description: 【文件索引配置】配置项位置检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

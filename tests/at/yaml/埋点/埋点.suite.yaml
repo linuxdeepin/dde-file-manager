@@ -1,0 +1,688 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 埋点_suite
+app: dde-file-manager
+description: 埋点模块 AT-SPI 用例
+module: 埋点
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 埋点_0001_s1
+  name: 埋点-打开上万文件的目录检查上传时间
+  description: 埋点-打开上万文件的目录检查上传时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 埋点_0002_s1
+  name: 埋点-检查各路径打开目录，检查上传时间
+  description: 埋点-检查各路径打开目录，检查上传时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 埋点_0003_s1
+  name: 埋点-打开任意目录检查上传时间
+  description: 埋点-打开任意目录检查上传时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 埋点_0004_s1
+  name: 埋点-打开空目录检查上传时间
+  description: 埋点-打开空目录检查上传时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 埋点_0005_s1
+  name: 埋点，右键菜单项点击分布-在新窗口打开
+  description: 埋点，右键菜单项点击分布-在新窗口打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0006_s1
+  name: 埋点，右键菜单项点击分布-打开方式
+  description: 埋点，右键菜单项点击分布-打开方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 埋点_0007_s1
+  name: 埋点，右键菜单项点击分布-打开
+  description: 埋点，右键菜单项点击分布-打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 埋点_0008_s1
+  name: 埋点-右键菜单项点击分布-特殊场景，保险箱_
+  description: 埋点-右键菜单项点击分布-特殊场景，保险箱_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: 埋点_0009_s1
+  name: 埋点-右键菜单项点击分布-以管理员身份打开（空白地方）_
+  description: 埋点-右键菜单项点击分布-以管理员身份打开（空白地方）_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0010_s1
+  name: 埋点-右键菜单项点击分布-属性_
+  description: 埋点-右键菜单项点击分布-属性_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0011_s1
+  name: 埋点-右键菜单项点击分布-视图选项
+  description: 埋点-右键菜单项点击分布-视图选项
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 埋点_0012_s1
+  name: 埋点，右键菜单项点击分布-排序方式，修改时间
+  description: 埋点，右键菜单项点击分布-排序方式，修改时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0013_s1
+  name: 埋点，右键菜单项点击分布-显示方式，列表视图
+  description: 埋点，右键菜单项点击分布-显示方式，列表视图
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0014_s1
+  name: 埋点，右键菜单项点击分布-新建文档
+  description: 埋点，右键菜单项点击分布-新建文档
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0015_s1
+  name: 埋点，右键菜单项点击分布-在终端中打开
+  description: 埋点，右键菜单项点击分布-在终端中打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0016_s1
+  name: 埋点，右键菜单项点击分布-以管理员身份打开
+  description: 埋点，右键菜单项点击分布-以管理员身份打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0017_s1
+  name: 埋点，右键菜单项点击分布-添加到快捷访问
+  description: 埋点，右键菜单项点击分布-添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: 文档
+- id: 埋点_0018_s1
+  name: 埋点，右键菜单项点击分布-发送到光驱
+  description: 埋点，右键菜单项点击分布-发送到光驱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 埋点_0019_s1
+  name: 埋点，右键菜单项点击分布-发送到桌面
+  description: 埋点，右键菜单项点击分布-发送到桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 埋点_0020_s1
+  name: 埋点，右键菜单项点击分布-创建链接
+  description: 埋点，右键菜单项点击分布-创建链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 埋点_0021_s1
+  name: 埋点，右键菜单项点击分布-共享文件夹
+  description: 埋点，右键菜单项点击分布-共享文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 埋点_0022_s1
+  name: 埋点，右键菜单项点击分布-属性
+  description: 埋点，右键菜单项点击分布-属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 埋点_0023_s1
+  name: 埋点，右键菜单项点击分布-删除
+  description: 埋点，右键菜单项点击分布-删除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 埋点_0024_s1
+  name: 埋点-记录桌面启动的时间
+  description: 埋点-记录桌面启动的时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 埋点_0025_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-下载
+  description: 埋点，侧边栏各目录去重后的点击分布-下载
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: side_bar_view
+- id: 埋点_0026_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-回收站
+  description: 埋点，侧边栏各目录去重后的点击分布-回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 埋点_0027_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-保险箱
+  description: 埋点，侧边栏各目录去重后的点击分布-保险箱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: 埋点_0028_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-系统盘
+  description: 埋点，侧边栏各目录去重后的点击分布-系统盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: side_bar_view
+- id: 埋点_0029_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-多个数据盘（其他名称）
+  description: 埋点，侧边栏各目录去重后的点击分布-多个数据盘（其他名称）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 埋点_0030_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-我的共享
+  description: 埋点，侧边栏各目录去重后的点击分布-我的共享
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 埋点_0031_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-已添加的标签（颜色标签）
+  description: 埋点，侧边栏各目录去重后的点击分布-已添加的标签（颜色标签）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

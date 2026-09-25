@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 性能_suite
+app: dde-file-manager
+description: 性能模块 AT-SPI 用例
+module: 性能
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 性能_0001_s1
+  name: 选中大量文件后对文件进行操作
+  description: 选中大量文件后对文件进行操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

@@ -1,0 +1,271 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 拖拽_suite
+app: dde-file-manager
+description: 拖拽模块 AT-SPI 用例
+module: 拖拽
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 拖拽_0001_s1
+  name: 拖拽文件到同目录的文件夹下
+  description: 拖拽文件到同目录的文件夹下
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0002_s1
+  name: 【拖入选中】列表模式_从外部拖入文件后默认选中文件
+  description: 【拖入选中】列表模式_从外部拖入文件后默认选中文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0003_s1
+  name: 拖拽-改变属组和属主，拖拽文件到U盘
+  description: 拖拽-改变属组和属主，拖拽文件到U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 拖拽_0004_s1
+  name: Bug202013转：拖拽文件到同目录的文件夹下
+  description: Bug202013转：拖拽文件到同目录的文件夹下
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0005_s1
+  name: 聚合拖拽-4K屏高分辨率在文管选中多个文件拖拽
+  description: 聚合拖拽-4K屏高分辨率在文管选中多个文件拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0006_s1
+  name: '[core]拖入优化-列表模式下，按住ctrl从普通目录拖拽文件/文件夹到另一文管窗口'
+  description: '[core]拖入优化-列表模式下，按住ctrl从普通目录拖拽文件/文件夹到另一文管窗口'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0007_s1
+  name: 拖入优化-列表模式下，按住ctrl从回收站拖拽文件/文件夹到普通目录
+  description: 拖入优化-列表模式下，按住ctrl从回收站拖拽文件/文件夹到普通目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 拖拽_0008_s1
+  name: '[core]拖入优化-图标模式下，按住ctrl从普通目录拖拽文件/文件夹到另一文管窗口'
+  description: '[core]拖入优化-图标模式下，按住ctrl从普通目录拖拽文件/文件夹到另一文管窗口'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0009_s1
+  name: 拖入优化-各目录搜索目录拖拽
+  description: 拖入优化-各目录搜索目录拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0010_s1
+  name: 拖入优化- 关闭窗口特效，拖拽文件/文件夹
+  description: 拖入优化- 关闭窗口特效，拖拽文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0011_s1
+  name: '[core]库目录禁止拖拽-图标模式下库目录禁止拖拽'
+  description: '[core]库目录禁止拖拽-图标模式下库目录禁止拖拽'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: 回收站
+- id: 拖拽_0012_s1
+  name: '[core]文件操作-ALT+拖拽文件到本地目录'
+  description: '[core]文件操作-ALT+拖拽文件到本地目录'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 拖拽_0013_s1
+  name: '[002][core]文件操作-CTRL+拖拽文件到外设'
+  description: '[002][core]文件操作-CTRL+拖拽文件到外设'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 拖拽_0014_s1
+  name: 聚合拖拽-桌面已铺满全选文件拖拽_
+  description: 聚合拖拽-桌面已铺满全选文件拖拽_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 拖拽_0015_s1
+  name: 聚合拖拽-多屏下桌面拖拽99个文件至副屏
+  description: 聚合拖拽-多屏下桌面拖拽99个文件至副屏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 拖拽_0016_s1
+  name: 聚合拖拽-在桌面选中多个文件发生聚合后在原位置释放_
+  description: 聚合拖拽-在桌面选中多个文件发生聚合后在原位置释放_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 拖拽_0017_s1
+  name: 聚合拖拽-在桌面拖拽多个文件至回收站_
+  description: 聚合拖拽-在桌面拖拽多个文件至回收站_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 拖拽_0018_s1
+  name: 聚合拖拽-单窗口在当前目录选中100个文件拖拽_
+  description: 聚合拖拽-单窗口在当前目录选中100个文件拖拽_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 回收站
+teardown:
+- action: session_stop

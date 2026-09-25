@@ -1,0 +1,308 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 外设_suite
+app: dde-file-manager
+description: 外设模块 AT-SPI 用例
+module: 外设
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 外设_0001_s1
+  name: 【U盘】读写U盘目录右键菜单功能检查
+  description: 【U盘】读写U盘目录右键菜单功能检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 桌面
+- id: 外设_0002_s1
+  name: 外设和网络路径删除文件，移动硬盘内部彻底删除文件
+  description: 外设和网络路径删除文件，移动硬盘内部彻底删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 外设_0003_s1
+  name: 外设和网络路径删除文件，移动硬盘内部拖拽文件至回收站
+  description: 外设和网络路径删除文件，移动硬盘内部拖拽文件至回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: 外设_0004_s1
+  name: 外设和网络路径删除文件，移动硬盘内部delete键删除文件
+  description: 外设和网络路径删除文件，移动硬盘内部delete键删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 外设_0005_s1
+  name: 外设和网络路径删除文件，移动硬盘内部右键删除文件
+  description: 外设和网络路径删除文件，移动硬盘内部右键删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 外设_0006_s1
+  name: 【外设】外设和网络路径彻底删除文件
+  description: 【外设】外设和网络路径彻底删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 外设_0007_s1
+  name: 【外设】外设和网络路径删除文件进入回收站
+  description: 【外设】外设和网络路径删除文件进入回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 外设_0008_s1
+  name: 磁盘隐藏-检查组策略增加磁盘隐藏组策略
+  description: 磁盘隐藏-检查组策略增加磁盘隐藏组策略
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0009_s1
+  name: 缩略图预览，网络协议显示，文管设置和组策略同步
+  description: 缩略图预览，网络协议显示，文管设置和组策略同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+- id: 外设_0010_s1
+  name: 缩略图预览，网络协议显示，组策略关闭
+  description: 缩略图预览，网络协议显示，组策略关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0011_s1
+  name: 缩略图预览，网络协议显示，组策略开启
+  description: 缩略图预览，网络协议显示，组策略开启
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0012_s1
+  name: 缩略图预览，网络协议显示，文管设置，文案翻译
+  description: 缩略图预览，网络协议显示，文管设置，文案翻译
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+- id: 外设_0013_s1
+  name: 【外设】远程环境缩略图预览
+  description: 【外设】远程环境缩略图预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+  - action: assert_element
+    ref: 网络
+- id: 外设_0014_s1
+  name: 文件扩展角标，块设备显示，gio添加角标
+  description: 文件扩展角标，块设备显示，gio添加角标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0015_s1
+  name: 文件扩展角标，块设备显示，组策略关闭
+  description: 文件扩展角标，块设备显示，组策略关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0016_s1
+  name: 文件扩展角标，块设备显示，组策略开启
+  description: 文件扩展角标，块设备显示，组策略开启
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0017_s1
+  name: U盘中，文件属性-勾选隐藏此
+  description: U盘中，文件属性-勾选隐藏此
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0018_s1
+  name: U盘搜索结果重命名
+  description: U盘搜索结果重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设_0019_s1
+  name: U盘中，文件夹右键功能-添加书签
+  description: U盘中，文件夹右键功能-添加书签
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

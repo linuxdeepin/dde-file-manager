@@ -1,0 +1,703 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 预览侧边栏支持放大预览图片_suite
+app: dde-file-manager
+description: 预览侧边栏支持放大预览图片模块 AT-SPI 用例
+module: 预览侧边栏支持放大预览图片
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 预览侧边栏支持放大预览图片_0001_s1
+  name: 【预览侧边栏支持放大预览图片】图片加载动效
+  description: 【预览侧边栏支持放大预览图片】图片加载动效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0002_s1
+  name: 【预览侧边栏支持放大预览图片】文件选择对话框预览图片
+  description: 【预览侧边栏支持放大预览图片】文件选择对话框预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 预览侧边栏支持放大预览图片_0003_s1
+  name: 【预览侧边栏支持放大预览图片】重命名文件后观察预览区
+  description: 【预览侧边栏支持放大预览图片】重命名文件后观察预览区
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 图片
+- id: 预览侧边栏支持放大预览图片_0004_s1
+  name: 【预览侧边栏支持放大预览图片】安全性
+  description: 【预览侧边栏支持放大预览图片】安全性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0005_s1
+  name: 【预览侧边栏支持放大预览图片】反复放大缩小右侧边栏
+  description: 【预览侧边栏支持放大预览图片】反复放大缩小右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0006_s1
+  name: 【预览侧边栏支持放大预览图片】拖拽右侧边栏超出最大宽度
+  description: 【预览侧边栏支持放大预览图片】拖拽右侧边栏超出最大宽度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0007_s1
+  name: 【预览侧边栏支持放大预览图片】未开启"显示预览"
+  description: 【预览侧边栏支持放大预览图片】未开启"显示预览"
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0008_s1
+  name: 【预览侧边栏支持放大预览图片】大图片预览
+  description: 【预览侧边栏支持放大预览图片】大图片预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0009_s1
+  name: 【预览侧边栏支持放大预览图片】选择大量图片预览
+  description: 【预览侧边栏支持放大预览图片】选择大量图片预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0010_s1
+  name: 【预览侧边栏支持放大预览图片】多图片连续预览切换响应
+  description: 【预览侧边栏支持放大预览图片】多图片连续预览切换响应
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0011_s1
+  name: 【预览侧边栏支持放大预览图片】树形视图下缩放右侧边栏
+  description: 【预览侧边栏支持放大预览图片】树形视图下缩放右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0012_s1
+  name: 【预览侧边栏支持放大预览图片】列表视图下缩放右侧边栏
+  description: 【预览侧边栏支持放大预览图片】列表视图下缩放右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0013_s1
+  name: 【预览侧边栏支持放大预览图片】nfs共享目录支持放大预览图片
+  description: 【预览侧边栏支持放大预览图片】nfs共享目录支持放大预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0014_s1
+  name: 【预览侧边栏支持放大预览图片】davs共享目录支持放大预览图片
+  description: 【预览侧边栏支持放大预览图片】davs共享目录支持放大预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0015_s1
+  name: 【预览侧边栏支持放大预览图片】dav共享目录支持放大预览图片
+  description: 【预览侧边栏支持放大预览图片】dav共享目录支持放大预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0016_s1
+  name: 【预览侧边栏支持放大预览图片】sftp共享目录支持放大预览图片
+  description: 【预览侧边栏支持放大预览图片】sftp共享目录支持放大预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0017_s1
+  name: 【预览侧边栏支持放大预览图片】ftp共享目录支持放大预览图片
+  description: 【预览侧边栏支持放大预览图片】ftp共享目录支持放大预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0018_s1
+  name: 【预览侧边栏支持放大预览图片】smb共享目录支持放大预览图片
+  description: 【预览侧边栏支持放大预览图片】smb共享目录支持放大预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0019_s1
+  name: 【预览侧边栏支持放大预览图片】虚拟路径支持放大预览图片
+  description: 【预览侧边栏支持放大预览图片】虚拟路径支持放大预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 最近使用
+- id: 预览侧边栏支持放大预览图片_0020_s1
+  name: 【预览侧边栏支持放大预览图片】系统屏幕缩放为1.25倍时放大缩小右侧边栏
+  description: 【预览侧边栏支持放大预览图片】系统屏幕缩放为1.25倍时放大缩小右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0021_s1
+  name: 【预览侧边栏支持放大预览图片】系统字体为20号时放大缩小右侧边栏
+  description: 【预览侧边栏支持放大预览图片】系统字体为20号时放大缩小右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0022_s1
+  name: 【预览侧边栏支持放大预览图片】切换分辨率放大缩小右侧边栏
+  description: 【预览侧边栏支持放大预览图片】切换分辨率放大缩小右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0023_s1
+  name: 【预览侧边栏支持放大预览图片】高清屏下放大缩小右侧边栏
+  description: 【预览侧边栏支持放大预览图片】高清屏下放大缩小右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0024_s1
+  name: 【预览侧边栏支持放大预览图片】拖拽放大窗口时放大顺序
+  description: 【预览侧边栏支持放大预览图片】拖拽放大窗口时放大顺序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 回收站
+- id: 预览侧边栏支持放大预览图片_0025_s1
+  name: 【预览侧边栏支持放大预览图片】拖拽缩小窗口时压缩顺序
+  description: 【预览侧边栏支持放大预览图片】拖拽缩小窗口时压缩顺序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 图片
+- id: 预览侧边栏支持放大预览图片_0026_s1
+  name: 【预览侧边栏支持放大预览图片】缩放右侧边栏场景
+  description: 【预览侧边栏支持放大预览图片】缩放右侧边栏场景
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 预览侧边栏支持放大预览图片_0027_s1
+  name: 【预览侧边栏支持放大预览图片】隐藏右侧边栏
+  description: 【预览侧边栏支持放大预览图片】隐藏右侧边栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 图片
+- id: 预览侧边栏支持放大预览图片_0028_s1
+  name: 【预览侧边栏支持放大预览图片】记忆右侧边栏宽度
+  description: 【预览侧边栏支持放大预览图片】记忆右侧边栏宽度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: side_bar_view
+- id: 预览侧边栏支持放大预览图片_0029_s1
+  name: 【预览侧边栏支持放大预览图片】右侧边栏区域中的所有信息自适应变化
+  description: 【预览侧边栏支持放大预览图片】右侧边栏区域中的所有信息自适应变化
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 图片
+- id: 预览侧边栏支持放大预览图片_0030_s1
+  name: 【预览侧边栏支持放大预览图片】放大和缩小左侧边栏时预览图片
+  description: 【预览侧边栏支持放大预览图片】放大和缩小左侧边栏时预览图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 主目录
+teardown:
+- action: session_stop

@@ -1,0 +1,81 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件排序支持同类型聚合排序_suite
+app: dde-file-manager
+description: 文件排序支持同类型聚合排序模块 AT-SPI 用例
+module: 文件排序支持同类型聚合排序
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件排序支持同类型聚合排序_0001_s1
+  name: 【文件排序支持同类型聚合排序】搜索文件结果按类型排序结果验证
+  description: 【文件排序支持同类型聚合排序】搜索文件结果按类型排序结果验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件排序支持同类型聚合排序_0002_s1
+  name: 【文件排序支持同类型聚合排序】按类型排序稳定性验证
+  description: 【文件排序支持同类型聚合排序】按类型排序稳定性验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件排序支持同类型聚合排序_0003_s1
+  name: 【文件排序支持同类型聚合排序】大文件量（10,000个）按类型排序效率验证
+  description: 【文件排序支持同类型聚合排序】大文件量（10,000个）按类型排序效率验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件排序支持同类型聚合排序_0004_s1
+  name: 【文件排序支持同类型聚合排序】隐藏文件排序验证
+  description: 【文件排序支持同类型聚合排序】隐藏文件排序验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件排序支持同类型聚合排序_0005_s1
+  name: 【文件排序支持同类型聚合排序】修改mimetype排序结果刷新
+  description: 【文件排序支持同类型聚合排序】修改mimetype排序结果刷新
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件排序支持同类型聚合排序_0006_s1
+  name: 【文件排序支持同类型聚合排序】不同视图下的类型排序结果一致性验证
+  description: 【文件排序支持同类型聚合排序】不同视图下的类型排序结果一致性验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

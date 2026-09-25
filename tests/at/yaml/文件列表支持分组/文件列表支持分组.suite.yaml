@@ -1,0 +1,532 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件列表支持分组_suite
+app: dde-file-manager
+description: 文件列表支持分组模块 AT-SPI 用例
+module: 文件列表支持分组
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件列表支持分组_0001_s1
+  name: 【文件列表支持分组】分组间距增大
+  description: 【文件列表支持分组】分组间距增大
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 文件列表支持分组_0002_s1
+  name: 【文件列表支持分组】分组UI界面检查
+  description: 【文件列表支持分组】分组UI界面检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件列表支持分组_0003_s1
+  name: 【文件列表支持分组】搜索结果界面支持分组
+  description: 【文件列表支持分组】搜索结果界面支持分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 分组测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: AddressBar
+- id: 文件列表支持分组_0004_s1
+  name: 【文件列表支持分组】三方应用支持分组
+  description: 【文件列表支持分组】三方应用支持分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 文件列表支持分组_0005_s1
+  name: 【文件列表支持分组】文件选择对话框显示分组
+  description: 【文件列表支持分组】文件选择对话框显示分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件列表支持分组_0006_s1
+  name: 【文件列表支持分组】用户创建的快捷访问目录进行分组
+  description: 【文件列表支持分组】用户创建的快捷访问目录进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 文件列表支持分组_0007_s1
+  name: 【文件列表支持分组】保险箱进行分组
+  description: 【文件列表支持分组】保险箱进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: 文件列表支持分组_0008_s1
+  name: 【文件列表支持分组】外设存储目录进行分组
+  description: 【文件列表支持分组】外设存储目录进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件列表支持分组_0009_s1
+  name: 【文件列表支持分组】对NFS目录进行分组
+  description: 【文件列表支持分组】对NFS目录进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件列表支持分组_0010_s1
+  name: 【文件列表支持分组】对DAVS目录进行分组
+  description: 【文件列表支持分组】对DAVS目录进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件列表支持分组_0011_s1
+  name: 【文件列表支持分组】对DAV目录进行分组
+  description: 【文件列表支持分组】对DAV目录进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件列表支持分组_0012_s1
+  name: 【文件列表支持分组】对网络邻居进行分组
+  description: 【文件列表支持分组】对网络邻居进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件列表支持分组_0013_s1
+  name: 【文件列表支持分组】对最近使用目录进行分组
+  description: 【文件列表支持分组】对最近使用目录进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: 文件列表支持分组_0014_s1
+  name: 【文件列表支持分组】对回收站进行分组
+  description: 【文件列表支持分组】对回收站进行分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 系统盘
+- id: 文件列表支持分组_0015_s1
+  name: 【文件列表支持分组】稳定性测试
+  description: 【文件列表支持分组】稳定性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件列表支持分组_0016_s1
+  name: 【文件列表支持分组】性能测试
+  description: 【文件列表支持分组】性能测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件列表支持分组_0017_s1
+  name: 【文件列表支持分组】安全性测试
+  description: 【文件列表支持分组】安全性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件列表支持分组_0018_s1
+  name: 【文件列表支持分组】分组有记忆功能
+  description: 【文件列表支持分组】分组有记忆功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 下载
+- id: 文件列表支持分组_0019_s1
+  name: 【文件列表支持分组】分组仅对当前目录生效
+  description: 【文件列表支持分组】分组仅对当前目录生效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+- id: 文件列表支持分组_0020_s1
+  name: 【文件列表支持分组】树形视图模式下分组后进行搜索
+  description: 【文件列表支持分组】树形视图模式下分组后进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: AddressBar
+- id: 文件列表支持分组_0021_s1
+  name: 【文件列表支持分组】列表视图模式下分组后对文件进行操作
+  description: 【文件列表支持分组】列表视图模式下分组后对文件进行操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件列表支持分组_0022_s1
+  name: 【文件列表支持分组】图标视图模式下分组后对文件进行操作
+  description: 【文件列表支持分组】图标视图模式下分组后对文件进行操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 文件列表支持分组_0023_s1
+  name: 【文件列表支持分组】对系统目录下的隐藏文件分组
+  description: 【文件列表支持分组】对系统目录下的隐藏文件分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件列表支持分组_0024_s1
+  name: 【文件列表支持分组】分组按照类型后，“文件和文件夹混合排序”失效
+  description: 【文件列表支持分组】分组按照类型后，“文件和文件夹混合排序”失效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件列表支持分组_0025_s1
+  name: 【文件列表支持分组】修改类型后，检查文件是否正确分组
+  description: 【文件列表支持分组】修改类型后，检查文件是否正确分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 文件列表支持分组_0026_s1
+  name: 【文件列表支持分组】修改大小后，检查文件是否正确分组
+  description: 【文件列表支持分组】修改大小后，检查文件是否正确分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件列表支持分组_0027_s1
+  name: 【文件列表支持分组】修改名称后，检查文件是否正确分组
+  description: 【文件列表支持分组】修改名称后，检查文件是否正确分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 文件列表支持分组_0028_s1
+  name: 【文件列表支持分组】修改时间后，检查文件是否正确分组
+  description: 【文件列表支持分组】修改时间后，检查文件是否正确分组
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件列表支持分组_0029_s1
+  name: 【文件列表支持分组】分组从无到有/从有到无
+  description: 【文件列表支持分组】分组从无到有/从有到无
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件列表支持分组_0030_s1
+  name: 【文件列表支持分组】分组功能入口
+  description: 【文件列表支持分组】分组功能入口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

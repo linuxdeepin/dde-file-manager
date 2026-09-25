@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 云盘登录登出_suite
+app: dde-file-manager
+description: 云盘登录登出模块 AT-SPI 用例
+module: 云盘登录登出
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 云盘登录登出_0001_s1
+  name: 【云盘】UOS ID作为用户唯一身份标识且预分配存储空间
+  description: 【云盘】UOS ID作为用户唯一身份标识且预分配存储空间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 云盘登录登出_0002_s1
+  name: 插件状态变更-断开网络连接
+  description: 插件状态变更-断开网络连接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: CollectionView
+  - action: assert_element
+    ref: 网络
+- id: 云盘登录登出_0003_s1
+  name: 插件状态变更-客户端切换同步路径
+  description: 插件状态变更-客户端切换同步路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: CollectionView
+- id: 云盘登录登出_0004_s1
+  name: 插件状态变更-切换账号登录
+  description: 插件状态变更-切换账号登录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: CollectionView
+- id: 云盘登录登出_0005_s1
+  name: 云盘插件登出-客户端退出登录
+  description: 云盘插件登出-客户端退出登录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

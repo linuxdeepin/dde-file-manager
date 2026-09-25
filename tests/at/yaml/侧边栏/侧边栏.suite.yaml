@@ -1,0 +1,172 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 侧边栏_suite
+app: dde-file-manager
+description: 侧边栏模块 AT-SPI 用例
+module: 侧边栏
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 侧边栏_0001_s1
+  name: 快捷方式添加快捷访问，该路径里面进行文件操作
+  description: 快捷方式添加快捷访问，该路径里面进行文件操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 快捷访问
+- id: 侧边栏_0002_s1
+  name: 【侧边栏目录显示优化】拖拽侧边栏进行排序
+  description: 【侧边栏目录显示优化】拖拽侧边栏进行排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 侧边栏_0003_s1
+  name: 【侧边栏目录显示优化】拖拽文件到侧边栏目录，检查背景色
+  description: 【侧边栏目录显示优化】拖拽文件到侧边栏目录，检查背景色
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 侧边栏_0004_s1
+  name: 【侧边栏目录显示优化】侧边栏目录hover，检查背景色
+  description: 【侧边栏目录显示优化】侧边栏目录hover，检查背景色
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 侧边栏_0005_s1
+  name: 【侧边栏目录显示优化】侧边栏目录选中，检查背景色
+  description: 【侧边栏目录显示优化】侧边栏目录选中，检查背景色
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 桌面
+- id: 侧边栏_0006_s1
+  name: 【侧边栏目录显示优化】文管窗口左右收缩
+  description: 【侧边栏目录显示优化】文管窗口左右收缩
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 侧边栏_0007_s1
+  name: 【侧边栏目录显示优化】文管窗口左右拉伸
+  description: 【侧边栏目录显示优化】文管窗口左右拉伸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 侧边栏_0008_s1
+  name: 【侧边栏目录显示优化】检查文管侧边栏的最大宽度
+  description: 【侧边栏目录显示优化】检查文管侧边栏的最大宽度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 侧边栏_0009_s1
+  name: 【侧边栏目录显示优化】检查文管侧边栏的最小宽度
+  description: 【侧边栏目录显示优化】检查文管侧边栏的最小宽度
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

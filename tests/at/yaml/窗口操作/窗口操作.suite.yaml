@@ -1,0 +1,218 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 窗口操作_suite
+app: dde-file-manager
+description: 窗口操作模块 AT-SPI 用例
+module: 窗口操作
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 窗口操作_0001_s1
+  name: 【重复打开文件夹】默认取消勾选：在单独的进程中打开文件窗口
+  description: 【重复打开文件夹】默认取消勾选：在单独的进程中打开文件窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 窗口操作_0002_s1
+  name: 【重复打开文件夹】打开计算机大于2次，计算机窗口显示一个且置顶
+  description: 【重复打开文件夹】打开计算机大于2次，计算机窗口显示一个且置顶
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 窗口操作_0003_s1
+  name: 【重复打开文件夹】在桌面打开文件管理器，再通过任务栏打开文件管理器，文件管理器窗口显示一个且置顶
+  description: 【重复打开文件夹】在桌面打开文件管理器，再通过任务栏打开文件管理器，文件管理器窗口显示一个且置顶
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 窗口操作_0004_s1
+  name: 【重复打开文件夹】文件管理器在计算机页面，再通过启动器侧边栏打开，对应窗口显示一个且置顶
+  description: 【重复打开文件夹】文件管理器在计算机页面，再通过启动器侧边栏打开，对应窗口显示一个且置顶
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 窗口操作_0005_s1
+  name: 【重复打开文件夹】文件管理器打开指定目录，再通过任务栏打开文件管理器，会打开两个窗口
+  description: 【重复打开文件夹】文件管理器打开指定目录，再通过任务栏打开文件管理器，会打开两个窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 视频
+- id: 窗口操作_0006_s1
+  name: 【重复打开文件夹】文件管理器打开指定目录，再通过启动器打开文件管理器，会打开两个窗口
+  description: 【重复打开文件夹】文件管理器打开指定目录，再通过启动器打开文件管理器，会打开两个窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 视频
+- id: 窗口操作_0007_s1
+  name: 【重复打开文件夹】打开文件夹链接大于2次，文件夹窗口只显示一个且置顶
+  description: 【重复打开文件夹】打开文件夹链接大于2次，文件夹窗口只显示一个且置顶
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 窗口操作_0008_s1
+  name: 【重复打开文件夹】不勾选重复打开文件夹时激活已有窗口，打开同一个文件夹大于2次，文件夹窗口大于2个
+  description: 【重复打开文件夹】不勾选重复打开文件夹时激活已有窗口，打开同一个文件夹大于2次，文件夹窗口大于2个
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 窗口操作_0009_s1
+  name: 【重复打开文件夹】鼠标右键选择“在新窗口中打开”同一个文件夹，文件夹窗口显示多个
+  description: 【重复打开文件夹】鼠标右键选择“在新窗口中打开”同一个文件夹，文件夹窗口显示多个
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 窗口操作_0010_s1
+  name: 埋点 - 首次启动文件管理器（其他功能唤醒）
+  description: 埋点 - 首次启动文件管理器（其他功能唤醒）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 窗口操作_0011_s1
+  name: 【重复打开文件夹】勾选在单独的进行中打开文件夹窗口，打开同一个文件夹大于2次，文件夹窗口大于2个
+  description: 【重复打开文件夹】勾选在单独的进行中打开文件夹窗口，打开同一个文件夹大于2次，文件夹窗口大于2个
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

@@ -1,0 +1,144 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 同步状态_suite
+app: dde-file-manager
+description: 同步状态模块 AT-SPI 用例
+module: 同步状态
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 同步状态_0001_s1
+  name: 同步状态-取消同步
+  description: 同步状态-取消同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0002_s1
+  name: 同步状态_本地存储
+  description: 同步状态_本地存储
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 同步状态_0003_s1
+  name: 同步状态_正在同步
+  description: 同步状态_正在同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0004_s1
+  name: 同步失败_无扩展名的文件
+  description: 同步失败_无扩展名的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0005_s1
+  name: 同步失败_设置上传的文件格式
+  description: 同步失败_设置上传的文件格式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0006_s1
+  name: 同步失败_删除或移动本地文件
+  description: 同步失败_删除或移动本地文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0007_s1
+  name: 同步失败_删除或移动云端文件
+  description: 同步失败_删除或移动云端文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0008_s1
+  name: 同步失败_服务异常
+  description: 同步失败_服务异常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+- id: 同步状态_0009_s1
+  name: 同步失败_云端空间
+  description: 同步失败_云端空间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0010_s1
+  name: 同步失败_本地磁盘
+  description: 同步失败_本地磁盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 同步状态_0011_s1
+  name: 同步失败_手动暂停
+  description: 同步失败_手动暂停
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

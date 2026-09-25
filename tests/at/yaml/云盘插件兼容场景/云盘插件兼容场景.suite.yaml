@@ -1,0 +1,40 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 云盘插件兼容场景_suite
+app: dde-file-manager
+description: 云盘插件兼容场景模块 AT-SPI 用例
+module: 云盘插件兼容场景
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 云盘插件兼容场景_0001_s1
+  name: 云盘插件-打开多个云盘目录场景
+  description: 云盘插件-打开多个云盘目录场景
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

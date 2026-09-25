@@ -1,0 +1,2033 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件操作_suite
+app: dde-file-manager
+description: 文件操作模块 AT-SPI 用例
+module: 文件操作
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件操作_0001_s1
+  name: 主目录图标 - 右键操作-4
+  description: 主目录图标 - 右键操作-4
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 文件操作_0002_s1
+  name: 主目录图标 - 右键操作-3
+  description: 主目录图标 - 右键操作-3
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 文件操作_0003_s1
+  name: 主目录图标 - 右键操作-2
+  description: 主目录图标 - 右键操作-2
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 文件操作_0004_s1
+  name: '[006][core]右侧预览-图片类型信息栏基本信息-2'
+  description: '[006][core]右侧预览-图片类型信息栏基本信息-2'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0005_s1
+  name: 视频预览
+  description: 视频预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 文件操作_0006_s1
+  name: 【Bug转用例场景】文件夹添加到快捷访问
+  description: 【Bug转用例场景】文件夹添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 文件操作_0007_s1
+  name: 【文件操作】文件夹创建软链接
+  description: 【文件操作】文件夹创建软链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0008_s1
+  name: 排序方式-排序方式修改
+  description: 排序方式-排序方式修改
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 文件操作_0009_s1
+  name: 长文件名功能  - 添加快捷访问
+  description: 长文件名功能  - 添加快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0010_s1
+  name: 长文件名功能 - 标记信息，文件夹右键添加标记
+  description: 长文件名功能 - 标记信息，文件夹右键添加标记
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0011_s1
+  name: 长文件名功能 - 桌面创建长文件名的文件
+  description: 长文件名功能 - 桌面创建长文件名的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0012_s1
+  name: 长文件名功能 - 字符限制规则
+  description: 长文件名功能 - 字符限制规则
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0013_s1
+  name: 长文件名功能 - 卸载后，字符限制规则
+  description: 长文件名功能 - 卸载后，字符限制规则
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0014_s1
+  name: 长文件名功能  - 新建文件夹
+  description: 长文件名功能  - 新建文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0015_s1
+  name: 长文件名功能  - 新建文档
+  description: 长文件名功能  - 新建文档
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0016_s1
+  name: 长文件名功能  - 复制，粘贴
+  description: 长文件名功能  - 复制，粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0017_s1
+  name: 长文件名功能  - 剪切，粘贴
+  description: 长文件名功能  - 剪切，粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0018_s1
+  name: 长文件名功能  - 剪贴板
+  description: 长文件名功能  - 剪贴板
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0019_s1
+  name: 长文件名功能  - 重命名
+  description: 长文件名功能  - 重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0020_s1
+  name: 长文件名功能  - 批量重命名，替换文本
+  description: 长文件名功能  - 批量重命名，替换文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0021_s1
+  name: 长文件名功能  - 批量重命名，添加文本
+  description: 长文件名功能  - 批量重命名，添加文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0022_s1
+  name: 长文件名功能  - 批量重命名，自定义文本
+  description: 长文件名功能  - 批量重命名，自定义文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0023_s1
+  name: 长文件名功能  - 删除
+  description: 长文件名功能  - 删除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 文件操作_0024_s1
+  name: 长文件名功能  - 删除、还原
+  description: 长文件名功能  - 删除、还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 文件操作_0025_s1
+  name: 长文件名功能  - 排序
+  description: 长文件名功能  - 排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0026_s1
+  name: 长文件名功能  - 文件和文件夹混合排序
+  description: 长文件名功能  - 文件和文件夹混合排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0027_s1
+  name: 长文件名功能  - 发送到U盘
+  description: 长文件名功能  - 发送到U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0028_s1
+  name: 长文件名功能  - 发送到光驱
+  description: 长文件名功能  - 发送到光驱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0029_s1
+  name: 长文件名功能  - 复制，剪切，拖拽到/tmp目录
+  description: 长文件名功能  - 复制，剪切，拖拽到/tmp目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0030_s1
+  name: 长文件名功能  - 创建链接
+  description: 长文件名功能  - 创建链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0031_s1
+  name: 长文件名功能  - 发送到桌面
+  description: 长文件名功能  - 发送到桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0032_s1
+  name: 长文件名功能 - 在终端 中打开
+  description: 长文件名功能 - 在终端 中打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0033_s1
+  name: 长文件名功能 - 共享文件夹
+  description: 长文件名功能 - 共享文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0034_s1
+  name: 长文件名功能 - 病毒查杀
+  description: 长文件名功能 - 病毒查杀
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0035_s1
+  name: 长文件名功能(关闭) - 新建文件夹
+  description: 长文件名功能(关闭) - 新建文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0036_s1
+  name: 复制含有特殊字符的文件夹，选择替换方式
+  description: 复制含有特殊字符的文件夹，选择替换方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0037_s1
+  name: 长文件名功能(关闭) - 重命名
+  description: 长文件名功能(关闭) - 重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0038_s1
+  name: 长文件名功能(关闭)  - 批量重命名，替换文本
+  description: 长文件名功能(关闭)  - 批量重命名，替换文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0039_s1
+  name: 长文件名功能(关闭) - 发送到光驱
+  description: 长文件名功能(关闭) - 发送到光驱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0040_s1
+  name: 创建链接
+  description: 创建链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0041_s1
+  name: 长文件名被截断后发送到桌面
+  description: 长文件名被截断后发送到桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0042_s1
+  name: 埋点，右键菜单项点击分布-图标大小，极小
+  description: 埋点，右键菜单项点击分布-图标大小，极小
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 文件操作_0043_s1
+  name: 埋点，右键菜单项点击分布-新建文件夹
+  description: 埋点，右键菜单项点击分布-新建文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 音乐
+- id: 文件操作_0044_s1
+  name: 埋点，右键菜单项点击分布-标记信息
+  description: 埋点，右键菜单项点击分布-标记信息
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0045_s1
+  name: 埋点，右键菜单项点击分布-发送到U盘
+  description: 埋点，右键菜单项点击分布-发送到U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0046_s1
+  name: 埋点，右键菜单项点击分布-发送到蓝牙
+  description: 埋点，右键菜单项点击分布-发送到蓝牙
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0047_s1
+  name: 【文件选择对话框】长文件名功能 -  文件选择对话框(保存)，保存
+  description: 【文件选择对话框】长文件名功能 -  文件选择对话框(保存)，保存
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0048_s1
+  name: 【文件选择对话框】长文件名功能 -  文件选择对话框(打开)，打开
+  description: 【文件选择对话框】长文件名功能 -  文件选择对话框(打开)，打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0049_s1
+  name: 【文件选择对话框】长文件名功能(关闭) -  文件选择对话框(保存)，保存
+  description: 【文件选择对话框】长文件名功能(关闭) -  文件选择对话框(保存)，保存
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0050_s1
+  name: 【撤销交互】【桌面】复制文件后粘贴至其他文件夹，Ctrl+Z撤销粘贴操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【桌面】复制文件后粘贴至其他文件夹，Ctrl+Z撤销粘贴操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0051_s1
+  name: 【撤销交互】【桌面】新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【桌面】新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0052_s1
+  name: 排序 - 按修改时间排序 - 由近到远排序（修改时间由大到小）
+  description: 排序 - 按修改时间排序 - 由近到远排序（修改时间由大到小）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0053_s1
+  name: '[t]属性-选中单个文件/文件夹右键-属性'
+  description: '[t]属性-选中单个文件/文件夹右键-属性'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0054_s1
+  name: '[t][core]复制-选中单个文件/文件夹右键-复制'
+  description: '[t][core]复制-选中单个文件/文件夹右键-复制'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0055_s1
+  name: '[t][core]剪切-选中单个文件/文件夹右键-剪切'
+  description: '[t][core]剪切-选中单个文件/文件夹右键-剪切'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0056_s1
+  name: 文件名称分词优化-桌面图标大小为小，文件名称为汉字+英文组合，检查文件显示
+  description: 文件名称分词优化-桌面图标大小为小，文件名称为汉字+英文组合，检查文件显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0057_s1
+  name: '[013]右键菜单-空白处右键显示设置'
+  description: '[013]右键菜单-空白处右键显示设置'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0058_s1
+  name: 【文管图标增加tips提示】检查文管title栏图标的tips提示
+  description: 【文管图标增加tips提示】检查文管title栏图标的tips提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0059_s1
+  name: 【文件管理】桌面右键菜单-新建文档
+  description: 【文件管理】桌面右键菜单-新建文档
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0060_s1
+  name: 【多选图片右键打印】选中多张图片，右键菜单点击"打印"
+  description: 【多选图片右键打印】选中多张图片，右键菜单点击"打印"
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0061_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内空白处快捷键查看属性
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内空白处快捷键查看属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0062_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键查看属性
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键查看属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0063_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键删除（开启普通删除提示）
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键删除（开启普通删除提示）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 文件操作_0064_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键删除
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键删除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 文件操作_0065_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键重命名
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0066_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键剪切粘贴
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键剪切粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0067_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键复制粘贴
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键复制粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0068_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键打开
+  description: 文管右键菜单显示快捷键-快捷键功能-文管内快捷键打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0069_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键查看属性
+  description: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键查看属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0070_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键删除（开启普通删除提示）
+  description: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键删除（开启普通删除提示）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 文件操作_0071_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键删除
+  description: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键删除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 文件操作_0072_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键重命名
+  description: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0073_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键剪切粘贴
+  description: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键剪切粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0074_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键复制粘贴
+  description: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键复制粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0075_s1
+  name: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键打开
+  description: 文管右键菜单显示快捷键-快捷键功能-桌面快捷键打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0076_s1
+  name: 文管右键菜单显示快捷键-快捷键显示-文管普通目录右键菜单显示快捷键
+  description: 文管右键菜单显示快捷键-快捷键显示-文管普通目录右键菜单显示快捷键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0077_s1
+  name: 文管右键菜单显示快捷键-快捷键显示-桌面右键菜单显示快捷键
+  description: 文管右键菜单显示快捷键-快捷键显示-桌面右键菜单显示快捷键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0078_s1
+  name: 【右键菜单增加反选选项】桌面和文管，选中多个文件，右键菜单单击&amp;amp;quot;反选&amp;amp;quot;
+  description: 【右键菜单增加反选选项】桌面和文管，选中多个文件，右键菜单单击&amp;amp;quot;反选&amp;amp;quot;
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0079_s1
+  name: 【文件右键】右键刷新功能
+  description: 【文件右键】右键刷新功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0080_s1
+  name: 【文件右键】文件/文件夹-右键打开
+  description: 【文件右键】文件/文件夹-右键打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0081_s1
+  name: 文件/文件夹-右键-添加标记
+  description: 文件/文件夹-右键-添加标记
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0082_s1
+  name: 文件/文件夹-右键-标签栏路径文件编辑标记
+  description: 文件/文件夹-右键-标签栏路径文件编辑标记
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0083_s1
+  name: 文件/文件夹-右键-操作标记栏目
+  description: 文件/文件夹-右键-操作标记栏目
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0084_s1
+  name: 文件/文件夹-右键-标记栏右键
+  description: 文件/文件夹-右键-标记栏右键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0085_s1
+  name: 【文件右键】空白处右键-新建文件夹
+  description: 【文件右键】空白处右键-新建文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0086_s1
+  name: 【文件右键】空白处右键-新建文档
+  description: 【文件右键】空白处右键-新建文档
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0087_s1
+  name: '[050]打开方式页面-勾选设为默认修改推荐应用'
+  description: '[050]打开方式页面-勾选设为默认修改推荐应用'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0088_s1
+  name: '[36][core]重命名支持殊符号-特殊名称文件夹共享'
+  description: '[36][core]重命名支持殊符号-特殊名称文件夹共享'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0089_s1
+  name: '[37][somke]重命名支持殊符号-新增支持持殊符号'
+  description: '[37][somke]重命名支持殊符号-新增支持持殊符号'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0090_s1
+  name: 属性复制-快捷键复制
+  description: 属性复制-快捷键复制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0091_s1
+  name: 属性复制-右键菜单复制
+  description: 属性复制-右键菜单复制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0092_s1
+  name: '[047]允许以程序执行'
+  description: '[047]允许以程序执行'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0093_s1
+  name: 文件属性-修改权限
+  description: 文件属性-修改权限
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0094_s1
+  name: '[053]文件属性-默认权限'
+  description: '[053]文件属性-默认权限'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0095_s1
+  name: '[046]属性基本信息-隐藏'
+  description: '[046]属性基本信息-隐藏'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0096_s1
+  name: 右侧预览-文件夹类型信息栏基本信息
+  description: 右侧预览-文件夹类型信息栏基本信息
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0097_s1
+  name: 【 预览】在文管/桌面多个文件预览
+  description: 【 预览】在文管/桌面多个文件预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 文件操作_0098_s1
+  name: '[003][core]预览-PDF预览'
+  description: '[003][core]预览-PDF预览'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: StatusBar
+- id: 文件操作_0099_s1
+  name: '[034][core]预览-在桌面/文管按住空格键预览文件不松'
+  description: '[034][core]预览-在桌面/文管按住空格键预览文件不松'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0100_s1
+  name: '[007]预览-预览支持类型'
+  description: '[007]预览-预览支持类型'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0101_s1
+  name: '[002][core]右侧预览-文件夹，信息栏'
+  description: '[002][core]右侧预览-文件夹，信息栏'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0102_s1
+  name: '[006][core]右侧预览-图片类型信息栏基本信息-1'
+  description: '[006][core]右侧预览-图片类型信息栏基本信息-1'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0103_s1
+  name: 【Ctrl+Z撤销】复制文件后，Ctrl+Z撤销弹出彻底删除提示
+  description: 【Ctrl+Z撤销】复制文件后，Ctrl+Z撤销弹出彻底删除提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0104_s1
+  name: 【Ctrl+Z撤销】新建文件后，Ctrl+Z撤销弹出彻底删除提示
+  description: 【Ctrl+Z撤销】新建文件后，Ctrl+Z撤销弹出彻底删除提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0105_s1
+  name: 反选快捷键【Shift+Ctrl+I】- 部分选中
+  description: 反选快捷键【Shift+Ctrl+I】- 部分选中
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0106_s1
+  name: 【书签】快捷访问-剪切文件到快捷访问内
+  description: 【书签】快捷访问-剪切文件到快捷访问内
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 快捷访问
+- id: 文件操作_0107_s1
+  name: 快捷访问-复制粘贴到快捷访问内
+  description: 快捷访问-复制粘贴到快捷访问内
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 快捷访问
+- id: 文件操作_0108_s1
+  name: 【书签】快捷访问-右键移除
+  description: 【书签】快捷访问-右键移除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0109_s1
+  name: 【书签】快捷访问-普通目录下文件夹添加
+  description: 【书签】快捷访问-普通目录下文件夹添加
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 快捷访问
+- id: 文件操作_0110_s1
+  name: 剪切拷贝-存在同名文件时的情况
+  description: 剪切拷贝-存在同名文件时的情况
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0111_s1
+  name: 【 复制】剪切拷贝-桌面文件复制操作
+  description: 【 复制】剪切拷贝-桌面文件复制操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 文件操作_0112_s1
+  name: 右键菜单-选中文件/文件夹右键-标记信息，颜色标记
+  description: 右键菜单-选中文件/文件夹右键-标记信息，颜色标记
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0113_s1
+  name: 标记-输入框标记
+  description: 标记-输入框标记
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0114_s1
+  name: Bug193649转：在文管重命名目录后马上删除目录
+  description: Bug193649转：在文管重命名目录后马上删除目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0115_s1
+  name: Bug192087转：连续长按或多次按下ctrl+shift+?快捷键后系统正常
+  description: Bug192087转：连续长按或多次按下ctrl+shift+?快捷键后系统正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0116_s1
+  name: Bug185973转：选中多个文件删除时，会删除所有
+  description: Bug185973转：选中多个文件删除时，会删除所有
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件操作_0117_s1
+  name: 【文件操作】【Bug211431转】使用2022文本中的内容重命名文件时不会导致文管崩溃
+  description: 【文件操作】【Bug211431转】使用2022文本中的内容重命名文件时不会导致文管崩溃
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0118_s1
+  name: 重命名文件时命名内容检查
+  description: 重命名文件时命名内容检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0119_s1
+  name: 多文件、文件夹的操作
+  description: 多文件、文件夹的操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0120_s1
+  name: 重命名共享文件夹名称
+  description: 重命名共享文件夹名称
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0121_s1
+  name: 批量重命名-替换文本
+  description: 批量重命名-替换文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0122_s1
+  name: 批量重命名-添加文本
+  description: 批量重命名-添加文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0123_s1
+  name: 批量重命名-自定义文本
+  description: 批量重命名-自定义文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0124_s1
+  name: 【文件选择对话框】文管选择窗-浏览器调用
+  description: 【文件选择对话框】文管选择窗-浏览器调用
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 文件操作_0125_s1
+  name: Bug192717转：框选最近使用的多个文件，拖拽到其他目录，中间点取消
+  description: Bug192717转：框选最近使用的多个文件，拖拽到其他目录，中间点取消
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: 文件操作_0126_s1
+  name: '[004]最近使用文件右键-单个文件右键-打开文件所在位置'
+  description: '[004]最近使用文件右键-单个文件右键-打开文件所在位置'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0127_s1
+  name: 主目录图标 - 右键操作-1
+  description: 主目录图标 - 右键操作-1
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 文件操作_0128_s1
+  name: 拖拽主目录下桌面目录到桌面某一个文件夹_
+  description: 拖拽主目录下桌面目录到桌面某一个文件夹_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 文件操作_0129_s1
+  name: 剪切桌面文件后在“文档”目录下粘贴
+  description: 剪切桌面文件后在“文档”目录下粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 文件操作_0130_s1
+  name: 【普通目录】拖拽普通目录文件至侧边栏其他目录/桌面
+  description: 【普通目录】拖拽普通目录文件至侧边栏其他目录/桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 文件操作_0131_s1
+  name: 排序 - 名称排序，字母排序，多字母
+  description: 排序 - 名称排序，字母排序，多字母
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件操作_0132_s1
+  name: 排序 - 名称排序，数字+字母+汉字+其他
+  description: 排序 - 名称排序，数字+字母+汉字+其他
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

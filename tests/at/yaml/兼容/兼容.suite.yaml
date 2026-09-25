@@ -1,0 +1,52 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 兼容_suite
+app: dde-file-manager
+description: 兼容模块 AT-SPI 用例
+module: 兼容
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 兼容_0001_s1
+  name: 文件管理器翻译验证-其他语言
+  description: 文件管理器翻译验证-其他语言
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 兼容_0002_s1
+  name: 文件管理器菜单翻译率验证-老挝语
+  description: 文件管理器菜单翻译率验证-老挝语
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 兼容_0003_s1
+  name: 文件管理器菜单翻译率验证-主要语言
+  description: 文件管理器菜单翻译率验证-主要语言
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

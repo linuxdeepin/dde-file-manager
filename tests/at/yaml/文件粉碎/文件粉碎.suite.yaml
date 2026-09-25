@@ -1,0 +1,176 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件粉碎_suite
+app: dde-file-manager
+description: 文件粉碎模块 AT-SPI 用例
+module: 文件粉碎
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件粉碎_0001_s1
+  name: 【文件粉碎】粉碎大量文件时，有部分文件粉碎失败
+  description: 【文件粉碎】粉碎大量文件时，有部分文件粉碎失败
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: 文件粉碎_0002_s1
+  name: 【文件粉碎】文件粉碎过程中同时做其他操作
+  description: 【文件粉碎】文件粉碎过程中同时做其他操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件粉碎_0003_s1
+  name: 【文件粉碎】四性测试
+  description: 【文件粉碎】四性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件粉碎_0004_s1
+  name: 【文件粉碎】特殊场景文件粉碎
+  description: 【文件粉碎】特殊场景文件粉碎
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 文件粉碎_0005_s1
+  name: 【文件粉碎】粉碎开关打开再关闭
+  description: 【文件粉碎】粉碎开关打开再关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件粉碎_0006_s1
+  name: 【文件粉碎】不支持文件粉碎的目录检查
+  description: 【文件粉碎】不支持文件粉碎的目录检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 主目录
+- id: 文件粉碎_0007_s1
+  name: 【文件粉碎】修改字体/分辨率/缩放，检查文件粉碎UI界面
+  description: 【文件粉碎】修改字体/分辨率/缩放，检查文件粉碎UI界面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件粉碎_0008_s1
+  name: 【文件粉碎】文件粉碎UI界面检查
+  description: 【文件粉碎】文件粉碎UI界面检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: CollectionView
+- id: 文件粉碎_0009_s1
+  name: 【文件粉碎】对搜索结果的文件进行粉碎
+  description: 【文件粉碎】对搜索结果的文件进行粉碎
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 测试文件粉碎
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 文件粉碎_0010_s1
+  name: 【文件粉碎】支持文件粉碎的目录检查
+  description: 【文件粉碎】支持文件粉碎的目录检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+teardown:
+- action: session_stop

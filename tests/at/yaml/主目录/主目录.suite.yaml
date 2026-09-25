@@ -1,0 +1,185 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 主目录_suite
+app: dde-file-manager
+description: 主目录模块 AT-SPI 用例
+module: 主目录
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 主目录_0001_s1
+  name: 主目录图标 - 桌面默认显示主目录图标_
+  description: 主目录图标 - 桌面默认显示主目录图标_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 主目录_0002_s1
+  name: 主目录图标 - 新建用户，桌面显示主目录图标
+  description: 主目录图标 - 新建用户，桌面显示主目录图标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 主目录_0003_s1
+  name: 主目录图标 - 从文管桌面路径进入主目录_
+  description: 主目录图标 - 从文管桌面路径进入主目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 主目录_0004_s1
+  name: 主目录图标 - 文管内部右键操作
+  description: 主目录图标 - 文管内部右键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: 主目录_0005_s1
+  name: 主目录图标 - 窗口操作
+  description: 主目录图标 - 窗口操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 主目录_0006_s1
+  name: 主目录图标 - 主目录内部文件操作
+  description: 主目录图标 - 主目录内部文件操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 主目录_0007_s1
+  name: 主目录图标 - 拖拽文件操作
+  description: 主目录图标 - 拖拽文件操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+- id: 主目录_0008_s1
+  name: 主目录图标 - 适配图标主题
+  description: 主目录图标 - 适配图标主题
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+teardown:
+- action: session_stop

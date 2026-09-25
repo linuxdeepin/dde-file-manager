@@ -1,0 +1,26 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 场景_suite
+app: dde-file-manager
+description: 场景模块 AT-SPI 用例
+module: 场景
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 场景_0001_s1
+  name: UBXC004502_域账号下连接samba服务器
+  description: UBXC004502_域账号下连接samba服务器
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

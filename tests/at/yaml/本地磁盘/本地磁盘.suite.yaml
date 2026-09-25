@@ -1,0 +1,215 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 本地磁盘_suite
+app: dde-file-manager
+description: 本地磁盘模块 AT-SPI 用例
+module: 本地磁盘
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 本地磁盘_0001_s1
+  name: 【本地磁盘】磁盘占用优化-没有数据盘
+  description: 【本地磁盘】磁盘占用优化-没有数据盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+- id: 本地磁盘_0002_s1
+  name: 【本地磁盘】root用户修改磁盘密码
+  description: 【本地磁盘】root用户修改磁盘密码
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 本地磁盘_0003_s1
+  name: 【本地磁盘】修改磁盘密码弹窗-磁盘密码校验
+  description: 【本地磁盘】修改磁盘密码弹窗-磁盘密码校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 本地磁盘_0004_s1
+  name: 【本地磁盘】盘符重命名
+  description: 【本地磁盘】盘符重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+- id: 本地磁盘_0005_s1
+  name: 【本地磁盘】盘符信息-控制中心切换语言检查标签展示
+  description: 【本地磁盘】盘符信息-控制中心切换语言检查标签展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 本地磁盘_0006_s1
+  name: 【本地磁盘】盘符信息-多标签盘符文件系统标签展示
+  description: 【本地磁盘】盘符信息-多标签盘符文件系统标签展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: TabBar
+- id: 本地磁盘_0007_s1
+  name: 【本地磁盘】盘符信息-多窗口盘符文件系统标签展示
+  description: 【本地磁盘】盘符信息-多窗口盘符文件系统标签展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 本地磁盘_0008_s1
+  name: 【本地磁盘】[t]盘符信息-勾选/不勾选”在磁盘图标上显示文件系统标签“
+  description: 【本地磁盘】[t]盘符信息-勾选/不勾选”在磁盘图标上显示文件系统标签“
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 本地磁盘_0009_s1
+  name: 【本地磁盘】盘符展示-本地磁盘属性信息检查
+  description: 【本地磁盘】盘符展示-本地磁盘属性信息检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: 本地磁盘_0010_s1
+  name: 【本地磁盘】盘符展示-双系统安装UOS
+  description: 【本地磁盘】盘符展示-双系统安装UOS
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 本地磁盘_0011_s1
+  name: 【本地磁盘】盘符展示-系统升级、还原后计算机页面盘符检查
+  description: 【本地磁盘】盘符展示-系统升级、还原后计算机页面盘符检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 本地磁盘_0012_s1
+  name: 【本地磁盘】磁盘占用优化-磁盘空间展示
+  description: 【本地磁盘】磁盘占用优化-磁盘空间展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+teardown:
+- action: session_stop

@@ -1,0 +1,743 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 固定目录_suite
+app: dde-file-manager
+description: 固定目录模块 AT-SPI 用例
+module: 固定目录
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 固定目录_0001_s1
+  name: 分组折叠-U盘选中单个/多个文件夹右键添加到快捷访问
+  description: 分组折叠-U盘选中单个/多个文件夹右键添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0002_s1
+  name: 分组折叠-ftp选中单个/多个文件夹右键添加到快捷访问
+  description: 分组折叠-ftp选中单个/多个文件夹右键添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0003_s1
+  name: 分组折叠-sftp选中单个/多个文件夹右键添加到快捷访问
+  description: 分组折叠-sftp选中单个/多个文件夹右键添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0004_s1
+  name: 分组折叠-添加FTP文件夹到侧边栏后原始文件夹重命名
+  description: 分组折叠-添加FTP文件夹到侧边栏后原始文件夹重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0005_s1
+  name: 分组折叠-添加SFTP文件夹到侧边栏后原始文件夹重命名
+  description: 分组折叠-添加SFTP文件夹到侧边栏后原始文件夹重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0006_s1
+  name: 分组折叠-添加SMB文件夹到侧边栏后原始文件夹重命名
+  description: 分组折叠-添加SMB文件夹到侧边栏后原始文件夹重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0007_s1
+  name: 分组折叠-添加U盘文件夹到侧边栏后原始文件夹重命名
+  description: 分组折叠-添加U盘文件夹到侧边栏后原始文件夹重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0008_s1
+  name: 分组折叠-外设（光盘、手机）及目录选中文件夹右键添加到快捷访问
+  description: 分组折叠-外设（光盘、手机）及目录选中文件夹右键添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0009_s1
+  name: 分组折叠-折叠状态拖动文件、文件夹到快捷访问目录，拖动时显示禁止图标
+  description: 分组折叠-折叠状态拖动文件、文件夹到快捷访问目录，拖动时显示禁止图标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 固定目录_0010_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-最近使用
+  description: 埋点，侧边栏各目录去重后的点击分布-最近使用
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0011_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-主目录
+  description: 埋点，侧边栏各目录去重后的点击分布-主目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0012_s1
+  name: 埋点，侧边栏各目录去重后的点击分布-桌面
+  description: 埋点，侧边栏各目录去重后的点击分布-桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0013_s1
+  name: 卸载和升级文管
+  description: 卸载和升级文管
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 固定目录_0014_s1
+  name: 分组折叠-smb选中单个/多个文件夹右键添加到快捷访问
+  description: 分组折叠-smb选中单个/多个文件夹右键添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0015_s1
+  name: 分组折叠-存在多窗口选中文件夹右键添加到快捷访问
+  description: 分组折叠-存在多窗口选中文件夹右键添加到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0016_s1
+  name: 分组折叠-多窗口选择文件夹拖拽到其他窗口的快捷访问区
+  description: 分组折叠-多窗口选择文件夹拖拽到其他窗口的快捷访问区
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 固定目录_0017_s1
+  name: 分组折叠-从快捷访问移除-右键
+  description: 分组折叠-从快捷访问移除-右键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: 回收站
+- id: 固定目录_0018_s1
+  name: 分组折叠-从快捷访问移除-拖拽
+  description: 分组折叠-从快捷访问移除-拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: 回收站
+- id: 固定目录_0019_s1
+  name: 分组折叠-添加文件夹到侧边栏后原始文件夹重命名后同步重命名快捷访问
+  description: 分组折叠-添加文件夹到侧边栏后原始文件夹重命名后同步重命名快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0020_s1
+  name: 分组折叠-添加文件夹到侧边栏后原始文件夹路径变更
+  description: 分组折叠-添加文件夹到侧边栏后原始文件夹路径变更
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0021_s1
+  name: 历史书签数据兼容
+  description: 历史书签数据兼容
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0022_s1
+  name: 分组折叠-网络分区悬停鼠标
+  description: 分组折叠-网络分区悬停鼠标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0023_s1
+  name: 分组折叠-网络展开
+  description: 分组折叠-网络展开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0024_s1
+  name: 分组折叠-标签默认展示
+  description: 分组折叠-标签默认展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0025_s1
+  name: 分组折叠-标签悬停鼠标
+  description: 分组折叠-标签悬停鼠标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0026_s1
+  name: 分组折叠-折叠状态移除标签
+  description: 分组折叠-折叠状态移除标签
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0027_s1
+  name: 分组折叠-调整字体大小查看侧边栏显示
+  description: 分组折叠-调整字体大小查看侧边栏显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0028_s1
+  name: 分组折叠-调整深色主题查看侧边栏显示
+  description: 分组折叠-调整深色主题查看侧边栏显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0029_s1
+  name: 切换语言后，检查dock栏语言显示
+  description: 切换语言后，检查dock栏语言显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 计算机
+- id: 固定目录_0030_s1
+  name: 切换语言后，检查语言正确性
+  description: 切换语言后，检查语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0031_s1
+  name: 切换语言后，检查文管内语言正确性
+  description: 切换语言后，检查文管内语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 计算机
+- id: 固定目录_0032_s1
+  name: 切换语言后，检查桌面功能语言正确性
+  description: 切换语言后，检查桌面功能语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 计算机
+- id: 固定目录_0033_s1
+  name: 切换语言后，检查桌面右键功能语言正确性
+  description: 切换语言后，检查桌面右键功能语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 计算机
+- id: 固定目录_0034_s1
+  name: 切换语言后，检查文管内右键功能语言正确性
+  description: 切换语言后，检查文管内右键功能语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0035_s1
+  name: 切换语言后，检查保险箱语言正确性
+  description: 切换语言后，检查保险箱语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: 固定目录_0036_s1
+  name: 切换语言后，检查文管内顶部栏语言正确性
+  description: 切换语言后，检查文管内顶部栏语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 设置
+- id: 固定目录_0037_s1
+  name: 切换语言后，检查搜索界面语言正确性
+  description: 切换语言后，检查搜索界面语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0038_s1
+  name: 切换语言后，检查文件操作语言正确性
+  description: 切换语言后，检查文件操作语言正确性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0039_s1
+  name: 多语言适配
+  description: 多语言适配
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 固定目录_0040_s1
+  name: 安装双系统，计算机界面展示
+  description: 安装双系统，计算机界面展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+teardown:
+- action: session_stop
