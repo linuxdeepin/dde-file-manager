@@ -115,5 +115,95 @@ suites:
     selector:
       name: CurRejectButton
       role: push button
+- id: suite_filedialog_003_s1
+  name: 文件对话框标签信息
+  description: 验证 TitleLabel/FileNameLabel/FiltersLabel 标签控件
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TitleLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileNameLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: FiltersLabel
+      role: label
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TitleLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersLabel
+      role: label
+- id: suite_filedialog_004_s1
+  name: 文件对话框输入与过滤
+  description: 验证 FileNameEdit/FiltersComboBox 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileNameEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: FiltersComboBox
+      role: combo box
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+- id: suite_filedialog_005_s1
+  name: 文件对话框确认与取消按钮
+  description: 验证 CurAcceptButton/CurRejectButton 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CurAcceptButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: CurRejectButton
+      role: push button
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CurAcceptButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CurRejectButton
+      role: push button
 teardown:
 - action: session_stop

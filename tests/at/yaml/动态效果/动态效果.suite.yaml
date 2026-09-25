@@ -52,5 +52,20 @@ suites:
   assert_steps:
   - action: assert_element
     ref: 快捷访问
+- id: case_dynamic_sidebar_pictures
+  name: 侧边栏导航-图片
+  description: '验证侧边栏"图片"导航项存在并可点击'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
 teardown:
 - action: session_stop
