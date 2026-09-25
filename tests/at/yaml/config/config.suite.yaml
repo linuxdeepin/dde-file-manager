@@ -1,0 +1,1176 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 配置_suite
+app: dde-file-manager
+description: 配置模块 AT-SPI 用例
+module: 配置
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_config_配置_001
+  name: 埋点，侧边栏各目录去重后的点击分布-挂载ftp共享文件夹
+  description: '来源用例编号: 2003943'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_002
+  name: dde-file-manager-daemon移除
+  description: '来源用例编号: 1828785'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_003
+  name: 埋点-打开上万文件的目录检查上传时间
+  description: '来源用例编号: 1816027'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_004
+  name: 埋点-打开任意目录检查上传时间
+  description: '来源用例编号: 1816023'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_005
+  name: 埋点-打开空目录检查上传时间
+  description: '来源用例编号: 1816021'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_006
+  name: 埋点，右键菜单项点击分布-在新窗口打开
+  description: '来源用例编号: 1816007'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_007
+  name: 埋点，右键菜单项点击分布-打开方式
+  description: '来源用例编号: 1816005'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_008
+  name: 埋点，右键菜单项点击分布-打开
+  description: '来源用例编号: 1816003'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_009
+  name: 埋点-右键菜单项点击分布-特殊场景，保险箱_
+  description: '来源用例编号: 1815871'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_010
+  name: 埋点-右键菜单项点击分布-以管理员身份打开（空白地方）_
+  description: '来源用例编号: 1815867'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_011
+  name: 埋点-右键菜单项点击分布-属性_
+  description: '来源用例编号: 1815861'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_012
+  name: 埋点-右键菜单项点击分布-视图选项
+  description: '来源用例编号: 1815855'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_013
+  name: 埋点，右键菜单项点击分布-排序方式，修改时间
+  description: '来源用例编号: 1815841'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 排序
+    - 修改时间
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_014
+  name: 埋点，右键菜单项点击分布-显示方式，列表视图
+  description: '来源用例编号: 1815837'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 主目录
+    items:
+    - 视图模式
+    - 列表模式
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_015
+  name: 埋点，右键菜单项点击分布-新建文档
+  description: '来源用例编号: 1815833'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_016
+  name: 埋点，右键菜单项点击分布-在终端中打开
+  description: '来源用例编号: 1815829'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_017
+  name: 埋点，右键菜单项点击分布-以管理员身份打开
+  description: '来源用例编号: 1815827'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_018
+  name: 埋点，右键菜单项点击分布-设置壁纸
+  description: '来源用例编号: 1815823'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_019
+  name: 埋点，右键菜单项点击分布-添加到快捷访问
+  description: '来源用例编号: 1815821'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_020
+  name: 埋点，右键菜单项点击分布-发送到桌面
+  description: '来源用例编号: 1815813'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_021
+  name: 埋点，右键菜单项点击分布-创建链接
+  description: '来源用例编号: 1815811'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_022
+  name: 埋点，右键菜单项点击分布-属性
+  description: '来源用例编号: 1815807'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_023
+  name: 埋点，右键菜单项点击分布-删除
+  description: '来源用例编号: 1815805'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: case_config_配置_024
+  name: 埋点-记录桌面启动的时间
+  description: '来源用例编号: 1810959'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_config_配置_025
+  name: 埋点，侧边栏各目录去重后的点击分布-下载
+  description: '来源用例编号: 1810941'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_026
+  name: 埋点，侧边栏各目录去重后的点击分布-回收站
+  description: '来源用例编号: 1810939'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_027
+  name: 埋点，侧边栏各目录去重后的点击分布-保险箱
+  description: '来源用例编号: 1810935'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_028
+  name: 埋点，侧边栏各目录去重后的点击分布-系统盘
+  description: '来源用例编号: 1810933'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_029
+  name: 埋点，侧边栏各目录去重后的点击分布-多个数据盘（其他名称）
+  description: '来源用例编号: 1810927'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 数据盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_030
+  name: 埋点，侧边栏各目录去重后的点击分布-我的共享
+  description: '来源用例编号: 1810923'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_031
+  name: 埋点，侧边栏各目录去重后的点击分布-已添加的标签（颜色标签）
+  description: '来源用例编号: 1810915'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_032
+  name: 右键菜单整体隐藏，检查桌面右键菜单情况
+  description: '来源用例编号: 1807573'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_033
+  name: 右键菜单整体隐藏，检查文件选择对话框右键菜单情况
+  description: '来源用例编号: 1807571'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_034
+  name: 右键菜单整体隐藏，检查文件管理器普通目录窗口右键菜单情况
+  description: '来源用例编号: 1807569'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_035
+  name: 右键菜单整体隐藏，检查文件管理器最近使用窗口右键菜单情况
+  description: '来源用例编号: 1807567'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_036
+  name: 右键菜单整体隐藏，检查文件管理器回收站窗口右键菜单情况
+  description: '来源用例编号: 1807565'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_037
+  name: 右键菜单整体隐藏，检查文件管理器保险箱窗口右键菜单情况
+  description: '来源用例编号: 1807563'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_038
+  name: 右键菜单整体隐藏，检查文件管理器搜索结果页窗口右键菜单情况
+  description: '来源用例编号: 1807559'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_config_配置_039
+  name: 右键菜单分组优化-检查文件选择对话框右键菜单分组排序
+  description: '来源用例编号: 1807493'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+teardown:
+- action: session_stop

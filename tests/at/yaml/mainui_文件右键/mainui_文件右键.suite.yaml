@@ -1,0 +1,260 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件右键_suite
+app: dde-file-manager
+description: 文件右键模块 AT-SPI 用例
+module: 文件右键
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_mainui_文件右键_001
+  name: 【多选图片右键打印】选中多张文件和其他文件，右键菜单点击'打印'
+  description: '来源用例编号: 1807831'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_002
+  name: 安装wps官网的个人版，检查桌面和文管右键菜单
+  description: '来源用例编号: 1807825'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_003
+  name: 文管右键菜单显示快捷键-快捷键功能-文件保存对话框内右键菜单显示快捷键
+  description: '来源用例编号: 1807823'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_004
+  name: 文管右键菜单显示快捷键-快捷键功能-文件选择对话框内右键菜单显示快捷键
+  description: '来源用例编号: 1807821'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_005
+  name: 文件右键-分别打开多个对象的属性窗口
+  description: '来源用例编号: 1807773'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 数据盘
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_006
+  name: 检查root用户文管-列表模式-留白处右键菜单
+  description: '来源用例编号: 1807697'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 数据盘
+    do: right_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_007
+  name: 检查保险箱-列表模式-留白处右键菜单
+  description: '来源用例编号: 1807687'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: double_click
+    wait: 1.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: double_click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_008
+  name: 自定义右键菜单-配置菜单项支持的文件类型MimeType
+  description: '来源用例编号: 1807639'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_009
+  name: '[core]右键菜单整体隐藏后恢复整体显示'
+  description: '来源用例编号: 1807557'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件右键_010
+  name: 打开方式页面-主目录存在icon同名文件夹检查右键打开方式应用图标显示
+  description: '来源用例编号: 1807471'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: case_mainui_文件右键_011
+  name: 重命名支持殊符号-不支持特殊符号
+  description: '来源用例编号: 1807465'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
