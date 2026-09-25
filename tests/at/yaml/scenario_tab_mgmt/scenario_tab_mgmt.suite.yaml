@@ -1,0 +1,146 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: scenario_tab_mgmt_suite
+app: dde-file-manager
+module: scenario_tab_mgmt
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_scenario_tab_mgmt_001_s1
+  name: 标签页新建与切换
+  description: '覆盖批次53-54：标签页新建、切换、关闭操作（xlsx ID: 1808623）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+w
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+- id: suite_scenario_tab_mgmt_002_s1
+  name: 标签页右键固定与快捷键操作
+  description: '覆盖批次53-54：标签页右键固定/取消固定、快捷键切换标签（xlsx ID: 1808623）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 固定标签页
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 取消固定标签页
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+tab
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+shift+tab
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+- id: suite_scenario_tab_mgmt_003_s1
+  name: 标签页导航栏与地址栏操作
+  description: '覆盖批次55：地址栏导航、前进后退按钮（xlsx ID: 1805965）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CrumbEdit
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: LeftBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+      role: text
+teardown:
+- action: session_stop
