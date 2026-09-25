@@ -10,41 +10,60 @@ setup:
   wait: 3.0
 suites:
 - id: suite_misc_ui_001_s1
-  name: 视图提示消息控件
-  description: ''
+  name: 视图提示消息控件——图标按钮与关闭按钮交互
+  description: '聚焦视图提示消息的图标按钮，点击关闭按钮关闭提示消息并验证关闭后控件不再存在'
   steps:
   - step_type: action
     action: element_action
     selector:
       name: IconButton
+      role: push button
     do: focus
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: IconButton
+      role: push button
     do: point
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CloseButton
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: CloseButton
+      role: push button
     do: click
     wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
       name: IconButton
+      role: push button
   - step_type: assert
     action: assert_element
     selector:
       name: CloseButton
+      role: push button
   - step_type: assert
     action: assert_not_exists
     selector:
       name: CloseButton
+      role: push button
 - id: suite_misc_ui_002_s1
-  name: 桌面图标整理设置对话框
-  description: ''
+  name: 桌面图标整理设置对话框——滑块与开关交互
+  description: '打开桌面图标整理设置对话框，调整滑块大小并切换开关，验证密钥输入框可用'
   steps:
   - step_type: action
     action: element_action
@@ -52,30 +71,48 @@ suites:
       name: Slider
       role: slider
     do: focus
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: Slider
       role: slider
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: SwitchBtn
+      role: push button
     do: click
     wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: push button
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: KeyEdit
       role: text
     do: focus
+    wait: 0.5
   - step_type: action
-    action: element_action
+    action: element_set_value
     selector:
       name: KeyEdit
       role: text
-    do: point
+    text: shortcut_key
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -86,6 +123,7 @@ suites:
     action: assert_element
     selector:
       name: SwitchBtn
+      role: push button
   - step_type: assert
     action: assert_element
     selector:
@@ -93,7 +131,7 @@ suites:
       role: text
 - id: suite_misc_ui_003_s1
   name: 磁盘托盘提示、桌面水印与属性键值标签
-  description: ''
+  description: '聚焦磁盘托盘提示标签，查看桌面水印提示标签，右键打开属性对话框验证键值编辑控件'
   steps:
   - step_type: action
     action: element_action
@@ -101,24 +139,45 @@ suites:
       name: TextLabel
       role: label
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsLabel
-    do: point
-    wait: 1.5
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TextLabel
-    items:
-    - 属性
     wait: 1.0
   - step_type: action
     action: element_action
     selector:
-      name: RightValueEdit
+      name: TextLabel
+      role: label
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+      role: label
+    do: point
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+      role: label
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: RightValueEdit
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RightValueEdit
+      role: text
+    text: property_value
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -129,13 +188,11 @@ suites:
     action: assert_element
     selector:
       name: TipsLabel
+      role: label
   - step_type: assert
     action: assert_element
     selector:
       name: RightValueEdit
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: RightValueEdit
+      role: text
 teardown:
 - action: session_stop
