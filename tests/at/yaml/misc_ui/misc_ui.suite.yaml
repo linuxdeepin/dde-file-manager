@@ -137,5 +137,113 @@ suites:
     action: assert_element
     selector:
       name: RightValueEdit
+- id: suite_misc_ui_004_s1
+  name: 缩放滑块控件验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScaleSlider
+      role: slider
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScaleSlider
+      role: slider
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScaleSlider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+- id: suite_misc_ui_005_s1
+  name: 开关按钮切换验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_misc_ui_006_s1
+  name: 恢复开关状态验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: RecSwitch
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: RecSwitch
+    do: point
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RecSwitch
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+- id: suite_misc_ui_007_s1
+  name: 提示编辑框验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsEdit
+      role: text
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: TipsEdit
+      role: text
+    text: test_tip
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsLabel
 teardown:
 - action: session_stop

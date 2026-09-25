@@ -906,5 +906,295 @@ suites:
     action: assert_element
     selector:
       name: CollectionView
+- id: suite_filemanager_017_s1
+  name: 地址栏导航到根目录
+  description: ''
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_filemanager_018_s1
+  name: 地址栏导航到主目录
+  description: ''
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: '~'
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+- id: suite_filemanager_019_s1
+  name: 地址栏导航到tmp目录
+  description: ''
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /tmp
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+- id: suite_filemanager_020_s1
+  name: 侧边栏焦点切换
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+- id: suite_filemanager_021_s1
+  name: 文件列表视图焦点与点击
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ItemViewParent
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ItemViewParent
+      role: list
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_filemanager_022_s1
+  name: 标签页添加与切换
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+- id: suite_filemanager_023_s1
+  name: 面包屑导航点击
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CrumbEdit
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CrumbEdit
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+- id: suite_filemanager_024_s1
+  name: 底部栏焦点验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BottomBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_filemanager_025_s1
+  name: 导航后退按钮
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: LeftBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+- id: suite_filemanager_026_s1
+  name: 收藏视图控件验证
+  description: ''
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+    do: point
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
 teardown:
 - action: session_stop
