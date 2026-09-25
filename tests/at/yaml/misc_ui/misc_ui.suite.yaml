@@ -10,19 +10,14 @@ setup:
   wait: 3.0
 suites:
 - id: suite_misc_ui_001_s1
-  name: 视图提示消息控件
-  description: ''
+  name: 视图提示消息控件与对话框关闭
+  description: 验证提示消息图标按钮可聚焦与定位，点击关闭按钮后对话框关闭，关闭按钮不再可见
   steps:
   - step_type: action
     action: element_action
     selector:
       name: IconButton
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: IconButton
-    do: point
   - step_type: action
     action: element_action
     selector:
@@ -35,16 +30,12 @@ suites:
     selector:
       name: IconButton
   - step_type: assert
-    action: assert_element
-    selector:
-      name: CloseButton
-  - step_type: assert
     action: assert_not_exists
     selector:
       name: CloseButton
 - id: suite_misc_ui_002_s1
-  name: 桌面图标整理设置对话框
-  description: ''
+  name: 桌面图标整理滑块与快捷键开关设置
+  description: 在桌面图标整理设置对话框中验证图标大小滑块可定位，自动整理开关可切换，快捷键编辑框可聚焦
   steps:
   - step_type: action
     action: element_action
@@ -55,27 +46,15 @@ suites:
   - step_type: action
     action: element_action
     selector:
-      name: Slider
-      role: slider
-    do: point
-  - step_type: action
-    action: element_action
-    selector:
       name: SwitchBtn
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: KeyEdit
       role: text
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: KeyEdit
-      role: text
-    do: point
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -93,7 +72,7 @@ suites:
       role: text
 - id: suite_misc_ui_003_s1
   name: 磁盘托盘提示、桌面水印与属性键值标签
-  description: ''
+  description: 验证磁盘托盘文本标签与提示标签可定位，右键打开属性对话框后验证右侧值编辑框可聚焦
   steps:
   - step_type: action
     action: element_action
@@ -106,14 +85,14 @@ suites:
     selector:
       name: TipsLabel
     do: point
-    wait: 1.5
+    wait: 1.0
   - step_type: action
     action: dtk_context_menu
     selector:
       name: TextLabel
     items:
     - 属性
-    wait: 1.0
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
@@ -133,9 +112,188 @@ suites:
     action: assert_element
     selector:
       name: RightValueEdit
+
+- id: suite_misc_ui_004_s1
+  name: 桌面图标整理与磁盘属性综合操作流程
+  description: 验证桌面图标整理滑块可定位，切换自动整理开关，聚焦快捷键编辑框，然后验证磁盘托盘提示标签与右键属性值编辑框可用
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+    do: point
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TextLabel
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: RightValueEdit
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TextLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsLabel
   - step_type: assert
     action: assert_element
     selector:
       name: RightValueEdit
+- id: suite_misc_ui_005_s1
+  name: 视图提示图标与快捷键编辑综合流程
+  description: 验证视图提示图标按钮可聚焦，操作桌面图标整理滑块与自动整理开关，聚焦快捷键编辑框输入值，验证全部控件可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: KeyEdit
+      role: text
+    text: Ctrl+Shift+D
+  - step_type: action
+    action: element_action
+    selector:
+      name: CloseButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: IconButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyEdit
+      role: text
+- id: suite_misc_ui_006_s1
+  name: 提示标签与工具提示显示控制综合流程
+  description: 验证提示标签与文本标签可定位，操作提示按钮与工具提示控件，验证提示显示控件全部可定位
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: point
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsButton
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: Tooltip
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsBtn
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsLabel
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TextLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Tooltip
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsBtn
 teardown:
 - action: session_stop
