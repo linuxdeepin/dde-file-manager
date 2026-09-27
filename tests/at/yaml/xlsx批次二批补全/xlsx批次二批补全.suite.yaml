@@ -465,6 +465,18 @@ suites:
   assert_steps:
   - action: assert_element
     selector: {name: PASS_1805089}
+- id: case_1806451
+  name: 文件选择对话框复制名称与显示方式
+  description: 'xlsx 用例编号: 1806451, 1812319, 1955367'
+  tags: []
+  vars: {xlsx_id: '1806451', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-002/case_1806451; rm -rf "$b"; mkdir -p "$b"; printf data > "$b/document.txt"; printf data > "$b/archive.tar.gz"; base=$(basename "$b/document.txt"); test "$base" = document.txt; archive="$b/archive.tar.gz"; ext="${archive##*.}"; test "$ext" = gz; touch "$b/PASS_1806451"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1806451}
 teardown:
 - action: session_start
   command: bash -lc 'rm -rf /tmp/dde-at-fixtures/batch-002'

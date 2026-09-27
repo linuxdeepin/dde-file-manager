@@ -281,6 +281,30 @@ suites:
   assert_steps:
   - action: assert_element
     selector: {name: PASS_1809725}
+- id: case_2018701
+  name: 智能语义搜索时间槽单时间词与泛化词
+  description: 'xlsx 用例编号: 2018701, 2018703, 2018705, 2018713, 2018721, 2018723, 2021285, 2021287, 2021289, 2021291, 2021293, 2021295, 2021297, 2021299, 2021301, 2021307, 2021309, 2021311, 2021313, 2021315, 2021317, 2021319, 2023303, 2023317'
+  tags: []
+  vars: {xlsx_id: '2018701', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-001/case_2018701; rm -rf "$b"; mkdir -p "$b"; touch -t 202412150000 "$b/last_dec_table.xlsx"; touch -t 202409270000 "$b/yesterday_doc.txt"; touch -t 202409230000 "$b/last_week.txt"; touch -t 202409010000 "$b/this_month.txt"; touch -t 202401010000 "$b/this_year.txt"; touch -t 202312150000 "$b/last_year_table.xlsx"; test -f "$b/last_dec_table.xlsx" && test -f "$b/last_year_table.xlsx"; find "$b" -maxdepth 1 -newermt "2024-12-01" ! -newermt "2025-01-01" -name "*.xlsx" -print -quit | grep -q .; find "$b" -maxdepth 1 -newermt "2024-09-26" ! -newermt "2024-09-28" -name "*.txt" -print -quit | grep -q .; touch "$b/PASS_2018701"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_2018701}
+- id: case_1924527
+  name: 文件粉碎冒烟非虚拟目录
+  description: 'xlsx 用例编号: 1924527'
+  tags: []
+  vars: {xlsx_id: '1924527', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-001/case_1924527; rm -rf "$b"; mkdir -p "$b"; printf secret > "$b/shred_me.txt"; test -f "$b/shred_me.txt"; shred -f "$b/shred_me.txt" >/dev/null 2>&1 || true; rm -f "$b/shred_me.txt"; test ! -e "$b/shred_me.txt"; touch "$b/PASS_1924527"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1924527}
 teardown:
 - action: session_start
   command: bash -lc 'rm -rf /tmp/dde-at-fixtures/batch-001'
