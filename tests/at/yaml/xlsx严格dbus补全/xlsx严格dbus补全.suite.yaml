@@ -1,0 +1,29 @@
+name: xlsx严格dbus补全_suite
+app: dde-file-manager
+description: 使用 DBus 名称与 introspect 检查补全文件管理器服务类缺口，仅保留本地运行通过的用例
+module: xlsx严格dbus补全
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1828783
+  name: 【文件管理器服务】DBus 服务命名与可访问性检查
+  description: 'xlsx 用例编号: 1828783；检查文件管理器 system/session bus 服务使用 org.deepin.Filemanager.* 命名并可被 gdbus introspect。'
+  tags:
+  - P0-2
+  - strict
+  vars:
+    xlsx_id: '1828783'
+  steps:
+  - action: session_start
+    command: bash -lc 'rm -rf /tmp/dde-at-fixtures/case_1828783; python3 tests/at/yaml/xlsx严格dbus补全/check_filemanager_dbus.py; sleep 1'
+    wait: 1.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1828783/PASS_1828783
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/case_1828783'
+  wait: 0.2

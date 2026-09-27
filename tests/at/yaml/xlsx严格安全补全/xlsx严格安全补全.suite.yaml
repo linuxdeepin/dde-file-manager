@@ -1,0 +1,44 @@
+name: xlsx严格安全补全_suite
+app: dde-file-manager
+description: 使用系统工具检查文件管理器包内 ELF 安全编译选项，仅保留本地运行通过的用例
+module: xlsx严格安全补全
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1880111
+  name: 【文管安全性】包安全编译选项检查
+  description: 'xlsx 用例编号: 1880111；检查 dde-file-manager 包内可执行 ELF 和 .so 库具备 PIE、RELRO、BIND_NOW、NX、Stack Canary。'
+  tags:
+  - P2-2
+  - strict
+  vars:
+    xlsx_id: '1880111'
+  steps:
+  - action: session_start
+    command: bash -lc 'rm -rf /tmp/dde-at-fixtures/case_1880111; python3 tests/at/yaml/xlsx严格安全补全/check_package_security.py; sleep 2'
+    wait: 2.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1880111/PASS_1880111
+- id: case_1994833
+  name: 【文件索引配置】安全编译检查
+  description: 'xlsx 用例编号: 1994833；按原始用例引用的安全编译检查口径，检查 dde-file-manager 包内可执行 ELF 和 .so 库具备 PIE、RELRO、BIND_NOW、NX、Stack Canary。'
+  tags:
+  - P0-2
+  - strict
+  vars:
+    xlsx_id: '1994833'
+  steps:
+  - action: session_start
+    command: bash -lc 'rm -rf /tmp/dde-at-fixtures/case_1994833; DDE_AT_CASE_ID=1994833 python3 tests/at/yaml/xlsx严格安全补全/check_package_security.py; sleep 2'
+    wait: 2.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1994833/PASS_1994833
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/case_1880111 /tmp/dde-at-fixtures/case_1994833'
+  wait: 0.2

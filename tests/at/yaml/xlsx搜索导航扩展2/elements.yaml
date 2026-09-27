@@ -1,0 +1,26 @@
+elements:
+  SearchButton:
+    name: SearchButton
+  SearchLineEdit:
+    name: DLineEditChildLineEdit
+  AdvancedButton:
+    name: AdvancedButton
+  side_bar_view:
+    name: side_bar_view
+  back_button:
+    name: back_button
+    role: button
+  forword_button:
+    name: forword_button
+    role: button
+  桌面:
+    name: 桌面
+    role: table cell
+  文档:
+    name: 文档
+  图片:
+    name: 图片
+    role: table cell
+  下载:
+    name: 下载
+    role: table cell

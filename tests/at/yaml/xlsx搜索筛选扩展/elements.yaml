@@ -1,0 +1,15 @@
+elements:
+  SearchButton:
+    name: SearchButton
+  SearchLineEdit:
+    name: DLineEditChildLineEdit
+  AdvancedButton:
+    name: AdvancedButton
+  SearchEdit:
+    name: SearchEdit
+    role: form
+  side_bar_view:
+    name: side_bar_view
+  back_button:
+    name: back_button
+    role: button

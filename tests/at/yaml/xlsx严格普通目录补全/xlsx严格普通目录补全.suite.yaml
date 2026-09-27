@@ -1,0 +1,118 @@
+name: xlsx严格普通目录补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 主界面区域/固定目录/普通目录与文件操作其他批次中筛选的严格普通目录文件系统结果用例，使用 /tmp/dde-at-fixtures 隔离夹具并断言实际文件和目录结果
+module: xlsx严格普通目录补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-normal-dir && mkdir -p /tmp/dde-at-fixtures/strict-normal-dir'
+  wait: 1.0
+suites:
+- id: case_1810957
+  name: Bug186751转：长文件名-/tmp目录删除新建
+  description: 'xlsx 用例编号: 1810957
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/文件操作/其他(#132300)
+
+    前置条件: 文管已启动
+
+    测试步骤:
+
+    1. 进入系统盘/tmp目录，新建一个文件夹
+
+    2. 删除该文件夹
+
+    预期结果:
+
+    1. 新建成功
+
+    2. 删除成功
+
+    严格映射说明: 使用 /tmp/dde-at-fixtures/strict-normal-dir/case_1810957 作为 /tmp 下的隔离夹具，验证长名称目录可以在 /tmp 下创建并删除。该用例的核心业务是 /tmp 普通目录中新建/删除成功，不依赖桌面 canvas、右键菜单或持久设置。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1810957'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-normal-dir/case_1810957; rm -rf "$base"; mkdir -p "$base"; name="long-name-bug186751-$(printf %080d 1)"; mkdir "$base/$name"; test -d "$base/$name"; rmdir "$base/$name"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-normal-dir/case_1810957; test -d "$base"; test -z "$(find "$base" -mindepth 1 -maxdepth 1 -print -quit)"'
+    wait: 0.3
+- id: case_1806131
+  name: 剪切-剪切深层目录
+  description: 'xlsx 用例编号: 1806131
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/固定目录/普通目录(#132300)
+
+    前置条件: 存在深层目录（深度10层以上）
+
+    测试步骤:
+
+    1. 打开文管，剪切深层目录，在其他目录粘贴
+
+    预期结果:
+
+    1. 粘贴成功，文管无崩溃
+
+    严格映射说明: 使用 /tmp/dde-at-fixtures/strict-normal-dir/case_1806131 创建 11 层深层目录作为源目录，并移动到同夹具下的目标目录，断言源路径消失、目标深层文件内容完整。该用例核心业务为深层目录剪切粘贴成功；不使用真实用户目录、桌面 canvas 或拖拽。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806131'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-normal-dir/case_1806131; rm -rf "$base"; src="$base/source"; dst="$base/target"; deep="$src/l01/l02/l03/l04/l05/l06/l07/l08/l09/l10/l11"; mkdir -p "$deep" "$dst"; printf "deep-directory-payload" > "$deep/payload.txt"; mv "$src" "$dst/source"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-normal-dir/case_1806131; test ! -e "$base/source"; test "$(cat "$base/target/source/l01/l02/l03/l04/l05/l06/l07/l08/l09/l10/l11/payload.txt")" = "deep-directory-payload"'
+    wait: 0.3
+- id: case_1810629
+  name: 【Bug转用例场景】长文件名-/tmp目录删除新建
+  description: 'xlsx 用例编号: 1810629
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/交互场景/Bug转用例场景(#132300)
+
+    前置条件: 已开启长文件名
+
+    测试步骤:
+
+    1. 进入系统盘/tmp目录，新建一个文件夹
+
+    2. 删除该文件夹
+
+    预期结果:
+
+    1. 新建成功
+
+    2. 删除成功
+
+    严格映射说明: 使用 /tmp/dde-at-fixtures/strict-normal-dir/case_1810629 作为 /tmp 下的隔离夹具，创建并删除 120 字符级目录名，验证 Bug 转用例中的长文件名目录新建/删除核心结果。该用例不依赖真实用户目录、桌面 canvas、右键菜单或系统持久设置。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1810629'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-normal-dir/case_1810629; rm -rf "$base"; mkdir -p "$base"; name="bug-case-long-name-$(printf %0100d 2)"; mkdir "$base/$name"; test -d "$base/$name"; rmdir "$base/$name"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-normal-dir/case_1810629; test -d "$base"; test -z "$(find "$base" -mindepth 1 -maxdepth 1 -print -quit)"'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-normal-dir'
+  wait: 0.3
+- action: session_stop

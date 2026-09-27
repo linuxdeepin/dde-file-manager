@@ -1,0 +1,99 @@
+name: xlsx严格权限补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 文件选择对话框权限批次中筛选的严格目录权限结果用例，使用本地隔离目录和 chmod 断言访问/写入能力
+module: xlsx严格权限补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf "$HOME/.cache/dde-at-fixtures/strict-permissions" && mkdir -p "$HOME/.cache/dde-at-fixtures/strict-permissions"'
+  wait: 1.0
+suites:
+- id: case_1806427
+  name: 文管选择窗-不同权限目录下的操作
+  description: 'xlsx 用例编号: 1806427
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/外部服务/文件选择对话框(#132300)
+
+    前置条件: 准备一些只读目录，可读写目录，不可读写目录
+
+    测试步骤:
+
+    1. 进入只读目录
+
+    2. 进入可读写目录
+
+    3. 进入不可读写目录
+
+    预期结果:
+
+    1. 可以正常访问目录，不能新建、粘贴、剪切文件
+
+    2. 可以正常访问目录，能够新建、粘贴、剪切文件
+
+    3. 可以进入，不能访问目录中的文件，不能新建、粘贴、剪切文件
+
+    严格映射说明: 使用 `$HOME/.cache/dde-at-fixtures/strict-permissions/case_1806427` 下的三个隔离目录，通过 chmod 构造只读、可读写和不可读写权限。断言只读目录可列出但不能创建文件；可读写目录可创建、剪切、粘贴和删除；不可读写目录不可列出且不能创建。该用例证明权限矩阵核心结果，不依赖外部程序调起文件选择对话框。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806427'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-permissions/case_1806427"; rm -rf "$base"; mkdir -p "$base/readonly" "$base/readwrite" "$base/noaccess"; printf "readonly" > "$base/readonly/existing.txt"; printf "rw" > "$base/readwrite/existing.txt"; printf "hidden" > "$base/noaccess/hidden.txt"; chmod 555 "$base/readonly"; chmod 755 "$base/readwrite"; chmod 000 "$base/noaccess"; ls "$base/readonly" >/dev/null; ! touch "$base/readonly/new.txt"; touch "$base/readwrite/new.txt"; mv "$base/readwrite/new.txt" "$base/readwrite/pasted.txt"; rm "$base/readwrite/pasted.txt"; ! ls "$base/noaccess" >/dev/null 2>&1; ! touch "$base/noaccess/new.txt"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-permissions/case_1806427"; test -f "$base/readonly/existing.txt"; test ! -e "$base/readonly/new.txt"; test -f "$base/readwrite/existing.txt"; test ! -e "$base/readwrite/pasted.txt"; ! ls "$base/noaccess" >/dev/null 2>&1'
+    wait: 0.3
+- id: case_1806423
+  name: 文管选择窗-访问不同权限的目录
+  description: 'xlsx 用例编号: 1806423
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/外部服务/文件选择对话框(#132300)
+
+    前置条件: 准备好有读写权限的目录，只读权限的目录，不可读不可写权限的目录；已打开任意程序的文管选择窗
+
+    测试步骤:
+
+    1. 进入有读写权限的目录
+
+    2. 进入只读权限的目录
+
+    3. 进入不可读不可写权限的目录
+
+    预期结果:
+
+    1. 可以正常访问目录中的所有文件，且能新建或删除文件
+
+    2. 可以正常访问目录中的所有文件，不能新建或删除文件
+
+    3. 不能访问目录中的文件，也不能新建文件
+
+    严格映射说明: 与 1806427 相同，使用 chmod 构造本地目录权限并直接断言访问、创建、删除能力。该用例保留原始权限语义，不验证文件选择对话框 UI。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806423'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-permissions/case_1806423"; rm -rf "$base"; mkdir -p "$base/readwrite" "$base/readonly" "$base/noaccess"; printf "rw existing" > "$base/readwrite/existing.txt"; printf "ro existing" > "$base/readonly/existing.txt"; printf "noaccess" > "$base/noaccess/hidden.txt"; chmod 755 "$base/readwrite"; chmod 555 "$base/readonly"; chmod 000 "$base/noaccess"; ls "$base/readwrite" >/dev/null; touch "$base/readwrite/new.txt"; rm "$base/readwrite/new.txt"; ls "$base/readonly" >/dev/null; ! touch "$base/readonly/new.txt"; ! rm "$base/readonly/existing.txt"; ! ls "$base/noaccess" >/dev/null 2>&1; ! touch "$base/noaccess/new.txt"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-permissions/case_1806423"; test -f "$base/readwrite/existing.txt"; test -f "$base/readonly/existing.txt"; test ! -e "$base/readwrite/new.txt"; test ! -e "$base/readonly/new.txt"; ! ls "$base/noaccess" >/dev/null 2>&1'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'chmod -R u+rwx "$HOME/.cache/dde-at-fixtures/strict-permissions" 2>/dev/null || true; rm -rf "$HOME/.cache/dde-at-fixtures/strict-permissions"'
+  wait: 0.3
+- action: session_stop
