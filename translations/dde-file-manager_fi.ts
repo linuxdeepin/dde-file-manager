@@ -1164,9 +1164,9 @@ Kirjoita käyttäjä ja salasana kohteelle %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
-        <source>Finalize disc after burning 
+        <source>Finalize disc after burning
 (no additional data can be appended)</source>
-        <translation>Viimeistele levy polttamisen jälkeen 
+        <translation>Viimeistele levy polttamisen jälkeen
 (ei voi lisätä levylle lisää tietoja)</translation>
     </message>
     <message>
