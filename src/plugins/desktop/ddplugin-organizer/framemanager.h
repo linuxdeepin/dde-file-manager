@@ -35,6 +35,12 @@ public slots:
     void onWindowShowed();
     void onDetachWindows();
     void onGeometryChanged();
+    // Triggered by screen geometry changes (display scaling / resolution). The
+    // collections are already visible at this point, so re-laying them out in
+    // place would produce a visible move/resize. Hide the surfaces for the
+    // duration of the re-layout and restore their previous visibility so the
+    // collections appear directly at their final positions.
+    void onScreenGeometryChanged();
 
 protected:
     void switchMode(OrganizerMode mode);
