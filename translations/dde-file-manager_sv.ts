@@ -2102,7 +2102,7 @@ Du måste uppgradera valvet för att fortsätta använda det.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
-        <source>The export path directory is world-writable, please choose a safer location!</source>
+        <source>This directory can be written by other users, please choose a safer directory!</source>
         <translation>Exportkatalogen är skrivbar för alla. Välj en säkrare plats!</translation>
     </message>
     <message>
