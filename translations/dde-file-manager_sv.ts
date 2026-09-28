@@ -1165,7 +1165,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
-        <source>Finalize disc after burning 
+        <source>Finalize disc after burning
 (no additional data can be appended)</source>
         <translation type="unfinished"></translation>
     </message>

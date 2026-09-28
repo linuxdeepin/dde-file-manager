@@ -1164,7 +1164,7 @@ Insira o usuário e a senha para %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
-        <source>Finalize disc after burning 
+        <source>Finalize disc after burning
 (no additional data can be appended)</source>
         <translation>Finalizar disco após a gravação
 (não será possível adicionar mais dados)</translation>

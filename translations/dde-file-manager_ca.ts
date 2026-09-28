@@ -1164,7 +1164,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
-        <source>Finalize disc after burning 
+        <source>Finalize disc after burning
 (no additional data can be appended)</source>
         <translation>Clou el disc després de gravar-lo (no s&apos;hi poden afegir dades addicionals)</translation>
     </message>

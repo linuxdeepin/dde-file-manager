@@ -1164,7 +1164,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="201"/>
-        <source>Finalize disc after burning 
+        <source>Finalize disc after burning
 (no additional data can be appended)</source>
         <translation>Zakończ po wypaleniu
 (nie będzie można dodać więcej danych)</translation>
@@ -7772,7 +7772,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/fileencrypthandle.cpp" line="200"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation>Katalog %1 jest w użyciu, 
+        <translation>Katalog %1 jest w użyciu,
  wyczyść pliki w nim zawarte i spróbuj odblokować sejf ponownie.</translation>
     </message>
 </context>
