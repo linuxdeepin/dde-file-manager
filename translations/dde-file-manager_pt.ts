@@ -2098,7 +2098,7 @@ You need to upgrade this vault to continue using it.</source>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="593"/>
-        <source>The export path directory is world-writable, please choose a safer location!</source>
+        <source>This directory can be written by other users, please choose a safer directory!</source>
         <translation type="unfinished"/>
     </message>
     <message>

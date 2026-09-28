@@ -603,7 +603,7 @@ bool recovery_key_utils::validateExportPath(const QString &path, const QString &
     if (dirStat.st_mode & S_IWOTH) {
         ::close(dirFd);
         fmWarning() << "Export path directory is world-writable:" << path;
-        setMsg(QObject::tr("The export path directory is world-writable, please choose a safer location!"));
+        setMsg(QObject::tr("This directory can be written by other users, please choose a safer directory!"));
         return false;
     }
     if (::faccessat(dirFd, ".", W_OK, 0) != 0) {

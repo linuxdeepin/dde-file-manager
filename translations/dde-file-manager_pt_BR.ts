@@ -2045,7 +2045,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="606"/>
-        <source>The export path directory is world-writable, please choose a safer location!</source>
+        <source>This directory can be written by other users, please choose a safer directory!</source>
         <translation>O diretório de exportação permite gravação por qualquer usuário. Escolha um local mais seguro!</translation>
     </message>
     <message>
