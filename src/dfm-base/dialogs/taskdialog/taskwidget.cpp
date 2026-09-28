@@ -778,6 +778,7 @@ void TaskWidget::onMouseHover(const bool hover)
     }
 
     adjustSize();
+    update();
 }
 
 QString TaskWidget::formatTime(qint64 second) const
