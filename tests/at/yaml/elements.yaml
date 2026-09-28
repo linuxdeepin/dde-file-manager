@@ -144,6 +144,8 @@ elements:
   ExecutableCheckBox:
     name: ExecutableCheckBox
     role: check box
+  SearchLineEdit:
+    name: DLineEditChildLineEdit
   FileChooser:
     name: FileChooser
   FileNameEdit:
