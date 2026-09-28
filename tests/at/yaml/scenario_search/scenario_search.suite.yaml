@@ -1,0 +1,171 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: scenario_search_suite
+app: dde-file-manager
+module: scenario_search
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_scenario_search_001_s1
+  name: 搜索框输入与清除验证
+  description: '覆盖批次5：搜索框输入关键词触发搜索、清除搜索回到正常浏览（xlsx ID: 1994801, 1850171）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SearchEdit
+      role: text
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: SearchEdit
+      role: text
+    text: test
+  - step_type: action
+    action: keyboard_press
+    key: Return
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SearchEdit
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SearchEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SearchButton
+      role: push button
+- id: suite_scenario_search_002_s1
+  name: 高级搜索按钮与搜索设置
+  description: '覆盖批次8：高级搜索按钮展开/收起、搜索索引配置开关（xlsx ID: 1994801, 1973563）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AdvancedButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: AdvancedButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AdvancedButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+- id: suite_scenario_search_003_s1
+  name: 搜索结果列表与文件操作
+  description: '覆盖批次31：搜索结果文件右键操作、搜索结果排序（xlsx ID: 1806855）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SearchEdit
+      role: text
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: SearchEdit
+      role: text
+    text: a
+  - step_type: action
+    action: keyboard_press
+    key: Return
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 排序方式
+    - 名称
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SearchEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+teardown:
+- action: session_stop

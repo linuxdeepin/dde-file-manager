@@ -2160,3 +2160,787 @@ cases:
     action: assert_element
     selector:
       name: CollectionView
+- id: suite_scenario_settings_001_s1
+  name: 文管设置-基础设置开关验证
+  module: scenario_settings
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+      role: scroll bar
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+      role: toggle
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll bar
+- id: suite_scenario_settings_002_s1
+  name: 文管设置-侧边栏显示项目配置
+  module: scenario_settings
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+      role: scroll bar
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: click
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+- id: suite_scenario_settings_003_s1
+  name: 文管设置-工作区视图与高级设置
+  module: scenario_settings
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: point
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+      role: toggle
+- id: suite_scenario_settings_004_s1
+  name: 文管设置-自定义标签页管理
+  module: scenario_settings
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddItemBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: DeleteButton
+      role: push button
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: DeleteButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddItemBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DeleteButton
+      role: push button
+- id: suite_scenario_search_001_s1
+  name: 搜索框输入与清除验证
+  module: scenario_search
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SearchEdit
+      role: text
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: SearchEdit
+      role: text
+    text: test
+  - step_type: action
+    action: keyboard_press
+    key: Return
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SearchEdit
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: BackSpace
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SearchEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SearchButton
+      role: push button
+- id: suite_scenario_search_002_s1
+  name: 高级搜索按钮与搜索设置
+  module: scenario_search
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AdvancedButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: AdvancedButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AdvancedButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+- id: suite_scenario_search_003_s1
+  name: 搜索结果列表与文件操作
+  module: scenario_search
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SearchEdit
+      role: text
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: SearchEdit
+      role: text
+    text: a
+  - step_type: action
+    action: keyboard_press
+    key: Return
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 排序方式
+    - 名称
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SearchEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_file_ops_001_s1
+  name: 复制文件地址与文件操作
+  module: scenario_file_ops
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 显示方式
+    - 树状视图
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+a
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+shift+c
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_file_ops_002_s1
+  name: 书签快捷访问与侧边栏操作
+  module: scenario_file_ops
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: SideBarView
+      role: list
+    items:
+    - 添加书签
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+      role: list
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: SideBarView
+      role: list
+    items:
+    - 移除书签
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+      role: list
+- id: suite_scenario_file_ops_003_s1
+  name: 预览开关切换
+  module: scenario_file_ops
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: F3
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: F3
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_file_ops_004_s1
+  name: 文件右键菜单操作
+  module: scenario_file_ops
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 属性
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll bar
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: Escape
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll bar
+- id: suite_scenario_recycle_bin_001_s1
+  name: 回收站页面检查与表头操作
+  module: scenario_recycle_bin
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 显示列
+    - 原始路径
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 显示列
+    - 原始路径
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_recycle_bin_002_s1
+  name: 回收站排序与还原操作
+  module: scenario_recycle_bin
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 排序方式
+    - 删除时间
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 排序方式
+    - 名称
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 还原
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_recycle_bin_003_s1
+  name: 回收站清空与删除确认
+  module: scenario_recycle_bin
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 删除
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnDelete
+      role: push button
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: Escape
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+      role: push button
+- id: suite_scenario_tab_mgmt_001_s1
+  name: 标签页新建与切换
+  module: scenario_tab_mgmt
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BottomBar
+      role: page tab
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+w
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+- id: suite_scenario_tab_mgmt_002_s1
+  name: 标签页右键固定与快捷键操作
+  module: scenario_tab_mgmt
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TabBar
+      role: page tab
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 固定标签页
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: TabBar
+      role: page tab
+    items:
+    - 取消固定标签页
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+tab
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+shift+tab
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TabBar
+      role: page tab
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddBtn
+      role: push button
+- id: suite_scenario_tab_mgmt_003_s1
+  name: 标签页导航栏与地址栏操作
+  module: scenario_tab_mgmt
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CrumbEdit
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: Return
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: LeftBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+      role: text

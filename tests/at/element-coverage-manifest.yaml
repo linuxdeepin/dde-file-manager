@@ -741,3 +741,28 @@ elements:
     source: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
     type: DSuggestButton *
     name_source: accessible
+  SearchEdit:
+    role: text
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+    type: QLineEdit *
+    name_source: accessible
+  SearchButton:
+    role: push button
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+    type: Dtk::Widget::DIconButton *
+    name_source: accessible
+  AdvancedButton:
+    role: push button
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/searcheditwidget.cpp
+    type: Dtk::Widget::DPushButton *
+    name_source: accessible
+  AddItemBtn:
+    role: push button
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp
+    type: Dtk::Widget::DPushButton *
+    name_source: accessible
+  DeleteButton:
+    role: push button
+    source: src/plugins/filemanager/dfmplugin-titlebar/views/customtabsettingwidget.cpp
+    type: Dtk::Widget::DIconButton *
+    name_source: accessible
