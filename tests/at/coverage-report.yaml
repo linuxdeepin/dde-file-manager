@@ -1,11 +1,13 @@
-scan_total: 148
+scan_total: 147
+transient_items:
+- name: MenuPtr
+  role: menu
+  ui_name: MenuPtr
+  locator: name
 unreachable: 0
-denominator: 148
-covered: 148
+denominator: 147
+covered: 147
 uncovered: 0
 coverage: 100.0
 passed: true
-accessible_named: 138
-accessible_covered: 138
-accessible_coverage: 100.0
 uncovered_elements: []

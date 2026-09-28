@@ -3,8 +3,830 @@
 # SPDX-License-Identifier: GPL-3.0-or-later
 version: '1.0'
 cases:
+- id: case_bug_sidebar_navigate_system
+  name: 侧边栏系统导航——计算机到桌面到最近使用
+  module: bug转用例场景
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: assert_element
+    ref: 计算机
+    step_type: assert
+  - action: assert_element
+    ref: 桌面
+    step_type: assert
+  - action: assert_element
+    ref: 最近使用
+    step_type: assert
+- id: case_bug_sidebar_navigate_network_trash
+  name: 侧边栏网络与回收站——网络到回收站到系统盘
+  module: bug转用例场景
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: assert_element
+    ref: 网络
+    step_type: assert
+  - action: assert_element
+    ref: 回收站
+    step_type: assert
+  - action: assert_element
+    ref: 系统盘
+    step_type: assert
+- id: case_bug_sidebar_navigate_pictures
+  name: 侧边栏图片目录导航
+  module: bug转用例场景
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: assert_element
+    ref: 图片
+    step_type: assert
+- id: case_bug_menu_settings_and_new_window
+  name: 主菜单——设置与新建窗口操作
+  module: bug转用例场景
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: dtk_main_menu
+    ref: 设置
+    items:
+    - 设置
+    wait: 2.0
+    step_type: action
+  - action: keyboard_press
+    key: escape
+    wait: 1.0
+    step_type: action
+  - action: dtk_main_menu
+    ref: 新建窗口
+    items:
+    - 新建窗口
+    wait: 2.0
+    step_type: action
+  - action: assert_process_running
+    app: dde-file-manager
+    step_type: assert
+- id: suite_common_001_s1
+  name: 光盘烧录选项设置与镜像转储对话框
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 刻录到光盘
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckdiscCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChecksumCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: EjectCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AdvanceBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileChooser
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 转换为镜像
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CreateImgBtn
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckdiscCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChecksumCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: EjectCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AdvanceBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileChooser
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CreateImgBtn
+      role: push button
+- id: suite_common_002_s1
+  name: 打开方式对话框——选择默认程序并取消
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 打开方式
+    - 选择默认程序
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChooseButton
+      role: push button
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckButton
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChooseButton
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: CancelButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChooseButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckButton
+      role: push button
+  - step_type: assert
+    action: assert_not_exists
+    selector:
+      name: CancelButton
+      role: push button
+- id: suite_common_003_s1
+  name: 文件属性对话框——权限管理与路径编辑
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CrumbEdit
+      role: text
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: Edit_2
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: Edit_2
+      role: text
+    text: /tmp
+  - step_type: action
+    action: element_action
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CrumbEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AlertTooltip
+      role: tool tip
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_not_exists
+    selector:
+      name: ExecutableCheckBox
+      role: check box
+- id: suite_common_004_s1
+  name: 目录共享设置与蓝牙发送对话框
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: DevicesListView
+      role: list
+    items:
+    - 共享文件夹
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CopyNetAddr
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: CopyUserNameBt
+      role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: DevicesListView
+      role: list
+    items:
+    - 发送到
+    - 蓝牙
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: DevicesListView
+      role: list
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: DevicesListView
+      role: list
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DevicesListView
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CopyNetAddr
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CopyUserNameBt
+      role: push button
+- id: suite_common_005_s1
+  name: 打开方式对话框——程序列表与设为默认应用
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 打开方式
+    - 选择默认程序
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithListWidget
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithDialog-QScrollArea
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenWithBtnGroup
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: OpenFileChooseButton
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithDialog-QScrollArea
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenWithBtnGroup
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetToDefaultCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OpenFileChooseButton
+      role: push button
+- id: suite_common_007_s1
+  name: 文件管理器设置——隐藏文件显示开关
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile_2
+      role: check box
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: HideFile_2
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HideFile
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: HideFile_2
+      role: check box
+- id: suite_common_008_s1
+  name: 光盘刻录选项与目录共享设置
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 刻录到光盘
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: FsComb
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: DevicesListView
+      role: list
+    items:
+    - 共享文件夹
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareNameEditor
+      role: text
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: ShareNameEditor
+      role: text
+    text: SharedFolder
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SetPasswordBt
+      role: push button
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FsComb
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FinalizeDiscCheckbox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareNameEditor
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareAnonymousSelector
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SetPasswordBt
+      role: push button
+- id: suite_common_009_s1
+  name: 文件夹共享属性设置——共享开关与权限选择
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareSwitcher
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ShareSwitcher
+      role: check box
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ShareSwitcher
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SharePermissionSelector
+      role: combo box
+- id: suite_common_010_s1
+  name: 文件标签信息展示与属性查看
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TagLable
+      role: label
+    do: point
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TagLable
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TagLeftLable
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TagLable
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TagLeftLable
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ToolTip
+- id: suite_common_011_s1
+  name: 光盘刻录选项——卷标设置与写入速度选择
+  module: common
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 文件
+    - 刻录到光盘
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: VolnameEdit
+      role: text
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: VolnameEdit
+      role: text
+    text: MyDisc
+  - step_type: action
+    action: element_action
+    selector:
+      name: WritespeedComb
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: WritespeedComb
+      role: combo box
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: VolnameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: WritespeedComb
+      role: combo box
+- id: suite_common_012_s1
+  name: 文件权限属性——所有者与用户组权限设置
+  module: common
+  steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+    items:
+    - 属性
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OwnerComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: GroupComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: OtherComboBox
+      role: combo box
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameEditIcon
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OwnerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: GroupComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: OtherComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: NameEditIcon
+  - step_type: assert
+    action: assert_window
+    selector:
+      name: dde-file-manager
 - id: suite_dde_file_manager_preview_001_s1
-  name: 未知类型文件预览与对话框关闭
+  name: 未知类型文件预览——打开预览面板并验证文件信息后关闭
   module: dde_file_manager_preview
   steps:
   - step_type: action
@@ -14,15 +836,31 @@ cases:
   - step_type: action
     action: element_action
     selector:
+      name: IconLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: CloseBtn
       role: push button
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CloseBtn
       role: push button
     do: click
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -44,7 +882,7 @@ cases:
       name: CloseBtn
       role: push button
 - id: suite_dde_file_manager_preview_002_s1
-  name: 音乐文件预览信息展示
+  name: 音乐文件预览——查看音频元数据信息并关闭预览
   module: dde_file_manager_preview
   steps:
   - step_type: action
@@ -54,9 +892,31 @@ cases:
   - step_type: action
     action: element_action
     selector:
+      name: ArtistLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: ArtistValue
       role: label
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumValue
+      role: label
+    do: focus
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: escape
@@ -87,7 +947,7 @@ cases:
       name: ArtistLabel
       role: label
 - id: suite_dde_file_manager_preview_003_s1
-  name: DCI 图标预览模式与调色板设置
+  name: DCI 图标预览——切换模式并设置自定义尺寸与调色板参数
   module: dde_file_manager_preview
   steps:
   - step_type: action
@@ -100,12 +960,22 @@ cases:
       name: ModeCom
       role: combo box
     do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: down
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: AvailableSizeCombo
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
     action: element_set_value
     selector:
@@ -117,7 +987,25 @@ cases:
     selector:
       name: ForegroundPaletteEdit
       role: text
-    text: '0'
+    text: '#FF0000'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: BackgroundPaletteEdit
+      role: text
+    text: '#FFFFFF'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HightlightPaletteEdit
+      role: text
+    text: '#00FF00'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HFpaletteEdit
+      role: text
+    text: '#0000FF'
   - step_type: assert
     action: assert_element
     selector:
@@ -154,7 +1042,7 @@ cases:
       name: HFpaletteEdit
       role: text
 - id: suite_dde_file_manager_preview_004_s1
-  name: 视频预览播放控制与翻页切换 PDF 缩略图
+  name: 视频文件预览——播放控制与缩略图列表浏览
   module: dde_file_manager_preview
   steps:
   - step_type: action
@@ -167,53 +1055,54 @@ cases:
       name: ControlButton
       role: push button
     do: click
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: ControlButton
       role: push button
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ItemViewParent
+      role: list
     do: focus
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: right
-    wait: 1.5
+    wait: 1.0
   - step_type: action
-    action: element_action
-    selector:
-      name: ItemViewParent
-      role: list
-    do: focus
+    action: keyboard_press
+    key: left
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
       name: ControlButton
       role: push button
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ItemViewParent
-      role: list
   - step_type: assert
     action: assert_element
     selector:
       name: ItemViewParent
       role: list
 - id: suite_dde_file_manager_preview_005_s1
-  name: 音乐与视频文件预览及播放控制
+  name: 音频文件预览——导航至音频目录并验证播放控制与进度条
   module: dde_file_manager_preview
   steps:
   - step_type: action
     action: keyboard_press
     key: ctrl+l
+    wait: 0.5
   - step_type: action
-    action: element_set_value
-    selector:
-      name: AddressBar
-      role: text
+    action: keyboard_type_text
     text: /usr/share/sounds
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: space
@@ -224,30 +1113,32 @@ cases:
       name: PlayControlButton
       role: push button
     do: click
+    wait: 1.0
   - step_type: action
-    action: keyboard_press
-    key: escape
-  - step_type: action
-    action: keyboard_press
-    key: ctrl+l
-  - step_type: action
-    action: element_set_value
+    action: element_action
     selector:
-      name: AddressBar
-      role: text
-    text: /usr/share
+      name: ProgressSlider
+      role: slider
+    do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: enter
+    action: element_action
+    selector:
+      name: Slider_2
+      role: slider
+    do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: space
-    wait: 2.0
-  - step_type: assert
-    action: assert_element
+    action: element_action
     selector:
       name: StatusBar
       role: status bar
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -263,22 +1154,26 @@ cases:
     selector:
       name: Slider_2
       role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
 - id: suite_dde_file_manager_preview_006_s1
-  name: PDF加密预览翻页与未知文件信息显示
+  name: 文档预览——翻页浏览缩略图并验证文件大小与类型信息
   module: dde_file_manager_preview
   steps:
   - step_type: action
     action: keyboard_press
     key: ctrl+l
+    wait: 0.5
   - step_type: action
-    action: element_set_value
-    selector:
-      name: AddressBar
-      role: text
+    action: keyboard_type_text
     text: /usr/share/doc
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: space
@@ -286,16 +1181,35 @@ cases:
   - step_type: action
     action: element_action
     selector:
+      name: View_ImageList
+      role: list
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: Nextbutton
       role: push button
     do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SizeLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TypeLabel
+      role: label
+    do: focus
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: escape
-  - step_type: action
-    action: keyboard_press
-    key: space
-    wait: 2.0
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -317,21 +1231,20 @@ cases:
       name: TypeLabel
       role: label
 - id: suite_dde_file_manager_preview_007_s1
-  name: DCI图标预览主题切换
+  name: DCI 图标预览——切换主题并验证主题下拉框状态
   module: dde_file_manager_preview
   steps:
   - step_type: action
     action: keyboard_press
     key: ctrl+l
+    wait: 0.5
   - step_type: action
-    action: element_set_value
-    selector:
-      name: AddressBar
-      role: text
+    action: keyboard_type_text
     text: /usr/share/dsg/icons
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: space
@@ -342,19 +1255,22 @@ cases:
       name: ThemeCom
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: down
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
       name: ThemeCom
       role: combo box
 - id: suite_dialogs_001_s1
-  name: 网络挂载认证对话框
+  name: 网络挂载认证对话框——匿名与注册用户登录
   module: dialogs
   steps:
   - step_type: action
@@ -364,6 +1280,13 @@ cases:
       role: push button
     do: click
     wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: AnonymousButton
+      role: push button
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -389,12 +1312,50 @@ cases:
       name: PasswordCheckBox
       role: check box
     do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordButtonGroup
+      role: panel
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AnonymousButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RegisterButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
   - step_type: assert
     action: assert_element
     selector:
       name: PasswordButtonGroup
+      role: panel
 - id: suite_dialogs_002_s1
-  name: 文件冲突确认对话框
+  name: 文件冲突确认对话框——跳过与替换操作
   module: dialogs
   steps:
   - step_type: action
@@ -410,94 +1371,178 @@ cases:
       name: ChkboxNotAskAgain
       role: check box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: BtnCoexist
       role: push button
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: BtnSkip
       role: push button
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: BtnDelete
+      role: push button
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnReplace
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: focus
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnSkip
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+      role: push button
   - step_type: assert
     action: assert_element
     selector:
       name: BtnReplace
       role: push button
 - id: suite_dialogs_003_s1
-  name: 批量操作进度对话框
+  name: 批量操作进度对话框——暂停与停止任务
   module: dialogs
   steps:
   - step_type: action
     action: element_action
     selector:
       name: TaskListWidget
+      role: list
     do: focus
     wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: BtnPause
+      role: push button
     do: click
     wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: BtnPause
+      role: push button
     do: click
     wait: 1.0
   - step_type: action
     action: element_action
     selector:
+      name: BtnPause
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: BtnStop
+      role: push button
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnStop
+      role: push button
+    do: focus
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
       name: TaskListWidget
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnPause
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnStop
+      role: push button
 - id: suite_dialogs_004_s1
-  name: SMB共享密码设置对话框
+  name: SMB共享密码设置对话框——输入并确认共享密码
   module: dialogs
   steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordEdit_2
+      role: text
+    do: focus
+    wait: 1.0
   - step_type: action
     action: element_set_value
     selector:
       name: PasswordEdit_2
+      role: text
     text: SharePassw0rd!
   - step_type: action
     action: element_action
     selector:
       name: PasswordEdit_2
-    do: focus
-    wait: 1.0
+      role: text
+    do: point
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: PasswordEdit_2
-    do: point
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
       name: PasswordEdit_2
+      role: text
 - id: suite_filedialog_001_s1
-  name: 打开文件对话框基本交互
+  name: 打开文件对话框——文件名输入与过滤器选择
   module: filedialog
   steps:
   - step_type: action
-    action: element_set_value
+    action: element_action
     selector:
-      name: FileNameEdit
-      role: text
-    text: test.txt
+      name: TitleLabel
+      role: label
+    do: focus
     wait: 1.0
   - step_type: action
     action: element_action
@@ -505,30 +1550,49 @@ cases:
       name: FileNameLabel
       role: label
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: FileNameEdit
+      role: text
+    text: test.txt
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileNameEdit
+      role: text
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersLabel
       role: label
     do: point
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersComboBox
       role: combo box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersComboBox
       role: combo box
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CurAcceptButton
+      role: push button
     do: focus
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
@@ -537,9 +1601,30 @@ cases:
   - step_type: assert
     action: assert_element
     selector:
+      name: FileNameLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
       name: CurAcceptButton
+      role: push button
 - id: suite_filedialog_002_s1
-  name: 保存文件对话框与取消操作
+  name: 保存文件对话框——输入文件名并取消保存
   module: filedialog
   steps:
   - step_type: action
@@ -561,726 +1646,59 @@ cases:
       name: FileNameEdit
       role: text
     do: focus
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersComboBox
       role: combo box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersLabel
       role: label
     do: point
-  - step_type: action
-    action: element_action
-    selector:
-      name: CurRejectButton
-      role: push button
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: CurRejectButton
-      role: push button
-    do: point
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CurRejectButton
-      role: push button
-- id: suite_misc_ui_001_s1
-  name: 视图提示消息控件
-  module: misc_ui
-  steps:
-  - step_type: action
-    action: element_action
-    selector:
-      name: IconButton
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: IconButton
-    do: point
-  - step_type: action
-    action: element_action
-    selector:
-      name: CloseButton
-    do: click
-    wait: 1.0
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: IconButton
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CloseButton
-  - step_type: assert
-    action: assert_not_exists
-    selector:
-      name: CloseButton
-- id: suite_misc_ui_002_s1
-  name: 桌面图标整理设置对话框
-  module: misc_ui
-  steps:
-  - step_type: action
-    action: element_action
-    selector:
-      name: Slider
-      role: slider
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: Slider
-      role: slider
-    do: point
-  - step_type: action
-    action: element_action
-    selector:
-      name: SwitchBtn
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: KeyEdit
-      role: text
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: KeyEdit
-      role: text
-    do: point
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: Slider
-      role: slider
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: SwitchBtn
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: KeyEdit
-      role: text
-- id: suite_misc_ui_003_s1
-  name: 磁盘托盘提示、桌面水印与属性键值标签
-  module: misc_ui
-  steps:
-  - step_type: action
-    action: element_action
-    selector:
-      name: TextLabel
-      role: label
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsLabel
-    do: point
-    wait: 1.5
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TextLabel
-    items:
-    - 属性
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: RightValueEdit
-    do: focus
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TextLabel
-      role: label
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TipsLabel
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: RightValueEdit
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: RightValueEdit
-- id: suite_common_001_s1
-  name: 光盘烧录选项与镜像转储对话框
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: FileChooser
-    items:
-    - 刻录到光盘
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: CheckdiscCheckbox
-      role: check box
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: ChecksumCheckbox
-      role: check box
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: EjectCheckbox
-      role: check box
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: AdvanceBtn
-      role: push button
-    do: click
-  - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: FileChooser
-    items:
-    - 转换为镜像
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: CreateImgBtn
-      role: push button
-    do: focus
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CheckdiscCheckbox
-      role: check box
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: AdvanceBtn
-      role: push button
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: FileChooser
-      role: text
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CreateImgBtn
-      role: push button
-- id: suite_common_002_s1
-  name: 打开方式对话框
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: ChooseButton
-    items:
-    - 打开方式
-    - 选择默认程序
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: CheckButton
-      role: push button
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: ChooseButton
-      role: push button
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: CancelButton
-      role: push button
-    do: click
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ChooseButton
-      role: push button
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CheckButton
-      role: push button
-  - step_type: assert
-    action: assert_not_exists
-    selector:
-      name: CancelButton
-      role: push button
-- id: suite_common_003_s1
-  name: 文件属性对话框（权限管理与标签编辑）
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: CrumbEdit
-    items:
-    - 属性
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: CrumbEdit
-      role: text
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: Edit_2
-      role: text
-    do: focus
-  - step_type: action
-    action: element_set_value
-    selector:
-      name: Edit_2
-      role: text
-    text: /
-  - step_type: action
-    action: element_action
-    selector:
-      name: ExecutableCheckBox
-      role: check box
-    do: click
-  - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CrumbEdit
-      role: text
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: AlertTooltip
-      role: tool tip
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ExecutableCheckBox
-      role: check box
-  - step_type: assert
-    action: assert_not_exists
-    selector:
-      name: ExecutableCheckBox
-      role: check box
-- id: suite_common_004_s1
-  name: 目录共享与蓝牙传输对话框
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: DevicesListView
-    items:
-    - 共享文件夹
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: CopyNetAddr
-      role: push button
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: CopyUserNameBt
-      role: push button
-    do: click
-  - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: DevicesListView
-    items:
-    - 发送到
-    - 蓝牙
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: DevicesListView
-      role: list
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: DevicesListView
-      role: list
-    do: point
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CopyNetAddr
-      role: push button
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CopyUserNameBt
-      role: push button
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: DevicesListView
-      role: list
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: DevicesListView
-      role: list
-- id: suite_common_005_s1
-  name: 打开方式选择对话框
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: OpenWithListWidget
-    items:
-    - 打开方式
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: OpenWithDialog-QScrollArea
-      role: scroll pane
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: OpenWithListWidget
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: OpenWithListWidget
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: OpenWithBtnGroup
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: SetToDefaultCheckBox
-      role: check box
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: OpenFileChooseButton
-    do: point
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: OpenWithListWidget
-- id: suite_common_007_s1
-  name: 文件属性对话框-隐藏文件属性设置
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: HideFile_2
-    items:
-    - 属性
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: HideFile
-      role: check box
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: HideFile_2
-    items:
-    - 属性
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: HideFile_2
-      role: check box
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: HideFile_2
-      role: check box
-    do: focus
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: HideFile
-      role: check box
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: HideFile_2
-      role: check box
-- id: suite_common_008_s1
-  name: 刻录选项与目录共享设置
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: FsComb
-    items:
-    - 刻录到光盘
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: FsComb
-      role: combo box
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: FsComb
-      role: combo box
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: FinalizeDiscCheckbox
-      role: check box
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: FsComb
-    items:
-    - 共享
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: ShareNameEditor
-      role: text
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: ShareNameEditor
-      role: text
-    do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: ShareAnonymousSelector
-      role: combo box
-    do: click
-    wait: 1.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: SetPasswordBt
-    do: point
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: FinalizeDiscCheckbox
-      role: check box
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ShareNameEditor
-      role: text
-- id: suite_common_009_s1
-  name: 文件夹共享属性设置
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: ShareSwitcher
-    items:
-    - 属性
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: ShareSwitcher
-      role: check box
-    do: click
-  - step_type: action
-    action: element_action
-    selector:
-      name: SharePermissionSelector
-      role: combo box
-    do: click
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ShareSwitcher
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: SharePermissionSelector
-- id: suite_common_010_s1
-  name: 文件标签信息展示
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TagLable
-    items:
-    - 属性
-    wait: 2.0
-  - step_type: action
-    action: element_action
-    selector:
-      name: TagLable
-      role: label
-    do: point
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TagLable
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TagLeftLable
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ToolTip
-- id: suite_common_011_s1
-  name: 光盘刻录选项设置
-  module: common
-  steps:
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: VolnameEdit
-    items:
-    - 发送到光盘
-    wait: 2.0
-  - step_type: action
-    action: element_set_value
-    selector:
-      name: VolnameEdit
-      role: text
-    text: MyDisc
-  - step_type: action
-    action: element_action
-    selector:
-      name: WritespeedComb
-      role: combo box
-    do: click
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: VolnameEdit
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: WritespeedComb
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: VolnameEdit
-- id: suite_common_012_s1
-  name: ''
-  module: common
-  steps:
-  - step_type: action
-    action: keyboard_hot_key
-    key: ctrl+l
-    wait: 1.0
-  - step_type: action
-    action: keyboard_type_text
-    text: /
     wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: enter
-    wait: 2.0
+    action: element_action
+    selector:
+      name: FileNameLabel
+      role: label
+    do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: menu
+    action: element_action
+    selector:
+      name: CurRejectButton
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: CurRejectButton
+      role: push button
+    do: click
     wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: OwnerComboBox
-    items:
-    - 属性
-    wait: 2.0
-  - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
-      name: OwnerComboBox
+      name: CurRejectButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
       role: combo box
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: GroupComboBox
-      role: combo box
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: OtherComboBox
-      role: combo box
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: NameEditIcon
-  - step_type: assert
-    action: assert_window
-    selector:
-      name: dde-file-manager
 - id: suite_filemanager_001_s1
-  name: 标题栏标签页管理
+  name: 标题栏标签页管理——新建标签页并验证切换
   module: filemanager
   steps:
   - step_type: action
@@ -1289,17 +1707,28 @@ cases:
       name: AddBtn
       role: push button
     do: click
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: BottomBar
       role: page tab
     do: focus
-  - step_type: assert
-    action: assert_element
+    wait: 0.5
+  - step_type: action
+    action: element_action
     selector:
       name: BottomBar
       role: page tab
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddBtn
+      role: push button
+    do: click
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -1311,7 +1740,7 @@ cases:
       name: AddBtn
       role: push button
 - id: suite_filemanager_002_s1
-  name: 连接到服务器对话框
+  name: 连接到服务器对话框——打开对话框并验证服务器列表与编码设置
   module: filemanager
   steps:
   - step_type: action
@@ -1319,18 +1748,25 @@ cases:
     items:
     - 文件
     - 连接到服务器
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: CollectionServerView
       role: list
     do: focus
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: CharsetComboBox
       role: combo box
     do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
@@ -1341,13 +1777,8 @@ cases:
     selector:
       name: CharsetComboBox
       role: combo box
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: CharsetComboBox
-      role: combo box
 - id: suite_filemanager_003_s1
-  name: 磁盘加密与解密参数输入
+  name: 磁盘加密与解密——打开解密对话框并验证加密参数输入控件
   module: filemanager
   steps:
   - step_type: action
@@ -1355,40 +1786,57 @@ cases:
     items:
     - 磁盘
     - 解密磁盘
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: Editor_2
       role: text
     do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: Editor_2
+      role: text
+    text: testpass123
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   - step_type: action
     action: dtk_main_menu
     items:
     - 磁盘
     - 加密管理
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: ChgUnlockType
       role: push button
     do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: EncType
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: EncKeyEdit1
       role: text
     do: focus
-  - step_type: assert
-    action: assert_element
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
     selector:
-      name: Editor_2
+      name: EncKeyEdit1
       role: text
+    text: encryption_key_1
   - step_type: assert
     action: assert_element
     selector:
@@ -1415,7 +1863,7 @@ cases:
       name: KeyExportInput
       role: text
 - id: suite_filemanager_004_s1
-  name: 保险箱创建重置与文件操作辅助控件
+  name: 保险箱创建向导——验证创建完成按钮与找回密码文件路径控件
   module: filemanager
   steps:
   - step_type: action
@@ -1423,43 +1871,61 @@ cases:
     items:
     - 保险箱
     - 创建保险箱
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: FinishedBtn
       role: push button
-    do: click
+    do: focus
+    wait: 1.0
   - step_type: action
     action: dtk_main_menu
     items:
     - 保险箱
     - 重置密码
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyFileEdit
+      role: text
+    do: focus
+    wait: 0.5
   - step_type: action
     action: dtk_main_menu
     items:
     - 保险箱
     - 找回密码
+    wait: 2.0
   - step_type: action
-    action: dtk_main_menu
-    items:
-    - 编辑
-    - 批量重命名
+    action: element_action
+    selector:
+      name: FilePathEdit
+      role: text
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: ComboBox
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
-    action: dtk_main_menu
-    items:
-    - 文件
-    - 属性确认
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 0.5
   - step_type: action
-    action: dtk_main_menu
-    items:
-    - 设置
-    - 搜索索引
+    action: element_action
+    selector:
+      name: CancelBtn
+      role: push button
+    do: click
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -1491,43 +1957,46 @@ cases:
       name: CheckBox
       role: check box
 - id: suite_filemanager_005_s1
-  name: 主窗口标题栏返回按钮、占位控件与文件视图右键菜单
+  name: 主窗口标题栏返回按钮与文件视图右键菜单
   module: filemanager
   steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: LeftBtn
+      role: push button
+    do: click
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: LeftBtn
       role: push button
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: LeftBtn
-      role: push button
-    do: point
-  - step_type: action
-    action: keyboard_press
-    key: alt+Left
     wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: Placeholder
-    do: point
+    do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: shift+f10
-    wait: 1.5
+    action: dtk_context_menu
+    selector:
+      name: Placeholder
+    items:
+    - 新建文件夹
+    wait: 2.0
   - step_type: action
     action: keyboard_press
     key: escape
     wait: 0.5
-  - step_type: assert
-    action: assert_element
+  - step_type: action
+    action: element_action
     selector:
-      name: LeftBtn
-      role: push button
+      name: MenuPtr
+    do: focus
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
@@ -1541,21 +2010,14 @@ cases:
     action: assert_element
     selector:
       name: MenuPtr
-      role: menu
-  - step_type: assert
-    action: assert_not_exists
-    selector:
-      name: MenuPtr
-      role: menu
 - id: suite_filemanager_006_s1
-  name: 保险箱创建、解锁与密码重置视图
+  name: 保险箱创建——解锁与密码重置全流程
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: NextBtn
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 创建保险箱
     wait: 2.0
   - step_type: action
@@ -1564,44 +2026,59 @@ cases:
       name: NextBtn
       role: push button
     do: focus
-  - step_type: action
-    action: keyboard_press
-    key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: NextBtn
+    action: dtk_main_menu
     items:
-    - 解锁
+    - 保险箱
+    - 解锁保险箱
     wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: PasswordEdit
     do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
+    action: element_set_value
     selector:
-      name: NextBtn
+      name: PasswordEdit
+    text: vaultpass123
+  - step_type: action
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 重置密码
     wait: 2.0
   - step_type: action
     action: element_action
     selector:
+      name: OldPasswordEdit
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: OldPasswordEdit
+    text: oldpass123
+  - step_type: action
+    action: element_action
+    selector:
       name: NewPasswordEdit
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPasswordEdit
+    text: newpass456
   - step_type: action
     action: element_action
     selector:
       name: PasswordHintEdit
       role: text
     do: focus
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
@@ -1618,6 +2095,10 @@ cases:
   - step_type: assert
     action: assert_element
     selector:
+      name: NewPasswordEdit
+  - step_type: assert
+    action: assert_element
+    selector:
       name: PasswordHintEdit
       role: text
 - id: suite_filemanager_007_s1
@@ -1625,38 +2106,56 @@ cases:
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PasswordLineEdit
+    action: dtk_main_menu
     items:
-    - 解锁加密分区
+    - 磁盘
+    - 解密磁盘
     wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: PasswordLineEdit
     do: focus
-  - step_type: action
-    action: keyboard_press
-    key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
+    action: element_set_value
     selector:
       name: PasswordLineEdit
+    text: diskpass123
+  - step_type: action
+    action: dtk_main_menu
     items:
-    - 修改加密口令
+    - 磁盘
+    - 修改口令
     wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: OldPass
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: OldPass
+    text: oldpass456
   - step_type: action
     action: element_action
     selector:
       name: NewPass1
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPass1
+    text: newpass789
   - step_type: action
     action: element_action
     selector:
       name: NewPass2
     do: focus
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
@@ -1674,41 +2173,49 @@ cases:
     selector:
       name: NewPass2
 - id: suite_filemanager_008_s1
-  name: 磁盘密码修改对话框与光盘操作按钮
+  name: 磁盘密码修改对话框与光盘操作按钮验证
   module: filemanager
   steps:
   - step_type: action
     action: dtk_main_menu
     items:
-    - 修改磁盘密码
+    - 磁盘
+    - 修改口令
     wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: OldPwdEdit
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: NewPwdEdit
-    do: focus
-  - step_type: action
-    action: keyboard_press
-    key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
+    action: element_set_value
     selector:
       name: OldPwdEdit
-    items:
-    - 打开
-    wait: 2.0
+    text: oldpwd789
+  - step_type: action
+    action: element_action
+    selector:
+      name: NewPwdEdit
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: NewPwdEdit
+    text: newpwd012
   - step_type: action
     action: element_action
     selector:
       name: PbBurn
-      role: push button
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: PbDump
+    do: point
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
@@ -1721,14 +2228,12 @@ cases:
     action: assert_element
     selector:
       name: PbBurn
-      role: push button
   - step_type: assert
     action: assert_element
     selector:
       name: PbDump
-      role: push button
 - id: suite_filemanager_009_s1
-  name: 主窗口侧边栏标签栏与连接到服务器对话框
+  name: 主窗口侧边栏与连接到服务器对话框交互
   module: filemanager
   steps:
   - step_type: action
@@ -1736,15 +2241,18 @@ cases:
     selector:
       name: SideBarView
     do: focus
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: TabBar
       role: page tab
-    do: point
+    do: focus
+    wait: 0.5
   - step_type: action
     action: dtk_main_menu
     items:
+    - 文件
     - 连接到服务器
     wait: 2.0
   - step_type: action
@@ -1753,23 +2261,25 @@ cases:
       name: SchemeComboBox
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: ServerComboBox
       role: combo box
-    do: focus
-  - step_type: action
-    action: element_set_value
-    selector:
-      name: ServerComboBox
-      role: combo box
-    text: smb://192.168.1.100/share
+    do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: TheAddButton
-    do: click
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -1787,73 +2297,78 @@ cases:
   - step_type: assert
     action: assert_element
     selector:
+      name: ServerComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
       name: TheAddButton
+      role: push button
 - id: suite_filemanager_010_s1
-  name: 保险箱属性对话框与密码相关视图
+  name: 保险箱属性对话框与密码恢复视图
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PropertyDialog-QScrollArea
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 属性
     wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: PropertyDialog-QScrollArea
-      role: scroll pane
     do: focus
-  - step_type: action
-    action: keyboard_press
-    key: escape
     wait: 1.0
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PropertyDialog-QScrollArea
+    action: dtk_main_menu
     items:
-    - 移除保险箱
+    - 保险箱
+    - 找回密码
     wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: PwdEdit
     do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
+    action: element_set_value
     selector:
-      name: PropertyDialog-QScrollArea
-    items:
-    - 恢复密钥解锁
-    wait: 2.0
+      name: PwdEdit
+    text: recoverypass
   - step_type: action
     action: element_action
     selector:
       name: RecoveryKeyEdit
       role: text
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RecoveryKeyEdit
+      role: text
+    text: recovery_key_001
+  - step_type: action
+    action: element_action
+    selector:
+      name: RepeatPasswordEdit
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPasswordEdit
+    text: recoverypass
   - step_type: action
     action: keyboard_press
     key: escape
     wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: PropertyDialog-QScrollArea
-    items:
-    - 重置密码
-    wait: 2.0
   - step_type: assert
     action: assert_element
     selector:
       name: PropertyDialog-QScrollArea
-      role: scroll pane
   - step_type: assert
     action: assert_element
     selector:
@@ -1868,52 +2383,58 @@ cases:
     selector:
       name: RepeatPasswordEdit
 - id: suite_filemanager_011_s1
-  name: 计算机视图重命名栏与危险操作密码确认控件
+  name: 计算机视图文件重命名与密码确认
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: RenameEditor
-    items:
-    - 重命名
-    wait: 1.5
+    action: keyboard_hot_key
+    key: f2
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: RenameEditor
-      role: text
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RenameEditor
+    text: renamed_file.txt
   - step_type: action
     action: element_action
     selector:
       name: RenameBtn
+      role: push button
     do: focus
-  - step_type: action
-    action: keyboard_press
-    key: escape
-    wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: RenameEditor
-    items:
-    - 彻底删除
-    wait: 2.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: RepeatPwdEdit
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RepeatPwdEdit
+    text: confirmpass
+  - step_type: action
+    action: element_action
+    selector:
+      name: SaveBtn
+      role: push button
+    do: focus
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
       name: RenameEditor
-      role: text
   - step_type: assert
     action: assert_element
     selector:
       name: RenameBtn
+      role: push button
   - step_type: assert
     action: assert_element
     selector:
@@ -1922,15 +2443,15 @@ cases:
     action: assert_element
     selector:
       name: SaveBtn
+      role: push button
 - id: suite_filemanager_012_s1
-  name: 设备属性对话框、磁盘解密参数与状态栏缩放滑块
+  name: 设备属性对话框与状态栏缩放滑块交互
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: ScrollArea
+    action: dtk_main_menu
     items:
+    - 文件
     - 属性
     wait: 2.0
   - step_type: action
@@ -1939,22 +2460,13 @@ cases:
       name: ScrollArea
       role: scroll pane
     do: focus
-  - step_type: action
-    action: keyboard_press
-    key: escape
     wait: 1.0
-  - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: ScrollArea
-    items:
-    - 解密
-    wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: RecSwitch
     do: focus
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: escape
@@ -1965,6 +2477,21 @@ cases:
       name: ScaleSlider
       role: slider
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScaleSlider
+      role: slider
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScaleSlider
+      role: slider
+    do: click
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
@@ -1979,20 +2506,14 @@ cases:
     selector:
       name: ScaleSlider
       role: slider
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ScaleSlider
-      role: slider
 - id: suite_filemanager_013_s1
-  name: 保险箱创建向导解锁方式设置视图
+  name: 保险箱创建向导——解锁方式选择与密码提示设置
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TypeCombo
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 创建保险箱
     wait: 2.0
   - step_type: action
@@ -2001,6 +2522,7 @@ cases:
       name: TypeCombo
       role: combo box
     do: click
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: escape
@@ -2008,21 +2530,27 @@ cases:
   - step_type: action
     action: element_action
     selector:
+      name: TypeCombo
+      role: combo box
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: TipsEdit
       role: text
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_set_value
     selector:
       name: TipsEdit
       role: text
-    text: 我的密码提示
+    text: 我的密码提示信息
   - step_type: action
-    action: element_action
-    selector:
-      name: TypeCombo
-      role: combo box
-    do: focus
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -2033,21 +2561,15 @@ cases:
     selector:
       name: TipsEdit
       role: text
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TypeCombo
-      role: combo box
 - id: suite_filemanager_014_s1
-  name: 保险箱解锁视图提示按钮与提示气泡
+  name: 保险箱解锁视图——提示按钮交互与提示气泡显示
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TipsButton
+    action: dtk_main_menu
     items:
-    - 解锁
+    - 保险箱
+    - 解锁保险箱
     wait: 2.0
   - step_type: action
     action: element_action
@@ -2055,12 +2577,7 @@ cases:
       name: TipsButton
       role: push button
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsButton
-      role: push button
-    do: point
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
@@ -2072,6 +2589,20 @@ cases:
     action: keyboard_press
     key: escape
     wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsButton
+      role: push button
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsButton
+      role: push button
+    do: click
+    wait: 1.0
   - step_type: assert
     action: assert_element
     selector:
@@ -2085,20 +2616,14 @@ cases:
     action: assert_not_exists
     selector:
       name: Tooltip
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: TipsButton
-      role: push button
 - id: suite_filemanager_015_s1
-  name: 保险箱删除视图提示按钮与切换删除模式
+  name: 保险箱删除视图——提示按钮与删除模式切换
   module: filemanager
   steps:
   - step_type: action
-    action: dtk_context_menu
-    selector:
-      name: TipsBtn
+    action: dtk_main_menu
     items:
+    - 保险箱
     - 删除保险箱
     wait: 2.0
   - step_type: action
@@ -2107,12 +2632,7 @@ cases:
       name: TipsBtn
       role: push button
     do: focus
-  - step_type: action
-    action: element_action
-    selector:
-      name: TipsBtn
-      role: push button
-    do: point
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
@@ -2121,15 +2641,28 @@ cases:
     do: click
     wait: 1.0
   - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  - step_type: action
     action: element_action
     selector:
       name: ToggleModeBtn
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: ToggleModeBtn
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsBtn
+      role: push button
+    do: point
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: escape
@@ -2143,20 +2676,335 @@ cases:
     action: assert_element
     selector:
       name: ToggleModeBtn
-  - step_type: assert
-    action: assert_not_exists
-    selector:
-      name: ToggleModeBtn
 - id: suite_filemanager_016_s1
-  name: 桌面收藏视图控件验证
+  name: 桌面收藏视图——控件定位与焦点验证
   module: filemanager
   steps:
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
   - step_type: action
     action: element_action
     selector:
       name: CollectionView
     do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+    do: point
+    wait: 0.5
   - step_type: assert
     action: assert_element
     selector:
       name: CollectionView
+- id: suite_misc_ui_001_s1
+  name: 视图提示消息控件——图标按钮与关闭按钮交互
+  module: misc_ui
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconButton
+      role: push button
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: IconButton
+      role: push button
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: CloseButton
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: CloseButton
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 0.5
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: IconButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CloseButton
+      role: push button
+  - step_type: assert
+    action: assert_not_exists
+    selector:
+      name: CloseButton
+      role: push button
+- id: suite_misc_ui_002_s1
+  name: 桌面图标整理设置对话框——滑块与开关交互
+  module: misc_ui
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: KeyEdit
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: KeyEdit
+      role: text
+    text: shortcut_key
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: KeyEdit
+      role: text
+- id: suite_misc_ui_003_s1
+  name: 磁盘托盘提示、桌面水印与属性键值标签
+  module: misc_ui
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TextLabel
+      role: label
+    do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+      role: label
+    do: point
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: TipsLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: RightValueEdit
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: RightValueEdit
+      role: text
+    text: property_value
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TextLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TipsLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RightValueEdit
+      role: text
+- id: case_dynamic_sidebar_view_and_desktop
+  name: 侧边栏视图验证与桌面导航
+  module: 动态效果
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 0.5
+    step_type: action
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: assert_element
+    ref: side_bar_view
+    step_type: assert
+  - action: assert_element
+    ref: 桌面
+    step_type: assert
+- id: case_dynamic_sidebar_quick_access
+  name: 侧边栏快捷访问导航切换
+  module: 动态效果
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: assert_element
+    ref: 快捷访问
+    step_type: assert
+- id: case_admin_sidebar_navigate_personal
+  name: 侧边栏个人目录导航——桌面到文档到最近使用
+  module: 管理员
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: assert_element
+    ref: 桌面
+    step_type: assert
+  - action: assert_element
+    ref: 文档
+    step_type: assert
+  - action: assert_element
+    ref: 最近使用
+    step_type: assert
+- id: case_admin_sidebar_navigate_media
+  name: 侧边栏媒体目录导航——视频与快捷访问
+  module: 管理员
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+    step_type: action
+  - action: assert_element
+    ref: 视频
+    step_type: assert
+  - action: assert_element
+    ref: 快捷访问
+    step_type: assert
+- id: case_admin_menu_settings
+  name: 主菜单——打开设置对话框并验证进程运行
+  module: 管理员
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+    step_type: action
+  - action: dtk_main_menu
+    ref: 设置
+    items:
+    - 设置
+    wait: 2.0
+    step_type: action
+  - action: assert_process_running
+    app: dde-file-manager
+    step_type: assert

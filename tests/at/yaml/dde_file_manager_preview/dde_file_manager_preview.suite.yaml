@@ -10,8 +10,8 @@ setup:
   wait: 3.0
 suites:
 - id: suite_dde_file_manager_preview_001_s1
-  name: 未知类型文件预览与对话框关闭
-  description: ''
+  name: 未知类型文件预览——打开预览面板并验证文件信息后关闭
+  description: '选中文件后按空格打开预览面板，验证文件图标和名称标签显示，最后点击关闭按钮关闭预览'
   steps:
   - step_type: action
     action: keyboard_press
@@ -20,15 +20,31 @@ suites:
   - step_type: action
     action: element_action
     selector:
+      name: IconLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: NameLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: CloseBtn
       role: push button
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CloseBtn
       role: push button
     do: click
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -51,8 +67,8 @@ suites:
       name: CloseBtn
       role: push button
 - id: suite_dde_file_manager_preview_002_s1
-  name: 音乐文件预览信息展示
-  description: ''
+  name: 音乐文件预览——查看音频元数据信息并关闭预览
+  description: '选中音频文件按空格预览，验证艺术家和专辑标签及对应值均显示，按 Escape 关闭预览面板'
   steps:
   - step_type: action
     action: keyboard_press
@@ -61,9 +77,31 @@ suites:
   - step_type: action
     action: element_action
     selector:
+      name: ArtistLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: ArtistValue
       role: label
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: AlbumValue
+      role: label
+    do: focus
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: escape
@@ -95,8 +133,8 @@ suites:
       name: ArtistLabel
       role: label
 - id: suite_dde_file_manager_preview_003_s1
-  name: DCI 图标预览模式与调色板设置
-  description: ''
+  name: DCI 图标预览——切换模式并设置自定义尺寸与调色板参数
+  description: '预览 DCI 图标文件，切换预览模式，设置自定义尺寸，逐个填写前景、背景、高亮及前景高亮调色板值并验证'
   steps:
   - step_type: action
     action: keyboard_press
@@ -108,12 +146,22 @@ suites:
       name: ModeCom
       role: combo box
     do: click
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: down
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: AvailableSizeCombo
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
     action: element_set_value
     selector:
@@ -125,7 +173,25 @@ suites:
     selector:
       name: ForegroundPaletteEdit
       role: text
-    text: '0'
+    text: '#FF0000'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: BackgroundPaletteEdit
+      role: text
+    text: '#FFFFFF'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HightlightPaletteEdit
+      role: text
+    text: '#00FF00'
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: HFpaletteEdit
+      role: text
+    text: '#0000FF'
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -163,8 +229,8 @@ suites:
       name: HFpaletteEdit
       role: text
 - id: suite_dde_file_manager_preview_004_s1
-  name: 视频预览播放控制与翻页切换 PDF 缩略图
-  description: ''
+  name: 视频文件预览——播放控制与缩略图列表浏览
+  description: '预览视频文件，点击播放控制按钮播放/暂停，使用方向键翻页浏览缩略图列表并验证列表存在'
   steps:
   - step_type: action
     action: keyboard_press
@@ -176,22 +242,29 @@ suites:
       name: ControlButton
       role: push button
     do: click
+    wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: ControlButton
       role: push button
-    do: focus
-  - step_type: action
-    action: keyboard_press
-    key: right
-    wait: 1.5
+    do: click
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: ItemViewParent
       role: list
     do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: right
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: left
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -203,27 +276,21 @@ suites:
     selector:
       name: ItemViewParent
       role: list
-  - step_type: assert
-    action: assert_element
-    selector:
-      name: ItemViewParent
-      role: list
 - id: suite_dde_file_manager_preview_005_s1
-  name: 音乐与视频文件预览及播放控制
-  description: ''
+  name: 音频文件预览——导航至音频目录并验证播放控制与进度条
+  description: '通过地址栏导航到音频目录，按空格预览音频文件，点击播放控制按钮并验证进度条和状态栏均显示'
   steps:
   - step_type: action
     action: keyboard_press
     key: ctrl+l
+    wait: 0.5
   - step_type: action
-    action: element_set_value
-    selector:
-      name: AddressBar
-      role: text
+    action: keyboard_type_text
     text: /usr/share/sounds
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: space
@@ -234,31 +301,33 @@ suites:
       name: PlayControlButton
       role: push button
     do: click
+    wait: 1.0
   - step_type: action
-    action: keyboard_press
-    key: escape
-  - step_type: action
-    action: keyboard_press
-    key: ctrl+l
-  - step_type: action
-    action: element_set_value
+    action: element_action
     selector:
-      name: AddressBar
-      role: text
-    text: /usr/share
+      name: ProgressSlider
+      role: slider
+    do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: enter
+    action: element_action
+    selector:
+      name: Slider_2
+      role: slider
+    do: focus
+    wait: 0.5
   - step_type: action
-    action: keyboard_press
-    key: space
-    wait: 2.0
-  assert_steps:
-  - step_type: assert
-    action: assert_element
+    action: element_action
     selector:
       name: StatusBar
       role: status bar
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
+  assert_steps:
   - step_type: assert
     action: assert_element
     selector:
@@ -274,22 +343,26 @@ suites:
     selector:
       name: Slider_2
       role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
 - id: suite_dde_file_manager_preview_006_s1
-  name: PDF加密预览翻页与未知文件信息显示
-  description: ''
+  name: 文档预览——翻页浏览缩略图并验证文件大小与类型信息
+  description: '导航到文档目录，预览文件，使用翻页按钮浏览缩略图列表，验证文件大小和类型标签显示后关闭预览'
   steps:
   - step_type: action
     action: keyboard_press
     key: ctrl+l
+    wait: 0.5
   - step_type: action
-    action: element_set_value
-    selector:
-      name: AddressBar
-      role: text
+    action: keyboard_type_text
     text: /usr/share/doc
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: space
@@ -297,16 +370,35 @@ suites:
   - step_type: action
     action: element_action
     selector:
+      name: View_ImageList
+      role: list
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: Nextbutton
       role: push button
     do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SizeLabel
+      role: label
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: TypeLabel
+      role: label
+    do: focus
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: escape
-  - step_type: action
-    action: keyboard_press
-    key: space
-    wait: 2.0
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -329,21 +421,20 @@ suites:
       name: TypeLabel
       role: label
 - id: suite_dde_file_manager_preview_007_s1
-  name: DCI图标预览主题切换
-  description: ''
+  name: DCI 图标预览——切换主题并验证主题下拉框状态
+  description: '导航到图标目录，预览 DCI 图标文件，点击主题下拉框切换主题并验证主题控件可用'
   steps:
   - step_type: action
     action: keyboard_press
     key: ctrl+l
+    wait: 0.5
   - step_type: action
-    action: element_set_value
-    selector:
-      name: AddressBar
-      role: text
+    action: keyboard_type_text
     text: /usr/share/dsg/icons
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 1.0
   - step_type: action
     action: keyboard_press
     key: space
@@ -354,12 +445,15 @@ suites:
       name: ThemeCom
       role: combo box
     do: click
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: down
+    wait: 0.5
   - step_type: action
     action: keyboard_press
     key: enter
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element

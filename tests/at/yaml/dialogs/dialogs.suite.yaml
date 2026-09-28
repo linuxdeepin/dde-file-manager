@@ -10,8 +10,8 @@ setup:
   wait: 3.0
 suites:
 - id: suite_dialogs_001_s1
-  name: 网络挂载认证对话框
-  description: ''
+  name: 网络挂载认证对话框——匿名与注册用户登录
+  description: '在网络挂载认证对话框中切换匿名和注册用户模式，输入用户名和域名，勾选记住密码并验证密码按钮组可用'
   steps:
   - step_type: action
     action: element_action
@@ -20,6 +20,13 @@ suites:
       role: push button
     do: click
     wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: AnonymousButton
+      role: push button
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
@@ -45,14 +52,52 @@ suites:
       name: PasswordCheckBox
       role: check box
     do: click
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordButtonGroup
+      role: panel
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
+      name: AnonymousButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RegisterButton
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
       name: PasswordButtonGroup
+      role: panel
 - id: suite_dialogs_002_s1
-  name: 文件冲突确认对话框
-  description: ''
+  name: 文件冲突确认对话框——跳过与替换操作
+  description: '在文件冲突确认对话框中勾选不再询问，验证共存、跳过、删除和替换按钮可用'
   steps:
   - step_type: action
     action: element_action
@@ -67,86 +112,170 @@ suites:
       name: ChkboxNotAskAgain
       role: check box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: BtnCoexist
       role: push button
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: BtnSkip
       role: push button
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: BtnDelete
+      role: push button
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnReplace
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: focus
+    wait: 0.5
   assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnSkip
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+      role: push button
   - step_type: assert
     action: assert_element
     selector:
       name: BtnReplace
       role: push button
 - id: suite_dialogs_003_s1
-  name: 批量操作进度对话框
-  description: ''
+  name: 批量操作进度对话框——暂停与停止任务
+  description: '在批量操作进度对话框中验证任务列表，点击暂停按钮暂停任务后再次点击恢复，验证停止按钮可用'
   steps:
   - step_type: action
     action: element_action
     selector:
       name: TaskListWidget
+      role: list
     do: focus
     wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: BtnPause
+      role: push button
     do: click
     wait: 1.0
   - step_type: action
     action: element_action
     selector:
       name: BtnPause
+      role: push button
     do: click
     wait: 1.0
   - step_type: action
     action: element_action
     selector:
+      name: BtnPause
+      role: push button
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
       name: BtnStop
+      role: push button
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnStop
+      role: push button
+    do: focus
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
       name: TaskListWidget
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnPause
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnStop
+      role: push button
 - id: suite_dialogs_004_s1
-  name: SMB共享密码设置对话框
-  description: ''
+  name: SMB共享密码设置对话框——输入并确认共享密码
+  description: '在SMB共享密码设置对话框中输入共享密码并验证密码输入框可用'
   steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordEdit_2
+      role: text
+    do: focus
+    wait: 1.0
   - step_type: action
     action: element_set_value
     selector:
       name: PasswordEdit_2
+      role: text
     text: SharePassw0rd!
   - step_type: action
     action: element_action
     selector:
       name: PasswordEdit_2
-    do: focus
-    wait: 1.0
+      role: text
+    do: point
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: PasswordEdit_2
-    do: point
+      role: text
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: escape
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
       name: PasswordEdit_2
+      role: text
 teardown:
 - action: session_stop
