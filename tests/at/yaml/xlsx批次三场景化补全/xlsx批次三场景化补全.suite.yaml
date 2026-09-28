@@ -1,0 +1,62 @@
+name: xlsx批次三场景化补全_suite
+app: dde-file-manager
+description: >-
+  批次三 P4 主题场景化补全——将外部交互商店应用安装后桌面图标与功能（1 个原始 ID）
+  从入口烟测强化为真实功能操作+业务结果断言。模拟应用商店安装后生成 .desktop 文件，
+  验证桌面图标文件字段完整性与功能可达性。
+module: xlsx批次三场景化补全
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+# ── 外部交互：商店应用安装后桌面图标与功能（1 个 ID）──
+# 1806385
+- id: case_1806385
+  name: 【外部交互】商店应用安装后桌面图标与功能
+  description: 'xlsx 用例编号: 1806385；模拟应用商店安装福昕 PDF 网页版后生成 .desktop 文件，验证桌面图标文件字段完整性与功能可达性。'
+  tags:
+  - P4
+  - strict
+  vars: {xlsx_id: '1806385'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806385; rm -rf "$base"; mkdir -p "$base";
+      printf "[Desktop Entry]\nName=FoxitPDF\nName[zh_CN]=福昕PDF网页版\nExec=/usr/bin/xdg-open https://foxit.com\nIcon=foxit-pdf\nType=Application\nCategories=Office;\nComment=Foxit PDF Web Edition\n" > "$base/foxitpdf.desktop";
+      rm -f "$base/PASS_1806385";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1806385.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: foxitpdf
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次三场景化补全/assert_batch3.py
+      /tmp/dde-at-fixtures/case_1806385/PASS_1806385
+      desktop_file
+      /tmp/dde-at-fixtures/case_1806385/foxitpdf.desktop
+    wait: 1.0
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次三场景化补全/assert_batch3.py
+      /tmp/dde-at-fixtures/case_1806385/PASS_1806385
+      desktop_fields
+      /tmp/dde-at-fixtures/case_1806385/foxitpdf.desktop
+      Name:FoxitPDF
+      Type:Application
+      Icon:foxit-pdf
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806385/PASS_1806385
