@@ -527,6 +527,49 @@ TEST_F(AbstractIndexControllerImpl, KeepBackendAlive_Enabled_DoesNotReactivate)
 }
 
 // ---------------------------------------------------------------------------
+// service watcher handlers
+// ---------------------------------------------------------------------------
+
+TEST_F(AbstractIndexControllerImpl, ServiceRegistered_ConfigEnabled_ResetsStaleStateAndActivates)
+{
+    controller = new AbstractIndexController(buildTestDescriptor());
+    controller->interface.reset(new OrgDeepinFilemanagerTextIndexInterface(
+            QStringLiteral("org.deepin.Filemanager.TextIndex"),
+            QStringLiteral("/org/deepin/Filemanager/TextIndex"),
+            QDBusConnection(QStringLiteral("test")),
+            controller));
+    controller->isConfigEnabled = true;
+    // 模拟服务崩溃时遗留的 stale Running 状态
+    controller->currentState = AbstractIndexController::State::Running;
+
+    controller->handleServiceRegistered();
+
+    EXPECT_EQ(controller->currentState, AbstractIndexController::State::Idle);
+}
+
+TEST_F(AbstractIndexControllerImpl, ServiceRegistered_ConfigDisabled_KeepsDisabledState)
+{
+    controller = new AbstractIndexController(buildTestDescriptor());
+    controller->isConfigEnabled = false;
+    controller->currentState = AbstractIndexController::State::Disabled;
+
+    controller->handleServiceRegistered();
+
+    EXPECT_EQ(controller->currentState, AbstractIndexController::State::Disabled);
+}
+
+TEST_F(AbstractIndexControllerImpl, ServiceUnregistered_ResetsStateToDisabled)
+{
+    controller = new AbstractIndexController(buildTestDescriptor());
+    controller->isConfigEnabled = true;
+    controller->currentState = AbstractIndexController::State::Running;
+
+    controller->handleServiceUnregistered();
+
+    EXPECT_EQ(controller->currentState, AbstractIndexController::State::Disabled);
+}
+
+// ---------------------------------------------------------------------------
 // startIndexTask
 // ---------------------------------------------------------------------------
 
