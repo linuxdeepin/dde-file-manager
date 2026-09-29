@@ -32,7 +32,7 @@ UsbRepairDBus::UsbRepairDBus(const char *name, QObject *parent)
     QDBusConnection::RegisterOptions opts =
             QDBusConnection::ExportAllSlots | QDBusConnection::ExportAllSignals;
 
-    // NOTE: Use SystemBus (not SessionBus like textindex) because:
+    // NOTE: Use SystemBus because:
     // - fsck requires root privileges
     // - udisks2 events are on system bus
     QDBusConnection bus = QDBusConnection::connectToBus(QDBusConnection::SystemBus, QString(name));
