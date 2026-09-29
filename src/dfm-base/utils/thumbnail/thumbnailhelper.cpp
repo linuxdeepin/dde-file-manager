@@ -52,6 +52,9 @@ void ThumbnailHelper::initMimeTypeSupport()
 
     // === Document types ===
     mimeTypeSupportStrategy.insert(Mime::kTypeAppPdf, Strategy::kCheckDocument);
+    // OFD is a zip sub-type, so it cannot inherit the document strategy
+    // through the pdf parent-type path and must be listed explicitly.
+    mimeTypeSupportStrategy.insert(Mime::kTypeAppOfd, Strategy::kCheckDocument);
     mimeTypeSupportStrategy.insert(Mime::kTypeAppCRRMedia, Strategy::kCheckDocument);
     mimeTypeSupportStrategy.insert(Mime::kTypeAppMxf, Strategy::kCheckDocument);
     mimeTypeSupportStrategy.insert(Mime::kTypeAppPptx, Strategy::kCheckDocument);
@@ -67,6 +70,7 @@ void ThumbnailHelper::initSizeLimit()
     sizeLimitHash.reserve(28);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeTextPlain), 1024 * 1024);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppPdf), INT64_MAX);
+    sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppOfd), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVRRMedia), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppVMAsf), INT64_MAX);
     sizeLimitHash.insert(mimeDatabase.mimeTypeForName(DFMGLOBAL_NAMESPACE::Mime::kTypeAppMxf), INT64_MAX);
