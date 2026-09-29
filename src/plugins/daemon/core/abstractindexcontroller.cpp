@@ -13,6 +13,7 @@
 #include <QDBusPendingCallWatcher>
 #include <QDBusPendingReply>
 #include <QDBusReply>
+#include <QDBusServiceWatcher>
 #include <QDir>
 #include <QTimer>
 
@@ -48,6 +49,20 @@ void AbstractIndexController::initialize()
 
     keepAliveTimer->setInterval(5 * 60 * 1000);
     updateKeepAliveTimer();
+
+    // 监听索引服务的 DBus 注册/注销：服务异常退出后重新上线时，立即按 dconfig
+    // 开关恢复 SetEnabled，而不是等待 5 分钟一次的保活轮询。只恢复监控使能与
+    // 状态机，不主动触发重索引——停机期间丢失变更的补偿由服务端自愈机制决定
+    // （filename 索引有哨兵恢复；全文/OCR 索引设计上接受 Clean 状态的停机窗口）
+    serviceWatcher = new QDBusServiceWatcher(m_descriptor.dbusServiceName,
+                                             QDBusConnection::sessionBus(),
+                                             QDBusServiceWatcher::WatchForRegistration
+                                                     | QDBusServiceWatcher::WatchForUnregistration,
+                                             this);
+    connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered,
+            this, &AbstractIndexController::handleServiceRegistered);
+    connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered,
+            this, &AbstractIndexController::handleServiceUnregistered);
 
     if (isConfigEnabled) {
         activeBackend(true);
@@ -252,6 +267,29 @@ void AbstractIndexController::handleConfigChanged(const QString &config, const Q
             handler->second(isConfigEnabled);
         }
     }
+}
+
+void AbstractIndexController::handleServiceRegistered()
+{
+    if (!isConfigEnabled) {
+        fmDebug() << "[" << m_descriptor.controllerName
+                  << "] Index service registered but config disabled, keep backend disabled";
+        return;
+    }
+
+    fmInfo() << "[" << m_descriptor.controllerName << "] Index service registered, restoring enabled state";
+    // 旧进程遗留的状态（如 Running）已失效：任务随进程消亡，TaskFinished 不会再到达。
+    // 仅复位状态机，不触发 Idle handler 的索引库检查/重索引。
+    updateState(State::Idle);
+    activeBackend(true);
+}
+
+void AbstractIndexController::handleServiceUnregistered()
+{
+    fmWarning() << "[" << m_descriptor.controllerName << "] Index service unregistered from DBus";
+    // 服务消失后任务不可能再完成，复位状态机；重新拉起由 systemd Restart /
+    // DBus activation（保活轮询的调用即可触发）完成，注册后走恢复流程。
+    updateState(State::Disabled);
 }
 
 void AbstractIndexController::activeBackend(bool isInit)

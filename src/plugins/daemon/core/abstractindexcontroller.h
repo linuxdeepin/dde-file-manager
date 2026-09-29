@@ -13,6 +13,7 @@
 #include <QVariantMap>
 
 class QDBusAbstractInterface;
+class QDBusServiceWatcher;
 
 DAEMONPCORE_BEGIN_NAMESPACE
 
@@ -49,6 +50,8 @@ private:
     void startIndexTask(bool isCreate);
     void updateState(State newState);
     void handleConfigChanged(const QString &config, const QString &key);
+    void handleServiceRegistered();
+    void handleServiceUnregistered();
     void activeBackend(bool isInit = false);
     void keepBackendAlive();
     bool isBackendAvaliable();
@@ -61,6 +64,7 @@ private:
     State currentState { State::Disabled };
     bool isConfigEnabled { false };
     QTimer *keepAliveTimer { nullptr };
+    QDBusServiceWatcher *serviceWatcher { nullptr };
     std::map<State, StateHandler> stateHandlers;
     std::map<State, TaskFinishHandler> taskFinishHandlers;
 };
