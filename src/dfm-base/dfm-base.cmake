@@ -132,5 +132,8 @@ INSTALL_DCONFIG("org.deepin.dde.file-manager.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.plugins.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.view.json")
 INSTALL_DCONFIG("org.deepin.dde.file-manager.animation.json")
+# textindex dconfig schema stays owned by dde-file-manager permanently (C5);
+# the index service itself now lives in deepin-anything-index.
+INSTALL_DCONFIG("org.deepin.dde.file-manager.textindex.json")
 
 

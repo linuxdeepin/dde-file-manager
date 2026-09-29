@@ -75,10 +75,10 @@ cd "${BUILD_DIR}"
 # Use offscreen Qt platform to avoid display dependencies.
 export QT_QPA_PLATFORM="offscreen"
 
-# Ensure locally-built libraries (dfm6-base, extractor) are found at runtime
+# Ensure locally-built libraries (dfm6-base) are found at runtime
 # ahead of older system-installed copies, preventing symbol-resolution
-# failures (e.g. ut-textindex needing newer dfm6-base symbols).
-export LD_LIBRARY_PATH="${BUILD_DIR}/src/dfm-base:${BUILD_DIR}/src/apps/dde-file-manager-extractor${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
+# failures.
+export LD_LIBRARY_PATH="${BUILD_DIR}/src/dfm-base${LD_LIBRARY_PATH:+:${LD_LIBRARY_PATH}}"
 
 # Discover test binaries
 GTEST_RESULTS_DIR="${BUILD_DIR}/gtest-results"
