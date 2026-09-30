@@ -303,7 +303,7 @@ QMap<QString, QString> UniversalUtils::getKernelParameters()
     for (const QByteArray &onePara : paraList) {
         int equalsIdx = onePara.indexOf('=');
         QString key = equalsIdx == -1 ? onePara.trimmed() : onePara.left(equalsIdx).trimmed();
-        QString value = equalsIdx == -1 ? QString() : onePara.right(equalsIdx).trimmed();
+        QString value = equalsIdx == -1 ? QString() : onePara.mid(equalsIdx + 1).trimmed();
         result.insert(key, value);
     }
 
