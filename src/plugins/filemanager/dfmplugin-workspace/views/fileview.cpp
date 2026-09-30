@@ -146,6 +146,14 @@ FileView::~FileView()
     if (selectionModel()) {
         disconnect(selectionModel(), nullptr, this, nullptr);
         selectionModel()->clear();
+        // Detach the selection model from the view model before the model is
+        // deleted (step 5). QItemSelectionModelPrivate::model is a raw pointer
+        // (Q_OBJECT_COMPAT_PROPERTY, not QPointer); if the destroyed() ->
+        // modelDestroyed() callback is dropped during the complex teardown
+        // sequence (step 4 replaces the selection model), d->model stays
+        // dangling and ~FileSelectionModel() -> setModel(nullptr) walks stale
+        // QPersistentModelIndex data, crashing in removePersistentIndexData().
+        selectionModel()->setModel(nullptr);
     }
     setCurrentIndex(QModelIndex());
 
