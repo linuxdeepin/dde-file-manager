@@ -55,6 +55,7 @@ public:
 private:
     bool shouldHandleIndexEvent(const QString &path, AbstractIndexClient::TaskType type) const;
     void applyServerStatus(const QString &state);
+    void applyFailedStatus();
     void applyWaitingStatus(IndexStatusCheckBox::Status status);
 
 private:

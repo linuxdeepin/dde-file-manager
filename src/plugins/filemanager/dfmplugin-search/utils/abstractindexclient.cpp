@@ -10,6 +10,7 @@
 #include <QDBusConnection>
 #include <QDBusConnectionInterface>
 #include <QDBusPendingReply>
+#include <QDBusServiceWatcher>
 #include <QMap>
 #include <QThread>
 
@@ -20,6 +21,23 @@ AbstractIndexClient::AbstractIndexClient(IndexClientDescriptor descriptor, QObje
     : QObject(parent),
       m_descriptor(std::move(descriptor))
 {
+    // 事件驱动监测后端服务注册/注销（与 daemon-core 插件同构）：服务退出时立即
+    // 通知界面显示错误状态而不是转圈等待，重新上线时触发重查询自愈
+    serviceWatcher = new QDBusServiceWatcher(m_descriptor.dbusServiceName,
+                                             QDBusConnection::sessionBus(),
+                                             QDBusServiceWatcher::WatchForRegistration
+                                                     | QDBusServiceWatcher::WatchForUnregistration,
+                                             this);
+    connect(serviceWatcher, &QDBusServiceWatcher::serviceRegistered, this, [this]() {
+        fmInfo() << "[" << m_descriptor.clientName << "] backend service registered";
+        emit serviceAvailabilityChanged(true);
+    });
+    connect(serviceWatcher, &QDBusServiceWatcher::serviceUnregistered, this, [this]() {
+        fmWarning() << "[" << m_descriptor.clientName << "] backend service unregistered";
+        // 旧代理随服务消亡：丢弃以触发下次调用时重新拉起服务并重建
+        interface.reset();
+        emit serviceAvailabilityChanged(false);
+    });
 }
 
 AbstractIndexClient::~AbstractIndexClient() = default;

@@ -9,10 +9,12 @@
 //   ctor {lambda(Qt::CheckState)#1} ..................... CheckStateChanged_CheckedQueriesIndex_* / *_Unchecked_*
 //   ctor {lambda(QString)#2 resetRequested} ............. ResetRequested_Manual_ForcesUpdate /
 //                                                          ResetRequested_Other_BypassesEnv
-//   ctor {lambda(QString,QString,bool)#3} ................ IndexStatusResult_Failure_Ignored /
+//   ctor {lambda(QString,QString,bool)#3} ................ IndexStatusResult_Failure_ShowsFailedStatus /
+//                                                          IndexStatusResult_Failure_Unchecked_Ignored /
 //                                                          IndexStatusResult_Success_AppliesState (via applyServerStatus)
 //   ctor {lambda(QString,QString)#4} ..................... IndexStatusChanged_Idle_CompletesAndQueriesTime
 //   ctor {lambda(QString,bool)#5} ......................... LastUpdateTimeResult_* (2 cases)
+//   ctor {lambda(bool)#6} ................................. ServiceAvailability_* (4 cases)
 //   syncCheckedState(bool) ................................ SyncCheckedState_TogglesView
 //   connectToBackend() .................................... ConnectToBackend_QueriesServiceStatus
 //   connectToBackend(){lambda#2..#4} ...................... TaskSignals_* (progress/finished/failed)
@@ -174,7 +176,7 @@ TEST_F(UT_IndexStatusControllerCov, ResetRequested_Other_BypassesEnv)
     EXPECT_EQ(forceUpdateCalls, 0);
 }
 
-TEST_F(UT_IndexStatusControllerCov, IndexStatusResult_Failure_Ignored)
+TEST_F(UT_IndexStatusControllerCov, IndexStatusResult_Failure_ShowsFailedStatus)
 {
     // Arrange
     view->setChecked(true);
@@ -184,7 +186,21 @@ TEST_F(UT_IndexStatusControllerCov, IndexStatusResult_Failure_Ignored)
     emit client->indexStatusResult(QString(), QString(), false);
 
     // Assert
-    EXPECT_EQ(view->status(), IndexStatusCheckBox::Status::Indexing);   // untouched
+    EXPECT_EQ(view->status(), IndexStatusCheckBox::Status::Failed);   // spinner stopped
+    EXPECT_EQ(getLastUpdateTimeCalls, 0);
+}
+
+TEST_F(UT_IndexStatusControllerCov, IndexStatusResult_Failure_Unchecked_Ignored)
+{
+    // Arrange
+    view->setChecked(false);
+    view->setStatus(IndexStatusCheckBox::Status::Inactive);
+
+    // Act
+    emit client->indexStatusResult(QString(), QString(), false);
+
+    // Assert
+    EXPECT_EQ(view->status(), IndexStatusCheckBox::Status::Inactive);   // untouched
     EXPECT_EQ(getLastUpdateTimeCalls, 0);
 }
 
@@ -240,6 +256,61 @@ TEST_F(UT_IndexStatusControllerCov, LastUpdateTimeResult_EmptyTime_FallsToWarnin
     // Assert
     EXPECT_EQ(view->status(), IndexStatusCheckBox::Status::Failed);   // untouched
     EXPECT_EQ(getLastUpdateTimeCalls, 0);
+}
+
+TEST_F(UT_IndexStatusControllerCov, ServiceUnavailable_Indexing_ShowsFailedStatus)
+{
+    // Arrange
+    view->setChecked(true);
+    view->setStatus(IndexStatusCheckBox::Status::Indexing);
+
+    // Act
+    emit client->serviceAvailabilityChanged(false);
+
+    // Assert
+    EXPECT_EQ(view->status(), IndexStatusCheckBox::Status::Failed);   // spinner stopped
+    EXPECT_EQ(getLastUpdateTimeCalls, 0);
+}
+
+TEST_F(UT_IndexStatusControllerCov, ServiceAvailable_RequeriesIndexStatus)
+{
+    // Arrange
+    view->setChecked(true);
+    const int baseline = getIndexStatusCalls;
+
+    // Act
+    emit client->serviceAvailabilityChanged(true);
+
+    // Assert
+    EXPECT_EQ(getIndexStatusCalls - baseline, 1);   // service is back: re-query
+    EXPECT_EQ(getLastUpdateTimeCalls, 0);
+}
+
+TEST_F(UT_IndexStatusControllerCov, ServiceUnavailable_Completed_ShowsFailedStatus)
+{
+    // Arrange
+    view->setChecked(true);
+    view->setStatus(IndexStatusCheckBox::Status::Completed);
+
+    // Act
+    emit client->serviceAvailabilityChanged(false);
+
+    // Assert
+    EXPECT_EQ(view->status(), IndexStatusCheckBox::Status::Failed);   // one-vote veto: no green lie
+}
+
+TEST_F(UT_IndexStatusControllerCov, ServiceAvailability_Unchecked_Ignored)
+{
+    // Arrange
+    view->setChecked(false);
+    view->setStatus(IndexStatusCheckBox::Status::Inactive);
+
+    // Act
+    emit client->serviceAvailabilityChanged(false);
+
+    // Assert
+    EXPECT_EQ(view->status(), IndexStatusCheckBox::Status::Inactive);
+    EXPECT_EQ(getIndexStatusCalls, 0);
 }
 
 // ---------- sync / backend wiring ----------
