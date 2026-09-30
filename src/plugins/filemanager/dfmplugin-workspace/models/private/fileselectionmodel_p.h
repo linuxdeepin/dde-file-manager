@@ -23,8 +23,8 @@ public:
 
     mutable QModelIndexList selectedList;
     QItemSelection selection;
-    QModelIndex firstSelectedIndex;
-    QModelIndex lastSelectedIndex;
+    QPersistentModelIndex firstSelectedIndex;
+    QPersistentModelIndex lastSelectedIndex;
     QItemSelectionModel::SelectionFlags currentCommand;
     QTimer timer;
 };
