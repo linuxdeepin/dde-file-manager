@@ -23,6 +23,8 @@
 //   handleGetLastUpdateTimeReply(){lambda#1} ...... same
 //   getIndexStatus(){lambda#1/#1::lambda#1} ....... GetIndexStatus_WithInterface_EmitsFailure
 //   onDBusIndexStatusChanged ...................... OnDBusIndexStatusChanged_EmitsIndexStatusChanged
+//   ctor {serviceWatcher lambdas} ................. ServiceWatcher_RegisterEmitsAvailable /
+//                                                   ServiceWatcher_UnregisterEmitsUnavailableAndDropsInterface
 // The client gets a real QDBusInterface pointing at an unregistered session-bus
 // service; QDBusAbstractInterface::isValid is stubbed true so ensureInterface()
 // succeeds and the async paths run (the bus then answers with an error).
@@ -119,6 +121,7 @@ protected:
     {
         const QString service = QStringLiteral("com.deepin.covtest.Reply%1").arg(QCoreApplication::applicationPid());
         const QString path = QStringLiteral("/com/deepin/covtest/Reply");
+        realService = service;
 
         serverHost = new QObject();
         new ReplyServerAdaptor(serverHost);
@@ -155,6 +158,7 @@ protected:
     stub_ext::StubExt stub;
     AbstractIndexClient *client = nullptr;
     QObject *serverHost = nullptr;
+    QString realService;
 };
 
 // ---------- ensureInterface ----------
@@ -447,6 +451,44 @@ TEST_F(UT_AbstractIndexClientCov, CheckHasRunningRootTask_RealBackend_EmitsValue
     const auto args = spy.takeFirst();
     EXPECT_TRUE(args.at(0).toBool());
     EXPECT_TRUE(args.at(1).toBool());
+}
+
+// ---------- service availability watcher ----------
+
+TEST_F(UT_AbstractIndexClientCov, ServiceWatcher_UnregisterEmitsUnavailableAndDropsInterface)
+{
+    // Arrange
+    makeRealServiceClient();
+    makeInterfaceValid();
+    ASSERT_TRUE(client->ensureInterface());
+    QSignalSpy spy(client, &AbstractIndexClient::serviceAvailabilityChanged);
+
+    // Act
+    ASSERT_TRUE(QDBusConnection::sessionBus().unregisterService(realService));
+    pumpEvents();
+
+    // Assert
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_FALSE(spy.takeFirst().at(0).toBool());
+    EXPECT_EQ(client->interface.get(), nullptr);   // stale proxy dropped
+}
+
+TEST_F(UT_AbstractIndexClientCov, ServiceWatcher_RegisterEmitsAvailable)
+{
+    // Arrange
+    makeRealServiceClient();
+    QSignalSpy spy(client, &AbstractIndexClient::serviceAvailabilityChanged);
+
+    // Act
+    ASSERT_TRUE(QDBusConnection::sessionBus().unregisterService(realService));
+    pumpEvents();
+    ASSERT_EQ(spy.count(), 1);
+    ASSERT_TRUE(QDBusConnection::sessionBus().registerService(realService));
+    pumpEvents();
+
+    // Assert
+    ASSERT_EQ(spy.count(), 2);
+    EXPECT_TRUE(spy.takeLast().at(0).toBool());
 }
 
 // ---------- type mapping / DBus slots ----------

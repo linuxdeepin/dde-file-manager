@@ -13,6 +13,7 @@
 #include <memory>
 
 class QDBusAbstractInterface;
+class QDBusServiceWatcher;
 
 DPSEARCH_BEGIN_NAMESPACE
 
@@ -63,6 +64,7 @@ Q_SIGNALS:
     void lastUpdateTimeResult(const QString &time, bool success);
     void indexStatusResult(const QString &state, const QString &grade, bool success);
     void indexStatusChanged(const QString &state, const QString &grade);
+    void serviceAvailabilityChanged(bool available);
 
 protected:
     bool ensureInterface();
@@ -84,6 +86,7 @@ private Q_SLOTS:
 private:
     IndexClientDescriptor m_descriptor;
     std::unique_ptr<QDBusAbstractInterface> interface;
+    QDBusServiceWatcher *serviceWatcher { nullptr };
 };
 
 DPSEARCH_END_NAMESPACE

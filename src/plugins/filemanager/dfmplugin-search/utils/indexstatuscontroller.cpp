@@ -44,6 +44,9 @@ IndexStatusController::IndexStatusController(IndexStatusCheckBox *view,
     connect(m_client, &AbstractIndexClient::indexStatusResult, this, [this](const QString &state, const QString &grade, bool success) {
         if (!success) {
             fmWarning() << "[" << m_options.logTag << "] Failed to get index status";
+            // Covers the case the watcher cannot see: service never registered
+            // / activation failed — only a failed call reveals it
+            applyFailedStatus();
             return;
         }
         applyServerStatus(state);
@@ -52,6 +55,21 @@ IndexStatusController::IndexStatusController(IndexStatusCheckBox *view,
     // Server-driven status: real-time changes
     connect(m_client, &AbstractIndexClient::indexStatusChanged, this, [this](const QString &state, const QString &grade) {
         applyServerStatus(state);
+    });
+
+    // Backend availability is a "one-vote veto": once the service is gone the index
+    // can no longer make progress, so any checked state must show the failure
+    // immediately (Idle's green "completed" would otherwise lie); when the service
+    // is back, re-query the authoritative state
+    connect(m_client, &AbstractIndexClient::serviceAvailabilityChanged, this, [this](bool available) {
+        if (!m_view->isChecked())
+            return;
+
+        if (available) {
+            m_client->getIndexStatus();
+        } else {
+            applyFailedStatus();
+        }
     });
 
     connect(m_client, &AbstractIndexClient::lastUpdateTimeResult, this, [this](const QString &time, bool success) {
@@ -154,6 +172,15 @@ void IndexStatusController::applyServerStatus(const QString &state)
     } else {
         fmWarning() << "[" << m_options.logTag << "] unknown server status:" << state;
     }
+}
+
+void IndexStatusController::applyFailedStatus()
+{
+    if (!m_view->isChecked())
+        return;
+
+    m_view->setStatus(IndexStatusCheckBox::Status::Failed);
+    m_view->setFailedText(m_options.failedMainText, m_options.failedLinkText, QStringLiteral("manual"));
 }
 
 void IndexStatusController::applyWaitingStatus(IndexStatusCheckBox::Status status)
