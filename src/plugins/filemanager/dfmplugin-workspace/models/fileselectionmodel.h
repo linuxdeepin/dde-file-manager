@@ -33,7 +33,12 @@ public:
     void select(const QItemSelection &selection, QItemSelectionModel::SelectionFlags command) override;
     void clear() override;
 
+    void setModel(QAbstractItemModel *model);
+
 private:
+    void onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last);
+    void connectModel(QAbstractItemModel *model);
+
     QScopedPointer<FileSelectionModelPrivate> d;
     Q_DECLARE_PRIVATE_D(d, FileSelectionModel)
 };

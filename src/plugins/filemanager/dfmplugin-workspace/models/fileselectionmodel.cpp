@@ -11,12 +11,34 @@ FileSelectionModel::FileSelectionModel(QAbstractItemModel *model)
     : QItemSelectionModel(model),
       d(new FileSelectionModelPrivate(this))
 {
+    connectModel(model);
 }
 
 FileSelectionModel::FileSelectionModel(QAbstractItemModel *model, QObject *parent)
     : QItemSelectionModel(model, parent),
       d(new FileSelectionModelPrivate(this))
 {
+    connectModel(model);
+}
+
+void FileSelectionModel::setModel(QAbstractItemModel *model)
+{
+    if (auto *oldModel = this->model()) {
+        disconnect(oldModel, &QAbstractItemModel::rowsAboutToBeRemoved,
+                   this, &FileSelectionModel::onRowsAboutToBeRemoved);
+    }
+
+    QItemSelectionModel::setModel(model);
+
+    connectModel(model);
+}
+
+void FileSelectionModel::connectModel(QAbstractItemModel *model)
+{
+    if (model) {
+        connect(model, &QAbstractItemModel::rowsAboutToBeRemoved,
+                this, &FileSelectionModel::onRowsAboutToBeRemoved);
+    }
 }
 
 FileSelectionModel::~FileSelectionModel()
@@ -120,8 +142,8 @@ void FileSelectionModel::select(const QItemSelection &selection, QItemSelectionM
         d->selectedList.clear();
 
     if (selection.isEmpty()) {
-        d->firstSelectedIndex = QModelIndex();
-        d->lastSelectedIndex = QModelIndex();
+        d->firstSelectedIndex = QPersistentModelIndex();
+        d->lastSelectedIndex = QPersistentModelIndex();
     } else {
         d->firstSelectedIndex = selection.first().topLeft();
         d->lastSelectedIndex = selection.last().bottomRight();
@@ -144,8 +166,27 @@ void FileSelectionModel::clear()
     d->timer.stop();
     d->selectedList.clear();
     d->selection.clear();
-    d->firstSelectedIndex = QModelIndex();
-    d->lastSelectedIndex = QModelIndex();
+    d->firstSelectedIndex = QPersistentModelIndex();
+    d->lastSelectedIndex = QPersistentModelIndex();
 
     QItemSelectionModel::clear();
+}
+
+void FileSelectionModel::onRowsAboutToBeRemoved(const QModelIndex &parent, int first, int last)
+{
+    Q_UNUSED(parent)
+    Q_UNUSED(first)
+    Q_UNUSED(last)
+
+    // 行删除前停止延迟定时器，丢弃待定选择（行即将删除，待定选择大概率已过期）
+    if (d->timer.isActive()) {
+        d->timer.stop();
+    }
+
+    // 清空全部缓存状态，使 selectedIndexes() 等方法回退到基类 QItemSelectionModel 的正确调整状态
+    d->selectedList.clear();
+    d->selection.clear();
+    d->firstSelectedIndex = QPersistentModelIndex();
+    d->lastSelectedIndex = QPersistentModelIndex();
+    d->currentCommand = QItemSelectionModel::SelectionFlags();
 }
