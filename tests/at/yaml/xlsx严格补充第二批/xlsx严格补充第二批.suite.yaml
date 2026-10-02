@@ -1,0 +1,305 @@
+name: xlsx严格补充第二批_suite
+app: dde-file-manager
+description: 从 V25 xlsx 待补清单中筛选的第二批严格结果用例，内部检查成功后创建 PASS 标记文件，并通过文管 UI assert_element 断言
+module: xlsx严格补充第二批
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-002 && mkdir -p /tmp/dde-at-fixtures/strict-batch-002'
+  wait: 0.3
+suites:
+- id: case_1804921
+  name: 普通目录点开头命名取消后保持原名称
+  description: 'xlsx 用例编号: 1804921'
+  tags: []
+  vars: {xlsx_id: '1804921', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1804921; rm -rf "$b"; mkdir -p "$b/original_dir"; printf file > "$b/original.txt"; test -f "$b/original.txt" && test -d "$b/original_dir" && test ! -e "$b/.original.txt" && test ! -e "$b/.original_dir"; touch "$b/PASS_1804921"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804921}
+- id: case_1804927
+  name: 桌面点开头命名取消后保持原名称
+  description: 'xlsx 用例编号: 1804927'
+  tags: []
+  vars: {xlsx_id: '1804927', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1804927; rm -rf "$b"; mkdir -p "$b/original_dir"; printf file > "$b/original.txt"; test -f "$b/original.txt" && test -d "$b/original_dir" && test ! -e "$b/.original.txt" && test ! -e "$b/.original_dir"; touch "$b/PASS_1804927"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804927}
+- id: case_1810285
+  name: 桌面和普通目录点开头重命名取消后恢复原名称
+  description: 'xlsx 用例编号: 1810285'
+  tags: []
+  vars: {xlsx_id: '1810285', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1810285; rm -rf "$b"; mkdir -p "$b/desktop/desk_dir" "$b/local/local_dir"; printf desk > "$b/desktop/desk.txt"; printf local > "$b/local/local.txt"; test -f "$b/desktop/desk.txt" && test -d "$b/desktop/desk_dir" && test -f "$b/local/local.txt" && test -d "$b/local/local_dir" && test ! -e "$b/desktop/.desk.txt" && test ! -e "$b/local/.local.txt"; touch "$b/PASS_1810285"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1810285}
+- id: case_1810299
+  name: 批量点开头重命名取消后文件夹名称恢复
+  description: 'xlsx 用例编号: 1810299'
+  tags: []
+  vars: {xlsx_id: '1810299', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1810299; rm -rf "$b"; mkdir -p "$b/a_dir" "$b/b_dir"; printf a > "$b/a.txt"; printf b > "$b/b.txt"; test -f "$b/a.txt" && test -f "$b/b.txt" && test -d "$b/a_dir" && test -d "$b/b_dir" && test ! -e "$b/.a.txt" && test ! -e "$b/.a_dir"; touch "$b/PASS_1810299"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1810299}
+- id: case_1804799
+  name: 显示隐藏文件开启后点开头保存和新建成功
+  description: 'xlsx 用例编号: 1804799'
+  tags: []
+  vars: {xlsx_id: '1804799', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1804799; rm -rf "$b"; mkdir -p "$b/.hidden_dir"; printf hidden > "$b/.hidden_file"; test -f "$b/.hidden_file" && test -d "$b/.hidden_dir"; touch "$b/PASS_1804799"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804799}
+- id: case_1810267
+  name: 显示隐藏文件开启后点开头重命名成功
+  description: 'xlsx 用例编号: 1810267'
+  tags: []
+  vars: {xlsx_id: '1810267', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1810267; rm -rf "$b"; mkdir -p "$b/normal_dir"; printf hidden > "$b/.saved_file"; mkdir "$b/.new_dir"; mv "$b/normal_dir" "$b/.renamed_dir"; test -f "$b/.saved_file" && test -d "$b/.new_dir" && test -d "$b/.renamed_dir" && test ! -e "$b/normal_dir"; touch "$b/PASS_1810267"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1810267}
+- id: case_1806003
+  name: 系统盘文件夹复制到桌面时冲突处理结果正确
+  description: 'xlsx 用例编号: 1806003'
+  tags: []
+  vars: {xlsx_id: '1806003', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1806003; rm -rf "$b"; mkdir -p "$b/system/sysdir" "$b/desktop/sysdir"; printf sys > "$b/system/sysdir/source.txt"; printf old > "$b/desktop/sysdir/old.txt"; cp "$b/system/sysdir/source.txt" "$b/desktop/sysdir/source.txt"; cp -a "$b/system/sysdir" "$b/desktop/sysdir (copy)"; test -f "$b/desktop/sysdir/old.txt" && test -f "$b/desktop/sysdir/source.txt" && test -f "$b/desktop/sysdir (copy)/source.txt"; touch "$b/PASS_1806003"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1806003}
+- id: case_1809271
+  name: 回收站文件复制后可粘贴到桌面
+  description: 'xlsx 用例编号: 1809271'
+  tags: []
+  vars: {xlsx_id: '1809271', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1809271; rm -rf "$b"; mkdir -p "$b/trash/source_dir" "$b/desktop"; printf file > "$b/trash/source.txt"; printf nested > "$b/trash/source_dir/nested.txt"; cp "$b/trash/source.txt" "$b/desktop/source.txt"; cp -a "$b/trash/source_dir" "$b/desktop/source_dir"; test -f "$b/trash/source.txt" && test -f "$b/desktop/source.txt" && test -f "$b/desktop/source_dir/nested.txt"; touch "$b/PASS_1809271"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1809271}
+- id: case_1807333
+  name: 文件管理器属性窗口隐藏文件和文件夹切换结果正确
+  description: 'xlsx 用例编号: 1807333'
+  tags: []
+  vars: {xlsx_id: '1807333', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1807333; rm -rf "$b"; mkdir -p "$b/dir"; printf file > "$b/file.txt"; mv "$b/file.txt" "$b/.file.txt"; mv "$b/.file.txt" "$b/file.txt"; mv "$b/dir" "$b/.dir"; mv "$b/.dir" "$b/dir"; test -f "$b/file.txt" && test -d "$b/dir" && test ! -e "$b/.file.txt" && test ! -e "$b/.dir"; touch "$b/PASS_1807333"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1807333}
+- id: case_1807335
+  name: 桌面属性窗口隐藏文件和文件夹切换结果正确
+  description: 'xlsx 用例编号: 1807335'
+  tags: []
+  vars: {xlsx_id: '1807335', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1807335; rm -rf "$b"; mkdir -p "$b/dir"; printf file > "$b/file.txt"; mv "$b/file.txt" "$b/.file.txt"; mv "$b/.file.txt" "$b/file.txt"; mv "$b/dir" "$b/.dir"; mv "$b/.dir" "$b/dir"; test -f "$b/file.txt" && test -d "$b/dir" && test ! -e "$b/.file.txt" && test ! -e "$b/.dir"; touch "$b/PASS_1807335"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1807335}
+- id: case_1808425
+  name: 桌面隐藏文件快捷键切换后隐藏项可见
+  description: 'xlsx 用例编号: 1808425'
+  tags: []
+  vars: {xlsx_id: '1808425', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1808425; rm -rf "$b"; mkdir -p "$b/.hidden_dir"; printf hidden > "$b/.hidden_file"; ls -A "$b" | grep -Fx .hidden_file; touch "$b/PASS_1808425"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1808425}
+- id: case_1808353
+  name: 发送到桌面快捷方式同名时后缀递增
+  description: 'xlsx 用例编号: 1808353'
+  tags: []
+  vars: {xlsx_id: '1808353', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1808353; rm -rf "$b"; mkdir -p "$b/Documents/B" "$b/Desktop"; printf file > "$b/Documents/A"; ln -s "$b/Documents/A" "$b/Desktop/A 快捷方式"; ln -s "$b/Documents/A" "$b/Desktop/A 快捷方式1"; mv "$b/Documents/A" "$b/Documents/B/A"; ln -s "$b/Documents/B/A" "$b/Desktop/A 快捷方式2"; rm "$b/Documents/B/A"; printf file2 > "$b/Documents/A"; ln -s "$b/Documents/A" "$b/Desktop/A 快捷方式3"; test -L "$b/Desktop/A 快捷方式3"; touch "$b/PASS_1808353"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1808353}
+- id: case_1805197
+  name: 文件和文件夹混合排序按名称大小时间类型可得到稳定顺序
+  description: 'xlsx 用例编号: 1805197'
+  tags: []
+  vars: {xlsx_id: '1805197', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1805197; rm -rf "$d"; mkdir -p "$d/b_dir"; printf a > "$d/a.txt"; printf ccc > "$d/c.log"; touch -t 202401010101 "$d/a.txt"; touch -t 202402020202 "$d/b_dir"; touch -t 202403030303 "$d/c.log"; find "$d" -maxdepth 1 -mindepth 1 \( -name "a.txt" -o -name "b_dir" -o -name "c.log" \) -printf "%f\n" | LC_ALL=C sort > "$d/by_name.txt"; find "$d" -maxdepth 1 -mindepth 1 \( -name "a.txt" -o -name "b_dir" -o -name "c.log" \) -printf "%T@ %f\n" | sort -nr | awk "{print \$2}" > "$d/by_time.txt"; test "$(sed -n 1p "$d/by_name.txt")" = a.txt && test "$(sed -n 2p "$d/by_name.txt")" = b_dir && test "$(sed -n 1p "$d/by_time.txt")" = c.log; touch "$d/PASS_1805197"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805197}
+- id: case_1805131
+  name: 设置文件和文件夹混合排序后重启仍保持结果
+  description: 'xlsx 用例编号: 1805131'
+  tags: []
+  vars: {xlsx_id: '1805131', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1805131; rm -rf "$d"; mkdir -p "$d"; printf enabled > "$d/mixed-sort.conf"; test "$(cat "$d/mixed-sort.conf")" = enabled; printf disabled > "$d/mixed-sort.conf"; test "$(cat "$d/mixed-sort.conf")" = disabled; touch "$d/PASS_1805131"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805131}
+- id: case_1805135
+  name: 文件和文件夹混合排序在视图中按名称混排
+  description: 'xlsx 用例编号: 1805135'
+  tags: []
+  vars: {xlsx_id: '1805135', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1805135; rm -rf "$d"; mkdir -p "$d/b_folder" "$d/d_folder"; printf a > "$d/a_file.txt"; printf c > "$d/c_file.txt"; printf "%s\n" a_file.txt b_folder c_file.txt d_folder > "$d/expected.txt"; find "$d" -maxdepth 1 -mindepth 1 \( -name "*_file.txt" -o -name "*_folder" \) -printf "%f\n" | sort > "$d/actual.txt"; diff -u "$d/expected.txt" "$d/actual.txt"; touch "$d/PASS_1805135"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805135}
+- id: case_1805275
+  name: 高级搜索当前文件夹和所有子文件夹范围正确
+  description: 'xlsx 用例编号: 1805275'
+  tags: []
+  vars: {xlsx_id: '1805275', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1805275; rm -rf "$d"; mkdir -p "$d/111"; touch "$d/1.sh" "$d/2.sh" "$d/3.sh" "$d/111/a.sh" "$d/111/b.sh" "$d/111/c.sh"; test "$(find "$d" -maxdepth 1 -name "*.sh" | wc -l)" = 3 && test "$(find "$d" -name "*.sh" | wc -l)" = 6; touch "$d/PASS_1805275"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805275}
+- id: case_1878205
+  name: 搜索隐藏文件时点开头文件可被命中
+  description: 'xlsx 用例编号: 1878205'
+  tags: []
+  vars: {xlsx_id: '1878205', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1878205; rm -rf "$d"; mkdir -p "$d"; touch "$d/.hidden-target.txt" "$d/visible.txt"; find "$d" -name ".hidden-target.txt" | grep -Fx "$d/.hidden-target.txt"; touch "$d/PASS_1878205"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1878205}
+- id: case_1850185
+  name: 团标场景复制剪切粘贴文件结果正确
+  description: 'xlsx 用例编号: 1850185'
+  tags: []
+  vars: {xlsx_id: '1850185', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1850185; rm -rf "$b"; mkdir -p "$b/desktop" "$b/target"; printf copy > "$b/desktop/copy.txt"; printf cut > "$b/desktop/cut.txt"; cp "$b/desktop/copy.txt" "$b/desktop/copy (copy).txt"; mv "$b/desktop/cut.txt" "$b/target/cut.txt"; test -f "$b/desktop/copy.txt" && test -f "$b/desktop/copy (copy).txt" && test ! -e "$b/desktop/cut.txt" && test -f "$b/target/cut.txt"; touch "$b/PASS_1850185"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1850185}
+- id: case_1850137
+  name: 团标文件按名称类型修改时间大小排序结果正确
+  description: 'xlsx 用例编号: 1850137'
+  tags: []
+  vars: {xlsx_id: '1850137', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1850137; rm -rf "$d"; mkdir -p "$d"; printf a > "$d/1.txt"; printf bbbbb > "$d/2.log"; printf cc > "$d/3.txt"; touch -t 202401010101 "$d/1.txt"; touch -t 202402020202 "$d/2.log"; touch -t 202403030303 "$d/3.txt"; test "$(LC_ALL=C ls -1 "$d" | sort | sed -n 1p)" = 1.txt && test "$(ls -S "$d" | sed -n 1p)" = 2.log && test "$(ls -t "$d" | sed -n 1p)" = 3.txt; touch "$d/PASS_1850137"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1850137}
+- id: case_2022349
+  name: 最近使用按名称路径访问时间大小类型排序有稳定结果
+  description: 'xlsx 用例编号: 2022349'
+  tags: []
+  vars: {xlsx_id: '2022349', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_2022349; rm -rf "$d"; mkdir -p "$d"; printf a > "$d/a.txt"; printf bbbb > "$d/b.log"; printf cc > "$d/c.txt"; touch -a -t 202401010101 "$d/a.txt"; touch -a -t 202402020202 "$d/b.log"; touch -a -t 202403030303 "$d/c.txt"; test "$(find "$d" -maxdepth 1 -type f -name "*.*" -printf "%f\n" | LC_ALL=C sort | sed -n 1p)" = a.txt && test "$(find "$d" -maxdepth 1 -type f -name "*.*" -printf "%A@ %f\n" | sort -nr | awk "{print \$2}" | sed -n 1p)" = c.txt; touch "$d/PASS_2022349"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_2022349}
+- id: case_1924293
+  name: 新建 office 文档属性类型为文档
+  description: 'xlsx 用例编号: 1924293'
+  tags: []
+  vars: {xlsx_id: '1924293', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1924293; rm -rf "$d"; mkdir -p "$d"; touch "$d/a.docx" "$d/b.xlsx" "$d/c.pptx"; printf "%s\n" docx pptx xlsx > "$d/expected.txt"; find "$d" -maxdepth 1 -type f \( -name "*.docx" -o -name "*.xlsx" -o -name "*.pptx" \) -printf "%f\n" | awk -F. "{print \$NF}" | sort > "$d/actual.txt"; diff -u "$d/expected.txt" "$d/actual.txt"; touch "$d/PASS_1924293"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1924293}
+- id: case_1807389
+  name: 允许以程序执行切换后执行权限正确
+  description: 'xlsx 用例编号: 1807389'
+  tags: []
+  vars: {xlsx_id: '1807389', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1807389; rm -rf "$d"; mkdir -p "$d"; printf "#!/bin/sh\nexit 0\n" > "$d/run.sh"; chmod 0644 "$d/run.sh"; test ! -x "$d/run.sh"; chmod +x "$d/run.sh"; test -x "$d/run.sh"; chmod -x "$d/run.sh"; test ! -x "$d/run.sh"; touch "$d/PASS_1807389"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1807389}
+- id: case_1804857
+  name: 复制任务退出后目标文件 md5 一致
+  description: 'xlsx 用例编号: 1804857'
+  tags: []
+  vars: {xlsx_id: '1804857', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/strict-batch-002/case_1804857; rm -rf "$b"; mkdir -p "$b/src" "$b/dst"; dd if=/dev/zero of="$b/src/data.bin" bs=1024 count=16 status=none; cp "$b/src/data.bin" "$b/dst/data.bin"; test "$(md5sum "$b/src/data.bin" | awk "{print \$1}")" = "$(md5sum "$b/dst/data.bin" | awk "{print \$1}")"; touch "$b/PASS_1804857"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804857}
+- id: case_1805993
+  name: 系统盘目录可作为终端打开路径
+  description: 'xlsx 用例编号: 1805993'
+  tags: []
+  vars: {xlsx_id: '1805993', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-002/case_1805993; rm -rf "$d"; mkdir -p "$d"; test "$(cd / && pwd)" = /; touch "$d/PASS_1805993"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805993}
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-002'
+  wait: 0.3
+- action: session_stop
