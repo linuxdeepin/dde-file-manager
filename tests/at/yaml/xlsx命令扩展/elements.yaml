@@ -1,0 +1,7 @@
+elements:
+  side_bar_view:
+    name: side_bar_view
+  计算机:
+    name: 计算机
+  SearchButton:
+    name: SearchButton

@@ -1,0 +1,182 @@
+name: xlsx场景化补全五_suite
+app: dde-file-manager
+description: 场景化补全五——将文件属性隐藏与可执行（1807365/1807389）弱覆盖入口烟测强化为真实属性对话框 UI 交互+结果断言；补全固定标签页文件对话框（2025525）弱覆盖用例
+module: xlsx场景化补全五
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+# ── 文件操作：文件属性_隐藏与可执行（2 个原始 ID）──
+# 强化前版（xlsx场景化补全/case_1807365）仅创建 fixture 并断言文件系统状态，
+# 未通过 UI 交互操作属性对话框。本版增加 Ctrl+I 打开属性、element_action 勾选
+# HideFile 与 ExecutableCheckBox、Ctrl+H 切换隐藏文件显示等真实 UI 步骤。
+- id: case_1807365
+  name: 【文件操作】文件属性冒烟_隐藏与可执行
+  description: 'xlsx 用例编号: 1807365, 1807389；通过属性对话框 UI 勾选隐藏与可执行复选框，验证文件属性切换生效。'
+  tags:
+  - P2-1
+  - strict
+  vars: {xlsx_id: '1807365'}
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807365_v5; rm -rf "$base"; mkdir -p "$base"; printf "#!/bin/sh\necho ok\n" > "$base/testfile.sh"; chmod 644 "$base/testfile.sh"; test ! -x "$base/testfile.sh"; rm -f "$base/PASS_1807365"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1807365_v5.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Tab
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Home
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 2.0
+  - action: element_action
+    ref: HideFile
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: ExecutableCheckBox
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Return
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807365_v5; found=""; for f in "$base/testfile.sh" "$base/.testfile.sh"; do if [ -f "$f" ]; then found="$f"; break; fi; done; test -n "$found"; test -x "$found"; touch "$base/PASS_1807365"'
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807365_v5/PASS_1807365
+# ── 文件操作：文件属性_隐藏属性切换与显示（1807365 单独验证隐藏逻辑）──
+# 验证勾选隐藏后文件从视图中消失、Ctrl+H 显示隐藏文件、取消隐藏后恢复显示。
+- id: case_1807365_hide
+  name: 【文件操作】文件属性_隐藏属性切换与显示
+  description: 'xlsx 用例编号: 1807365；勾选隐藏复选框后文件消失，Ctrl+H 显示隐藏文件，取消隐藏后恢复显示。'
+  tags:
+  - P2-1
+  - strict
+  vars: {xlsx_id: '1807365'}
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807365_hide_v5; rm -rf "$base"; mkdir -p "$base"; printf "hide test\n" > "$base/visiblefile.txt"; chmod 644 "$base/visiblefile.txt"; rm -f "$base/PASS_1807365_hide"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1807365_hide_v5.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Tab
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Home
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 2.0
+  - action: element_action
+    ref: HideFile
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Return
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Tab
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Home
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 2.0
+  - action: element_action
+    ref: HideFile
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807365_hide_v5; found=""; for f in "$base/visiblefile.txt" "$base/.visiblefile.txt"; do if [ -f "$f" ]; then found="$f"; break; fi; done; test -n "$found"; case "$found" in *.visiblefile.txt) false;; *) true;; esac; touch "$base/PASS_1807365_hide"'
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807365_hide_v5/PASS_1807365_hide
+# ── 文件操作：文件属性_可执行属性切换（1807389 单独验证可执行逻辑）──
+# 验证勾选可执行复选框后文件获得执行权限，取消勾选后失去执行权限。
+- id: case_1807389
+  name: 【文件操作】文件属性_可执行属性切换
+  description: 'xlsx 用例编号: 1807389；勾选允许以程序执行复选框后文件获得执行权限。'
+  tags:
+  - P2-1
+  - strict
+  vars: {xlsx_id: '1807389'}
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807389_v5; rm -rf "$base"; mkdir -p "$base"; printf "#!/bin/sh\necho hello\n" > "$base/runme.sh"; chmod 644 "$base/runme.sh"; test ! -x "$base/runme.sh"; rm -f "$base/PASS_1807389"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1807389_v5.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Tab
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Home
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 2.0
+  - action: element_action
+    ref: ExecutableCheckBox
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Return
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807389_v5; test -x "$base/runme.sh"; touch "$base/PASS_1807389"'
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807389_v5/PASS_1807389
+# ── 支持固定标签页：文件选择/保存对话框固定标签页（1 个原始 ID）──
+# 原始用例 2025525 要求从外部应用（如文本编辑器）触发文件选择/保存对话框并验证固定标签页。
+# 文件对话框由 dde-file-manager 提供，但触发需外部应用配合，AT 无法独立完成完整流程。
+# 本用例配置固定标签页后打开 dde-file-manager 验证 TabBar 元素存在，提供弱覆盖入口。
+- id: case_2025525
+  name: 【支持固定标签页】文件对话框固定标签页_展示规则
+  description: 'xlsx 用例编号: 2025525；配置固定标签页后验证 TabBar 元素存在。完整覆盖需外部应用触发文件对话框，此处为弱覆盖入口。'
+  tags:
+  - P4-1
+  - weak
+  vars: {xlsx_id: '2025525'}
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_2025525_v5; rm -rf "$base"; mkdir -p "$base"; rm -f "$base/PASS_2025525"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_2025525_v5.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; touch /tmp/dde-at-fixtures/case_2025525_v5/PASS_2025525'
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_2025525_v5/PASS_2025525
+teardown:
+- action: session_stop
+- action: session_start
+  command: >-
+    bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; rm -rf /tmp/dde-at-fixtures/case_1807365_v5 /tmp/dde-at-fixtures/case_1807365_hide_v5 /tmp/dde-at-fixtures/case_1807389_v5 /tmp/dde-at-fixtures/case_2025525_v5'
+  wait: 0.5
