@@ -55,7 +55,9 @@ Build-Depends:
  libkf6idletime-dev,
  libnl-3-dev,
  libnl-genl-3-dev,
- libminizip-dev
+ libminizip-dev,
+ librofd-ffi-dev (>= 0.4.0),
+ libcairo2-dev
 Standards-Version: 4.5.0
 Homepage: http://www.deepin.org
 
@@ -72,6 +74,7 @@ Architecture: any
 Depends:
  ${shlibs:Depends},
  ${misc:Depends},
+ librofd-ffi0 (>= 0.4.0),
 Description: File manager front end
  File manager front-end of Deepin OS
 
@@ -79,7 +82,8 @@ Package: libdde-file-manager
 Architecture: any
 Depends:
  ${shlibs:Depends},
- ${misc:Depends}
+ ${misc:Depends},
+ librofd-ffi0 (>= 0.4.0)
 Description: DDE File Manager core librarys
  This package contains the shared libraries.
 

@@ -9,6 +9,7 @@ add_subdirectory(text-preview)
 add_subdirectory(markdown-preview)
 add_subdirectory(dciicon-preview)
 add_subdirectory(pdf-preview)
+add_subdirectory(rofd-preview)
 
 # TODO: #Qt6: libdmr
 if ((NOT ${CMAKE_SYSTEM_PROCESSOR} STREQUAL "sw_64")

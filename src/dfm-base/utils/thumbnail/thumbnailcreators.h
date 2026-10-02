@@ -20,6 +20,7 @@ QImage audioThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::Thumb
 QImage imageThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 QImage djvuThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 QImage pdfThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
+QImage ofdThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 QImage appimageThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 QImage uabThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
 QImage pptxThumbnailCreator(const QString &filePath, DFMGLOBAL_NAMESPACE::ThumbnailSize size);
