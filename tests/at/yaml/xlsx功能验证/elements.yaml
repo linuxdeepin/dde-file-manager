@@ -1,0 +1,68 @@
+elements:
+  back_button:
+    name: back_button
+    role: button
+  forword_button:
+    name: forword_button
+    role: button
+  iconView_button:
+    name: iconView_button
+    role: check box
+  listView_button:
+    name: listView_button
+    role: check box
+  treeView_button:
+    name: treeView_button
+    role: check box
+  SearchButton:
+    name: SearchButton
+  SearchLineEdit:
+    name: DLineEditChildLineEdit
+  SearchEdit:
+    name: SearchEdit
+    role: form
+  AddBtn:
+    name: AddBtn
+    role: button
+  计算机:
+    name: 计算机
+  系统盘:
+    name: 系统盘
+    role: table cell
+  主目录:
+    name: 主目录
+  桌面:
+    name: 桌面
+    role: table cell
+  视频:
+    name: 视频
+    role: table cell
+  音乐:
+    name: 音乐
+    role: table cell
+  图片:
+    name: 图片
+    role: table cell
+  文档:
+    name: 文档
+  下载:
+    name: 下载
+    role: table cell
+  最近使用:
+    name: 最近使用
+  回收站:
+    name: 回收站
+    role: table cell
+  快捷访问:
+    name: 快捷访问
+    role: table cell
+  DTitlebarDWindowMaxButton:
+    name: DTitlebarDWindowMaxButton
+    role: button
+  AdvancedButton:
+    name: AdvancedButton
+  side_bar_view:
+    name: side_bar_view
+  '...':
+    name: '...'
+    role: button

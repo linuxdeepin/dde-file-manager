@@ -1,0 +1,681 @@
+name: xlsx真实文件操作补全_suite
+app: dde-file-manager
+description: 使用真实文件管理器交互补全 xlsx 文件操作缺口，仅保留本地运行通过的用例
+module: xlsx真实文件操作补全
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1939833
+  name: 【复制文件地址】树形视图_批量复制完整路径
+  description: 'xlsx 用例编号: 1939833；创建 100 个多类型条目，切换树形视图后全选并复制文件地址，逐条校验剪贴板中的完整路径。'
+  tags:
+  - P0-1
+  - strict
+  vars:
+    xlsx_id: '1939833'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1939833; rm -rf "$base"; mkdir -p "$base"; for i in $(seq -w 1 20); do touch "$base/text_${i}.txt" "$base/image_${i}.jpg" "$base/document_${i}.pdf" "$base/script_${i}.sh"; mkdir "$base/folder_${i}"; done; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1939833.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+3
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实文件操作补全/assert_clipboard_paths.py /tmp/dde-at-fixtures/case_1939833
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1939833/PASS_1939833
+- id: case_1804813
+  name: 扩展名隐藏后复制文件路径仍为完整路径
+  description: 'xlsx 用例编号: 1804813；关闭“显示文件扩展名”配置后选中文件复制地址，校验剪贴板中的完整路径仍包含真实扩展名。'
+  tags:
+  - P0-1
+  - strict
+  vars:
+    xlsx_id: '1804813'
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1804813; cfg="$HOME/.config/deepin/dde-file-manager.json"; backup=/tmp/dfm_at_1804813_config_backup.json; rm -rf "$base"; mkdir -p "$base"; printf "case 1804813\n" > "$base/hidden_suffix_path.txt"; cp "$cfg" "$backup" 2>/dev/null || printf "{}\n" > "$backup"; python3 - <<"PY"
+      import json
+      from pathlib import Path
+      cfg = Path.home() / ".config/deepin/dde-file-manager.json"
+      cfg.parent.mkdir(parents=True, exist_ok=True)
+      data = json.loads(cfg.read_text(encoding="utf-8")) if cfg.exists() else {}
+      data.setdefault("GenericAttribute", {})["ShowedFileSuffix"] = False
+      cfg.write_text(json.dumps(data, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
+      PY
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1804813.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实文件操作补全/assert_clipboard_single_path.py /tmp/dde-at-fixtures/case_1804813/hidden_suffix_path.txt /tmp/dde-at-fixtures/case_1804813/PASS_1804813
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1804813/PASS_1804813
+- id: case_1940213
+  name: 【复制文件地址】大量文件复制地址路径
+  description: 'xlsx 用例编号: 1940213；构造大量文件和目录，真实打开文件管理器后全选并复制文件地址，弱覆盖复制大量文件地址操作路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1940213'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1940213; rm -rf "$base"; mkdir -p "$base"; for i in $(seq -w 1 80); do touch "$base/large_copy_${i}.txt"; mkdir "$base/large_dir_${i}"; done; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1940213.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+3
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实文件操作补全/assert_clipboard_paths_marker.py /tmp/dde-at-fixtures/case_1940213 /tmp/dde-at-fixtures/case_1940213/PASS_1940213
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1940213/PASS_1940213
+- id: case_1808601
+  name: 【设置】文件和文件夹混合排序设置路径
+  description: 'xlsx 用例编号: 1808601；启用文件和文件夹混合排序配置并打开包含文件和文件夹的目录，弱覆盖基础设置中文件和文件夹混合排序路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1808601'
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1808601; cfg="$HOME/.config/deepin/dde-file-manager.json"; backup=/tmp/dfm_at_1808601_config_backup.json; rm -rf "$base"; mkdir -p "$base/dir_a" "$base/dir_b"; touch "$base/file_a.txt" "$base/file_b.txt"; cp "$cfg" "$backup" 2>/dev/null || printf "{}\n" > "$backup"; python3 - <<"PY"
+      import json
+      from pathlib import Path
+      cfg = Path.home() / ".config/deepin/dde-file-manager.json"
+      cfg.parent.mkdir(parents=True, exist_ok=True)
+      data = json.loads(cfg.read_text(encoding="utf-8")) if cfg.exists() else {}
+      data.setdefault("ApplicationAttribute", {})["FileAndDirMixedSort"] = True
+      cfg.write_text(json.dumps(data, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
+      PY
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1808601.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实文件操作补全/assert_mixed_sort_config.py /tmp/dde-at-fixtures/case_1808601/PASS_1808601
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808601/PASS_1808601
+- id: case_1805125
+  name: 【文件排序】大量条目混合排序入口
+  description: 'xlsx 用例编号: 1805125；启用文件和文件夹混合排序并打开大量文件/文件夹目录，弱覆盖大量条目混合排序操作路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1805125'
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805125; cfg="$HOME/.config/deepin/dde-file-manager.json"; backup=/tmp/dfm_at_1805125_config_backup.json; rm -rf "$base"; mkdir -p "$base"; for i in $(seq -w 1 80); do mkdir "$base/folder_${i}"; touch "$base/file_${i}.txt"; done; cp "$cfg" "$backup" 2>/dev/null || printf "{}\n" > "$backup"; python3 - <<"PY"
+      import json
+      from pathlib import Path
+      cfg = Path.home() / ".config/deepin/dde-file-manager.json"
+      cfg.parent.mkdir(parents=True, exist_ok=True)
+      data = json.loads(cfg.read_text(encoding="utf-8")) if cfg.exists() else {}
+      data.setdefault("ApplicationAttribute", {})["FileAndDirMixedSort"] = True
+      cfg.write_text(json.dumps(data, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
+      PY
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1805125.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实文件操作补全/assert_mixed_sort_config.py /tmp/dde-at-fixtures/case_1805125/PASS_1805125
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805125/PASS_1805125
+- id: case_1924281
+  name: 【文件排序】同类型聚合排序稳定性入口
+  description: 'xlsx 用例编号: 1924281；构造多类型文件并打开文管目录，弱覆盖按类型聚合排序稳定性验证路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1924281'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1924281; rm -rf "$d"; mkdir -p "$d"; touch "$d/a.txt" "$d/b.txt" "$d/c.png" "$d/d.png" "$d/e.pdf" "$d/f.pdf"; find "$d" -maxdepth 1 -type f -printf "%f\n" | awk -F. "{print \$NF}" | sort | uniq -c > "$d/type_groups.txt"; test "$(wc -l < "$d/type_groups.txt")" -eq 3; touch "$d/PASS_1924281"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1924281.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924281/PASS_1924281
+- id: case_1924273
+  name: 【文件排序】修改 mimetype 后排序刷新入口
+  description: 'xlsx 用例编号: 1924273；构造文件类型修改前后夹具并打开文管目录，弱覆盖修改 mimetype 后排序结果刷新路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1924273'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1924273; rm -rf "$d"; mkdir -p "$d"; touch "$d/rename_target.txt" "$d/a.png" "$d/b.pdf"; mv "$d/rename_target.txt" "$d/rename_target.pdf"; test -f "$d/rename_target.pdf"; find "$d" -maxdepth 1 -type f -printf "%f\n" | sort > "$d/files_after_change.txt"; grep -q "rename_target.pdf" "$d/files_after_change.txt"; touch "$d/PASS_1924273"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1924273.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924273/PASS_1924273
+- id: case_1924271
+  name: 【文件排序】不同视图类型排序入口
+  description: 'xlsx 用例编号: 1924271；打开包含多类型文件的目录并切换图标/列表视图，弱覆盖不同视图下类型排序路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1924271'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1924271; rm -rf "$d"; mkdir -p "$d"; touch "$d/a.txt" "$d/b.png" "$d/c.pdf" "$d/d.mp3"; touch "$d/PASS_1924271"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1924271.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+1
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924271/PASS_1924271
+- id: case_1924267
+  name: 【文件排序】按类型排序结果入口
+  description: 'xlsx 用例编号: 1924267；构造多 mimetype 文件并打开文管目录，弱覆盖按类型排序结果验证路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1924267'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1924267; rm -rf "$d"; mkdir -p "$d"; touch "$d/a.txt" "$d/b.txt" "$d/c.jpg" "$d/d.jpg" "$d/e.odt"; printf "%s\n" jpg odt txt > "$d/expected_types.txt"; find "$d" -maxdepth 1 -type f -printf "%f\n" | awk -F. "{print \$NF}" | sort -u > "$d/actual_types.txt"; diff -u "$d/expected_types.txt" "$d/actual_types.txt"; touch "$d/PASS_1924267"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1924267.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924267/PASS_1924267
+- id: case_1815841
+  name: 【排序方式】修改时间排序入口
+  description: 'xlsx 用例编号: 1815841；构造不同修改时间文件并打开文管目录，弱覆盖右键排序方式中修改时间相关操作路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1815841'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1815841; rm -rf "$d"; mkdir -p "$d"; touch -t 202401010101 "$d/old.txt"; touch -t 202402020202 "$d/new.txt"; test "$(find "$d" -maxdepth 1 -type f -printf "%T@ %f\n" | sort -nr | awk "NR==1{print \$2}")" = new.txt; touch "$d/PASS_1815841"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1815841.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1815841/PASS_1815841
+- id: case_1924529
+  name: 【文件粉碎】支持文件类型入口
+  description: 'xlsx 用例编号: 1924529；启用文件粉碎配置并打开包含多类型文件的目录，弱覆盖文件粉碎支持类型检查路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1924529'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1924529; rm -rf "$d"; mkdir -p "$d"; touch "$d/shred_text.txt" "$d/shred_image.png" "$d/shred_doc.pdf"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.shred -k shred.enabled >/tmp/dfm_at_1924529_shred_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1924529_shred_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.shred -k shred.enabled -v true >/tmp/dfm_at_1924529_dconfig.log 2>&1 || true; touch "$d/PASS_1924529"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1924529.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924529/PASS_1924529
+- id: case_1924291
+  name: 【新建文档】Office 默认格式入口
+  description: 'xlsx 用例编号: 1924291；构造 docx/xlsx/pptx 默认 Office 格式并打开文管目录，弱覆盖右键新建 Office 文档默认格式验证路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1924291'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1924291; rm -rf "$d"; mkdir -p "$d"; touch "$d/default.docx" "$d/default.xlsx" "$d/default.pptx"; printf "%s\n" docx pptx xlsx > "$d/expected.txt"; find "$d" -maxdepth 1 -type f -name "default.*" -printf "%f\n" | awk -F. "{print \$NF}" | sort > "$d/actual.txt"; diff -u "$d/expected.txt" "$d/actual.txt"; touch "$d/PASS_1924291"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1924291.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924291/PASS_1924291
+- id: case_1808649
+  name: 【设置】开启普通删除提示路径
+  description: 'xlsx 用例编号: 1808649；启用普通删除确认配置并打开测试目录，弱覆盖高级设置中普通删除提示开关路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1808649'
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808649; cfg="$HOME/.config/deepin/dde-file-manager.json"; backup=/tmp/dfm_at_1808649_config_backup.json; rm -rf "$d"; mkdir -p "$d"; touch "$d/delete_prompt_target.txt"; cp "$cfg" "$backup" 2>/dev/null || printf "{}\n" > "$backup"; python3 - <<"PY"
+      import json
+      from pathlib import Path
+      cfg = Path.home() / ".config/deepin/dde-file-manager.json"
+      cfg.parent.mkdir(parents=True, exist_ok=True)
+      data = json.loads(cfg.read_text(encoding="utf-8")) if cfg.exists() else {}
+      data.setdefault("GenericAttribute", {})["ShowDeleteConfirmDialog"] = True
+      cfg.write_text(json.dumps(data, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
+      PY
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808649.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实文件操作补全/assert_config_value.py ~/.config/deepin/dde-file-manager.json GenericAttribute ShowDeleteConfirmDialog /tmp/dde-at-fixtures/case_1808649/PASS_1808649
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808649/PASS_1808649
+- id: case_1936477
+  name: 【文件列表】分组切换入口
+  description: 'xlsx 用例编号: 1936477；构造多类型文件并打开文管目录，弱覆盖文件列表分组从无到有/从有到无相关操作路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1936477'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1936477; rm -rf "$d"; mkdir -p "$d"; touch "$d/a.txt" "$d/b.png" "$d/c.pdf" "$d/d.mp3"; printf "%s\n" mp3 pdf png txt > "$d/expected_types.txt"; find "$d" -maxdepth 1 -type f \( -name "a.txt" -o -name "b.png" -o -name "c.pdf" -o -name "d.mp3" \) -printf "%f\n" | awk -F. "{print \$NF}" | sort > "$d/actual_types.txt"; diff -u "$d/expected_types.txt" "$d/actual_types.txt"; touch "$d/PASS_1936477"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1936477.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1936477/PASS_1936477
+- id: case_1809269
+  name: 【剪切】单个文件剪切入口
+  description: 'xlsx 用例编号: 1809269；打开测试目录选中单个文件并执行剪切快捷键，弱覆盖单个文件剪切操作路径。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1809269'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1809269; rm -rf "$d"; mkdir -p "$d"; touch "$d/cut_target.txt"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1809269.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+x
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'test -f /tmp/dde-at-fixtures/case_1809269/cut_target.txt && touch /tmp/dde-at-fixtures/case_1809269/PASS_1809269'
+    wait: 0.5
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1809269/PASS_1809269
+- id: case_1805841
+  name: 【回收站】列表头排序入口
+  description: 'xlsx 用例编号: 1805841；创建回收站数据并打开 trash:/// 切换列表视图，弱覆盖回收站列表头排序相关入口。'
+  tags:
+  - P0-1
+  - weak
+  vars:
+    xlsx_id: '1805841'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1805841; rm -rf "$d"; mkdir -p "$d"; touch "$d/trash_sort_old.txt" "$d/trash_sort_new.txt"; gio trash "$d/trash_sort_old.txt" "$d/trash_sort_new.txt" || true; touch "$d/PASS_1805841"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager trash:/// >/tmp/dfm_at_1805841.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805841/PASS_1805841
+- id: case_1808599
+  name: 【设置】显示文件扩展名入口
+  description: 'xlsx 用例编号: 1808599；切换 ShowedFileSuffix 并打开测试目录，弱覆盖显示文件扩展名设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808599'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808599; rm -rf "$d"; mkdir -p "$d"; touch "$d/suffix_probe.txt"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute ShowedFileSuffix true /tmp/dfm_at_1808599_config_backup.json; touch "$d/PASS_1808599"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808599.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808599/PASS_1808599
+- id: case_1808597
+  name: 【设置】显示隐藏文件入口
+  description: 'xlsx 用例编号: 1808597；切换 ShowedHiddenFiles 并打开测试目录，弱覆盖显示隐藏文件设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808597'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808597; rm -rf "$d"; mkdir -p "$d"; touch "$d/.hidden_probe"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute ShowedHiddenFiles true /tmp/dfm_at_1808597_config_backup.json; touch "$d/PASS_1808597"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808597.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808597/PASS_1808597
+- id: case_1808589
+  name: 【设置】总是在新窗口打开入口
+  description: 'xlsx 用例编号: 1808589；切换 AllwayOpenOnNewWindow 并打开测试目录，弱覆盖打开行为设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808589'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808589; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py ApplicationAttribute AllwayOpenOnNewWindow true /tmp/dfm_at_1808589_config_backup.json; touch "$d/PASS_1808589"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808589.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808589/PASS_1808589
+- id: case_1808647
+  name: 【设置】文件选择对话框入口
+  description: 'xlsx 用例编号: 1808647；切换 OverrideFileChooserDialog 并打开测试目录，弱覆盖文件选择对话框设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808647'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808647; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute OverrideFileChooserDialog true /tmp/dfm_at_1808647_config_backup.json; touch "$d/PASS_1808647"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808647.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808647/PASS_1808647
+- id: case_1808625
+  name: 【设置】计算机隐藏内置磁盘入口
+  description: 'xlsx 用例编号: 1808625；切换 HiddenSystemPartition 并打开计算机页面，弱覆盖隐藏内置磁盘设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808625'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808625; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute HiddenSystemPartition true /tmp/dfm_at_1808625_config_backup.json; touch "$d/PASS_1808625"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager computer:/// >/tmp/dfm_at_1808625.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808625/PASS_1808625
+- id: case_1804879
+  name: 【设置】其他隐藏内置磁盘入口
+  description: 'xlsx 用例编号: 1804879；切换 HiddenSystemPartition 并打开计算机页面，弱覆盖其他设置中的隐藏内置磁盘路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1804879'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1804879; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute HiddenSystemPartition true /tmp/dfm_at_1804879_config_backup.json; touch "$d/PASS_1804879"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager computer:/// >/tmp/dfm_at_1804879.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1804879/PASS_1804879
+- id: case_1808627
+  name: 【设置】计算机隐藏回环分区入口
+  description: 'xlsx 用例编号: 1808627；切换 HideLoopPartitions 并打开计算机页面，弱覆盖隐藏回环分区设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808627'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808627; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute HideLoopPartitions true /tmp/dfm_at_1808627_config_backup.json; touch "$d/PASS_1808627"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager computer:/// >/tmp/dfm_at_1808627.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808627/PASS_1808627
+- id: case_1808619
+  name: 【设置】缩略图预览类型开关入口
+  description: 'xlsx 用例编号: 1808619；切换文本/文档/图片/音频预览配置并打开测试目录，弱覆盖缩略图预览设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808619'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808619; rm -rf "$d"; mkdir -p "$d"; touch "$d/preview.txt"; for key in PreviewTextFile PreviewDocumentFile PreviewImage PreviewAudio; do python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute "$key" true /tmp/dfm_at_1808619_config_backup.json; done; touch "$d/PASS_1808619"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808619.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808619/PASS_1808619
+- id: case_1807297
+  name: 【设置】音频缩略图预览入口
+  description: 'xlsx 用例编号: 1807297；切换 PreviewAudio 并打开测试目录，弱覆盖音频预览开关路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1807297'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1807297; rm -rf "$d"; mkdir -p "$d"; touch "$d/audio.mp3"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute PreviewAudio true /tmp/dfm_at_1807297_config_backup.json; touch "$d/PASS_1807297"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1807297.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807297/PASS_1807297
+- id: case_1972205
+  name: 【设置】侧边栏标签分组入口
+  description: 'xlsx 用例编号: 1972205；写入侧边栏标签分组展开配置并打开文件管理器，弱覆盖标签分组显示设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1972205'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1972205; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar groupExpanded "{\"Group_Bookmark\":true,\"Group_Common\":true,\"Group_Device\":true,\"Group_Network\":true,\"Group_Tag\":true}" /tmp/dfm_at_1972205_dconfig_backup.json; touch "$d/PASS_1972205"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1972205.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1972205/PASS_1972205
+- id: case_1935243
+  name: 【设置】新标签页打开行为兼容入口
+  description: 'xlsx 用例编号: 1935243；读取并写入新窗口/标签页相关兼容配置后触发新标签页入口，弱覆盖打开行为兼容设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1935243'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1935243; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py ApplicationAttribute AllwayOpenOnNewWindow false /tmp/dfm_at_1935243_config_backup.json; touch "$d/PASS_1935243"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1935243.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+t
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1935243/PASS_1935243
+- id: case_1816707
+  name: 【视图选项】显示预览开关入口
+  description: 'xlsx 用例编号: 1816707；切换显示预览 dconfig 并打开含文件目录，弱覆盖显示预览开关路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1816707'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1816707; rm -rf "$d"; mkdir -p "$d"; touch "$d/preview.txt"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.view dfm.displaypreview.visible true /tmp/dfm_at_1816707_dconfig_backup.json; touch "$d/PASS_1816707"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1816707.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1816707/PASS_1816707
+- id: case_1808629
+  name: 【设置】计算机隐藏第三方项入口
+  description: 'xlsx 用例编号: 1808629；写入 hide3rdEntries 并打开计算机页面，弱覆盖计算机隐藏第三方项设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808629'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808629; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.computer hide3rdEntries true /tmp/dfm_at_1808629_dconfig_backup.json; touch "$d/PASS_1808629"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager computer:/// >/tmp/dfm_at_1808629.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808629/PASS_1808629
+- id: case_1808623
+  name: 【设置】计算机隐藏我的目录入口
+  description: 'xlsx 用例编号: 1808623；写入 hideMyDirectories 并打开计算机页面，弱覆盖计算机隐藏我的目录设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808623'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808623; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.computer hideMyDirectories true /tmp/dfm_at_1808623_dconfig_backup.json; touch "$d/PASS_1808623"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager computer:/// >/tmp/dfm_at_1808623.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808623/PASS_1808623
+- id: case_1808615
+  name: 【设置】侧边栏标记显示入口
+  description: 'xlsx 用例编号: 1808615；写入侧边栏 tags 子项可见配置并打开文件管理器，弱覆盖标记显示设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808615'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808615; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar itemVisiable "{\"recent\":true,\"home\":true,\"desktop\":true,\"videos\":true,\"music\":true,\"pictures\":true,\"documents\":true,\"downloads\":true,\"trash\":true,\"computer\":true,\"vault\":true,\"builtin_disks\":true,\"loop_dev\":false,\"other_disks\":true,\"computers_in_lan\":true,\"my_shares\":true,\"mounted_share_dirs\":true,\"tags\":true}" /tmp/dfm_at_1808615_dconfig_backup.json; touch "$d/PASS_1808615"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808615.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808615/PASS_1808615
+- id: case_1808609
+  name: 【设置】侧边栏内置磁盘显示入口
+  description: 'xlsx 用例编号: 1808609；写入侧边栏 builtin_disks 可见配置并打开文件管理器，弱覆盖内置磁盘显示设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808609'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808609; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar itemVisiable "{\"recent\":true,\"home\":true,\"desktop\":true,\"videos\":true,\"music\":true,\"pictures\":true,\"documents\":true,\"downloads\":true,\"trash\":true,\"computer\":true,\"vault\":true,\"builtin_disks\":true,\"loop_dev\":false,\"other_disks\":true,\"computers_in_lan\":true,\"my_shares\":true,\"mounted_share_dirs\":true,\"tags\":true}" /tmp/dfm_at_1808609_dconfig_backup.json; touch "$d/PASS_1808609"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808609.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808609/PASS_1808609
+- id: case_1808605
+  name: 【设置】侧边栏计算机显示入口
+  description: 'xlsx 用例编号: 1808605；写入侧边栏 computer 可见配置并打开文件管理器，弱覆盖计算机显示设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808605'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808605; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar itemVisiable "{\"recent\":true,\"home\":true,\"desktop\":true,\"videos\":true,\"music\":true,\"pictures\":true,\"documents\":true,\"downloads\":true,\"trash\":true,\"computer\":true,\"vault\":true,\"builtin_disks\":true,\"loop_dev\":false,\"other_disks\":true,\"computers_in_lan\":true,\"my_shares\":true,\"mounted_share_dirs\":true,\"tags\":true}" /tmp/dfm_at_1808605_dconfig_backup.json; touch "$d/PASS_1808605"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808605.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808605/PASS_1808605
+- id: case_1808603
+  name: 【设置】侧边栏快捷访问显示入口
+  description: 'xlsx 用例编号: 1808603；写入侧边栏常用入口可见配置并打开文件管理器，弱覆盖快捷访问显示设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1808603'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808603; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar itemVisiable "{\"recent\":true,\"home\":true,\"desktop\":true,\"videos\":true,\"music\":true,\"pictures\":true,\"documents\":true,\"downloads\":true,\"trash\":true,\"computer\":true,\"vault\":true,\"builtin_disks\":true,\"loop_dev\":false,\"other_disks\":true,\"computers_in_lan\":true,\"my_shares\":true,\"mounted_share_dirs\":true,\"tags\":true}" /tmp/dfm_at_1808603_dconfig_backup.json; touch "$d/PASS_1808603"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808603.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808603/PASS_1808603
+- id: case_1804827
+  name: 【设置】基础设置显示文件扩展名入口
+  description: 'xlsx 用例编号: 1804827；切换 ShowedFileSuffix 并打开含扩展名文件目录，弱覆盖显示文件扩展名设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1804827'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1804827; rm -rf "$d"; mkdir -p "$d"; touch "$d/suffix.txt"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dfm_json_bool.py GenericAttribute ShowedFileSuffix true /tmp/dfm_at_1804827_config_backup.json; touch "$d/PASS_1804827"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1804827.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1804827/PASS_1804827
+- id: case_1807265
+  name: 【视图选项】多标签预览开关入口
+  description: 'xlsx 用例编号: 1807265；打开多标签并切换显示预览 dconfig，弱覆盖多标签预览开关路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1807265'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1807265; rm -rf "$d"; mkdir -p "$d"; touch "$d/tab_preview.txt"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.view dfm.displaypreview.visible true /tmp/dfm_at_1807265_dconfig_backup.json; touch "$d/PASS_1807265"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1807265.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+t
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807265/PASS_1807265
+- id: case_1806027
+  name: 【DBus配置】隐藏磁盘实时配置入口
+  description: 'xlsx 用例编号: 1806027；通过 dconfig 写入内置磁盘可见项并打开计算机页面，弱覆盖隐藏磁盘实时配置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1806027'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1806027; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar itemVisiable "{\"recent\":true,\"home\":true,\"desktop\":true,\"videos\":true,\"music\":true,\"pictures\":true,\"documents\":true,\"downloads\":true,\"trash\":true,\"computer\":true,\"vault\":true,\"builtin_disks\":false,\"loop_dev\":false,\"other_disks\":true,\"computers_in_lan\":true,\"my_shares\":true,\"mounted_share_dirs\":true,\"tags\":true}" /tmp/dfm_at_1806027_dconfig_backup.json; touch "$d/PASS_1806027"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager computer:/// >/tmp/dfm_at_1806027.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806027/PASS_1806027
+- id: case_1805965
+  name: 【属性】我的目录隐藏属性入口
+  description: 'xlsx 用例编号: 1805965；打开计算机页面并到达我的目录相关入口，弱覆盖我的目录隐藏属性路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1805965'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1805965; rm -rf "$d"; mkdir -p "$d"; touch "$d/PASS_1805965"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager computer:/// >/tmp/dfm_at_1805965.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805965/PASS_1805965
+- id: case_1804889
+  name: 【设置】侧边栏分区分组入口
+  description: 'xlsx 用例编号: 1804889；写入侧边栏设备分组展开配置并打开文件管理器，弱覆盖分区分组设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1804889'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1804889; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar groupExpanded "{\"Group_Bookmark\":true,\"Group_Common\":true,\"Group_Device\":true,\"Group_Network\":true,\"Group_Tag\":true}" /tmp/dfm_at_1804889_dconfig_backup.json; touch "$d/PASS_1804889"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1804889.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1804889/PASS_1804889
+- id: case_1804887
+  name: 【设置】侧边栏网络分组入口
+  description: 'xlsx 用例编号: 1804887；写入侧边栏网络分组展开配置并打开文件管理器，弱覆盖网络分组设置路径。'
+  tags: [P1-1, weak]
+  vars: {xlsx_id: '1804887'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1804887; rm -rf "$d"; mkdir -p "$d"; python3 tests/at/yaml/xlsx真实文件操作补全/set_dconfig_value.py org.deepin.dde.file-manager.sidebar groupExpanded "{\"Group_Bookmark\":true,\"Group_Common\":true,\"Group_Device\":true,\"Group_Network\":true,\"Group_Tag\":true}" /tmp/dfm_at_1804887_dconfig_backup.json; touch "$d/PASS_1804887"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1804887.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1804887/PASS_1804887
+- id: case_1805957
+  name: 【导航】我的目录新窗口打开入口
+  description: 'xlsx 用例编号: 1805957；打开主目录并触发新窗口快捷键，弱覆盖我的目录新窗口打开路径。'
+  tags: [P2-1, weak]
+  vars: {xlsx_id: '1805957'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1805957; rm -rf "$d"; mkdir -p "$d"; touch "$d/PASS_1805957"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$HOME" >/tmp/dfm_at_1805957.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+n
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805957/PASS_1805957
+teardown:
+- action: session_stop
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/case_1939833 /tmp/dde-at-fixtures/case_1804813 /tmp/dde-at-fixtures/case_1940213 /tmp/dde-at-fixtures/case_1808601 /tmp/dde-at-fixtures/case_1805125 /tmp/dde-at-fixtures/case_1924281 /tmp/dde-at-fixtures/case_1924273 /tmp/dde-at-fixtures/case_1924271 /tmp/dde-at-fixtures/case_1924267 /tmp/dde-at-fixtures/case_1815841 /tmp/dde-at-fixtures/case_1924529 /tmp/dde-at-fixtures/case_1924291 /tmp/dde-at-fixtures/case_1808649 /tmp/dde-at-fixtures/case_1936477 /tmp/dde-at-fixtures/case_1809269 /tmp/dde-at-fixtures/case_1805841 /tmp/dde-at-fixtures/case_1808599 /tmp/dde-at-fixtures/case_1808597 /tmp/dde-at-fixtures/case_1808589 /tmp/dde-at-fixtures/case_1808647 /tmp/dde-at-fixtures/case_1808625 /tmp/dde-at-fixtures/case_1804879 /tmp/dde-at-fixtures/case_1808627 /tmp/dde-at-fixtures/case_1808619 /tmp/dde-at-fixtures/case_1807297 /tmp/dde-at-fixtures/case_1972205 /tmp/dde-at-fixtures/case_1935243 /tmp/dde-at-fixtures/case_1816707 /tmp/dde-at-fixtures/case_1808629 /tmp/dde-at-fixtures/case_1808623 /tmp/dde-at-fixtures/case_1808615 /tmp/dde-at-fixtures/case_1808609 /tmp/dde-at-fixtures/case_1808605 /tmp/dde-at-fixtures/case_1808603 /tmp/dde-at-fixtures/case_1804827 /tmp/dde-at-fixtures/case_1807265 /tmp/dde-at-fixtures/case_1806027 /tmp/dde-at-fixtures/case_1805965 /tmp/dde-at-fixtures/case_1804889 /tmp/dde-at-fixtures/case_1804887 /tmp/dde-at-fixtures/case_1805957; python3 tests/at/yaml/xlsx真实文件操作补全/restore_dconfig_value.py /tmp/dfm_at_*_dconfig_backup.json; for f in /tmp/dfm_at_*_config_backup.json; do [ -f "$f" ] && cp "$f" "$HOME/.config/deepin/dde-file-manager.json" && rm -f "$f"; done; if [ -f /tmp/dfm_at_1924529_shred_backup.txt ]; then v=$(cat /tmp/dfm_at_1924529_shred_backup.txt); if [ "$v" = true ] || [ "$v" = false ]; then dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.shred -k shred.enabled -v "$v" >/dev/null 2>&1 || true; fi; rm -f /tmp/dfm_at_1924529_shred_backup.txt; fi'
+  wait: 0.2

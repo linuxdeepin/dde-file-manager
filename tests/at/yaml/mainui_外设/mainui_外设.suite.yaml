@@ -1,0 +1,9 @@
+name: 外设_suite
+app: dde-file-manager
+description: 外设模块 AT-SPI 用例
+module: 外设
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites: []

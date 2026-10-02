@@ -1,0 +1,93 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 2500_U2需求_suite
+app: dde-file-manager
+description: 2500_U2需求模块 AT-SPI 用例
+module: 2500_U2需求
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_u2req_2500_U2需求_001
+  name: 【智能语义搜索】时间槽-精确时间-错误的日期格式
+  description: '来源用例编号: 2021321'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 1月33日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 1月33日创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_008
+  name: 【智能语义搜索】位置槽-下载目录
+  description: '来源用例编号: 2019153'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 今天下载文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天下载文件
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: case_u2req_2500_U2需求_021
+  name: 【智能语义搜索】分组展开/折叠按钮检查
+  description: '来源用例编号: 2018599'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_023
+  name: 【智能语义搜索】分组标题检查
+  description: '来源用例编号: 2018291'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
