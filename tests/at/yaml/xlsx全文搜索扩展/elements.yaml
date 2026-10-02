@@ -1,0 +1,19 @@
+elements:
+  SearchButton:
+    name: SearchButton
+  SearchLineEdit:
+    name: DLineEditChildLineEdit
+  side_bar_view:
+    name: side_bar_view
+  treeView_button:
+    name: treeView_button
+    role: check box
+  iconView_button:
+    name: iconView_button
+    role: check box
+  listView_button:
+    name: listView_button
+    role: check box
+  桌面:
+    name: 桌面
+    role: table cell

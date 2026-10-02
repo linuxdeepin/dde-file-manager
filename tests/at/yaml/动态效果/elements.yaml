@@ -11,4 +11,3 @@ elements:
     role: table cell
   side_bar_view:
     name: side_bar_view
-    role: tree

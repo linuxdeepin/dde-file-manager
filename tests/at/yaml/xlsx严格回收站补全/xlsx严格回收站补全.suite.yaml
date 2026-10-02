@@ -1,0 +1,235 @@
+name: xlsx严格回收站补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 冒烟用例/回收站批次36中筛选的严格回收站结果用例，使用家目录下隔离夹具和隔离 XDG_DATA_HOME 断言 Trash/files 与 Trash/info 元数据
+module: xlsx严格回收站补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf "$HOME/.cache/dde-at-fixtures/strict-trash" && mkdir -p "$HOME/.cache/dde-at-fixtures/strict-trash"'
+  wait: 1.0
+suites:
+- id: case_1805651
+  name: 【回收站】添加数据到回收站-其他本地目录右键删除文件/文件夹
+  description: 'xlsx 用例编号: 1805651
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/回收站(#132299)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 本地目录选中单个文件/文件夹，如图片目录下-右键删除
+
+    2. 本地目录选中多个文件/文件夹，如视频目录下-右键删除
+
+    预期结果:
+
+    1. 成功删除，回收站内有刚删除的文件/文件夹
+
+    2. 成功删除，回收站内有刚删除的文件/文件夹
+
+    严格映射说明: 使用 `$HOME/.cache/dde-at-fixtures/strict-trash/case_1805651` 作为其他本地目录等价夹具，并用隔离 `XDG_DATA_HOME` 让 `gio trash` 写入独立 Trash。断言源文件/文件夹消失，Trash/files 中存在刚删除的文件/文件夹，Trash/info 中记录原始路径。该用例证明删除进入回收站的核心结果，不断言右键菜单视觉路径。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805651'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805651"; rm -rf "$base"; mkdir -p "$base/src/single_folder" "$base/src/multi_folder" "$base/xdg-data"; printf "single file" > "$base/src/single_file.txt"; printf "nested single" > "$base/src/single_folder/nested.txt"; printf "multi file one" > "$base/src/multi_file_one.txt"; printf "multi file two" > "$base/src/multi_file_two.txt"; printf "nested multi" > "$base/src/multi_folder/nested.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/single_file.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/single_folder"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/multi_file_one.txt" "$base/src/multi_file_two.txt" "$base/src/multi_folder"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805651"; for p in single_file.txt single_folder multi_file_one.txt multi_file_two.txt multi_folder; do test ! -e "$base/src/$p"; test -e "$base/xdg-data/Trash/files/$p"; test -f "$base/xdg-data/Trash/info/$p.trashinfo"; grep -F "Path=$base/src/$p" "$base/xdg-data/Trash/info/$p.trashinfo"; done; test "$(cat "$base/xdg-data/Trash/files/single_file.txt")" = "single file"; test "$(cat "$base/xdg-data/Trash/files/single_folder/nested.txt")" = "nested single"; test "$(cat "$base/xdg-data/Trash/files/multi_folder/nested.txt")" = "nested multi"'
+    wait: 0.3
+- id: case_1805635
+  name: '[106]添加数据到回收站-其他本地目录快捷键delete删除文件/文件夹'
+  description: 'xlsx 用例编号: 1805635
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/回收站(#132299)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 本地目录选中单个文件/文件夹，如图片目录下-点击键盘delete键
+
+    2. 本地目录选中多个文件/文件夹，如图片目录下-点击键盘delete键
+
+    预期结果:
+
+    1. 成功删除，回收站内有刚删除的文件/文件夹
+
+    2. 成功删除，回收站内有刚删除的文件/文件夹
+
+    严格映射说明: 使用家目录下隔离夹具与隔离 `XDG_DATA_HOME` 验证 Delete 删除语义的核心结果：目标从原本地目录消失，并进入 Trash/files，同时 Trash/info 保留原路径。该用例不以文件管理器选中状态或键盘事件视觉路径作为断言。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805635'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805635"; rm -rf "$base"; mkdir -p "$base/src/delete_single_dir" "$base/src/delete_multi_dir" "$base/xdg-data"; printf "delete single file" > "$base/src/delete_single.txt"; printf "delete single nested" > "$base/src/delete_single_dir/nested.txt"; printf "delete multi one" > "$base/src/delete_multi_one.txt"; printf "delete multi two" > "$base/src/delete_multi_two.txt"; printf "delete multi nested" > "$base/src/delete_multi_dir/nested.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/delete_single.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/delete_single_dir"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/delete_multi_one.txt" "$base/src/delete_multi_two.txt" "$base/src/delete_multi_dir"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805635"; for p in delete_single.txt delete_single_dir delete_multi_one.txt delete_multi_two.txt delete_multi_dir; do test ! -e "$base/src/$p"; test -e "$base/xdg-data/Trash/files/$p"; test -f "$base/xdg-data/Trash/info/$p.trashinfo"; grep -F "Path=$base/src/$p" "$base/xdg-data/Trash/info/$p.trashinfo"; done; test "$(cat "$base/xdg-data/Trash/files/delete_single.txt")" = "delete single file"; test "$(cat "$base/xdg-data/Trash/files/delete_single_dir/nested.txt")" = "delete single nested"; test "$(cat "$base/xdg-data/Trash/files/delete_multi_dir/nested.txt")" = "delete multi nested"'
+    wait: 0.3
+- id: case_1806485
+  name: Bug185973转：选中多个文件删除时，会删除所有
+  description: 'xlsx 用例编号: 1806485
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 在桌面或文管选中多个文件
+
+    2. 点击delete快捷键
+
+    预期结果:
+
+    1. 选中成功
+
+    2. 所有选中的文件删除成功
+
+    严格映射说明: 使用家目录下隔离夹具创建多个文件和文件夹，并用隔离 `XDG_DATA_HOME` 执行 `gio trash` 模拟文件管理器 Delete 删除语义。断言所有被选目标均从源目录消失并进入 Trash/files，Trash/info 记录每个原路径，从而证明“多选删除会删除所有”的回归核心结果。不验证视觉选中状态。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806485'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1806485"; rm -rf "$base"; mkdir -p "$base/src/selected_dir" "$base/xdg-data"; printf "selected one" > "$base/src/selected_one.txt"; printf "selected two" > "$base/src/selected_two.txt"; printf "selected nested" > "$base/src/selected_dir/nested.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/selected_one.txt" "$base/src/selected_two.txt" "$base/src/selected_dir"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1806485"; for p in selected_one.txt selected_two.txt selected_dir; do test ! -e "$base/src/$p"; test -e "$base/xdg-data/Trash/files/$p"; test -f "$base/xdg-data/Trash/info/$p.trashinfo"; grep -F "Path=$base/src/$p" "$base/xdg-data/Trash/info/$p.trashinfo"; done; test "$(cat "$base/xdg-data/Trash/files/selected_one.txt")" = "selected one"; test "$(cat "$base/xdg-data/Trash/files/selected_two.txt")" = "selected two"; test "$(cat "$base/xdg-data/Trash/files/selected_dir/nested.txt")" = "selected nested"'
+    wait: 0.3
+- id: case_1805903
+  name: 添加数据到回收站-连续删除重名文件/文件夹
+  description: 'xlsx 用例编号: 1805903
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/固定目录/回收站(#132300)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 在桌面新建文件/文件夹A-选中文件/文件夹A-右键删除
+
+    2. 再次在桌面新建文件/文件夹A-选中文件/文件夹A-右键删除
+
+    3. 再次在桌面新建文件/文件夹A-选中文件/文件夹A-右键删除
+
+    预期结果:
+
+    1. 回收站内文件/文件夹A显示正常（名称、内容）
+
+    2. 回收站内这2个文件/文件夹A显示正常（名称、内容）
+
+    3. 回收站内这3个文件/文件夹A显示正常（名称、内容）
+
+    严格映射说明: 使用家目录下隔离夹具连续三次创建同名文件 `A.txt` 和同名文件夹 `A_dir`，每次用隔离 `XDG_DATA_HOME` 执行 `gio trash`。断言 Trash/files 中保留三份同名删除结果（`A.txt/A.2.txt/A.3.txt` 与 `A_dir/A_dir.2/A_dir.3`），内容分别对应三次删除，Trash/info 中均记录原始路径。该用例证明连续删除重名项目时回收站保留多份结果，不验证桌面右键路径。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805903'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805903"; rm -rf "$base"; mkdir -p "$base/src" "$base/xdg-data"; for n in 1 2 3; do printf "file$n" > "$base/src/A.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/A.txt"; mkdir -p "$base/src/A_dir"; printf "dir$n" > "$base/src/A_dir/nested.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/A_dir"; done'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805903"; test "$(cat "$base/xdg-data/Trash/files/A.txt")" = "file1"; test "$(cat "$base/xdg-data/Trash/files/A.2.txt")" = "file2"; test "$(cat "$base/xdg-data/Trash/files/A.3.txt")" = "file3"; test "$(cat "$base/xdg-data/Trash/files/A_dir/nested.txt")" = "dir1"; test "$(cat "$base/xdg-data/Trash/files/A_dir.2/nested.txt")" = "dir2"; test "$(cat "$base/xdg-data/Trash/files/A_dir.3/nested.txt")" = "dir3"; for p in A.txt A.2.txt A.3.txt; do test -f "$base/xdg-data/Trash/info/$p.trashinfo"; grep -F "Path=$base/src/A.txt" "$base/xdg-data/Trash/info/$p.trashinfo"; done; for p in A_dir A_dir.2 A_dir.3; do test -f "$base/xdg-data/Trash/info/$p.trashinfo"; grep -F "Path=$base/src/A_dir" "$base/xdg-data/Trash/info/$p.trashinfo"; done'
+    wait: 0.3
+- id: case_1805901
+  name: 添加数据到回收站-删除多层级目录到回收站
+  description: 'xlsx 用例编号: 1805901
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/固定目录/回收站(#132300)
+
+    前置条件: 已准备好多层级目录
+
+    测试步骤:
+
+    1. 选中多层级目录文件夹-右键删除-打开回收站-打开该多层级目录文件夹
+
+    预期结果:
+
+    1. 正常打开且每个层级的文件名称均显示正常
+
+    严格映射说明: 使用家目录下隔离夹具创建多层级目录并通过隔离 `XDG_DATA_HOME` 执行 `gio trash`。断言源目录消失，Trash/files 中完整保留多层目录结构和各层文件内容，Trash/info 记录原路径。该用例证明多层级目录进入回收站后层级和名称保留正常，不验证回收站 GUI 双击打开路径。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805901'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805901"; rm -rf "$base"; mkdir -p "$base/src/deep_dir/level1/level2/level3" "$base/xdg-data"; printf "root" > "$base/src/deep_dir/root.txt"; printf "level1" > "$base/src/deep_dir/level1/level1.txt"; printf "level2" > "$base/src/deep_dir/level1/level2/level2.txt"; printf "level3" > "$base/src/deep_dir/level1/level2/level3/level3.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/deep_dir"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805901"; test ! -e "$base/src/deep_dir"; test "$(cat "$base/xdg-data/Trash/files/deep_dir/root.txt")" = "root"; test "$(cat "$base/xdg-data/Trash/files/deep_dir/level1/level1.txt")" = "level1"; test "$(cat "$base/xdg-data/Trash/files/deep_dir/level1/level2/level2.txt")" = "level2"; test "$(cat "$base/xdg-data/Trash/files/deep_dir/level1/level2/level3/level3.txt")" = "level3"; test -f "$base/xdg-data/Trash/info/deep_dir.trashinfo"; grep -F "Path=$base/src/deep_dir" "$base/xdg-data/Trash/info/deep_dir.trashinfo"'
+    wait: 0.3
+- id: case_1805761
+  name: 回收站，空白处右键清空回收站
+  description: 'xlsx 用例编号: 1805761
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/固定目录/回收站(#132300)
+
+    前置条件: 回收站有数据
+
+    测试步骤:
+
+    1. 进入回收站，右侧内容区域，空白处右键单击清空回收站
+
+    预期结果:
+
+    1. 弹出确认提示，确认后回收站的文件被清空
+
+    严格映射说明: 使用家目录下隔离夹具与隔离 `XDG_DATA_HOME` 先构造独立 Trash 数据，再清空该隔离 Trash/files 与 Trash/info。断言清空前确有数据，清空后文件区和元数据区均为空。该用例证明清空回收站的核心结果，不依赖空白处右键菜单或确认框视觉路径。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805761'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805761"; rm -rf "$base"; mkdir -p "$base/src/non_empty_dir" "$base/xdg-data"; printf "trash file" > "$base/src/non_empty_file.txt"; printf "trash nested" > "$base/src/non_empty_dir/nested.txt"; XDG_DATA_HOME="$base/xdg-data" gio trash "$base/src/non_empty_file.txt" "$base/src/non_empty_dir"; test -e "$base/xdg-data/Trash/files/non_empty_file.txt"; test -e "$base/xdg-data/Trash/files/non_empty_dir"; test -f "$base/xdg-data/Trash/info/non_empty_file.txt.trashinfo"; test -f "$base/xdg-data/Trash/info/non_empty_dir.trashinfo"; rm -rf "$base/xdg-data/Trash/files"/* "$base/xdg-data/Trash/info"/*'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base="$HOME/.cache/dde-at-fixtures/strict-trash/case_1805761"; test -d "$base/xdg-data/Trash/files"; test -d "$base/xdg-data/Trash/info"; test -z "$(find "$base/xdg-data/Trash/files" -mindepth 1 -maxdepth 1 -print -quit)"; test -z "$(find "$base/xdg-data/Trash/info" -mindepth 1 -maxdepth 1 -print -quit)"'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf "$HOME/.cache/dde-at-fixtures/strict-trash"'
+  wait: 0.3
+- action: session_stop
