@@ -7224,7 +7224,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="63"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="195"/>
         <source>Search</source>
-        <translation>Szukaj</translation>
+        <translation>Wyszukiwanie</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="178"/>
