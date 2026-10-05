@@ -620,7 +620,7 @@ Wprowadź nazwę użytkownika i hasło dla %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="289"/>
         <source>Tag</source>
-        <translation>Tag</translation>
+        <translation>Tagi</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="30"/>
