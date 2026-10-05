@@ -7484,7 +7484,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/widgets/tageditor.cpp" line="103"/>
         <source>Input tag info, such as work, family. A comma is used between two tags.</source>
-        <translation>Dodaj informacje o tagu, takie jak praca czy rodzina. Między nazwami tagów użyj przecinka.</translation>
+        <translation>Wpisz nazwę tagu, np. &quot;praca&quot; czy &quot;rodzina&quot;. Między nazwami użyj przecinka.</translation>
     </message>
 </context>
 <context>
