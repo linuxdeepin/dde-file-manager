@@ -15,6 +15,8 @@ using namespace dfmplugin_detailspace;
 ImagePreviewWidget::ImagePreviewWidget(QWidget *parent)
     : QWidget(parent)
 {
+    setObjectName("DetailPreviewWidget");
+    setAccessibleName("DetailPreviewWidget");
     setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 }
 

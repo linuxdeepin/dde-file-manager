@@ -66,12 +66,16 @@ QUrl DetailSpaceWidget::currentUrl() const
 
 void DetailSpaceWidget::initializeUi()
 {
+    setObjectName("DetailSpaceWidget");
+    setAccessibleName("DetailSpaceWidget");
     setAutoFillBackground(true);
     setBackgroundRole(QPalette::ColorRole::Base);
 
     QHBoxLayout *rvLayout = new QHBoxLayout(this);
     rvLayout->setContentsMargins(0, 0, 0, 0);
     detailView = new DetailView(this);
+    detailView->setObjectName("DetailView");
+    detailView->setAccessibleName("DetailView");
     rvLayout->addWidget(detailView, 1);
     setLayout(rvLayout);
 }

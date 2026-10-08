@@ -35,6 +35,9 @@ TagWidgetPrivate::~TagWidgetPrivate()
 
 void TagWidgetPrivate::initializeUI()
 {
+    q->setObjectName("DetailTagWidget");
+    q->setAccessibleName("DetailTagWidget");
+
     mainLayout = new QVBoxLayout(q);
     q->setLayout(mainLayout);
     QString name = tr("Tag");
@@ -50,12 +53,14 @@ void TagWidgetPrivate::initializeUI()
     colorListWidget = new TagColorListWidget(q, TagColorListWidget::kProperty);
     colorListWidget->setMaximumHeight(30);
     colorListWidget->setObjectName("tagActionWidget");
+    colorListWidget->setAccessibleName("DetailTagColorListWidget");
     colorListWidget->setToolTipVisible(false);
 
     colorListWidget->setSizePolicy(QSizePolicy::Preferred, QSizePolicy::Fixed);
 
     crumbEdit = new TagCrumbEdit(q);
     crumbEdit->setObjectName("tagCrumbEdit");
+    crumbEdit->setAccessibleName("DetailTagCrumbEdit");
     crumbEdit->setFrameShape(QFrame::Shape::NoFrame);
     crumbEdit->viewport()->setBackgroundRole(QPalette::NoRole);
     crumbEdit->setFocusPolicy(Qt::ClickFocus);

@@ -58,7 +58,7 @@ quint64 TrashHelper::windowId(QWidget *sender)
 
 void TrashHelper::contenxtMenuHandle(const quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
-    QMenu *menu = new QMenu;
+    QMenu *menu = new QMenu(FMWindowsIns.findWindowById(windowId));
     menu->addAction(QObject::tr("Open in new window"), [url]() {
         TrashEventCaller::sendOpenWindow(url);
     });

@@ -13,6 +13,7 @@
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -339,7 +340,7 @@ void RecentHelper::openFileLocation(const QList<QUrl> &urls)
 
 void RecentHelper::contenxtMenuHandle(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
-    QMenu *menu = new QMenu;
+    QMenu *menu = new QMenu(FMWindowsIns.findWindowById(windowId));
     menu->addAction(QObject::tr("Open in new window"), [url]() {
         RecentEventCaller::sendOpenWindow(url);
     });

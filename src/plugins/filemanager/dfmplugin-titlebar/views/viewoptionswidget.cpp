@@ -171,8 +171,12 @@ void ViewOptionsWidgetPrivate::initializeUi()
 
     // Display preview
     displayPreviewWidget = new DFrame(q);
+    displayPreviewWidget->setObjectName("DisplayPreviewWidget");
+    displayPreviewWidget->setAccessibleName("DisplayPreviewWidget");
     displayPreviewWidget->setFixedHeight(kViewOptionsFrameHeight);
     displayPreviewCheckBox = new QCheckBox(tr("Display preview"), displayPreviewWidget);
+    displayPreviewCheckBox->setObjectName("DisplayPreviewCheckBox");
+    displayPreviewCheckBox->setAccessibleName("DisplayPreviewCheckBox");
     // Initialize checkbox state from window
     if (currentWindow)
         displayPreviewCheckBox->setChecked(currentWindow->isDetailSpaceVisible());
