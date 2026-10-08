@@ -35,6 +35,8 @@ TagWidget::~TagWidget()
 void TagWidget::initialize()
 {
     d->initializeUI();
+    this->setObjectName("DetailTagWidget");
+    this->setAccessibleName("DetailTagWidget");
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QFrame *>(this), AcName::kAcTagWidget);

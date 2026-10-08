@@ -182,7 +182,7 @@ void SideBarHelper::defaultCdAction(quint64 windowId, const QUrl &url)
 void SideBarHelper::defaultContextMenu(quint64 windowId, const QUrl &url, const QPoint &globalPos)
 {
     // ref (DFMSideBarDefaultItemHandler::contextMenu)
-    DMenu *menu = new DMenu;
+    DMenu *menu = new DMenu(FMWindowsIns.findWindowById(windowId));
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(menu), AcName::kAcSidebarMenuDefault);

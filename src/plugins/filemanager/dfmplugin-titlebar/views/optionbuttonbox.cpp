@@ -313,6 +313,8 @@ void OptionButtonBox::initializeUi()
     d->viewOptionsButton->setIcon(QIcon::fromTheme("dfm_viewoption"));
     d->viewOptionsButton->setFixedSize(buttonSize);
     d->viewOptionsButton->setToolTip(tr("View options"));
+    d->viewOptionsButton->setObjectName("ViewOptionsButton");
+    d->viewOptionsButton->setAccessibleName("ViewOptionsButton");
     d->viewOptionsButton->setIconSize(buttonIconSize);
     d->viewOptionsButton->setCheckable(false);
 
