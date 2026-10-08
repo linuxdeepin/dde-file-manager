@@ -551,3 +551,105 @@ TEST_F(UT_CollectionItemDelegatePrivate, IconLevelDescriptions_HasCorrectCount)
     EXPECT_EQ(delegate->d->iconLevelDescriptions.size(),
               CollectionItemDelegatePrivate::kIconSizes.size());
 }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression tests
+// ---------------------------------------------------------------------------
+class CollectionItemDelegateTest : public testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        provider = new CustomDataHandler();
+    }
+
+    void TearDown() override
+    {
+        delete provider;
+        provider = nullptr;
+        stub.clear();
+    }
+
+public:
+    stub_ext::StubExt stub;
+    CollectionDataProvider *provider = nullptr;
+};
+
+// PMS:215793 CollectionItemDelegate 析构未释放私有数据：析构函数中补上 delete d，
+// 避免桌面 CollectionView 反复创建/销毁时泄漏 CollectionItemDelegatePrivate。
+// （该 bug 的操作分组策略部分在 dfmplugin-fileoperations 分片，不在此目录验证。）
+TEST_F(CollectionItemDelegateTest, BUG215793_DelegateLifecycle_DestroyReleasesPrivateNoCrash)
+{
+    for (int i = 0; i < 25; ++i) {
+        CollectionView *v = new CollectionView(QString("bug215793_%1").arg(i), provider);
+        CollectionItemDelegate *del = new CollectionItemDelegate(v);
+        EXPECT_NE(del->d, nullptr);
+        delete del;   // 修复前：此处泄漏 CollectionItemDelegatePrivate
+        delete v;
+    }
+
+    // 重复销毁后堆状态完好，新实例仍可用
+    CollectionView *v = new CollectionView("bug215793_final", provider);
+    CollectionItemDelegate *del = new CollectionItemDelegate(v);
+    EXPECT_NE(del->d, nullptr);
+    delete del;
+    delete v;
+    SUCCEED();
+}
+
+// ---------------------------------------------------------------------------
+// PMS:302075 图标缩放与性能修复回归（CollectionView/CollectionItemDelegate 右键
+// 菜单卡顿）：修复后图标绘制统一走 IconPainterUtils，QIcon::pixmap 请求
+// size*dpr 并显式 setDevicePixelRatio，保证高分屏下图标逻辑尺寸正确且等比缩放。
+// ---------------------------------------------------------------------------
+class IconPainterUtilsTest : public testing::Test
+{
+protected:
+    void SetUp() override { }
+    void TearDown() override { stub.clear(); }
+    stub_ext::StubExt stub;
+};
+
+// 96x96 源图标按逻辑尺寸 48 请求：修复后 px 应为 96 物理像素、dpr=2.0，
+// 修复前 icon.pixmap(48) 返回被缩小到 48 的位图再标 dpr=2，逻辑尺寸错误。
+TEST_F(IconPainterUtilsTest, BUG302075_GetIconPixmap_MultipliesSizeByDevicePixelRatio)
+{
+    QPixmap src(96, 96);
+    src.fill(Qt::red);
+    QIcon icon(src);
+
+    const QPixmap px = IconPainterUtils::getIconPixmap(icon, QSize(48, 48), 2.0);
+
+    EXPECT_FALSE(px.isNull());
+    EXPECT_EQ(px.width(), 96);                       // 物理 96 = 48 * 2
+    EXPECT_EQ(px.height(), 96);
+    EXPECT_NEAR(px.devicePixelRatio(), 2.0, 0.001);   // 逻辑 48x48
+}
+
+// 64x64 图标绘制进 50x100 区域：等比缩放到 50x50 且垂直居中，
+// 修复前直接 drawPixmap/QIcon::paint 会拉伸变形（x 方向 50、y 方向 100）。
+TEST_F(IconPainterUtilsTest, BUG302075_PaintIcon_PreservesAspectRatioAndCentersInRect)
+{
+    QPixmap src(64, 64);
+    src.fill(Qt::blue);
+    QIcon icon(src);
+
+    QPixmap device(50, 100);
+    device.fill(Qt::white);
+    QPainter painter(&device);
+
+    IconPainterUtils::PaintIconOpts opts;
+    opts.rect = QRectF(0, 0, 50, 100);
+    opts.alignment = Qt::AlignCenter;
+    opts.mode = QIcon::Normal;
+    opts.state = QIcon::Off;
+    opts.isThumb = false;
+    opts.viewMode = Global::ViewMode::kNoneMode;
+
+    const std::optional<QRect> painted = IconPainterUtils::paintIcon(&painter, icon, opts);
+    painter.end();
+
+    ASSERT_TRUE(painted.has_value());
+    // 64x64 等比缩到 50x50 后在 50x100 区域内垂直居中
+    EXPECT_EQ(*painted, QRect(0, 25, 50, 50));
+}

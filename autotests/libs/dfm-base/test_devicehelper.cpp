@@ -440,3 +440,217 @@ TEST(DeviceHelperTest, CheckNetworkConnectionNonExistent)
     });
     EXPECT_FALSE(result);
 }
+
+// ===== PMS sev-2 regression cluster: devicehelper.cpp (work-order batch 2) =====
+
+// PMS:193961 checkNetworkConnection（新增契约）：本地/非远程路径无需网络探测，直接返回 true
+TEST(DeviceHelperTest, BUG193961_CheckNetworkConnectionLocalPathReturnsTrue)
+{
+    EXPECT_TRUE(DeviceHelper::checkNetworkConnection(QStringLiteral("/home/ut_local_dir")));
+    EXPECT_TRUE(DeviceHelper::checkNetworkConnection(QStringLiteral("file:///tmp/ut_local_file.txt")));
+}
+
+// PMS:193961 checkNetworkConnection 远程路径（sftp）应探测网络并以探测结果为准（193961 断网兜底前置条件）
+TEST(DeviceHelperTest, BUG193961_CheckNetworkConnectionRespectsProbeResult)
+{
+    using CncFunc = bool (NetworkUtils::*)(const QString &, const QString &, int, const bool);
+    stub_ext::StubExt stub;
+    stub.set_lamda(static_cast<CncFunc>(&NetworkUtils::checkNetConnection),
+                   [](NetworkUtils *, const QString &, const QString &, int, const bool) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+    EXPECT_TRUE(DeviceHelper::checkNetworkConnection(QStringLiteral("sftp://10.0.0.1:22/share")));
+
+    stub_ext::StubExt stub2;
+    stub2.set_lamda(static_cast<CncFunc>(&NetworkUtils::checkNetConnection),
+                    [](NetworkUtils *, const QString &, const QString &, int, const bool) -> bool {
+                        __DBG_STUB_INVOKE__
+                        return false;
+                    });
+    EXPECT_FALSE(DeviceHelper::checkNetworkConnection(QStringLiteral("sftp://10.0.0.1:22/share")));
+}
+
+// ============================================================
+// PMS sev-2 regression: DeviceHelper::loadBlockInfo (bug 292155)
+// ============================================================
+
+#include <dfm-mount/dblockdevice.h>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <QJsonArray>
+#include <QMapIterator>
+
+// PMS:292155 挂载设备属性丢失 Block::kBlockConfiguration：loadBlockInfo 必须把
+// 非空的 block 配置（QVariantMap）按 key→JSON object 序列化为紧凑 JSON 写入
+// DeviceProperty::kConfiguration，磁盘信息页/设备管理才能读到挂载配置
+TEST(DeviceHelperTest, BUG292155_LoadBlockInfoSerializesBlockConfiguration)
+{
+    using namespace dfmmount;
+    stub_ext::StubExt stub;
+
+    const QVariantMap fstabOptions {
+        { "options", "rw,relatime" },
+        { "fsname", "/dev/ut292155" }
+    };
+    const QVariantMap blockConfig { { "fstab", fstabOptions } };
+
+    // DBlockDevice 构造函数私有（-fno-access-control 直连）；构造只注册回调，
+    // 不解引用 client。下方将 loadBlockInfo 触碰到的全部属性访问打桩，
+    // 因此 nullptr 的 UDisksClient 永远不会被使用。
+    BlockDevAutoPtr dev {
+        new DBlockDevice(nullptr, "/org/freedesktop/UDisks2/block_devices/ut292155")
+    };
+    ASSERT_TRUE(dev != nullptr);
+
+    stub.set_lamda(ADDR(dfmmount::DDevice, getProperty),
+                   [blockConfig](dfmmount::DDevice *, Property p) -> QVariant {
+                       __DBG_STUB_INVOKE__
+                       if (p == Property::kBlockConfiguration)
+                           return blockConfig;
+                       return QVariant();   // invalid -> getNullStrIfNotValid yields ""
+                   });
+    stub.set_lamda(ADDR(dfmmount::DDevice, path),
+                   [](dfmmount::DDevice *) { return QStringLiteral("/dev/ut292155"); });
+    stub.set_lamda(ADDR(dfmmount::DDevice, mountPoint),
+                   [](dfmmount::DDevice *) { return QString(); });
+    stub.set_lamda(ADDR(dfmmount::DDevice, fileSystem),
+                   [](dfmmount::DDevice *) { return QStringLiteral("ext4"); });
+    stub.set_lamda(ADDR(dfmmount::DDevice, sizeTotal),
+                   [](dfmmount::DDevice *) { return qint64 { 123456789 }; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, device),
+                   [](dfmmount::DBlockDevice *) { return QStringLiteral("/dev/ut292155"); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, idLabel),
+                   [](dfmmount::DBlockDevice *) { return QStringLiteral("ut_label"); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, removable),
+                   [](dfmmount::DBlockDevice *) { return true; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, optical),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, opticalBlank),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, canPowerOff),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, ejectable),
+                   [](dfmmount::DBlockDevice *) { return true; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, isEncrypted),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, isLoopDevice),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hasFileSystem),
+                   [](dfmmount::DBlockDevice *) { return true; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hasPartitionTable),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hasPartition),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hintSystem),
+                   [](dfmmount::DBlockDevice *) { return true; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hintIgnore),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, drive),
+                   [](dfmmount::DBlockDevice *) { return QStringLiteral("/org/freedesktop/UDisks2/drives/ut"); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, mountPoints),
+                   [](dfmmount::DBlockDevice *) { return QStringList { QStringLiteral("/media/ut292155") }; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, mediaCompatibility),
+                   [](dfmmount::DBlockDevice *) { return QStringList(); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, partitionEType),
+                   [](dfmmount::DBlockDevice *) { return PartitionType::kPartitionTypeNotFound; });
+
+    const QVariantMap datas = DeviceHelper::loadBlockInfo(dev);
+
+    // 回归核心：kConfiguration 必须存在，且是与输入等价的紧凑 JSON
+    ASSERT_TRUE(datas.contains(DP::kConfiguration));
+    const QString json = datas.value(DP::kConfiguration).toString();
+
+    QJsonObject expectedRoot;
+    QMapIterator<QString, QVariant> it(blockConfig);
+    while (it.hasNext()) {
+        it.next();
+        expectedRoot.insert(it.key(), QJsonObject::fromVariantMap(it.value().toMap()));
+    }
+    const QString expectedJson =
+        QString(QJsonDocument(expectedRoot).toJson(QJsonDocument::Compact));
+
+    EXPECT_EQ(json, expectedJson);
+    EXPECT_FALSE(json.contains('\n'));   // 紧凑格式（修复要求）
+
+    // 解析回读必须保真：fstab.fsname / fstab.options 与输入一致
+    const QJsonDocument doc = QJsonDocument::fromJson(json.toUtf8());
+    ASSERT_TRUE(!doc.isNull());
+    ASSERT_TRUE(doc.isObject());
+    ASSERT_TRUE(doc.object().contains("fstab"));
+    EXPECT_EQ(doc.object().value("fstab").toObject().value("fsname").toString(),
+              QStringLiteral("/dev/ut292155"));
+    EXPECT_EQ(doc.object().value("fstab").toObject().value("options").toString(),
+              QStringLiteral("rw,relatime"));
+
+    // 常规字段依旧透传，确认打桩链路真实走通（而非空 map 巧合通过）
+    EXPECT_EQ(datas.value(DP::kId).toString(), QStringLiteral("/dev/ut292155"));
+    EXPECT_EQ(datas.value(DP::kFileSystem).toString(), QStringLiteral("ext4"));
+}
+
+// PMS:292155 配置为空时不得写入 kConfiguration 空串键，下游以
+// contains(kConfiguration) 判断是否有序列化配置
+TEST(DeviceHelperTest, BUG292155_EmptyBlockConfigurationOmitsKey)
+{
+    using namespace dfmmount;
+    stub_ext::StubExt stub;
+
+    BlockDevAutoPtr dev {
+        new DBlockDevice(nullptr, "/org/freedesktop/UDisks2/block_devices/ut292155empty")
+    };
+    ASSERT_TRUE(dev != nullptr);
+
+    stub.set_lamda(ADDR(dfmmount::DDevice, getProperty),
+                   [](dfmmount::DDevice *, Property) -> QVariant {
+                       __DBG_STUB_INVOKE__
+                       return QVariant();   // kBlockConfiguration 为空
+                   });
+    stub.set_lamda(ADDR(dfmmount::DDevice, path),
+                   [](dfmmount::DDevice *) { return QStringLiteral("/dev/ut292155empty"); });
+    stub.set_lamda(ADDR(dfmmount::DDevice, mountPoint),
+                   [](dfmmount::DDevice *) { return QString(); });
+    stub.set_lamda(ADDR(dfmmount::DDevice, fileSystem),
+                   [](dfmmount::DDevice *) { return QString(); });
+    stub.set_lamda(ADDR(dfmmount::DDevice, sizeTotal),
+                   [](dfmmount::DDevice *) { return qint64 { 0 }; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, device),
+                   [](dfmmount::DBlockDevice *) { return QString(); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, idLabel),
+                   [](dfmmount::DBlockDevice *) { return QString(); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, removable),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, optical),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, opticalBlank),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, canPowerOff),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, ejectable),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, isEncrypted),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, isLoopDevice),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hasFileSystem),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hasPartitionTable),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hasPartition),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hintSystem),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, hintIgnore),
+                   [](dfmmount::DBlockDevice *) { return false; });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, drive),
+                   [](dfmmount::DBlockDevice *) { return QString(); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, mountPoints),
+                   [](dfmmount::DBlockDevice *) { return QStringList(); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, mediaCompatibility),
+                   [](dfmmount::DBlockDevice *) { return QStringList(); });
+    stub.set_lamda(ADDR(dfmmount::DBlockDevice, partitionEType),
+                   [](dfmmount::DBlockDevice *) { return PartitionType::kPartitionTypeNotFound; });
+
+    const QVariantMap datas = DeviceHelper::loadBlockInfo(dev);
+
+    EXPECT_FALSE(datas.contains(DP::kConfiguration));
+}

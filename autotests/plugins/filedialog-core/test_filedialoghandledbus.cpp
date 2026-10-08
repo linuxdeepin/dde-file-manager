@@ -700,3 +700,25 @@ TEST_F(UT_FileDialogHandleDBus, EdgeCase_InvalidParameters_HandlesCorrectly)
     // All should complete without crashing
     EXPECT_TRUE(true);
 }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (file dialog dbus handle)
+// ---------------------------------------------------------------------------
+
+// PMS:351995 dbus selectedUrls() must return urls exactly as QUrl encodes them:
+// the old code re-decoded the url string, corrupting file names that contain
+// '%' (and breaking round-trips for names with special characters).
+TEST_F(UT_FileDialogHandleDBus, BUG351995_SelectedUrlsNotDoubleDecoded)
+{
+    const QUrl url = QUrl::fromLocalFile(QStringLiteral("/tmp/50%off中文报告.txt"));
+    stub.set_lamda(ADDR(FileDialogHandle, selectedUrls),
+                   [url](FileDialogHandle *) -> QList<QUrl> {
+                       return QList<QUrl> { url };
+                   });
+
+    const QStringList result = handle->selectedUrls();
+    ASSERT_EQ(result.size(), 1);
+    // must match QUrl::toString() byte-for-byte: "50%" stays percent-encoded as %25
+    EXPECT_EQ(result.first(), url.toString());
+    EXPECT_TRUE(result.first().contains(QStringLiteral("%25")));
+}

@@ -6,6 +6,8 @@
 #include <QUrl>
 #include <QUrlQuery>
 #include <QDir>
+#include <QFile>
+#include <QTemporaryDir>
 
 #include "utils/searchhelper.h"
 #include "dfmplugin_search_global.h"
@@ -306,6 +308,28 @@ TEST_F(TestSearchHelper, CrumbRedirectUrl_ModifiesUrl)
     bool result = helper->crumbRedirectUrl(&url);
 
     EXPECT_TRUE(result || !result); // Test that method executes without crash
+}
+
+// PMS:116777 搜索结果页面包屑点击后跳回搜索页而不是真实文件位置。
+// 回归点：search scheme 的 URL 经 crumbRedirectUrl 后必须还原为真实文件 URL。
+TEST_F(TestSearchHelper, BUG116777_CrumbRedirectUrl_RestoresRealFileUrl)
+{
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+    const QString realPath = tempDir.filePath("redirect-target.txt");
+    QFile realFile(realPath);
+    ASSERT_TRUE(realFile.open(QIODevice::WriteOnly));
+    realFile.write("data");
+    realFile.close();
+    const QUrl realUrl = QUrl::fromLocalFile(realPath);
+
+    QUrl url = SearchHelper::fromSearchFile(realUrl, "kw", "1");
+    ASSERT_TRUE(SearchHelper::isSearchFile(url));
+
+    const bool result = helper->crumbRedirectUrl(&url);
+
+    EXPECT_TRUE(result);
+    EXPECT_EQ(url, realUrl);
 }
 
 TEST_F(TestSearchHelper, ShowTopWidget_WithValidWidget_ReturnsResult)

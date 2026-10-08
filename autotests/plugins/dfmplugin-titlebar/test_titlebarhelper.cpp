@@ -927,3 +927,39 @@ TEST_F(TitleBarHelperTest, SearchEnabled_SetToTrue_IsTrue)
     TitleBarHelper::newWindowAndTabEnabled = true;
     EXPECT_TRUE(TitleBarHelper::newWindowAndTabEnabled);
 }
+
+// PMS:291637 挂载 smb 后地址栏跳转误触发搜索、输入框一直显示查询状态：地址栏跳转与搜索逻辑未分离
+TEST_F(TitleBarHelperTest, BUG291637_HandleJumpToPressed_DoesNotStartSearch)
+{
+    QWidget sender;
+    bool cdSent = false;
+    bool openFileSent = false;
+    bool searchSent = false;
+
+    stub.set_lamda(&TitleBarHelper::findTileBarByWindowId, [](quint64) { return static_cast<TitleBarWidget *>(nullptr); });
+    stub.set_lamda(&TitleBarEventCaller::sendCheckAddressInputStr, [](QWidget *, QString *) {});
+    stub.set_lamda(qOverload<const QString &, bool>(&UrlRoute::fromUserInput), [](const QString &, bool) { return QUrl("smb://host/share"); });
+    stub.set_lamda(&UrlRoute::hasScheme, [](const QString &) { return true; });
+    stub.set_lamda(&TitleBarEventCaller::sendCd, [&cdSent](QWidget *, const QUrl &) { cdSent = true; });
+    stub.set_lamda(&TitleBarEventCaller::sendOpenFile, [&openFileSent](QWidget *, const QUrl &) { openFileSent = true; });
+    stub.set_lamda(&TitleBarEventCaller::sendSearch, [&searchSent](QWidget *, const QString &) { searchSent = true; });
+
+    TitleBarHelper::handleJumpToPressed(&sender, "smb://host/share");
+
+    EXPECT_TRUE(cdSent);
+    EXPECT_FALSE(openFileSent);
+    // 回归点：地址栏跳转绝不触发搜索事件
+    EXPECT_FALSE(searchSent);
+}
+
+// PMS:301837 卸载 FTP 后窗口标题栏已销毁，搜索回调仍执行导致无法再次连接服务器：handleSearch 缺少标题栏有效性校验
+TEST_F(TitleBarHelperTest, BUG301837_HandleSearch_TitleBarAlreadyRemoved_NoSearchSent)
+{
+    QWidget sender;
+    bool searchSent = false;
+    stub.set_lamda(&TitleBarEventCaller::sendSearch, [&searchSent](QWidget *, const QString &) { searchSent = true; });
+
+    // 标题栏已移除（kTitleBarMap 为空，findTileBarByWindowId 返回 nullptr）→ 直接返回，不发搜索事件、不崩溃
+    TitleBarHelper::handleSearch(&sender, "kw");
+    EXPECT_FALSE(searchSent);
+}

@@ -272,3 +272,62 @@ TEST_F(AsyncFileInfoTest, LocalAsyncFileInfoDestructsCleanly)
     // Exercise the (otherwise never-invoked) destructor on a stack instance.
     EXPECT_NO_FATAL_FAILURE({ AsyncFileInfo info(url); });
 }
+
+// ===== PMS sev-2 regression cluster: asyncfileinfo.cpp (work-order batch 2) =====
+
+// PMS:210839 setNotifyUrl 去重契约：同一 (url, observer) 重复通知不得产生重复表项
+TEST_F(AsyncFileInfoTest, BUG210839_SetNotifyUrlDeduplicatesSameEntry)
+{
+    AsyncFileInfo info(url);
+    const QUrl notifyUrl("file:///tmp/ut_210839_notify_target.png");
+    ASSERT_FALSE(info.d.isNull());
+    EXPECT_EQ(info.d->notifyUrls.size(), 0);
+
+    info.setNotifyUrl(notifyUrl, QStringLiteral("observerA"));
+    info.setNotifyUrl(notifyUrl, QStringLiteral("observerA"));   // duplicate insert
+    EXPECT_EQ(info.d->notifyUrls.count(notifyUrl, QStringLiteral("observerA")), 1);
+    EXPECT_EQ(info.d->notifyUrls.size(), 1);
+
+    info.setNotifyUrl(notifyUrl, QStringLiteral("observerB"));
+    EXPECT_EQ(info.d->notifyUrls.count(notifyUrl), 2);
+
+    info.removeNotifyUrl(notifyUrl, QStringLiteral("observerA"));
+    EXPECT_FALSE(info.d->notifyUrls.contains(notifyUrl, QStringLiteral("observerA")));
+    EXPECT_TRUE(info.d->notifyUrls.contains(notifyUrl, QStringLiteral("observerB")));
+}
+
+// PMS:210839 非法 url 应整体清空通知表（契约：调用方失效时清理订阅）
+TEST_F(AsyncFileInfoTest, BUG210839_SetNotifyUrlInvalidUrlClearsAll)
+{
+    AsyncFileInfo info(url);
+    const QUrl notifyUrl("file:///tmp/ut_210839_a.png");
+    info.setNotifyUrl(notifyUrl, QStringLiteral("observerA"));
+    ASSERT_EQ(info.d->notifyUrls.size(), 1);
+
+    EXPECT_NO_FATAL_FAILURE({ info.setNotifyUrl(QUrl(), QStringLiteral("observerA")); });
+    EXPECT_TRUE(info.d->notifyUrls.isEmpty());
+}
+
+// ============================================================
+// PMS sev-2 regression cluster: asyncfileinfo.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:249663 右键属性对话框偶发崩溃：AsyncFileInfo::setExtendedAttributes 对
+// 本地设备/光驱/隐藏三类扩展键走缓存路径（读回一致），默认键回退基类不崩溃
+TEST_F(AsyncFileInfoTest, BUG249663_SetExtendedAttributesRoutesToCache)
+{
+    AsyncFileInfo info(url);
+    using ExtType = FileInfo::FileExtendedInfoType;
+
+    EXPECT_NO_FATAL_FAILURE({
+        info.setExtendedAttributes(ExtType::kFileIsHid, true);
+        info.setExtendedAttributes(ExtType::kFileLocalDevice, false);
+        info.setExtendedAttributes(ExtType::kFileCdRomDevice, false);
+        // default branch -> base class handler, must not touch the cache path
+        info.setExtendedAttributes(ExtType::kOwner, QStringLiteral("ut-owner-249663"));
+    });
+
+    EXPECT_TRUE(info.extendAttributes(ExtType::kFileIsHid).toBool());
+    EXPECT_FALSE(info.extendAttributes(ExtType::kFileLocalDevice).toBool());
+    EXPECT_FALSE(info.extendAttributes(ExtType::kFileCdRomDevice).toBool());
+}

@@ -129,3 +129,68 @@ TEST_F(UT_FileShredWorker, shredFile_ProcessStartFailed_EmitsFailure)
     }
 }
 
+
+// ===================== PMS sev-2 regression additions =====================
+
+// PMS:333321 大批量文件粉碎时 shred 命令按 kPerMaxCount=50 分批执行，120 个文件应产生 3 次 QProcess::start
+TEST_F(UT_FileShredWorker, BUG333321_ShredFile_ManyFiles_BatchesIntoGroupsOf50)
+{
+    stub_ext::StubExt stub;
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+
+    // 120 个常规文件路径（不要求真实存在：isSymLink/isDir 为假即按普通文件处理）
+    const int kTotal = 120;
+    QStringList paths;
+    for (int i = 0; i < kTotal; ++i)
+        paths << tempDir.filePath(QString("shred-%1.dat").arg(i));
+
+    stub.set_lamda(ADDR(QFileInfo, isSymLink), []() { return false; });
+    stub.set_lamda(ADDR(QFileInfo, isDir), []() { return false; });
+
+    int startCalls = 0;
+    stub.set_lamda(static_cast<void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode)>(&QProcess::start),
+                   [&startCalls](QProcess *, const QString &, const QStringList &, QIODevice::OpenMode) { ++startCalls; });
+    stub.set_lamda(ADDR(QProcess, waitForStarted), []() { return true; });
+    stub.set_lamda(static_cast<QProcess::ProcessState (QProcess::*)() const>(&QProcess::state),
+                   []() { return QProcess::NotRunning; });
+    stub.set_lamda(static_cast<int (QProcess::*)() const>(&QProcess::exitCode),
+                   []() { return 0; });
+
+    QList<QUrl> urls;
+    for (const QString &p : paths)
+        urls << QUrl::fromLocalFile(p);
+
+    worker->shredFile(urls);
+
+    // 修复前不分批，start 只被调用 1 次；修复后 ceil(120/50)=3 次
+    EXPECT_EQ(startCalls, 3);
+}
+
+// PMS:333321 恰好 50 个文件边界情况下只应启动 1 个 shred 进程
+TEST_F(UT_FileShredWorker, BUG333321_ShredFile_Exactly50Files_SingleBatch)
+{
+    stub_ext::StubExt stub;
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+
+    stub.set_lamda(ADDR(QFileInfo, isSymLink), []() { return false; });
+    stub.set_lamda(ADDR(QFileInfo, isDir), []() { return false; });
+
+    int startCalls = 0;
+    stub.set_lamda(static_cast<void (QProcess::*)(const QString &, const QStringList &, QIODevice::OpenMode)>(&QProcess::start),
+                   [&startCalls](QProcess *, const QString &, const QStringList &, QIODevice::OpenMode) { ++startCalls; });
+    stub.set_lamda(ADDR(QProcess, waitForStarted), []() { return true; });
+    stub.set_lamda(static_cast<QProcess::ProcessState (QProcess::*)() const>(&QProcess::state),
+                   []() { return QProcess::NotRunning; });
+    stub.set_lamda(static_cast<int (QProcess::*)() const>(&QProcess::exitCode),
+                   []() { return 0; });
+
+    QList<QUrl> urls;
+    for (int i = 0; i < 50; ++i)
+        urls << QUrl::fromLocalFile(tempDir.filePath(QString("edge-%1.dat").arg(i)));
+
+    worker->shredFile(urls);
+
+    EXPECT_EQ(startCalls, 1);
+}

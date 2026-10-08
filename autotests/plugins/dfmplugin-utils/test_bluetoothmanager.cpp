@@ -857,3 +857,80 @@ TEST_F(UT_BluetoothManager, BluetoothManagerPrivate_onServiceValidChanged_False_
 
     d->onServiceValidChanged(false);
 }
+
+// ===================== PMS sev-2 regression additions =====================
+
+// PMS:162251 蓝牙服务重启恢复（onServiceValidChanged(true)）必须重建 DBus 接口实例，否则旧接口失效导致后续调用全挂。
+// 断言 initInterface 真正执行（setTimeout(2000) 被 initInterface 调用，用计数器验证），避免堆地址复用导致指针相等误判。
+TEST_F(UT_BluetoothManager, BUG162251_OnServiceValidChanged_True_ReinitializesDBusInterface)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    ASSERT_NE(manager, nullptr);
+    auto *d = manager->d_ptr.data();
+    ASSERT_NE(d, nullptr);
+
+    int setTimeoutCalls = 0;
+    stub.set_lamda(ADDR(QDBusInterface, setTimeout), [&setTimeoutCalls] {
+        __DBG_STUB_INVOKE__
+        ++setTimeoutCalls;
+    });
+
+    d->onServiceValidChanged(true);
+
+    // 修复前：onServiceValidChanged(true) 不调用 initInterface → 旧接口继续使用；修复后：重建接口（内部 setTimeout(2000)）
+    EXPECT_GE(setTimeoutCalls, 1);
+    EXPECT_NE(d->bluetoothInter, nullptr);
+}
+
+// PMS:182411 服务恢复后新接口应可用且 refresh() 能正常发起调用（不崩溃、不悬挂）
+TEST_F(UT_BluetoothManager, BUG182411_RefreshAfterServiceRestart_UsesFreshInterface)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    ASSERT_NE(manager, nullptr);
+    auto *d = manager->d_ptr.data();
+    ASSERT_NE(d, nullptr);
+
+    d->onServiceValidChanged(true);
+    ASSERT_NE(d->bluetoothInter, nullptr);
+
+    // 新接口超时应被设置（initInterface 中 setTimeout(2000)，已被 stub 拦截无副作用）
+    EXPECT_NO_FATAL_FAILURE(manager->refresh());
+}
+
+// PMS:248523 蓝牙服务恢复后接口必须重建：修复前 bluetoothInter 为 null/未就绪时首次访问 CanSendFile 崩溃或菜单项错误保留。
+// 回归：将接口置空后触发 onServiceValidChanged(true)，修复会重建接口，bluetoothSendEnable 可正常读到 CanSendFile=true。
+TEST_F(UT_BluetoothManager, BUG248523_OnServiceValidChanged_RebuildsInterfaceForSendEnable)
+{
+    __DBG_STUB_INVOKE__
+
+    auto manager = BluetoothManager::instance();
+    ASSERT_NE(manager, nullptr);
+    auto *d = manager->d_ptr.data();
+    ASSERT_NE(d, nullptr);
+
+    stub.set_lamda(ADDR(QDBusInterface, isValid), [] {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(ADDR(QDBusInterface, property), [](QObject *, const char *key) -> QVariant {
+        __DBG_STUB_INVOKE__
+        if (qstrcmp(key, "CanSendFile") == 0)
+            return QVariant(true);
+        return QVariant();
+    });
+
+    // 模拟修复前的故障态：接口尚未就绪/已失效（null）
+    d->bluetoothInter = nullptr;
+
+    // 修复前：此处直接使用 null 接口 → bluetoothSendEnable 空指针解引用；修复后：重建接口
+    d->onServiceValidChanged(true);
+    ASSERT_NE(d->bluetoothInter, nullptr);
+
+    // 接口就绪后 CanSendFile=true 应正确反映到菜单态
+    EXPECT_TRUE(manager->bluetoothSendEnable());
+}

@@ -1139,3 +1139,15 @@ TEST_F(UT_CanvasProxyModel, fileInfo_WithInvalidRow_ReturnsNull)
 }
 
 
+
+// ===================== PMS sev-2 regression additions =====================
+
+// PMS:140485 CanvasProxyModel::rootIndex 必须返回合法索引：row=INT_MAX、column=0、internalPointer 指向代理模型自身
+TEST_F(UT_CanvasProxyModel, BUG140485_RootIndex_InternalPointerIsProxyModel)
+{
+    const QModelIndex rootIdx = proxyModel->rootIndex();
+    EXPECT_TRUE(rootIdx.isValid());
+    EXPECT_EQ(rootIdx.row(), INT_MAX);
+    EXPECT_EQ(rootIdx.column(), 0);
+    EXPECT_EQ(rootIdx.internalPointer(), proxyModel);
+}

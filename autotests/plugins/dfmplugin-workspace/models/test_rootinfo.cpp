@@ -676,3 +676,40 @@ TEST_F(RootInfoTest, Watcher_HiddenFile_EmitsWatcherUpdateHideFile)
     int count2 = waitForSignal(hideSpy, 10000);
     EXPECT_GE(count2, 1);
 }
+
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:320213 checkKeyOnly 异常路径：空线程表/清理后调用不崩溃且键唯一性判断正确
+TEST_F(RootInfoTest, BUG320213_CheckKeyOnly_EdgePaths_NoCrash)
+{
+    createRootInfo();
+
+    // 空线程表：应返回 true 且不崩溃
+    EXPECT_NO_THROW(rootInfo->checkKeyOnly("any_key"));
+    EXPECT_TRUE(rootInfo->checkKeyOnly("any_key"));
+
+    // 单一搜索线程：唯一键为 true，其他键为 false
+    rootInfo->initThreadOfFileData("utsearch-key", Global::ItemRoles::kItemFileDisplayNameRole,
+                                   Qt::AscendingOrder, false);
+    EXPECT_TRUE(rootInfo->checkKeyOnly("utsearch-key"));
+    EXPECT_FALSE(rootInfo->checkKeyOnly("other-key"));
+
+    // 清理后回到空表：不崩溃且恢复 true（cleanRoot 依赖此语义决定 disconnect）
+    int remaining = rootInfo->clearTraversalThread("utsearch-key", false);
+    EXPECT_EQ(remaining, 0);
+    EXPECT_NO_THROW(rootInfo->checkKeyOnly("utsearch-key"));
+    EXPECT_TRUE(rootInfo->checkKeyOnly("utsearch-key"));
+}
+
+// PMS:320213 重复 init 同 key 后清理：checkKeyOnly 不崩溃
+TEST_F(RootInfoTest, BUG320213_CheckKeyOnly_ReInitSameKey_NoCrash)
+{
+    createRootInfo();
+    rootInfo->initThreadOfFileData("utsearch-key", Global::ItemRoles::kItemFileDisplayNameRole,
+                                   Qt::AscendingOrder, false);
+    rootInfo->initThreadOfFileData("utsearch-key", Global::ItemRoles::kItemFileDisplayNameRole,
+                                   Qt::AscendingOrder, false);
+    EXPECT_NO_THROW(rootInfo->checkKeyOnly("utsearch-key"));
+    rootInfo->clearTraversalThread("utsearch-key", false);
+    EXPECT_NO_THROW(rootInfo->checkKeyOnly("utsearch-key"));
+    SUCCEED();
+}

@@ -329,3 +329,77 @@ TEST_F(UT_ShredUtils, createShredSettingItem_ReturnsWidget)
         delete widget;
 }
 
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (shred utils)
+// ---------------------------------------------------------------------------
+
+// PMS:333229 validating a symlink for shredding must use the link's own
+// absolute path: passing the canonical target path shredded the wrong file
+// (the link target) and left the link itself alive.
+TEST_F(UT_ShredUtils, BUG333229_LinkFileValidatedByOwnAbsolutePath)
+{
+    const QString base = QDir::homePath() + QStringLiteral("/ut_shred_333229_%1")
+                                 .arg(QCoreApplication::applicationPid());
+    ASSERT_TRUE(QDir().mkpath(base));
+    const QString target = base + QStringLiteral("/target.txt");
+    const QString link = base + QStringLiteral("/link.lnk");
+    QFile targetFile(target);
+    ASSERT_TRUE(targetFile.open(QIODevice::WriteOnly));
+    targetFile.write("x");
+    targetFile.close();
+    QFile::remove(link);
+    ASSERT_TRUE(QFile::link(target, link));
+
+    QString checkedPath;
+    auto mockFileInfo = QSharedPointer<FileInfo>(new FileInfo(QUrl::fromLocalFile(link)));
+    stub.set_lamda(static_cast<FileInfoPointer(*)(const QUrl&, Global::CreateFileInfoType, QString*)>(&InfoFactory::create<FileInfo>),
+                   [&mockFileInfo](const QUrl &, const Global::CreateFileInfoType, QString *) -> FileInfoPointer {
+                       __DBG_STUB_INVOKE__
+                       return mockFileInfo;
+                   });
+    // the production fix: pathOf(kAbsoluteFilePath) reports the link itself, not the target
+    stub.set_lamda(VADDR(FileInfo, pathOf),
+                   [&link](FileInfo *, const FileInfo::FilePathInfoType) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return link;
+                   });
+    stub.set_lamda(ADDR(DeviceProxyManager, isFileOfExternalBlockMounts),
+                   [&checkedPath](DeviceProxyManager *, const QString &path) -> bool {
+                       __DBG_STUB_INVOKE__
+                       checkedPath = path;
+                       return false;
+                   });
+    stub.set_lamda(&FileUtils::bindPathTransform,
+                   [](const QString &path, bool) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return path;
+                   });
+
+    EXPECT_TRUE(utils->isValidFile(QUrl::fromLocalFile(link)));
+    // the link's own absolute path must be validated — never the canonical target
+    EXPECT_EQ(checkedPath, link);
+    EXPECT_NE(checkedPath, target);
+
+    QFile::remove(link);
+    QFile::remove(target);
+    QDir(base).removeRecursively();
+}
+
+// PMS:333229 a path outside the user's home must stay invalid for shredding.
+TEST_F(UT_ShredUtils, BUG333229_PathOutsideHomeIsInvalid)
+{
+    ASSERT_TRUE(QFileInfo::exists(QStringLiteral("/etc/hostname")));
+    stub.set_lamda(ADDR(DeviceProxyManager, isFileOfExternalBlockMounts),
+                   [](DeviceProxyManager *, const QString &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+    stub.set_lamda(&FileUtils::bindPathTransform,
+                   [](const QString &path, bool) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return path;
+                   });
+
+    EXPECT_FALSE(utils->isValidFile(QUrl::fromLocalFile(QStringLiteral("/etc/hostname"))));
+}

@@ -18,6 +18,9 @@
 
 #include <dfm-base/utils/universalutils.h>
 
+#include "stubext.h"
+#include <QProcess>
+
 using namespace dfmbase;
 
 TEST(UniversalUtilsTest, InMainThreadReturnsTrue)
@@ -222,4 +225,64 @@ TEST(UniversalUtilsTest, SetDockDnDMimeDataWithNonDesktopFileDoesNothing)
     UniversalUtils::setDockDnDMimeData(&md, QUrl::fromLocalFile("/tmp"), "test");
     // Non-desktop file URL → early return → no formats set.
     EXPECT_TRUE(md.formats().isEmpty());
+}
+
+// ===== PMS sev-2 regression cluster: universalutils.cpp (work-order batch 2) =====
+
+// PMS:117579 runCommand 以 QProcess::startDetached 直通（V2X 模式）：命令与参数应原样透传
+TEST(UniversalUtilsTest, BUG117579_RunCommandDelegatesToQProcessStartDetached)
+{
+    QString gotCmd, gotWd;
+    QStringList gotArgs;
+    bool called = false;
+    stub_ext::StubExt stub;
+    using DetachFunc = bool (*)(const QString &, const QStringList &, const QString &, qint64 *);
+    stub.set_lamda(static_cast<DetachFunc>(&QProcess::startDetached),
+                   [&](const QString &cmd, const QStringList &args, const QString &wd, qint64 *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       called = true;
+                       gotCmd = cmd;
+                       gotArgs = args;
+                       gotWd = wd;
+                       return true;
+                   });
+    const bool ok = UniversalUtils::runCommand(QStringLiteral("ut-dummy-cmd"),
+                                               { "--flag", "value" },
+                                               QStringLiteral("/tmp"));
+    EXPECT_TRUE(ok);
+    EXPECT_TRUE(called);
+    EXPECT_EQ(gotCmd, QString("ut-dummy-cmd"));
+    EXPECT_EQ(gotArgs, QStringList({ "--flag", "value" }));
+    EXPECT_EQ(gotWd, QString("/tmp"));
+}
+
+// PMS:117579 startDetached 返回 false 时 runCommand 应透传失败而非吞掉
+TEST(UniversalUtilsTest, BUG117579_RunCommandPropagatesFailure)
+{
+    stub_ext::StubExt stub;
+    using DetachFunc = bool (*)(const QString &, const QStringList &, const QString &, qint64 *);
+    stub.set_lamda(static_cast<DetachFunc>(&QProcess::startDetached),
+                   [](const QString &, const QStringList &, const QString &, qint64 *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+    EXPECT_FALSE(UniversalUtils::runCommand(QStringLiteral("ut-fail-cmd"), {}, QString()));
+}
+
+// PMS:224181 isParentUrl 前缀边界：file:///home/user2 不应被误判为 file:///home/user 的子路径
+TEST(UniversalUtilsTest, BUG224181_IsParentUrlPrefixBoundaryNotParent)
+{
+    EXPECT_FALSE(UniversalUtils::isParentUrl(QUrl("file:///home/user2/docs"),
+                                             QUrl("file:///home/user")));
+    EXPECT_FALSE(UniversalUtils::isParentUrl(QUrl("file:///home/user2"),
+                                             QUrl("file:///home/user")));
+}
+
+// PMS:224181 isParentUrl 根目录与尾分隔符：根是任意路径的父级；父带尾斜杠不改变判定
+TEST(UniversalUtilsTest, BUG224181_IsParentUrlRootAndTrailingSlash)
+{
+    EXPECT_TRUE(UniversalUtils::isParentUrl(QUrl("file:///home/user/docs"),
+                                            QUrl("file:///")));
+    EXPECT_TRUE(UniversalUtils::isParentUrl(QUrl("file:///home/user/docs"),
+                                            QUrl("file:///home/user/")));
 }

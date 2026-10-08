@@ -659,6 +659,82 @@ TEST_F(UT_ClipBoardMenuScene, UpdateState_WritableDir_KeepsCutEnabled)
     }
 }
 
+// PMS:335159 只读文件夹右键菜单剪切被置灰但ctrl+x有效：旧逻辑基于焦点文件canAttributes(kCanRename)禁用剪切，
+// 修复6644f4f4a后updateState只以currentDir的kIsWritable决定剪切可用性，不再查询焦点文件
+TEST_F(UT_ClipBoardMenuScene, BUG335159_UpdateState_CutEnabledChecksCurrentDirWritable)
+{
+    const QUrl focusUrl = QUrl::fromLocalFile("/tmp/test.txt");
+    QList<QUrl> urls = { focusUrl };
+    const QUrl currentDirUrl = QUrl::fromLocalFile("/tmp");
+
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = currentDirUrl;
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(urls);
+    params[MenuParamKey::kIsEmptyArea] = false;   // 非空区域：剪切动作被创建
+
+    // 焦点文件不可重命名（只读目录下文件的典型表现），修复后该状态不得影响剪切可用性
+    bool canRenameQueried = false;
+    stub.set_lamda(VADDR(FileInfo, canAttributes), [&canRenameQueried](FileInfo *, const CanableInfoType type) {
+        __DBG_STUB_INVOKE__
+        if (type == CanableInfoType::kCanRename)
+            canRenameQueried = true;
+        return false;
+    });
+    stub.set_lamda(VADDR(FileInfo, isAttributes), [](FileInfo *, const OptInfoType type) {
+        __DBG_STUB_INVOKE__
+        return type == OptInfoType::kIsWritable;   // currentDir 可写
+    });
+
+    // 捕获 updateState 期间的 InfoFactory 查询（initialize 阶段创建 focusFileInfo 属合法行为）
+    QList<QUrl> updateStateQueried;
+    bool capture = false;
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [&](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       __DBG_STUB_INVOKE__
+                       if (capture)
+                           updateStateQueried << url;
+                       return QSharedPointer<FileInfo>(new FileInfo(url));
+                   });
+    stub.set_lamda(VADDR(AbstractMenuScene, initialize), [](AbstractMenuScene *, const QVariantHash &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    stub.set_lamda(VADDR(AbstractMenuScene, create), [](AbstractMenuScene *, QMenu *) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    stub.set_lamda(VADDR(AbstractMenuScene, updateState), [](AbstractMenuScene *, QMenu *) {
+        __DBG_STUB_INVOKE__
+    });
+
+    ASSERT_TRUE(scene->initialize(params));
+
+    QMenu menu;
+    scene->create(&menu);
+
+    QAction *cutAction = nullptr;
+    for (QAction *action : menu.actions()) {
+        if (action->property(ActionPropertyKey::kActionID).toString() == QString(ActionID::kCut)) {
+            cutAction = action;
+            break;
+        }
+    }
+    ASSERT_NE(cutAction, nullptr);
+
+    capture = true;
+    scene->updateState(&menu);
+    capture = false;
+
+    // 剪切可用性只查询 currentDir，不再查询焦点文件
+    ASSERT_EQ(updateStateQueried.size(), 1);
+    EXPECT_EQ(updateStateQueried.first(), currentDirUrl);
+    EXPECT_NE(updateStateQueried.first(), focusUrl);
+    // 旧缺陷路径 focusFileInfo->canAttributes(kCanRename) 已移除
+    EXPECT_FALSE(canRenameQueried);
+    // 目录可写 → 剪切动作保持启用（回归：不再被置灰）
+    EXPECT_TRUE(cutAction->isEnabled());
+}
+
 TEST_F(UT_ClipBoardMenuScene, Triggered_NonOwnAction_ReturnsFalse)
 {
     QAction action("test");

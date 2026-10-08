@@ -425,3 +425,22 @@ TEST_F(ShortcutHelperTest, RenameProcessing_DoesNotCrash)
 {
     EXPECT_NO_THROW(shortcutHelper->renameProcessing());
 }
+
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:117491 Space 仅在非 autoRepeat 且无修饰键时触发预览（预览窗口关闭后崩溃）
+TEST_F(ShortcutHelperTest, BUG117491_Space_AutoRepeat_Ignored)
+{
+    stub.set_lamda(&ShortcutHelper::previewFiles, [](ShortcutHelper *) {});
+
+    // autoRepeat 事件必须被忽略
+    QKeyEvent repeatEv(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier, QString(), true);
+    EXPECT_FALSE(shortcutHelper->processKeyPressEvent(&repeatEv));
+
+    // 非 autoRepeat 且无修饰键：走预览分支
+    QKeyEvent onceEv(QEvent::KeyPress, Qt::Key_Space, Qt::NoModifier, QString(), false);
+    EXPECT_TRUE(shortcutHelper->processKeyPressEvent(&onceEv));
+
+    // 非 Space 键：不触发预览
+    QKeyEvent otherEv(QEvent::KeyPress, Qt::Key_A, Qt::NoModifier);
+    EXPECT_FALSE(shortcutHelper->processKeyPressEvent(&otherEv));
+}

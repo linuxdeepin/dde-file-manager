@@ -17,6 +17,8 @@
 #include <QSignalSpy>
 
 #include <dfm-base/utils/watchercache.h>
+#include <dfm-base/file/local/localfilewatcher.h>
+#include <QList>
 #include <dfm-base/interfaces/abstractfilewatcher.h>
 
 using namespace dfmbase;
@@ -88,4 +90,71 @@ TEST(WatcherCacheTest, SetCacheDisableRoundTrips)
     EXPECT_TRUE(WatcherCache::instance().cacheDisable(scheme));
     // cleanup
     WatcherCache::instance().setCacheDisbale(scheme, false);
+}
+
+// ============================================================
+// PMS sev-2 regression cluster: watchercache.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:230183 拖动文件进回收站桌面崩溃：cacheWatcher 对空 url/空 watcher 安全，
+// 有效监听对象入缓存并广播 updateWatcherTime({url}, true)
+TEST(WatcherCacheTest, BUG230183_CacheWatcherInsertsAndEmitsUpdateWatcherTime)
+{
+    const QUrl url = QUrl::fromLocalFile(QString("/tmp/dfm_ut_watchercache_230183.txt"));
+    auto watcher = QSharedPointer<LocalFileWatcher>::create(url);
+    QSignalSpy spy(&WatcherCache::instance(), &WatcherCache::updateWatcherTime);
+    WatcherCache::instance().cacheWatcher(url, watcher);
+    EXPECT_EQ(WatcherCache::instance().getCacheWatcher(url), watcher);
+    // ctor auto-registration and cache hits may emit extra updateWatcherTime;
+    // require at least one emission advertising this url with add=true
+    ASSERT_GE(spy.count(), 1);
+    bool found = false;
+    for (const auto &args : spy) {
+        if (args.at(0).value<QList<QUrl>>().contains(url) && args.at(1).toBool()) {
+            found = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found);
+    WatcherCache::instance().removeCacheWatcher(url);
+}
+
+// PMS:268167 批量删除文件夹时文件管理器崩溃：removeCacheWatcherByParent 按
+// scheme+路径前缀批量清理并广播 updateWatcherTime(urls, false)；根目录直接短路
+TEST(WatcherCacheTest, BUG268167_RemoveByParentPrefixEmitsUpdateWatcherTime)
+{
+    const QUrl parent = QUrl::fromLocalFile(QString("/tmp/dfm_ut_watchercache_268167"));
+    const QUrl childA = QUrl::fromLocalFile(parent.path() + "/subA/f1.txt");
+    const QUrl childB = QUrl::fromLocalFile(parent.path() + "/subB/f2.txt");
+    const QUrl outside = QUrl::fromLocalFile(QString("/tmp/dfm_ut_watchercache_outside_268167.txt"));
+    WatcherCache::instance().cacheWatcher(childA, QSharedPointer<LocalFileWatcher>::create(childA));
+    WatcherCache::instance().cacheWatcher(childB, QSharedPointer<LocalFileWatcher>::create(childB));
+    WatcherCache::instance().cacheWatcher(outside, QSharedPointer<LocalFileWatcher>::create(outside));
+    ASSERT_FALSE(WatcherCache::instance().getCacheWatcher(childA).isNull());
+
+    QSignalSpy spy(&WatcherCache::instance(), &WatcherCache::updateWatcherTime);
+    const int baseline = spy.count();
+    WatcherCache::instance().removeCacheWatcherByParent(parent);
+    EXPECT_TRUE(WatcherCache::instance().getCacheWatcher(childA).isNull());
+    EXPECT_TRUE(WatcherCache::instance().getCacheWatcher(childB).isNull());
+    EXPECT_FALSE(WatcherCache::instance().getCacheWatcher(outside).isNull());
+    // emissions advertising the removed children with add=false (per-child emits)
+    ASSERT_GT(spy.count(), baseline);
+    bool removedA = false, removedB = false;
+    for (int i = baseline; i < spy.count(); ++i) {
+        const auto removed = spy.at(i).at(0).value<QList<QUrl>>();
+        if (!spy.at(i).at(1).toBool()) {
+            removedA = removedA || removed.contains(childA);
+            removedB = removedB || removed.contains(childB);
+        }
+    }
+    EXPECT_TRUE(removedA);
+    EXPECT_TRUE(removedB);
+
+    // root parent short-circuit: no crash, no extra signal
+    const int beforeRoot = spy.count();
+    WatcherCache::instance().removeCacheWatcherByParent(QUrl::fromLocalFile("/"));
+    EXPECT_EQ(spy.count(), beforeRoot);
+
+    WatcherCache::instance().removeCacheWatcher(outside);
 }

@@ -24,6 +24,10 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/fileutils.h>
+#include <dfm-io/doperator.h>
+#include <QDBusConnection>
+#include <QDBusMessage>
 
 using namespace dfmbase;
 
@@ -552,4 +556,161 @@ TEST_F(LocalFileHandlerTest, SetPermissionsNonExistent)
         QUrl::fromLocalFile(rootPath + "/nonexistent_perm.txt"),
         QFileDevice::ReadOwner);
     EXPECT_FALSE(ok);
+}
+
+// ============================================================
+// PMS sev-2 regression cluster: localfilehandler.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:117493 手动重命名后本地文件监听不更新：renameFile 成功后必须手动发送
+// kFileDeleted(旧路径)+kFileAdded(新路径) 通知（needCheck=false 跳过隐藏名对话框）
+TEST_F(LocalFileHandlerTest, BUG117493_RenameFileNotifiesManualFileChange)
+{
+    stub_ext::StubExt stub;
+    QList<QPair<DFMGLOBAL_NAMESPACE::FileNotifyType, QUrl>> notified;
+    stub.set_lamda(ADDR(FileUtils, notifyFileChangeManual),
+                   [&notified](DFMGLOBAL_NAMESPACE::FileNotifyType type, const QUrl &url) {
+                       __DBG_STUB_INVOKE__
+                       notified.append({ type, url });
+                   });
+
+    const QString src = rootPath + "/rename_src_117493.txt";
+    const QString dst = rootPath + "/rename_dst_117493.txt";
+    QFile f(src);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("data");
+    f.close();
+
+    EXPECT_TRUE(handler.renameFile(QUrl::fromLocalFile(src), QUrl::fromLocalFile(dst), false));
+    EXPECT_TRUE(notified.contains({ DFMGLOBAL_NAMESPACE::FileNotifyType::kFileDeleted,
+                                    QUrl::fromLocalFile(src) }));
+    EXPECT_TRUE(notified.contains({ DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded,
+                                    QUrl::fromLocalFile(dst) }));
+}
+
+// PMS:117493 新建文件后同样需要手动发送 kFileAdded 通知，保证监听器感知
+TEST_F(LocalFileHandlerTest, BUG117493_TouchFileNotifiesFileAdded)
+{
+    stub_ext::StubExt stub;
+    QList<QPair<DFMGLOBAL_NAMESPACE::FileNotifyType, QUrl>> notified;
+    stub.set_lamda(ADDR(FileUtils, notifyFileChangeManual),
+                   [&notified](DFMGLOBAL_NAMESPACE::FileNotifyType type, const QUrl &url) {
+                       __DBG_STUB_INVOKE__
+                       notified.append({ type, url });
+                   });
+
+    const QString path = rootPath + "/touch_117493.txt";
+    const QUrl result = handler.touchFile(QUrl::fromLocalFile(path));
+    EXPECT_EQ(result, QUrl::fromLocalFile(path));
+    EXPECT_TRUE(notified.contains({ DFMGLOBAL_NAMESPACE::FileNotifyType::kFileAdded,
+                                    QUrl::fromLocalFile(path) }));
+}
+
+// PMS:177731 touchFile 在未显式初始化 dfmio 的进程中必须可用（当前实现无 init 前置）
+TEST_F(LocalFileHandlerTest, BUG177731_TouchFileWorks)
+{
+    const QString path = rootPath + "/created_177731.txt";
+    const QUrl result = handler.touchFile(QUrl::fromLocalFile(path));
+    EXPECT_EQ(result, QUrl::fromLocalFile(path));
+    EXPECT_TRUE(QFile::exists(path));
+}
+
+// PMS:177845 mkdir 在未显式初始化 dfmio 的进程中必须可用且发送通知
+TEST_F(LocalFileHandlerTest, BUG177845_MkdirWorks)
+{
+    const QString dirPath = rootPath + "/created_dir_177845";
+    EXPECT_TRUE(handler.mkdir(QUrl::fromLocalFile(dirPath)));
+    EXPECT_TRUE(QDir(dirPath).exists());
+}
+
+// PMS:189699 gio 上报成功但文件未真实创建：touchFile 必须检测 info/exists，
+// 返回空 URL 且置 NOT_SUPPORTED 错误码
+TEST_F(LocalFileHandlerTest, BUG189699_TouchFileNotCreatedReturnsEmptyUrl)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DFMIO::DOperator, touchFile), [](DFMIO::DOperator *) -> bool {
+        __DBG_STUB_INVOKE__
+        return true;   // gio reports success, but no file is actually created
+    });
+
+    const QString path = rootPath + "/phantom_189699.txt";
+    EXPECT_FALSE(QFile::exists(path));
+    const QUrl result = handler.touchFile(QUrl::fromLocalFile(path));
+    EXPECT_TRUE(result.isEmpty());
+    EXPECT_EQ(handler.errorCode(), DFM_IO_ERROR_NOT_SUPPORTED);
+    EXPECT_FALSE(QFile::exists(path));
+}
+
+// PMS:257805 从模板新建文件：touchFile(url, templateUrl) 返回模板 URL 且内容被复制
+TEST_F(LocalFileHandlerTest, BUG257805_TouchFileFromTemplateCopiesContent)
+{
+    const QString templatePath = rootPath + "/template_257805.dtemplate";
+    {
+        QFile tpl(templatePath);
+        ASSERT_TRUE(tpl.open(QIODevice::WriteOnly));
+        tpl.write("TEMPLATE-CONTENT-257805");
+    }
+    const QString newPath = rootPath + "/newfile_257805.txt";
+    const QUrl result = handler.touchFile(QUrl::fromLocalFile(newPath), QUrl::fromLocalFile(templatePath));
+    EXPECT_EQ(result, QUrl::fromLocalFile(templatePath));
+    QFile created(newPath);
+    ASSERT_TRUE(created.open(QIODevice::ReadOnly));
+    EXPECT_EQ(created.readAll(), QByteArray("TEMPLATE-CONTENT-257805"));
+}
+
+// PMS:144897 openFiles 失败路径：不存在的文件返回 false，不崩溃、不弹窗
+// （原修复的 push slot_OpenWith_ShowDialog 已被后续重构移除，按当前契约验证）
+TEST_F(LocalFileHandlerTest, BUG144897_OpenFilesNonExistentReturnsFalse)
+{
+    const QUrl url = QUrl::fromLocalFile(rootPath + "/no_such_144897.txt");
+    EXPECT_FALSE(handler.openFiles({ url }));
+    EXPECT_FALSE(handler.openFiles({ url, url }));   // repeated/批量同样安全
+}
+
+// PMS:243115 使用应用打开文件后最近使用记录并发写入：launchApp 成功后
+// addRecentFile 需安全完成（DBus 不可用时仅告警，不崩溃；多次调用稳定）
+TEST_F(LocalFileHandlerTest, BUG243115_OpenFilesByAppAddsRecentSafely)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(LocalFileHandlerPrivate, launchApp),
+                   [](LocalFileHandlerPrivate *, const QString &, const QStringList &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+    // avoid real session-bus blocking calls in AddItem
+    stub.set_lamda(static_cast<QDBusMessage (QDBusConnection::*)(const QDBusMessage &, QDBus::CallMode, int) const>(
+                       &QDBusConnection::call),
+                   [](QDBusConnection *, const QDBusMessage &, QDBus::CallMode, int) {
+                       __DBG_STUB_INVOKE__
+                       return QDBusMessage();
+                   });
+
+    const QString filePath = rootPath + "/recent_243115.txt";
+    QFile f(filePath);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("x");
+    f.close();
+
+    const QUrl url = QUrl::fromLocalFile(filePath);
+    for (int i = 0; i < 3; ++i)
+        EXPECT_TRUE(handler.openFilesByApp({ url }, QString("/tmp/fake_app_243115.desktop")));
+}
+
+// PMS:184131 回收站操作返回目标路径：trashFile 应透传 DOperator 结果，
+// 成功返回目标路径，失败返回空串
+TEST_F(LocalFileHandlerTest, BUG184131_TrashFileReturnsTargetPath)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DFMIO::DOperator, trashFile), [](DFMIO::DOperator *) -> QString {
+        __DBG_STUB_INVOKE__
+        return "/trash/target_184131";
+    });
+    const QUrl url = QUrl::fromLocalFile(rootPath + "/trash_me_184131.txt");
+    EXPECT_EQ(handler.trashFile(url), QString("/trash/target_184131"));
+
+    stub.set_lamda(ADDR(DFMIO::DOperator, trashFile), [](DFMIO::DOperator *) -> QString {
+        __DBG_STUB_INVOKE__
+        return QString();
+    });
+    EXPECT_TRUE(handler.trashFile(url).isEmpty());
 }

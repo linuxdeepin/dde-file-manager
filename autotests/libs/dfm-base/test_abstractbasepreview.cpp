@@ -84,3 +84,19 @@ TEST(AbstractBasePreviewTest, LocalPreviewDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ TestAbstractBasePreview preview; });
 }
+// ============================================================
+// PMS sev-2 regression cluster: abstractbasepreview.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:236235 预览压缩包后关闭窗口崩溃：handleBeforDestroy 必须可重入/幂等，
+// 有预览状态时连续两次调用不崩溃、不重复释放
+TEST(AbstractBasePreviewTest, BUG236235_HandleBeforDestroyIdempotentNoop)
+{
+    TestAbstractBasePreview preview;
+    preview.setFileUrl(QUrl::fromLocalFile("/tmp/dfm_ut_preview_236235.zip"));
+    EXPECT_NO_FATAL_FAILURE({
+        preview.handleBeforDestroy();
+        preview.handleBeforDestroy();   // second invocation must stay a safe noop
+    });
+    EXPECT_EQ(preview.fileUrl(), QUrl::fromLocalFile("/tmp/dfm_ut_preview_236235.zip"));
+}

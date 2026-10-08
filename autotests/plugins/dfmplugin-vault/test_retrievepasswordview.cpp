@@ -130,3 +130,66 @@ TEST_F(RetrievePasswordViewTest, ShowEvent_NoCrash)
     QShowEvent event;
     EXPECT_NO_FATAL_FAILURE(view->showEvent(&event));
 }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (retrieve password view)
+// ---------------------------------------------------------------------------
+#include <DFileChooserEdit>
+#include <DDialog>
+#include <QtConcurrent>
+
+DWIDGET_USE_NAMESPACE
+
+// PMS:377985 the key-file chooser must restrict the file dialog to *.key files
+// (ExistingFiles mode) and must not allow clearing the selection, otherwise
+// users can submit an arbitrary/empty key file path.
+TEST_F(RetrievePasswordViewTest, BUG377985_KeyFileChooserFilterContract)
+{
+    Dtk::Widget::DFileChooserEdit *edit = view->filePathEdit;
+    ASSERT_NE(edit, nullptr);
+
+    EXPECT_EQ(edit->nameFilters(), QStringList { QStringLiteral("KEY file(*.key)") });
+    EXPECT_EQ(edit->fileMode(), Dtk::Widget::DFileDialog::ExistingFiles);
+
+    ASSERT_NE(edit->lineEdit(), nullptr);
+    EXPECT_FALSE(edit->lineEdit()->isClearButtonEnabled());
+    EXPECT_TRUE(edit->lineEdit()->isReadOnly());
+}
+
+// PMS:310173 a failed key verification must re-enable the file chooser and both
+// buttons so the user can retry or cancel instead of getting stuck in the dialog.
+TEST_F(RetrievePasswordViewTest, BUG310173_KeyVerificationFailureKeepsDialogCancellable)
+{
+    stub.set_lamda(&OperatorCenter::verificationRetrievePassword,
+                   [](OperatorCenter *, const QString, QString &) -> bool { return false; });
+
+    QFuture<RetrievePasswordView::KeyVerificationResult> future = QtConcurrent::run([]() -> RetrievePasswordView::KeyVerificationResult {
+        RetrievePasswordView::KeyVerificationResult result;
+        result.isValid = false;
+        return result;
+    });
+    future.waitForFinished();
+    view->keyVerificationWatcher->setFuture(future);
+
+    QSignalSpy spy(view, &RetrievePasswordView::sigBtnEnabled);
+    ASSERT_TRUE(spy.isValid());
+    view->onKeyVerificationFinished();
+
+    EXPECT_TRUE(view->filePathEdit->isEnabled());
+    bool btnEnabled = false;
+    bool cancelEnabled = false;
+    for (const auto &args : spy) {
+        if (args.at(0).toInt() == 1 && args.at(1).toBool())
+            btnEnabled = true;
+        if (args.at(0).toInt() == 0 && args.at(1).toBool())
+            cancelEnabled = true;
+    }
+    EXPECT_TRUE(btnEnabled);
+    EXPECT_TRUE(cancelEnabled);
+
+    // leaving the dialog during/after verification must not hang or crash
+    QSignalSpy jumpSpy(view, &RetrievePasswordView::signalJump);
+    ASSERT_TRUE(jumpSpy.isValid());
+    view->buttonClicked(0, QString());
+    EXPECT_EQ(jumpSpy.count(), 1);
+}

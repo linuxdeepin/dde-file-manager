@@ -479,6 +479,35 @@ TEST_F(UT_ComputerItemDelegate, GetProgressTotalColor_ReturnsValidColor)
     EXPECT_TRUE(color.isValid());
 }
 
+// PMS:181279 光盘容量异常（usage > total）时按原始值绘制导致界面卡死；
+// 修复后 drawDeviceDetail 会把 sizeUsage 重置为 0 再格式化绘制
+TEST_F(UT_ComputerItemDelegate, BUG181279_UsageExceedsTotal_ResetsUsageToZero)
+{
+    // usage(1TB) > total(1GB)：旧代码会把 1TB 传给绘制逻辑造成卡死
+    mockModel->setMockData(ComputerModel::kTotalSizeVisiableRole, true);
+    mockModel->setMockData(ComputerModel::kUsedSizeVisiableRole, true);
+    mockModel->setMockData(ComputerModel::kProgressVisiableRole, true);
+    mockModel->setMockData(ComputerModel::kSizeTotalRole, static_cast<qint64>(1024LL * 1024 * 1024));
+    mockModel->setMockData(ComputerModel::kSizeUsageRole, static_cast<qint64>(1024LL * 1024 * 1024 * 1024));
+
+    QList<qint64> captured;
+    stub.set_lamda(&DFMBASE_NAMESPACE::FileUtils::formatSize, [&captured](qint64 size, bool, int, int, QStringList) -> QString {
+        __DBG_STUB_INVOKE__
+        captured.append(size);
+        return "x";
+    });
+
+    EXPECT_NO_THROW(delegate->drawDeviceDetail(mockPainter, mockOption, mockIndex));
+
+    // drawDeviceDetail 先格式化 usage 再格式化 total；
+    // 修复后 usage>total 被置 0，非法值绝不能进入 formatSize
+    ASSERT_GE(captured.size(), 2);
+    EXPECT_EQ(captured.at(0), 0);
+    EXPECT_FALSE(captured.contains(static_cast<qint64>(1024LL * 1024 * 1024 * 1024)));
+    // total 仍按原值格式化
+    EXPECT_EQ(captured.at(1), static_cast<qint64>(1024LL * 1024 * 1024));
+}
+
 TEST_F(UT_ComputerItemDelegate, RenderBlurShadow_ValidSize_ReturnsNonNullPixmap)
 {
     QSize testSize(50, 50);

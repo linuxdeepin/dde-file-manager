@@ -204,3 +204,34 @@ TEST_F(UT_ProgressDialog, handleShredResult_Failure_ShowsFailedWidget)
     dialog->handleShredResult(false, "Error message");
 }
 
+
+// ===================== PMS sev-2 regression additions =====================
+#include <QStackedWidget>
+
+// PMS:333093 粉碎失败后对话框应切换到 ShredFailedWidget 页面，而不是停留在进度页
+TEST_F(UT_ProgressDialog, BUG333093_HandleShredResult_Failure_SwitchesToFailedWidget)
+{
+    dialog->handleShredResult(false, QString("failed to shred /tmp/a.txt"));
+
+    auto *failedWidget = dialog->findChild<ShredFailedWidget *>();
+    ASSERT_NE(failedWidget, nullptr);
+    auto *stack = dialog->findChild<QStackedWidget *>();
+    ASSERT_NE(stack, nullptr);
+    EXPECT_EQ(stack->currentWidget(), failedWidget);
+}
+
+// PMS:333331 大批量（50W 文件）粉碎进度刷新后再失败，进度页仍应能切换到失败页且对话框不崩溃
+TEST_F(UT_ProgressDialog, BUG333331_HandleShredResult_AfterManyProgressUpdates_ShowsFailedWidget)
+{
+    for (int i = 0; i < 120; ++i) {
+        dialog->updateProgressValue(i % 101, QString("/tmp/ut-shred-batch/file-%1.txt").arg(i));
+    }
+
+    dialog->handleShredResult(false, QString("shredding 500000 files failed"));
+
+    auto *failedWidget = dialog->findChild<ShredFailedWidget *>();
+    ASSERT_NE(failedWidget, nullptr);
+    auto *stack = dialog->findChild<QStackedWidget *>();
+    ASSERT_NE(stack, nullptr);
+    EXPECT_EQ(stack->currentWidget(), failedWidget);
+}

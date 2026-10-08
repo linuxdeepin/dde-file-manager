@@ -236,3 +236,27 @@ TEST_F(RenameBarTest, FindPage_ReturnsPage)
         (void)result; // Suppress unused variable warning
     });
 }
+
+#include "views/workspacepage.h"
+
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:309489 findPage 需向上遍历父链查找 WorkspacePage（批量重命名不生效）
+TEST_F(RenameBarTest, BUG309489_FindPage_WalksParentHierarchy)
+{
+    WorkspacePage page;
+    QWidget container(&page);
+    RenameBar deepBar(&container);
+    EXPECT_EQ(deepBar.findPage(), &page);
+
+    RenameBar directBar(&page);
+    EXPECT_EQ(directBar.findPage(), &page);
+
+    QWidget plain;
+    RenameBar plainBar(&plain);
+    EXPECT_EQ(plainBar.findPage(), nullptr);
+
+    // 无 page 时获取选区需安全返回空列表
+    EXPECT_NO_THROW(plainBar.getSelectFiles());
+    EXPECT_TRUE(plainBar.getSelectFiles().isEmpty());
+    EXPECT_NO_THROW(deepBar.getSelectFiles());
+}

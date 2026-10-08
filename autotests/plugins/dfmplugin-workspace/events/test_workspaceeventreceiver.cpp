@@ -570,3 +570,93 @@ TEST_F(WorkspaceEventReceiverTest, HandleRegisterFocusFileViewDisabled_ValidSche
     // This should not crash
     EXPECT_NO_THROW(WorkspaceEventReceiver::instance()->handleRegisterFocusFileViewDisabled(scheme));
 }
+#include "utils/workspacehelper.h"
+#include <QtTest>
+#include <QList>
+#include <QMap>
+
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:354309 重命名成功后需经延迟单发 requestSelectFiles 恢复选区
+TEST_F(WorkspaceEventReceiverTest, BUG354309_RenameResult_EmitsRequestSelectFiles)
+{
+    stub.set_lamda(&WorkspaceHelper::instance, []() -> WorkspaceHelper * {
+        static WorkspaceHelper helper;
+        return &helper;
+    });
+    stub.set_lamda(&WorkspaceHelper::requestSelectFilesDelayMs, [](WorkspaceHelper *, int) {
+        return 1;
+    });
+
+    QList<QUrl> received;
+    int emitCount = 0;
+    QObject::connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSelectFiles,
+                     WorkspaceEventReceiver::instance(),
+                     [&](const QList<QUrl> &urls) {
+                         ++emitCount;
+                         received = urls;
+                     });
+
+    QMap<QUrl, QUrl> renamedUrls;
+    renamedUrls[QUrl("file:///ut-354309/old1.txt")] = QUrl("file:///ut-354309/new1.txt");
+    renamedUrls[QUrl("file:///ut-354309/old2.txt")] = QUrl("file:///ut-354309/new2.txt");
+
+    WorkspaceEventReceiver::instance()->handleRenameFileResult(12345, renamedUrls, true, QString());
+    QTest::qWait(100);
+
+    EXPECT_EQ(emitCount, 1);
+    EXPECT_EQ(received.count(), 2);
+    EXPECT_TRUE(received.contains(QUrl("file:///ut-354309/new1.txt")));
+    EXPECT_TRUE(received.contains(QUrl("file:///ut-354309/new2.txt")));
+}
+
+// PMS:354309 重命名失败或无重命名结果时不得触发选区恢复
+TEST_F(WorkspaceEventReceiverTest, BUG354309_RenameResult_FailedOrEmpty_SkipsSelection)
+{
+    stub.set_lamda(&WorkspaceHelper::instance, []() -> WorkspaceHelper * {
+        static WorkspaceHelper helper;
+        return &helper;
+    });
+    stub.set_lamda(&WorkspaceHelper::requestSelectFilesDelayMs, [](WorkspaceHelper *, int) {
+        return 1;
+    });
+
+    int emitCount = 0;
+    QObject::connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSelectFiles,
+                     WorkspaceEventReceiver::instance(),
+                     [&emitCount](const QList<QUrl> &) { ++emitCount; });
+
+    QMap<QUrl, QUrl> renamedUrls;
+    renamedUrls[QUrl("file:///ut-354309/old1.txt")] = QUrl("file:///ut-354309/new1.txt");
+    WorkspaceEventReceiver::instance()->handleRenameFileResult(12345, renamedUrls, false, QStringLiteral("error"));
+    WorkspaceEventReceiver::instance()->handleRenameFileResult(12345, {}, true, QString());
+    QTest::qWait(100);
+
+    EXPECT_EQ(emitCount, 0);
+}
+
+// PMS:354309 重命名条目数超过上限时跳过选区恢复，不得崩溃
+TEST_F(WorkspaceEventReceiverTest, BUG354309_RenameResult_OverLimit_SkipsSelection)
+{
+    stub.set_lamda(&WorkspaceHelper::instance, []() -> WorkspaceHelper * {
+        static WorkspaceHelper helper;
+        return &helper;
+    });
+    stub.set_lamda(&WorkspaceHelper::requestSelectFilesDelayMs, [](WorkspaceHelper *, int) {
+        return 1;
+    });
+
+    int emitCount = 0;
+    QObject::connect(WorkspaceHelper::instance(), &WorkspaceHelper::requestSelectFiles,
+                     WorkspaceEventReceiver::instance(),
+                     [&emitCount](const QList<QUrl> &) { ++emitCount; });
+
+    QMap<QUrl, QUrl> renamedUrls;
+    for (int i = 0; i < 20000; ++i) {
+        renamedUrls[QUrl(QStringLiteral("file:///ut-354309/old%1").arg(i))] =
+                QUrl(QStringLiteral("file:///ut-354309/new%1").arg(i));
+    }
+    WorkspaceEventReceiver::instance()->handleRenameFileResult(12345, renamedUrls, true, QString());
+    QTest::qWait(100);
+
+    EXPECT_EQ(emitCount, 0);
+}

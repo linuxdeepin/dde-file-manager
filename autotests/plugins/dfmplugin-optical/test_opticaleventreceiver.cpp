@@ -306,6 +306,54 @@ TEST_F(TestOpticalEventReceiver, HandleDropFiles_NonBurnScheme_ReturnsFalse)
     EXPECT_FALSE(result);
 }
 
+// PMS:164263 拖放文件到刻录目录后视图不刷新，需手动刷新才能看到新文件。
+// 回归点：burn scheme 且 burnFilePath 为空时，应发布 kCopy 拷贝事件
+//        （windowId=0、转换后的本地源 URL 列表、刻录目标 URL），并返回 true。
+TEST_F(TestOpticalEventReceiver, BUG164263_HandleDropFiles_BurnSchemePublishesCopyEvent)
+{
+    QList<QUrl> fromUrls = { QUrl("file:///home/user/test.txt") };
+    QUrl targetUrl = QUrl("burn:///dev/sr0");
+
+    stub.set_lamda(&UniversalUtils::urlsTransformToLocal, [&](const QList<QUrl> &urls, QList<QUrl> *localUrls) {
+        __DBG_STUB_INVOKE__
+        if (localUrls) {
+            *localUrls = urls;
+        }
+        return true;
+    });
+    stub.set_lamda(ADDR(OpticalHelper, burnFilePath), [](const QUrl &) {
+        __DBG_STUB_INVOKE__
+        return QString();
+    });
+
+    bool published = false;
+    dpf::EventType publishedType = static_cast<dpf::EventType>(-1);
+    int publishedWinId = -1;
+    QList<QUrl> publishedSources;
+    QUrl publishedTarget;
+    typedef bool (dpf::EventDispatcherManager::*PublishFunc)(dpf::EventType, int, QList<QUrl> &, const QUrl &,
+                                                            AbstractJobHandler::JobFlag &&, std::nullptr_t &&);
+    stub.set_lamda(static_cast<PublishFunc>(&dpf::EventDispatcherManager::publish),
+                   [&](dpf::EventDispatcherManager *, dpf::EventType type, int winId, QList<QUrl> &sources,
+                       const QUrl &target, AbstractJobHandler::JobFlag, std::nullptr_t) -> bool {
+                       __DBG_STUB_INVOKE__
+                       published = true;
+                       publishedType = type;
+                       publishedWinId = winId;
+                       publishedSources = sources;
+                       publishedTarget = target;
+                       return true;
+                   });
+
+    bool result = receiver->handleDropFiles(fromUrls, targetUrl);
+
+    EXPECT_TRUE(result);
+    EXPECT_TRUE(published);
+    EXPECT_EQ(publishedType, DFMBASE_NAMESPACE::GlobalEventType::kCopy);
+    EXPECT_EQ(publishedWinId, 0);
+    EXPECT_EQ(publishedSources, fromUrls);
+    EXPECT_EQ(publishedTarget, targetUrl);
+}
 TEST_F(TestOpticalEventReceiver, HandleBlockShortcutPaste_NonOpticalScheme_ReturnsFalse)
 {
     quint64 windowId = 12345;

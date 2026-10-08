@@ -498,3 +498,32 @@ TEST_F(UT_CoreHelper, StaticMethods_NoInstanceRequired_CallSuccessfully)
 //     EXPECT_NO_THROW(CoreHelper::stripFilters(emptyFilters));
 //     EXPECT_NO_THROW(CoreHelper::findExtensionName(emptyFileName, emptyFilters, &db));
 // }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (core helper)
+// ---------------------------------------------------------------------------
+
+// PMS:305621 findExtensionName must stop at the first matching name filter:
+// the fixed code checks the file name's own suffix once and then each filter
+// until a match, instead of querying the mime database for every filter.
+TEST_F(UT_CoreHelper, BUG305621_FindExtensionNameStopsAtFirstMatch)
+{
+    int suffixCalls = 0;
+    stub.set_lamda(&QMimeDatabase::suffixForFileName,
+                   [&suffixCalls](const QMimeDatabase *, const QString &) -> QString {
+                       ++suffixCalls;
+                       return QStringLiteral("txt");
+                   });
+
+    QMimeDatabase db;
+    QStringList filters;
+    for (int i = 0; i < 40; ++i)
+        filters << QStringLiteral("*.txt");
+
+    const QString ext = CoreHelper::findExtensionName(QStringLiteral("test.txt"), filters, &db);
+
+    // 1 lookup for the file name + 1 for the first matching filter ("*.txt") —
+    // the pre-fix implementation queried once per filter (41 lookups)
+    EXPECT_EQ(suffixCalls, 2);
+    EXPECT_FALSE(ext.isEmpty());
+}

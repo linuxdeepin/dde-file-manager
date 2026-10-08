@@ -288,3 +288,16 @@ TEST_F(UT_ShareFileInfoPrivate, FileName_ReturnsShareNameOrEmpty)
     d->info.clear();
     EXPECT_TRUE(d->fileName().isEmpty());
 }
+
+// PMS:124865 用户共享多级子目录时，重定向到本地文件的 URL 缺少子目录层级，定位到共享根目录。
+// 回归点：urlOf(kRedirectedFileUrl) 必须返回包含完整子目录路径的本地 URL。
+TEST_F(UT_ShareFileInfo, BUG124865_UrlOf_RedirectedFileUrl_SubDirectoryPath)
+{
+    const QUrl subDirUrl("usershare:///test/sub/dir");
+    ShareFileInfo subInfo(subDirUrl);
+    subInfo.d->info = { { ShareInfoKeys::kName, "dir" },
+                        { ShareInfoKeys::kPath, "/test" } };
+
+    EXPECT_EQ(subInfo.urlOf(UrlInfoType::kRedirectedFileUrl),
+              QUrl::fromLocalFile("/test/sub/dir"));
+}

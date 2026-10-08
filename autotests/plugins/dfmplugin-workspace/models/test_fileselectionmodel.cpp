@@ -12,6 +12,7 @@
 #include <QAbstractItemModel>
 #include <QItemSelection>
 #include <QModelIndex>
+#include <QStandardItemModel>
 #include <QTimer>
 
 using namespace dfmplugin_workspace;
@@ -100,4 +101,32 @@ TEST_F(FileSelectionModelTest, Destructor_DoesNotCrash)
     
     // Should not crash
     EXPECT_NO_THROW(delete model);
+}
+
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:326753 延迟 select 需维护 first/lastSelectedIndex，selectedCount 按区间计数
+TEST_F(FileSelectionModelTest, BUG326753_Select_ClearAndSelect_TracksRange)
+{
+    QStandardItemModel model;
+    model.appendRow(new QStandardItem("a"));
+    model.appendRow(new QStandardItem("b"));
+    model.appendRow(new QStandardItem("c"));
+
+    QItemSelection selection;
+    selection.select(model.index(0, 0), model.index(2, 0));
+
+    const auto flags = QItemSelectionModel::Current | QItemSelectionModel::Rows
+            | QItemSelectionModel::ClearAndSelect;
+    EXPECT_NO_THROW(selectionModel->select(selection, flags));
+    EXPECT_EQ(selectionModel->selectedCount(), 3);
+
+    // 空选区 + 相同命令：first/last 归位，不崩溃
+    QItemSelection empty;
+    EXPECT_NO_THROW(selectionModel->select(empty, flags));
+    EXPECT_EQ(selectionModel->selectedCount(), 0);
+
+    // 非 ClearAndSelect 命令：不维护区间，不崩溃
+    QItemSelection sel2;
+    sel2.select(model.index(1, 0), model.index(1, 0));
+    EXPECT_NO_THROW(selectionModel->select(sel2, QItemSelectionModel::Select));
 }

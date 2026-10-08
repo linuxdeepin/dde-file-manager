@@ -194,3 +194,43 @@ TEST_F(EntryFileInfoTest, ExtraProperties)
     EntryFileInfo info(url);
     EXPECT_NO_FATAL_FAILURE({ (void)info.extraProperties(); });
 }
+
+// ===== PMS sev-2 regression cluster: entryfileinfo.cpp (work-order batch 2) =====
+
+namespace {
+// 128039：自定义 entity，sizeTotal(200) > sizeUsage(100)，验证 sizeFree = total-usage（quint64 无符号契约）
+class Ut128039EntryEntity : public AbstractEntryFileEntity
+{
+public:
+    explicit Ut128039EntryEntity(const QUrl &url)
+        : AbstractEntryFileEntity(url) {}
+    QString displayName() const override { return QStringLiteral("Ut128039Entry"); }
+    QIcon icon() const override { return QIcon(); }
+    bool exists() const override { return true; }
+    bool showProgress() const override { return false; }
+    bool showTotalSize() const override { return true; }
+    bool showUsageSize() const override { return true; }
+    EntryOrder order() const override { return EntryOrder::kOrderCustom; }
+    quint64 sizeTotal() const override { return 200; }
+    quint64 sizeUsage() const override { return 100; }
+};
+}   // namespace
+
+// PMS:128039 sizeFree 契约：quint64 语义下 sizeFree = sizeTotal - sizeUsage（修复前 qint64 曾显示负值）
+TEST_F(EntryFileInfoTest, BUG128039_SizeFreeComputesUnsignedDifference)
+{
+    EntryEntityFactor::registCreator<Ut128039EntryEntity>("ut128039");
+    EntryFileInfo info(QUrl("entry:///home/user/utfile.ut128039"));
+    EXPECT_EQ(info.sizeTotal(), Q_UINT64_C(200));
+    EXPECT_EQ(info.sizeUsage(), Q_UINT64_C(100));
+    EXPECT_EQ(info.sizeFree(), Q_UINT64_C(100));
+}
+
+// PMS:128039 默认 entity（未覆写 size）时三个容量字段必须全部为 0（修复前 qint64 负值显示回归点）
+TEST_F(EntryFileInfoTest, BUG128039_DefaultEntitySizeFieldsAreZero)
+{
+    EntryFileInfo info(url);   // TestEntryEntity：未覆写 size 方法
+    EXPECT_EQ(info.sizeTotal(), Q_UINT64_C(0));
+    EXPECT_EQ(info.sizeUsage(), Q_UINT64_C(0));
+    EXPECT_EQ(info.sizeFree(), Q_UINT64_C(0));
+}

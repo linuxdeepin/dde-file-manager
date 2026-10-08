@@ -134,6 +134,32 @@ protected:
     bool mockBurnEnabled = true;
 };
 
+// PMS:155555 桌面端禁用刻录不生效：配置项原先挂在 optical 插件自己的 app 下，
+// 桌面进程读不到该 app 配置而回退为 true；修复后统一读
+// "org.deepin.dde.file-manager.burn" 下的 burnEnable
+TEST_F(TestOpticalHelper, BUG155555_IsBurnEnabled_QueriesBurnAppIdConfig)
+{
+    QString capturedApp;
+    QString capturedKey;
+    stub.set_lamda(&DConfigManager::value, [&capturedApp, &capturedKey](DConfigManager *,
+                                                                        const QString &app,
+                                                                        const QString &key,
+                                                                        const QVariant &defaultValue) {
+        __DBG_STUB_INVOKE__
+        capturedApp = app;
+        capturedKey = key;
+        if (key == "burnEnable")
+            return QVariant(false);
+        return defaultValue;
+    });
+
+    // 配置可读（app id 正确）时禁用刻录必须生效
+    EXPECT_FALSE(helper->isBurnEnabled());
+    // 修复点：必须读 burn 应用下的配置，而不是 optical 应用（桌面进程不可见）
+    EXPECT_EQ(capturedApp, QString("org.deepin.dde.file-manager.burn"));
+    EXPECT_EQ(capturedKey, QString("burnEnable"));
+}
+
 TEST_F(TestOpticalHelper, Instance_ReturnsSingleton)
 {
     OpticalHelper *instance1 = OpticalHelper::instance();

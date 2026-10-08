@@ -506,3 +506,41 @@ TEST_F(UT_FileInfoModelPrivate, checkAndRefreshDesktopIcon_WithRetriesExhausted_
     // Verify XDG search was called
     EXPECT_TRUE(xdgSearchCalled);
 }
+
+// ===================== PMS sev-2 regression additions =====================
+
+// PMS:134885 replaceData 在目标已存在（a 重命名为 b 且 b 已在模型中）时，必须先解锁写锁再调用 removeData，否则 QWriteLocker 递归加锁死锁
+TEST_F(UT_FileInfoModelPrivate, BUG134885_ReplaceData_TargetExists_NoDeadlockAndOldRemoved)
+{
+    QUrl rootUrl("file:///tmp");
+    model->setRootUrl(rootUrl);
+
+    QUrl urlA("file:///tmp/a-134885.txt");
+    QUrl urlB("file:///tmp/b-134885.txt");
+    emit fileProvider->fileInserted(urlA);
+    emit fileProvider->fileInserted(urlB);
+    ASSERT_EQ(model->rowCount(model->rootIndex()), 2);
+
+    QSignalSpy dataReplacedSpy(model, &FileInfoModel::dataReplaced);
+
+    // a 重命名为 b（b 已存在）：修复前此处会在持有写锁时再次加写锁 → 死锁（测试悬挂）
+    emit fileProvider->fileRenamed(urlA, urlB);
+
+    // 走到此处即说明未死锁
+    EXPECT_EQ(model->rowCount(model->rootIndex()), 1);
+    QList<QUrl> files = model->files();
+    EXPECT_TRUE(files.contains(urlB));
+    EXPECT_FALSE(files.contains(urlA));
+    EXPECT_GE(dataReplacedSpy.count(), 1);
+}
+
+// PMS:140485 FileInfoModel::rootIndex 必须返回 row=INT_MAX、internalPointer 指向模型自身的合法索引
+TEST_F(UT_FileInfoModelPrivate, BUG140485_RootIndex_UsesMaxRowWithSelfAsInternalPointer)
+{
+    const QModelIndex rootIdx = model->rootIndex();
+    EXPECT_TRUE(rootIdx.isValid());
+    EXPECT_EQ(rootIdx.row(), INT_MAX);
+    EXPECT_EQ(rootIdx.column(), 0);
+    EXPECT_EQ(rootIdx.internalPointer(), model);
+    EXPECT_EQ(model->rowCount(rootIdx), 0);
+}

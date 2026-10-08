@@ -13,6 +13,8 @@
 
 #include <gtest/gtest.h>
 
+#include <QSignalSpy>
+
 #include <QUrl>
 #include <QColor>
 #include <QPainter>
@@ -377,4 +379,33 @@ TEST_F(UT_TagHelper, crumbEditInputFilter_NullEdit)
 {
     // Test crumb edit input filter with null pointer
     EXPECT_NO_THROW(helper->crumbEditInputFilter(nullptr));
+}
+
+// PMS:180631 删除标记失败：标记显示名与颜色的映射转换不一致，导致存入的标记名与实际不对应
+TEST_F(UT_TagHelper, BUG180631_TagNameColorMapping_RoundTripConsistent)
+{
+    const QList<QColor> colors = helper->defaultColors();
+    ASSERT_FALSE(colors.isEmpty());
+
+    for (const QColor &color : colors) {
+        const QString displayName = helper->queryDisplayNameByColor(color);
+        EXPECT_FALSE(displayName.isEmpty()) << "missing display name for " << color.name().toStdString();
+
+        // 颜色 -> 显示名 -> 颜色 往返必须一致
+        const QColor backColor = helper->queryColorByDisplayName(displayName);
+        EXPECT_EQ(backColor.name(), color.name())
+                << "round trip mismatch for " << color.name().toStdString()
+                << " -> " << displayName.toStdString();
+    }
+
+    // 显示名映射不得交叉：不同颜色不可映射到同一显示名
+    for (const QColor &a : colors) {
+        for (const QColor &b : colors) {
+            if (a.name() == b.name())
+                continue;
+            EXPECT_NE(helper->queryDisplayNameByColor(a), helper->queryDisplayNameByColor(b))
+                    << "display name collision between " << a.name().toStdString()
+                    << " and " << b.name().toStdString();
+        }
+    }
 }

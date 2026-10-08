@@ -446,3 +446,54 @@ TEST_F(FileItemDataTest, Data_WithFileContentPreviewRole_ReturnsContent)
     EXPECT_TRUE(contentData.isValid());
     EXPECT_EQ(contentData.toString(), expectedContent);
 }
+
+// ===== PMS sev-2 regression tests (appended) =====
+
+#include <dfm-base/utils/fileutils.h>
+
+// PMS:323531 sortInfo 信息已补全时时间角色必须返回格式化时间而非 "-"，否则列表中所有文件时间列显示为空
+TEST_F(FileItemDataTest, BUG323531_Data_TimeRoles_FormattedWhenSortInfoCompleted)
+{
+    const quint64 mtime = 1700000000;
+    const quint64 ctime = 1700000100;
+    auto sortInfo = QSharedPointer<dfmbase::SortFileInfo>::create();
+    sortInfo->setLastModifiedTime(mtime);
+    sortInfo->setCreateTime(ctime);
+    sortInfo->setInfoCompleted(true);
+
+    FileItemData itemData(sortInfo);
+
+    const QString expectM = QDateTime::fromSecsSinceEpoch(mtime).toString(FileUtils::dateTimeFormat());
+    const QString expectC = QDateTime::fromSecsSinceEpoch(ctime).toString(FileUtils::dateTimeFormat());
+    EXPECT_EQ(itemData.data(kItemFileLastModifiedRole).toString(), expectM);
+    EXPECT_EQ(itemData.data(kItemFileCreatedRole).toString(), expectC);
+}
+
+// PMS:323531 sortInfo 未补全且无 FileInfo 时时间角色返回 "-"（兜底行为，不得崩溃/返回非法值）
+TEST_F(FileItemDataTest, BUG323531_Data_TimeRoles_DashWhenNothingAvailable)
+{
+    auto sortInfo = QSharedPointer<dfmbase::SortFileInfo>::create();
+    sortInfo->setInfoCompleted(false);
+
+    FileItemData itemData(sortInfo);
+
+    EXPECT_EQ(itemData.data(kItemFileLastModifiedRole).toString(), QString("-"));
+    EXPECT_EQ(itemData.data(kItemFileCreatedRole).toString(), QString("-"));
+}
+
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:128271 FileItemData(SortInfo) 构造后基础角色读取（URL/大小）不得崩溃且值来自 sortInfo
+TEST_F(FileItemDataTest, BUG128271_SortInfoBasedData_BasicRolesSmoke)
+{
+    auto sortInfo = QSharedPointer<dfmbase::SortFileInfo>::create();
+    sortInfo->setUrl(QUrl("file:///ut-128271-sample.txt"));
+    sortInfo->setSize(4096);
+    sortInfo->setFile(true);
+    sortInfo->setInfoCompleted(true);
+
+    FileItemData itemData(sortInfo);
+
+    EXPECT_EQ(itemData.data(kItemUrlRole).toUrl(), QUrl("file:///ut-128271-sample.txt"));
+    EXPECT_NO_THROW(itemData.data(kItemFileSizeRole));
+    EXPECT_NO_THROW(itemData.data(kItemFileDisplayNameRole));
+}

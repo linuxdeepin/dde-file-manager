@@ -140,3 +140,42 @@ TEST_F(VaultFileIteratorTest, HasNext_EmptyDir_ReturnsFalseImmediately)
     VaultFileIterator it(url, {}, QDir::AllEntries | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
     EXPECT_FALSE(it.hasNext());
 }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (vault file iterator)
+// ---------------------------------------------------------------------------
+
+// PMS:240555 the file info surfaced for vault entries must carry the exact
+// dfmvault url (not the local transformed path) — the cached/published info
+// used to carry the wrong url, so workspace drag validation failed for vault
+// files that existed before the unlock.
+TEST_F(VaultFileIteratorTest, BUG240555_FileInfoKeepsVaultUrlForDrag)
+{
+    QFile preExist(tempDir->path() + "/preexist.txt");
+    ASSERT_TRUE(preExist.open(QIODevice::WriteOnly));
+    preExist.write("x");
+    preExist.close();
+
+    QUrl vaultUrl;
+    vaultUrl.setScheme("dfmvault");
+    vaultUrl.setPath("/");
+
+    VaultFileIterator it(vaultUrl, {}, QDir::Files | QDir::NoDotAndDotDot, QDirIterator::NoIteratorFlags);
+    ASSERT_TRUE(it.hasNext());
+    it.next();
+
+    FileInfoPointer info;
+    std::thread worker([&]() {
+        info = it.fileInfo();   // Q_ASSERT(thread) contract: worker thread only
+    });
+    worker.join();
+
+    ASSERT_NE(info, nullptr);
+    const QUrl entryUrl = info->urlOf(FileInfo::FileUrlInfoType::kUrl);
+    // the info must keep the dfmvault url of the entry (not the local mapped path)
+    EXPECT_EQ(entryUrl.scheme(), QString("dfmvault"));
+    // SetUp seeded alpha.txt/beta.txt, this test adds preexist.txt — one of them is current
+    const QStringList known { QStringLiteral("/alpha.txt"), QStringLiteral("/beta.txt"),
+                              QStringLiteral("/preexist.txt") };
+    EXPECT_TRUE(known.contains(entryUrl.path()));
+}

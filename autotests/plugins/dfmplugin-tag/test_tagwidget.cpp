@@ -128,3 +128,37 @@ TEST_F(TagWidgetTest, updateCrumbsColor)
     map["red"] = QColor("red");
     ins->updateCrumbsColor(map);
 }
+
+// PMS:177499 添加标记后不显示：标记数据读取后未渲染到标记控件（标签数据缓存异常未兜底）
+TEST_F(TagWidgetTest, BUG177499_LoadTags_ManagerTagsRenderedToCrumbEdit)
+{
+    stub.set_lamda(&TagManager::getTagsByUrls, []() {
+        __DBG_STUB_INVOKE__
+        return QStringList { "red" };
+    });
+    stub.set_lamda(&TagManager::getTagsColor, []() -> QMap<QString, QColor> {
+        __DBG_STUB_INVOKE__
+        QMap<QString, QColor> map;
+        map["red"] = QColor("red");
+        return map;
+    });
+    stub.set_lamda(&TagHelper::isDefaultTag, []() -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    int crumbCount = 0;
+    stub.set_lamda(static_cast<bool (TagCrumbEdit::*)(const DCrumbTextFormat &, int)>(&TagCrumbEdit::insertCrumb),
+                   [&crumbCount](TagCrumbEdit *, const DCrumbTextFormat &, int) {
+                       __DBG_STUB_INVOKE__
+                       ++crumbCount;
+                       return true;
+                   });
+    stub.set_lamda(&TagColorListWidget::setCheckedColorList, [](TagColorListWidget *, const QList<QColor> &) {
+        __DBG_STUB_INVOKE__
+    });
+
+    ins->loadTags(QUrl("file://hello/world"));
+
+    EXPECT_EQ(crumbCount, 1);
+}

@@ -227,3 +227,158 @@ TEST_F(UpgradeFactoryTest, FullCycle_Previous_DoUpgrade_Completed)
     // Individual unit tests above cover name()+initialize() safely.
     SUCCEED();
 }
+
+/******************************************************************************/
+/********************** PMS sev-2 回归测试（237437/291617）******************/
+/******************************************************************************/
+
+#include <gtest/gtest.h>
+#include <stubext.h>
+
+#include <QUrl>
+#include <QTemporaryDir>
+#include <QApplication>
+
+#include "dialog/processdialog.h"
+
+// 测试主入口未创建 QApplication，而 ProcessDialog 构造需要 Widgets 应用实例；
+// 于静态初始化阶段创建，保证先于任何 QWidget 使用。
+namespace {
+int utUpgradeArgc = 1;
+char *utUpgradeArgv[2] = { nullptr, nullptr };
+struct QApplicationGuard {
+    QApplication *app = nullptr;
+    QApplicationGuard()
+    {
+        utUpgradeArgv[0] = const_cast<char *>("ut-dfm-upgrade");
+        app = new QApplication(utUpgradeArgc, utUpgradeArgv);
+    }
+    // 故意不释放：QApplication 需存活到最后一个 QWidget 之后，
+    // 否则静态析构顺序问题会在进程退出时崩溃
+};
+QApplicationGuard g_upgradeQAppGuard;
+}
+
+// PMS:237437 升级后默认书签丢失：DefaultItemManager::initDefaultItems 构造的
+// 默认书签必须覆盖 7 个标准路径（Home/Desktop/Videos/Music/Pictures/Documents/
+// Downloads），且每项 url 均为有效的 file:// 地址，否则升级配置中会写入空 url，
+// 文件管理器重启后默认书签全部消失。
+TEST(UpgradeDefaultItemsTest, BUG237437_InitDefaultItemsCoversStandardPathsWithValidUrl)
+{
+    using namespace dfm_upgrade;
+
+    DefaultItemManager::instance()->initDefaultItems();
+    const QList<BookmarkData> items = DefaultItemManager::instance()->defaultItemInitOrder();
+
+    static const QStringList kExpectedOrder = {
+        "Home", "Desktop", "Videos", "Music", "Pictures", "Documents", "Downloads"
+    };
+    ASSERT_EQ(items.size(), kExpectedOrder.size());
+
+    for (int i = 0; i < items.size(); ++i) {
+        const BookmarkData &data = items.at(i);
+        EXPECT_EQ(data.name, kExpectedOrder.at(i)) << "default item order mismatch at " << i;
+        EXPECT_TRUE(data.isDefaultItem) << kExpectedOrder.at(i).toStdString() << " must be default item";
+        EXPECT_EQ(data.index, i) << kExpectedOrder.at(i).toStdString() << " index mismatch";
+
+        // 回归核心：默认书签 url 必须有效（file:// 协议且非空路径）
+        EXPECT_TRUE(data.url.isValid()) << kExpectedOrder.at(i).toStdString() << " url invalid";
+        EXPECT_EQ(data.url.scheme(), QString("file")) << kExpectedOrder.at(i).toStdString() << " scheme mismatch";
+        EXPECT_FALSE(data.url.toLocalFile().isEmpty()) << kExpectedOrder.at(i).toStdString() << " local path empty";
+    }
+}
+
+// PMS:237437 默认书签序列化结果必须携带 url 字段（config 写入依赖该键），
+// 且 initData 将默认项按索引顺序写入快捷访问列表，不允许丢失或重复。
+TEST(UpgradeDefaultItemsTest, BUG237437_InitDataSerializesDefaultItemsWithUrl)
+{
+    using namespace dfm_upgrade;
+
+    DefaultItemManager::instance()->initDefaultItems();
+    BookMarkUpgradeUnit unit;
+    const QVariantList data = unit.initData();
+
+    // 环境无插件加载时 preDef 项为空，至少要包含全部默认项
+    ASSERT_GE(data.size(), 7);
+
+    int defaultCount = 0;
+    for (const QVariant &v : data) {
+        const QVariantMap item = v.toMap();
+        if (item.value("defaultItem").toBool()) {
+            ++defaultCount;
+            const QUrl url = item.value("url").toUrl();
+            EXPECT_TRUE(url.isValid()) << "serialized default item url invalid";
+            EXPECT_FALSE(url.toLocalFile().isEmpty()) << "serialized default item url empty";
+            EXPECT_FALSE(item.value("name").toString().isEmpty()) << "serialized default item name empty";
+            EXPECT_TRUE(item.contains("index"));
+        }
+    }
+    EXPECT_EQ(defaultCount, 7) << "all 7 default items must be serialized into initData result";
+}
+
+// PMS:237437 环境健壮性：无插件/无预定义项时 initPreDefineItems 也必须安全完成。
+TEST(UpgradeDefaultItemsTest, BUG237437_InitPreDefineItemsSafeInCleanEnv)
+{
+    using namespace dfm_upgrade;
+
+    DefaultItemManager::instance()->initPreDefineItems();
+    const QList<BookmarkData> predef = DefaultItemManager::instance()->defaultPreDefInitOrder();
+    for (const BookmarkData &data : predef) {
+        EXPECT_TRUE(data.url.isValid()) << "predefine item url invalid:" << data.name.toStdString();
+    }
+    SUCCEED();
+}
+
+// PMS:291617 进程检测目标错误：升级文件管理器本体时应检测
+// /usr/libexec/dde-file-manager（desktop 模式），修复前误用其它路径，
+// 导致进程检测失效、升级时文件管理器未被关闭，升级后行为异常。
+TEST(UpgradeProcessDialogTest, BUG291617_InitializeDesktopQueriesFileManagerProc)
+{
+    using namespace dfm_upgrade;
+
+    stub_ext::StubExt stub;
+    QString queriedExec;
+    stub.set_lamda(&ProcessDialog::queryProcess, [&queriedExec](ProcessDialog *, const QString &exec) -> QList<int> {
+        queriedExec = exec;
+        return {};
+    });
+
+    ProcessDialog dialog;
+    dialog.initialize(true);
+    EXPECT_TRUE(dialog.execDialog());
+    EXPECT_EQ(queriedExec, QString("/usr/libexec/dde-file-manager"));
+}
+
+// PMS:291617 非 desktop（dde-shell 桌面）模式必须检测 /usr/bin/dde-shell。
+TEST(UpgradeProcessDialogTest, BUG291617_InitializeShellQueriesDdeShellProc)
+{
+    using namespace dfm_upgrade;
+
+    stub_ext::StubExt stub;
+    QString queriedExec;
+    stub.set_lamda(&ProcessDialog::queryProcess, [&queriedExec](ProcessDialog *, const QString &exec) -> QList<int> {
+        queriedExec = exec;
+        return {};
+    });
+
+    ProcessDialog dialog;
+    dialog.initialize(false);
+    EXPECT_TRUE(dialog.execDialog());
+    EXPECT_EQ(queriedExec, QString("/usr/bin/dde-shell"));
+}
+
+// PMS:291617 升级后旧进程 exe 链接会带上 " (deleted)" 后缀，
+// isEqual 必须识别该形态，否则重启前的旧进程无法被检测到。
+TEST(UpgradeProcessDialogTest, BUG291617_IsEqualMatchesDeletedSuffix)
+{
+    using namespace dfm_upgrade;
+
+    ProcessDialog dialog;
+    // 精确匹配
+    EXPECT_TRUE(dialog.isEqual("/usr/bin/dde-shell", "/usr/bin/dde-shell"));
+    // " (deleted)" 后缀（升级后旧进程的 /proc/<pid>/exe 链接形态）
+    EXPECT_TRUE(dialog.isEqual("/usr/bin/dde-shell (deleted)", "/usr/bin/dde-shell"));
+    // 其它路径不得误判
+    EXPECT_FALSE(dialog.isEqual("/usr/bin/other-app", "/usr/bin/dde-shell"));
+    EXPECT_FALSE(dialog.isEqual("/usr/bin/dde-shellx (deleted)", "/usr/bin/dde-shell"));
+}
