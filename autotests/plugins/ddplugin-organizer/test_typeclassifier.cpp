@@ -150,3 +150,41 @@ TEST_F(UT_TypeClassifier, Change_UpdatesUrlInCategory)
     EXPECT_TRUE(true); // Method exists and returns a value
 }
 
+
+#include "config/configpresenter.h"
+
+// PMS:159621 归档分组丢失音乐分组：kCatDefault（默认启用全部分类）的
+// classes() 列表此前漏掉 kTypeKeyMuz，导致开启类型分组后桌面音乐文件
+// 无分组可归。修复后默认列表必须包含音乐分组。
+TEST_F(UT_TypeClassifier, BUG159621_Classes_DefaultCategories_ContainsMusic)
+{
+    stub.set_lamda(ADDR(ConfigPresenter, enabledTypeCategories),
+                   [](ConfigPresenter *) -> ItemCategories {
+                       __DBG_STUB_INVOKE__
+                       return ItemCategories(kCatDefault);
+                   });
+
+    // 分类器构造时读取 enabledTypeCategories，需在打桩后创建
+    TypeClassifier defaultClassifier;
+    const QStringList cls = defaultClassifier.classes();
+
+    EXPECT_TRUE(cls.contains(kTypeKeyMuz));   // 修复前缺失音乐分组
+    EXPECT_TRUE(cls.contains(kTypeKeyDoc));
+    EXPECT_TRUE(cls.contains(kTypeKeyFld));
+}
+
+// 用户显式仅启用音乐分类时，classes() 应只返回音乐一组（走 kCategory2Key 映射）。
+TEST_F(UT_TypeClassifier, BUG159621_Classes_MusicEnabledOnly_ReturnsSingleMusicGroup)
+{
+    stub.set_lamda(ADDR(ConfigPresenter, enabledTypeCategories),
+                   [](ConfigPresenter *) -> ItemCategories {
+                       __DBG_STUB_INVOKE__
+                       return ItemCategories(kCatMusic);
+                   });
+
+    TypeClassifier musicClassifier;
+    const QStringList cls = musicClassifier.classes();
+
+    ASSERT_EQ(cls.count(), 1);
+    EXPECT_EQ(cls.first(), QString(kTypeKeyMuz));
+}

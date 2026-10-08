@@ -20,6 +20,8 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/localdiriterator.h>
 #include <dfm-base/dfm_global_defines.h>
+#include "stubext.h"
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 using namespace dfmbase;
 
@@ -157,4 +159,38 @@ TEST_F(LocalDirIteratorTest, NextAndAccessorsUnguarded)
 TEST_F(LocalDirIteratorTest, LocalIteratorDestructsCleanly)
 {
     EXPECT_NO_FATAL_FAILURE({ LocalDirIterator it(QUrl::fromLocalFile(rootPath)); });
+}
+
+// ===== PMS sev-2 regression cluster: localdiriterator.cpp (work-order batch 2) =====
+
+// PMS:222927 oneByOne 契约：DConfig kAllAsync=true 时所有目录迭代器走异步（直接返回 true）
+TEST_F(LocalDirIteratorTest, BUG222927_AllAsyncConfigForcesAsyncIteration)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DConfigManager, value),
+                   [](DConfigManager *, const QString &, const QString &key, const QVariant &defaultValue) -> QVariant {
+                       __DBG_STUB_INVOKE__
+                       if (key == QStringLiteral("dfm.iterator.allasync"))
+                           return true;
+                       return defaultValue;
+                   });
+    // kAllAsync=true 时 oneByOne 直接短路返回 true，无需初始化枚举器
+    LocalDirIterator it(QUrl::fromLocalFile(rootPath));
+    EXPECT_TRUE(it.oneByOne());
+}
+
+// PMS:222927 默认配置（kAllAsync=false）下本地目录应走同步迭代（返回 false）
+TEST_F(LocalDirIteratorTest, BUG222927_LocalDirIteratesSyncByDefault)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DConfigManager, value),
+                   [](DConfigManager *, const QString &, const QString &key, const QVariant &defaultValue) -> QVariant {
+                       __DBG_STUB_INVOKE__
+                       if (key == QStringLiteral("dfm.iterator.allasync"))
+                           return false;
+                       return defaultValue;
+                   });
+    LocalDirIterator it(QUrl::fromLocalFile(rootPath));
+    ASSERT_TRUE(it.initIterator());
+    EXPECT_FALSE(it.oneByOne());
 }

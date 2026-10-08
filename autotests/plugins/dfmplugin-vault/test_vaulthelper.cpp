@@ -299,3 +299,137 @@ TEST_F(VaultHelperImpl, ShowInProgressDialog_Busy)
     VaultHelper::instance()->showInProgressDailog("Device or resource busy");
     EXPECT_TRUE(called);
 }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (vault helper)
+// ---------------------------------------------------------------------------
+#include <QFile>
+#include <QDir>
+#include <QFileInfo>
+#include <QTemporaryDir>
+#include <QStandardPaths>
+
+#include "utils/vaultdefine.h"
+#include <dfm-io/dfmio_utils.h>
+
+// PMS:125703 pathToVaultVirtualUrl used to parse the local path with the
+// QUrl(QString) ctor, so characters like '#' were split off as a fragment and
+// the produced dfmvault url was broken; drag&drop aborted and the preview
+// dialog crashed on close. The url must be built with setPath/setScheme and
+// survive a full round trip back to the local path.
+TEST_F(VaultHelperImpl, BUG125703_VirtualUrlSpecialCharsRoundTrip)
+{
+    stub.set_lamda(&PathManager::makeVaultLocalPath,
+                   [](const QString &, const QString &) -> QString {
+                       return QString("/tmp/ut125703_vault");
+                   });
+    stub.set_lamda(&PathManager::addPathSlash,
+                   [](const QString &path) -> QString {
+                       return path.endsWith('/') ? path : path + '/';
+                   });
+
+    VaultHelper *h = VaultHelper::instance();
+    const QString fileName = QStringLiteral("ut drag #1 100%&视频?.txt");
+    const QString localPath = QStringLiteral("/tmp/ut125703_vault/") + fileName;
+
+    QUrl virtualUrl = h->pathToVaultVirtualUrl(localPath);
+    EXPECT_TRUE(virtualUrl.isValid());
+    EXPECT_EQ(virtualUrl.scheme(), QString("dfmvault"));
+    // the full file name must live in the path, nothing may leak into fragment/query
+    EXPECT_EQ(virtualUrl.path(), QStringLiteral("/") + fileName);
+    EXPECT_TRUE(virtualUrl.fragment().isEmpty());
+    EXPECT_TRUE(virtualUrl.query().isEmpty());
+
+    // round trip: virtual -> local must restore the exact local path
+    QUrl back = VaultHelper::vaultToLocalUrl(virtualUrl);
+    EXPECT_EQ(back.toLocalFile(), localPath);
+}
+
+// PMS:177631 a transparent-encryption vault must unlock straight from the
+// keyring password instead of opening the unlock pages dialog.
+TEST_F(VaultHelperImpl, BUG177631_TransparentEncryptionUnlocksFromKeyring)
+{
+    using CfgGetFunc = QVariant (VaultConfig::*)(const QString &, const QString &, const QVariant &);
+    stub.set_lamda(static_cast<CfgGetFunc>(&VaultConfig::get),
+                   [](VaultConfig *, const QString &, const QString &, const QVariant &) -> QVariant {
+                       return QVariant(QString(kConfigValueMethodTransparent));
+                   });
+    stub.set_lamda(ADDR(OperatorCenter, passwordFromKeyring),
+                   [](OperatorCenter *) -> QString {
+                       return QStringLiteral("ut-keyring-password");
+                   });
+    stub.set_lamda(&PathManager::createVaultMountDir,
+                   [](const QString &) -> bool { return true; });
+
+    int unlockCalls = 0;
+    QString unlockedWith;
+    stub.set_lamda(ADDR(VaultHelper, unlockVault),
+                   [&unlockCalls, &unlockedWith](VaultHelper *, const QString &password) -> bool {
+                       ++unlockCalls;
+                       unlockedWith = password;
+                       return true;
+                   });
+    stub.set_lamda(ADDR(VaultHelper, defaultCdAction),
+                   [](VaultHelper *, const quint64, const QUrl &) {
+                   });
+    stub.set_lamda(&VaultHelper::recordTime,
+                   [](const QString &, const QString &) {
+                   });
+
+    VaultHelper::instance()->unlockVaultDialog();
+
+    EXPECT_EQ(unlockCalls, 1);
+    EXPECT_EQ(unlockedWith, QStringLiteral("ut-keyring-password"));
+}
+
+// PMS:202109 FileEncryptHandle::state("") must report kUnknow (never kNotExisted),
+// otherwise the sidebar falls back into the "create vault" flow after password
+// retrieval and pops the creation wizard.
+TEST_F(VaultHelperImpl, BUG202109_EmptyBaseDirReportsUnknownState)
+{
+    EXPECT_EQ(FileEncryptHandle::instance()->state(QString()), VaultState::kUnknow);
+    EXPECT_EQ(FileEncryptHandle::instance()->state(QString(), false), VaultState::kUnknow);
+    EXPECT_EQ(VaultHelper::instance()->state(QString()), VaultState::kUnknow);
+}
+
+// PMS:140787 state() must decide the vault state from DFMIO::DFMUtils::fsTypeFromUrl
+// (mount-aware), not from QStorageInfo; the unlock path is queried by url and a
+// fuse.cryfs fs type reports kUnlocked while any other fs type stays kEncrypted.
+TEST_F(VaultHelperImpl, BUG140787_UnlockPathFuseTypeDecidesUnlockedState)
+{
+    QTemporaryDir realUnlockDir;
+    ASSERT_TRUE(realUnlockDir.isValid());
+    QFile cfg(realUnlockDir.path() + "/cryfs.config");
+    ASSERT_TRUE(cfg.open(QIODevice::WriteOnly));
+    cfg.write("ut marker");
+    cfg.close();
+
+    stub.set_lamda(&QStandardPaths::findExecutable,
+                   [](const QString &, const QStringList &) -> QString { return "/usr/bin/cryfs"; });
+    const QString unlockDirPath = realUnlockDir.path();
+    stub.set_lamda(&PathManager::vaultUnlockPath,
+                   [unlockDirPath]() -> QString { return unlockDirPath; });
+
+    QList<QUrl> queried;
+    stub.set_lamda(&DFMIO::DFMUtils::fsTypeFromUrl,
+                   [&queried](const QUrl &url) -> QString {
+                       queried << url;
+                       return QStringLiteral("fuse.cryfs");
+                   });
+
+    EXPECT_EQ(FileEncryptHandle::instance()->state(realUnlockDir.path(), false), VaultState::kUnlocked);
+    ASSERT_FALSE(queried.isEmpty());
+    // the fs type must be queried on the unlock path url (mount point), not on storage info
+    EXPECT_EQ(queried.first(), QUrl::fromLocalFile(QFileInfo(realUnlockDir.path()).canonicalFilePath()));
+
+    // the same marker file on a non-fuse fs type must NOT report unlocked — the
+    // decision must come from fsTypeFromUrl, not from the cryfs.config presence
+    queried.clear();
+    stub.set_lamda(&DFMIO::DFMUtils::fsTypeFromUrl,
+                   [&queried](const QUrl &url) -> QString {
+                       queried << url;
+                       return QStringLiteral("ext4");
+                   });
+    EXPECT_EQ(FileEncryptHandle::instance()->state(realUnlockDir.path(), false), VaultState::kEncrypted);
+    EXPECT_FALSE(queried.isEmpty());
+}

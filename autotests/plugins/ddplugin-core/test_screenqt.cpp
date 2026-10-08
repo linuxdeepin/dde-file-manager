@@ -613,3 +613,90 @@ TEST_F(TestScreenQt, DockPositionChanges_SequentialUpdates_Success)
     EXPECT_TRUE(bottomGeometry.isValid());
     EXPECT_TRUE(leftGeometry.isValid());
 }
+
+#include <QWindow>
+
+// PMS:300955 高分屏下任务栏遮挡桌面图标：可用区域计算中 dock 物理尺寸只按
+// devicePixelRatio 缩放一次（96/2=48），修复前存在二次除法导致少减/多减。
+TEST_F(TestScreenQt, BUG300955_AvailableGeometry_HighRatio_SubtractsDockHeightOnce)
+{
+    if (!mockScreen || !screenQt) {
+        GTEST_SKIP() << "No screen available for testing";
+    }
+
+    stubDockHideMode = 0;
+    stubDockPosition = 2;   // 底部
+
+    // 2x 高分屏：逻辑几何 1920x1080
+    stub.set_lamda(&QScreen::geometry, []() -> QRect {
+        __DBG_STUB_INVOKE__
+        return QRect(0, 0, 1920, 1080);
+    });
+    stub.set_lamda(&QScreen::devicePixelRatio, []() -> qreal {
+        __DBG_STUB_INVOKE__
+        return 2.0;
+    });
+    stub.set_lamda(VADDR(ScreenQt, handleGeometry), [](ScreenQt *) -> QRect {
+        __DBG_STUB_INVOKE__
+        return QRect(0, 0, 1920, 1080);
+    });
+
+    // 物理坐标的 dock 前端窗口矩形：底部，高 96（=48*2）
+    stubDockRect.x = 0;
+    stubDockRect.y = 2064;   // 1080*2 - 96
+    stubDockRect.width = 3840;
+    stubDockRect.height = 96;
+
+    const QRect ava = screenQt->availableGeometry();
+
+    // dock 物理高度 96 仅按 ratio 缩一次 -> 48：1080-48=1032
+    EXPECT_EQ(ava, QRect(0, 0, 1920, 1032));
+}
+
+// PMS:366085 treeland 分数缩放下桌面最底行文件名被 dock 遮挡：QScreen::devicePixelRatio
+// 返回整数 wl_output scale(真实 1.25 报成 2)，用它换算物理 dock 会少减；修复后改用
+// 本屏顶层窗口的 devicePixelRatio（wp_fractional_scale 下发的真实 1.25）。
+TEST_F(TestScreenQt, BUG366085_AvailableGeometry_FractionalScaling_UsesWindowDevicePixelRatio)
+{
+    if (!mockScreen || !screenQt) {
+        GTEST_SKIP() << "No screen available for testing";
+    }
+
+    stubDockHideMode = 0;
+    stubDockPosition = 2;   // 底部
+
+    stub.set_lamda(&QScreen::geometry, []() -> QRect {
+        __DBG_STUB_INVOKE__
+        return QRect(0, 0, 1920, 1080);
+    });
+    // 错误的整数 scale（treeland 场景）
+    stub.set_lamda(&QScreen::devicePixelRatio, []() -> qreal {
+        __DBG_STUB_INVOKE__
+        return 2.0;
+    });
+    stub.set_lamda(VADDR(ScreenQt, handleGeometry), [](ScreenQt *) -> QRect {
+        __DBG_STUB_INVOKE__
+        return QRect(0, 0, 2400, 1350);   // 物理 = 1920/1.25 x 1080/1.25
+    });
+    // 顶层窗口携带合成器下发的真实分数缩放
+    stub.set_lamda(&QWindow::devicePixelRatio, [](QWindow *) -> qreal {
+        __DBG_STUB_INVOKE__
+        return 1.25;
+    });
+
+    QWindow dockSurfaceWindow;
+    dockSurfaceWindow.setScreen(mockScreen);
+    dockSurfaceWindow.create();
+
+    // 物理坐标的 dock：底部，高 60（=48*1.25）
+    stubDockRect.x = 0;
+    stubDockRect.y = 1290;   // 1350 - 60
+    stubDockRect.width = 2400;
+    stubDockRect.height = 60;
+
+    const QRect ava = screenQt->availableGeometry();
+
+    // 修复后按窗口 dpr 换算：60/1.25=48 -> 1080-48=1032
+    // 修复前按 QScreen dpr(2) 换算：60/2=30 -> 1050，dock 少减导致最底行被遮
+    EXPECT_EQ(ava, QRect(0, 0, 1920, 1032));
+}

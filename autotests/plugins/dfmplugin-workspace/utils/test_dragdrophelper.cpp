@@ -182,3 +182,163 @@ TEST_F(DragDropHelperTest, CheckMoveEnable_ValidUrls_DoesNotCrash)
     QUrl toUrl("file:///tmp");
     EXPECT_NO_THROW(helper->checkMoveEnable(dragUrl, toUrl));
 }
+
+// ===== PMS sev-2 regression tests (appended) =====
+
+// PMS:129781 跨用户拖拽时 sameUser=false 的 Move 动作必须被降级为 IgnoreAction，防止误移动他人目录中的文件
+TEST_F(DragDropHelperTest, BUG129781_CheckAction_DifferentUser_MoveDegradesToIgnore)
+{
+    // sameUser=false 且源动作为 MoveAction 时必须降级为 IgnoreAction
+    EXPECT_EQ(helper->checkAction(Qt::MoveAction, false), Qt::IgnoreAction);
+    // sameUser=true 时 MoveAction 保持不变
+    EXPECT_EQ(helper->checkAction(Qt::MoveAction, true), Qt::MoveAction);
+    // CopyAction 不受 sameUser 影响
+    EXPECT_EQ(helper->checkAction(Qt::CopyAction, true), Qt::CopyAction);
+    EXPECT_EQ(helper->checkAction(Qt::CopyAction, false), Qt::CopyAction);
+    // LinkAction 不受 sameUser 影响
+    EXPECT_EQ(helper->checkAction(Qt::LinkAction, false), Qt::LinkAction);
+}
+
+#include "models/fileviewmodel.h"
+#include "utils/filedatamanager.h"
+#include "utils/workspacehelper.h"
+#include <QTemporaryDir>
+#include "dfm_hookreg.h"
+
+// ===== PMS sev-2 regression tests (appended) =====
+namespace {
+class PmsDragHookListener : public QObject
+{
+public:
+    using QObject::QObject;
+    int calls = 0;
+    QList<QUrl> lastFrom;
+    QUrl lastTo;
+    Qt::DropAction lastAction = Qt::IgnoreAction;
+    Qt::DropAction replyAction = Qt::CopyAction;
+
+    bool onDragMove(const QList<QUrl> &from, const QUrl &to, Qt::DropAction *action)
+    {
+        ++calls;
+        lastFrom = from;
+        lastTo = to;
+        if (action) {
+            lastAction = *action;
+            *action = replyAction;
+        }
+        return true;
+    }
+
+    bool onFileDrop(const QList<QUrl> &from, const QUrl &to)
+    {
+        ++calls;
+        lastFrom = from;
+        lastTo = to;
+        return true;
+    }
+};
+
+void pmsStubWorkspaceForDrag(stub_ext::StubExt &stub)
+{
+    stub.set_lamda(&WorkspaceHelper::instance, []() -> WorkspaceHelper * {
+        static WorkspaceHelper helper;
+        return &helper;
+    });
+    stub.set_lamda(&FileDataManager::fetchRoot,
+                   [](FileDataManager *, const QUrl &, const QString &) -> RootInfo * {
+                       return nullptr;
+                   });
+    typedef bool (FileDataManager::*PmsFetch4)(const QUrl &, const QString &, Global::ItemRoles, Qt::SortOrder);
+    stub.set_lamda(static_cast<PmsFetch4>(&FileDataManager::fetchFiles),
+                   [](FileDataManager *, const QUrl &, const QString &, Global::ItemRoles, Qt::SortOrder) {
+                       return true;
+                   });
+}
+}  // namespace
+
+// PMS:123879 dragMove 命中 hook_DragDrop_FileDragMove 后 hook 可修改 dropAction 并被采纳
+TEST_F(DragDropHelperTest, BUG123879_DragMoveHook_ModifiesDropActionAndAccepts)
+{
+    dfmtest_hooks::registerAllHookEvents();
+    pmsStubWorkspaceForDrag(stub);
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+    const QUrl targetUrl = QUrl::fromLocalFile(tempDir.path());
+
+    auto *model = qobject_cast<FileViewModel *>(mockView->model());
+    ASSERT_NE(model, nullptr);
+    Q_UNUSED(model)
+    mockView->setRootUrl(targetUrl);
+    ASSERT_TRUE(mockView->rootIndex().isValid());
+
+    PmsDragHookListener listener;
+    listener.replyAction = Qt::LinkAction;  // hook 修改 dropAction：Copy -> Link
+    ASSERT_TRUE(dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDragMove",
+                                        &listener, &PmsDragHookListener::onDragMove));
+
+    QMimeData mime;
+    QDragMoveEvent event(QPoint(10, 10), Qt::CopyAction | Qt::LinkAction, &mime,
+                         Qt::NoButton, Qt::NoModifier);
+    EXPECT_TRUE(helper->dragMove(&event));
+
+    EXPECT_EQ(listener.calls, 1);
+    EXPECT_EQ(listener.lastAction, Qt::CopyAction);
+    EXPECT_EQ(event.dropAction(), Qt::LinkAction);
+    EXPECT_TRUE(event.isAccepted());
+}
+
+// PMS:138281 hook_DragDrop_FileDragMove 参数顺序：第二参数必须是落点目标 URL
+TEST_F(DragDropHelperTest, BUG138281_DragMoveHook_TargetUrlPassedAsSecondArg)
+{
+    dfmtest_hooks::registerAllHookEvents();
+    pmsStubWorkspaceForDrag(stub);
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+    const QUrl targetUrl = QUrl::fromLocalFile(tempDir.path());
+
+    auto *model = qobject_cast<FileViewModel *>(mockView->model());
+    ASSERT_NE(model, nullptr);
+    Q_UNUSED(model)
+    mockView->setRootUrl(targetUrl);
+    ASSERT_TRUE(mockView->rootIndex().isValid());
+
+    PmsDragHookListener listener;
+    ASSERT_TRUE(dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDragMove",
+                                        &listener, &PmsDragHookListener::onDragMove));
+
+    QMimeData mime;
+    QDragMoveEvent event(QPoint(10, 10), Qt::CopyAction, &mime, Qt::NoButton, Qt::NoModifier);
+    EXPECT_TRUE(helper->dragMove(&event));
+
+    EXPECT_EQ(listener.calls, 1);
+    EXPECT_EQ(listener.lastTo, targetUrl);
+    EXPECT_TRUE(listener.lastFrom.isEmpty());
+}
+
+// PMS:136337 drop 落点 URL 通过 model data kItemUrlRole 解析并传给 hook_DragDrop_FileDrop
+TEST_F(DragDropHelperTest, BUG136337_DropHook_TargetResolvedFromItemUrlRole)
+{
+    dfmtest_hooks::registerAllHookEvents();
+    pmsStubWorkspaceForDrag(stub);
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+    const QUrl targetUrl = QUrl::fromLocalFile(tempDir.path());
+
+    auto *model = qobject_cast<FileViewModel *>(mockView->model());
+    ASSERT_NE(model, nullptr);
+    Q_UNUSED(model)
+    mockView->setRootUrl(targetUrl);
+    ASSERT_TRUE(mockView->rootIndex().isValid());
+
+    PmsDragHookListener dropListener;
+    ASSERT_TRUE(dpfHookSequence->follow("dfmplugin_workspace", "hook_DragDrop_FileDrop",
+                                        &dropListener, &PmsDragHookListener::onFileDrop));
+
+    QMimeData mime;
+    mime.setUrls({ QUrl::fromLocalFile(tempDir.path()) });
+    QDropEvent event(QPoint(10, 10), Qt::CopyAction, &mime, Qt::NoButton, Qt::NoModifier);
+    EXPECT_TRUE(helper->drop(&event));
+
+    EXPECT_EQ(dropListener.calls, 1);
+    EXPECT_EQ(dropListener.lastTo, targetUrl);
+}

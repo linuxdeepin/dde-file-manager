@@ -117,3 +117,20 @@ TEST_F(FileInfoHelperTest, HandleFileRefreshCallable)
     ASSERT_NE(info, nullptr);
     EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().handleFileRefresh(info); });
 }
+
+// ============================================================
+// PMS sev-2 regression cluster: fileinfohelper.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:334647 文管里切换刷新后桌面崩溃：cacheFileInfoByThread 入队线程化处理，
+// 空 info 与非异步 info 均安全短路，不再崩溃
+TEST_F(FileInfoHelperTest, BUG334647_CacheFileInfoByThreadNullAndNonAsyncSafe)
+{
+    // null shared pointer -> pool lambda -> dynamicCast<AsyncFileInfo> null -> early return
+    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().cacheFileInfoByThread(QSharedPointer<FileInfo>()); });
+
+    // sync (non-async) info is safely ignored by the thread handler as well
+    auto info = InfoFactory::create<FileInfo>(url);
+    ASSERT_NE(info, nullptr);
+    EXPECT_NO_FATAL_FAILURE({ FileInfoHelper::instance().cacheFileInfoByThread(info); });
+}

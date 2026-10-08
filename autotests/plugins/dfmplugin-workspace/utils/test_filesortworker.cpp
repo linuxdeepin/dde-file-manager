@@ -11,6 +11,8 @@
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/interfaces/sortfileinfo.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/base/urlroute.h>
+#include <dfm-base/file/local/syncfileinfo.h>
 #include "stubext.h"
 
 #include "utils/filesortworker.h"
@@ -946,4 +948,61 @@ TEST_F(FileSortWorkerTest, DoModelChanged_ValidType_HandlesModelChange)
         // Just test that method exists and can be called
         // The actual implementation is tested through other public methods
     });
+}
+
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:319393 文件修改时间需以 QDateTime 读取，展示与排序时间一致
+TEST_F(FileSortWorkerTest, BUG319393_HandleFileInfoUpdated_LastModifiedTime_AsDateTime)
+{
+    static const bool reg = []() {
+        UrlRoute::regScheme(Global::Scheme::kFile, "/");
+        InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+        return true;
+    }();
+    Q_UNUSED(reg)
+
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+    const QString path = tempDir.filePath("ut-319393-测试文件.txt");
+    QFile file(path);
+    ASSERT_TRUE(file.open(QIODevice::WriteOnly));
+    file.write("ut data");
+    file.close();
+
+    const QUrl url = QUrl::fromLocalFile(path);
+    const auto info = InfoFactory::create<FileInfo>(url);
+    ASSERT_TRUE(info != nullptr);
+
+    SortInfoPointer si(new SortFileInfo);
+    si->setUrl(url);
+    // children 与 infos 按索引配对建立 childData
+    EXPECT_NO_THROW(worker->handleIteratorChildren(testKey, QList<SortInfoPointer>{ si }, { info }, true));
+
+    auto data = worker->childData(url);
+    ASSERT_TRUE(data != nullptr);
+    auto fi = data->fileInfo();
+    ASSERT_TRUE(fi != nullptr);
+
+    // handleFileInfoUpdated 含 worker 线程 Q_ASSERT，主线程直接走修复所在的刷新路径：
+    // sortInfoUpdateByFileInfo 以 QDateTime 读取修改时间（319393 修复点）
+    EXPECT_TRUE(worker->sortInfoUpdateByFileInfo(fi));
+    const auto finalSi = data->sortInfo;
+    ASSERT_TRUE(finalSi != nullptr);
+
+    const qint64 mtime = QFileInfo(path).lastModified().toSecsSinceEpoch();
+    EXPECT_NEAR(static_cast<double>(finalSi->lastModifiedTime()),
+                static_cast<double>(mtime), 2.0);
+}
+
+// PMS:320215 checkFilters 对空/不完整 sortInfo 需安全早退（重命名工作线程崩溃）
+TEST_F(FileSortWorkerTest, BUG320215_CheckFilters_IncompleteSortInfo_NoCrash)
+{
+    // 空指针：直接返回 true
+    EXPECT_TRUE(worker->checkFilters(SortInfoPointer(), false));
+
+    SortInfoPointer incomplete(new SortFileInfo);
+    bool ret = true;
+    EXPECT_NO_THROW(ret = worker->checkFilters(incomplete, false));
+    EXPECT_NO_THROW(worker->checkFilters(incomplete, true));
+    Q_UNUSED(ret)
 }

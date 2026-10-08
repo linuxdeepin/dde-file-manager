@@ -15,8 +15,13 @@
 #include <QCoreApplication>
 #include "stubext.h"
 
+#include <mntent.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/private/devicehelper.h>
 #include <dfm-base/dbusservice/global_server_defines.h>
+#include <QTemporaryDir>
+#include <QUrl>
 
 using namespace dfmbase;
 using namespace GlobalServerDefines::DeviceProperty;
@@ -670,4 +675,180 @@ TEST(DeviceUtilsTest, IsSystemDiskHashNotRootWithSysroot)
     info[kMountPoint] = "/sysroot";
     info[kIdLabel] = "NotRoot";
     EXPECT_FALSE(DeviceUtils::isSystemDisk(info));
+}
+
+// ===== PMS sev-2 regression cluster: deviceutils.cpp (work-order batch 2) =====
+
+// PMS:139803 getMountInfo 改用 libmount 解析 /proc/self/mountinfo：根挂载 source/target 双向反查必须一致
+TEST(DeviceUtilsTest, BUG139803_GetMountInfoBidirectionalOnRootMount)
+{
+    FILE *f = setmntent("/proc/mounts", "r");
+    ASSERT_NE(f, nullptr);
+    // 选一个 source/target 均唯一出现的条目，避免 overlay 多次挂载等环境干扰
+    QList<QPair<QString, QString>> entries;
+    struct mntent *ent;
+    while ((ent = getmntent(f)))
+        entries.append({ QString::fromUtf8(ent->mnt_fsname), QString::fromUtf8(ent->mnt_dir) });
+    endmntent(f);
+    ASSERT_FALSE(entries.isEmpty());
+
+    QString src, tgt;
+    for (const auto &e : entries) {
+        const int srcCount = std::count_if(entries.cbegin(), entries.cend(),
+                                           [&](const QPair<QString, QString> &x) { return x.first == e.first; });
+        const int tgtCount = std::count_if(entries.cbegin(), entries.cend(),
+                                           [&](const QPair<QString, QString> &x) { return x.second == e.second; });
+        if (srcCount == 1 && tgtCount == 1) {
+            src = e.first;
+            tgt = e.second;
+            break;
+        }
+    }
+    if (src.isEmpty()) {
+        SUCCEED() << "no unique source/target mount entry in this environment";
+        return;
+    }
+    EXPECT_EQ(DeviceUtils::getMountInfo(src, true), tgt);
+    EXPECT_EQ(DeviceUtils::getMountInfo(tgt, false), src);
+}
+
+// PMS:139803 含空格的挂载点（mountinfo 中 \040 转义）必须被完整解析：
+// 修复前手工 ifstream 按空白切分会把 "06 10 122" 之类挂载点切碎；getmntent/libmount 均还原为空格。
+TEST(DeviceUtilsTest, BUG139803_GetMountInfoHandlesEscapedSpaceMountPoint)
+{
+    FILE *f = setmntent("/proc/mounts", "r");
+    ASSERT_NE(f, nullptr);
+    bool found = false;
+    struct mntent *ent;
+    while ((ent = getmntent(f))) {
+        const QString dir = QString::fromUtf8(ent->mnt_dir);
+        if (dir.contains(QLatin1Char(' '))) {
+            found = true;
+            const QString result = DeviceUtils::getMountInfo(QString::fromUtf8(ent->mnt_fsname), true);
+            EXPECT_EQ(result, dir);
+            break;
+        }
+    }
+    endmntent(f);
+    if (!found)
+        SUCCEED() << "no space-escaped mount point in this environment";
+}
+
+// ============================================================
+// PMS sev-2 regression cluster: deviceutils.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:200247 加密盘列表（checkDiskEncrypted 修复引入的 encryptedDisks）为进程级缓存，
+// 重复调用必须返回一致结果且不崩溃（不依赖环境中是否存在 deepin-installer 配置）
+TEST(DeviceUtilsTest, BUG200247_EncryptedDisksStableAcrossCalls)
+{
+    const auto first = DeviceUtils::encryptedDisks();
+    const auto second = DeviceUtils::encryptedDisks();
+    EXPECT_EQ(first, second);
+}
+
+// PMS:180367 checkDiskEncrypted 读取安装器加密信息：结果跨调用稳定且为 bool，不崩溃
+TEST(DeviceUtilsTest, BUG180367_CheckDiskEncryptedStableAcrossCalls)
+{
+    const bool first = DeviceUtils::checkDiskEncrypted();
+    const bool second = DeviceUtils::checkDiskEncrypted();
+    EXPECT_EQ(first, second);
+}
+
+// PMS:323581 内置盘判定（原 kCanPowerOff+isSiblingOfRoot 修复，后演进为 isBuiltInDisk）：
+// 可移动/光驱/无 HintSystem 键 -> 非内置；根挂载点/_dde_ 标签/HintSystem/非 USB 总线 -> 内置
+TEST(DeviceUtilsTest, BUG323581_IsBuiltInDiskDeterministicBranches)
+{
+    using namespace GlobalServerDefines::DeviceProperty;
+    const QString fakeId = "/org/freedesktop/UDisks2/block_devices/sda1";
+
+    // removable (kCanPowerOff, not in fstab, not sibling of root) -> not built-in;
+    // kDrive differs from the cached root drive so isSiblingOfRoot is deterministically false
+    QVariantHash removable { { kDevice, fakeId }, { kCanPowerOff, true },
+                             { kMountPoint, "/media/usb_ut_323581" }, { kDrive, "sda_ut" } };
+    EXPECT_FALSE(DeviceUtils::isBuiltInDisk(removable));
+
+    QVariantHash optical { { kDevice, fakeId }, { kOpticalDrive, true }, { kHintSystem, false } };
+    EXPECT_FALSE(DeviceUtils::isBuiltInDisk(optical));
+
+    QVariantHash noHint { { kDevice, fakeId } };
+    EXPECT_FALSE(DeviceUtils::isBuiltInDisk(noHint));
+
+    QVariantHash rootDisk { { kDevice, fakeId }, { kHintSystem, false }, { kMountPoint, "/" } };
+    EXPECT_TRUE(DeviceUtils::isBuiltInDisk(rootDisk));
+
+    QVariantHash ddeDisk { { kDevice, fakeId }, { kHintSystem, false }, { kIdLabel, "_dde_data" } };
+    EXPECT_TRUE(DeviceUtils::isBuiltInDisk(ddeDisk));
+
+    QVariantHash hintSys { { kDevice, fakeId }, { kHintSystem, true }, { kMountPoint, "/media/usb" } };
+    EXPECT_TRUE(DeviceUtils::isBuiltInDisk(hintSys));
+
+    QVariantHash sataDisk { { kDevice, fakeId }, { kHintSystem, false },
+                            { kConnectionBus, "sata" }, { kMountPoint, "/media/usb" } };
+    EXPECT_TRUE(DeviceUtils::isBuiltInDisk(sataDisk));
+
+    // usb + non-system disk falls through to isSiblingOfRoot (environment dependent);
+    // only assert it is callable and does not crash
+    QVariantHash usbDisk { { kDevice, fakeId }, { kHintSystem, false },
+                           { kConnectionBus, "usb" }, { kMountPoint, "/media/usb" } };
+    EXPECT_NO_FATAL_FAILURE(DeviceUtils::isBuiltInDisk(usbDisk));
+}
+
+// PMS:233019 磁盘容量显示不准确：deviceBytesFree 应优先实时查询接口，
+// 实时不可用时回退到 udisks 缓存（kSizeFree -> kSizeTotal-kSizeUsed）
+TEST(DeviceUtilsTest, BUG233019_DeviceBytesFreePrefersRealTimeQuery)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DeviceProxyManager, queryDeviceInfoByPath),
+                   [](DeviceProxyManager *, const QString &, bool) -> QVariantMap {
+                       __DBG_STUB_INVOKE__
+                       return { { GlobalServerDefines::DeviceProperty::kSizeTotal, 100 },
+                                { GlobalServerDefines::DeviceProperty::kSizeUsed, 30 },
+                                { GlobalServerDefines::DeviceProperty::kSizeFree, 70 } };
+                   });
+    stub.set_lamda(&DeviceHelper::queryDeviceUsageRealTime,
+                   [](const QVariantMap &, quint64 *total, quint64 *avai, quint64 *used) -> bool {
+                       __DBG_STUB_INVOKE__
+                       *total = 100;
+                       *avai = 55;
+                       *used = 45;
+                       return true;
+                   });
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QUrl url = QUrl::fromLocalFile(dir.path());
+    EXPECT_EQ(DeviceUtils::deviceBytesFree(url), qint64(55));
+}
+
+// PMS:233019 实时查询失败时回退缓存链：kSizeFree 有效用之；否则用 kSizeTotal-kSizeUsed
+TEST(DeviceUtilsTest, BUG233019_DeviceBytesFreeFallsBackToCachedUsage)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(DeviceProxyManager, queryDeviceInfoByPath),
+                   [](DeviceProxyManager *, const QString &, bool) -> QVariantMap {
+                       __DBG_STUB_INVOKE__
+                       return { { GlobalServerDefines::DeviceProperty::kSizeTotal, 100 },
+                                { GlobalServerDefines::DeviceProperty::kSizeUsed, 30 },
+                                { GlobalServerDefines::DeviceProperty::kSizeFree, 70 } };
+                   });
+    stub.set_lamda(&DeviceHelper::queryDeviceUsageRealTime,
+                   [](const QVariantMap &, quint64 *total, quint64 *avai, quint64 *used) -> bool {
+                       __DBG_STUB_INVOKE__
+                       *total = 0;
+                       *avai = 0;
+                       *used = 0;
+                       return false;   // real-time query unavailable
+                   });
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    EXPECT_EQ(DeviceUtils::deviceBytesFree(QUrl::fromLocalFile(dir.path())), qint64(70));
+
+    // no kSizeFree in cache -> total - used
+    stub.set_lamda(ADDR(DeviceProxyManager, queryDeviceInfoByPath),
+                   [](DeviceProxyManager *, const QString &, bool) -> QVariantMap {
+                       __DBG_STUB_INVOKE__
+                       return { { GlobalServerDefines::DeviceProperty::kSizeTotal, 100 },
+                                { GlobalServerDefines::DeviceProperty::kSizeUsed, 30 } };
+                   });
+    EXPECT_EQ(DeviceUtils::deviceBytesFree(QUrl::fromLocalFile(dir.path())), qint64(70));
 }

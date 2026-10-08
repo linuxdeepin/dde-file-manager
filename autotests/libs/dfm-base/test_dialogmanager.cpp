@@ -19,6 +19,7 @@
 #include <QFile>
 #include <QTemporaryDir>
 #include <QLabel>
+#include <QWidget>
 
 #include "stubext.h"
 
@@ -819,3 +820,164 @@ TEST_F(DialogManagerTest, RegisterSettingWidget)
 
 
 #include <QFileInfo>
+
+// ============================================================
+// PMS sev-2 regression cluster: dialogmanager.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:140879 挂载部分 sftp 失败提示错误对话框：通用错误码（default 分支）走
+// kMountFailed 标题兜底弹窗，不崩溃、不弹真实模态
+TEST_F(DialogManagerTest, BUG140879_GenericMountErrorShowsFallbackDialog)
+{
+    auto *dm = DialogManager::instance();
+    DFMMOUNT::OperationErrorInfo err;
+    err.code = DFMMOUNT::DeviceError::kGDBusError;   // generic error -> default branch
+    err.message = "ut generic mount failure";
+    EXPECT_NO_FATAL_FAILURE({ dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err); });
+}
+
+// PMS:230739 文管弹窗导致点击事件被屏蔽：弹窗父窗口取 qApp->activeWindow()，
+// 无活跃窗口/一般活跃窗口时正常弹窗不崩溃
+TEST_F(DialogManagerTest, BUG230739_DialogParentUsesActiveWindow)
+{
+    auto *dm = DialogManager::instance();
+    QWidget window;
+    window.setWindowFlag(Qt::Window);
+    qApp->setActiveWindow(&window);
+    EXPECT_NO_FATAL_FAILURE({ dm->showNoPermissionDialog({ QUrl::fromLocalFile("/tmp/ut_no_perm.txt") }); });
+    EXPECT_NO_FATAL_FAILURE({ dm->showCopyMoveToSelfDialog(); });
+    qApp->setActiveWindow(nullptr);
+}
+
+// PMS:335841 设置指定目录失败弹窗：多按钮列表 showCreateSystemLinkDialog 场景，
+// showMessageDialog(title, message, QStringList) 应返回 exec 结果（stub 为 Accepted）
+TEST_F(DialogManagerTest, BUG335841_ShowMessageDialogWithButtonListReturnsExecCode)
+{
+    auto *dm = DialogManager::instance();
+    const int code = dm->showMessageDialog("UT Title", "UT Message",
+                                           QStringList { "A", "B", "C" });
+    EXPECT_EQ(code, QDialog::Accepted);
+}
+
+// PMS:372891 打开标记编辑窗口时侧边栏移除标记崩溃：WA_DeleteOnClose 的活跃窗口
+// 不能作为删除确认弹窗父窗口（回退无父 WindowStaysOnTopHint 分支），不再双重释放
+TEST_F(DialogManagerTest, BUG372891_DeleteDialogAvoidsDeleteOnCloseParent)
+{
+    auto *dm = DialogManager::instance();
+    // empty list short-circuits to Rejected without any dialog
+    EXPECT_EQ(dm->showDeleteFilesDialog({}), QDialog::Rejected);
+
+    // active window with WA_DeleteOnClose must NOT become the dialog parent
+    QWidget window;
+    window.setWindowFlag(Qt::Window);
+    window.setAttribute(Qt::WA_DeleteOnClose);
+    qApp->setActiveWindow(&window);
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString filePath = dir.path() + "/del_372891.txt";
+    {
+        QFile f(filePath);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    }
+    const int code = dm->showDeleteFilesDialog({ QUrl::fromLocalFile(filePath) });
+    EXPECT_EQ(code, QDialog::Accepted);
+    qApp->setActiveWindow(nullptr);
+    window.setAttribute(Qt::WA_DeleteOnClose, false);
+}
+
+// PMS:133251 卸载/挂载 udisks busy 时弹"卸载失败/挂载失败"误导用户：
+// busy 类错误码必须以 "Operating failed" 为标题、以正在进行中的操作为内容
+// 弹窗并直接返回，不再落入通用失败分支叠加误导性标题
+TEST_F(DialogManagerTest, BUG133251_BusyDeviceShowsOperatingFailedDialog)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    QString capturedTitle;
+    QString capturedMessage;
+    int callCount = 0;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &title, const QString &message) {
+                       __DBG_STUB_INVOKE__
+                       capturedTitle = title;
+                       capturedMessage = message;
+                       ++callCount;
+                   });
+
+    // 文件系统卸载 busy：标题 Operating failed，正文提示正在卸载
+    DFMMOUNT::OperationErrorInfo unmountBusy;
+    unmountBusy.code = DFMMOUNT::DeviceError::kUDisksBusyFileSystemUnmounting;
+    unmountBusy.message = "device busy";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, unmountBusy);
+    EXPECT_EQ(callCount, 1);
+    EXPECT_EQ(capturedTitle, DialogManager::tr("Operating failed"));
+    EXPECT_EQ(capturedMessage, DialogManager::tr("Unmounting device now..."));
+
+    // 文件系统挂载 busy：正文提示正在挂载，标题仍是 Operating failed
+    capturedTitle.clear();
+    capturedMessage.clear();
+    callCount = 0;
+    DFMMOUNT::OperationErrorInfo mountBusy;
+    mountBusy.code = DFMMOUNT::DeviceError::kUDisksBusyFileSystemMounting;
+    mountBusy.message = "device busy";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, mountBusy);
+    EXPECT_EQ(callCount, 1);
+    EXPECT_EQ(capturedTitle, DialogManager::tr("Operating failed"));
+    EXPECT_EQ(capturedMessage, DialogManager::tr("Mounting device now..."));
+
+    // 其余 busy 错误码（如弹出光驱）统一弹 "The device is busy now"
+    capturedTitle.clear();
+    capturedMessage.clear();
+    callCount = 0;
+    DFMMOUNT::OperationErrorInfo ejectBusy;
+    ejectBusy.code = DFMMOUNT::DeviceError::kUDisksBusyDriveEjecting;
+    ejectBusy.message = "device busy";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, ejectBusy);
+    EXPECT_EQ(callCount, 1);
+    EXPECT_EQ(capturedTitle, DialogManager::tr("Operating failed"));
+    EXPECT_EQ(capturedMessage, DialogManager::tr("The device is busy now"));
+}
+
+// PMS:133251 busy 错误必须提前返回：即使 operate 类型是挂载也不得叠加
+// "Mount failed" 等通用失败标题，即一次 busy 错误只弹一个"正在进行"对话框
+TEST_F(DialogManagerTest, BUG133251_BusyErrorReturnsBeforeGenericBranch)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    int callCount = 0;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &, const QString &) {
+                       __DBG_STUB_INVOKE__
+                       ++callCount;
+                   });
+
+    DFMMOUNT::OperationErrorInfo err;
+    err.code = DFMMOUNT::DeviceError::kUDisksBusyFileSystemUnmounting;
+    err.message = "device busy";
+    // 传入 kMount 类型：busy 分支必须在类型分支之前拦截，只弹一个对话框
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+    EXPECT_EQ(callCount, 1);
+}
+
+// PMS:133251 认证失败取消卸载（kUserErrorAuthenticationFailed）不弹对话框：
+// 用户主动取消是正常流程，静默返回而不是报错
+TEST_F(DialogManagerTest, BUG133251_AuthenticationFailedSilentOnUnmount)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    int callCount = 0;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &, const QString &) {
+                       __DBG_STUB_INVOKE__
+                       ++callCount;
+                   });
+
+    DFMMOUNT::OperationErrorInfo err;
+    err.code = DFMMOUNT::DeviceError::kUserErrorAuthenticationFailed;
+    err.message = "authentication failed";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err);
+    EXPECT_EQ(callCount, 0);
+}

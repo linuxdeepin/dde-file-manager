@@ -569,3 +569,24 @@ TEST_F(DPCConfirmWidgetTest, CheckPasswdComplexity_UsernameSameAsPassword_Return
     EXPECT_FALSE(result);
     EXPECT_FALSE(msg.isEmpty());
 }
+
+// PMS:309491 修改磁盘密码弹窗无法输入字符：校验器正则错误，合法 ASCII 密码被拦截
+TEST_F(DPCConfirmWidgetTest, BUG309491_InitUI_PasswordValidatorAcceptsAsciiPassword)
+{
+    ASSERT_TRUE(widget->oldPwdEdit);
+    ASSERT_TRUE(widget->newPwdEdit);
+    ASSERT_TRUE(widget->repeatPwdEdit);
+
+    for (DPasswordEdit *edit : { widget->oldPwdEdit, widget->newPwdEdit, widget->repeatPwdEdit }) {
+        const QValidator *validator = edit->lineEdit()->validator();
+        ASSERT_TRUE(validator);
+
+        QString text = "Abc@123";
+        int pos = 0;
+        EXPECT_EQ(validator->validate(text, pos), QValidator::Acceptable) << "ascii password rejected";
+
+        QString cnText = QString::fromUtf8("密码123");
+        int cnPos = 0;
+        EXPECT_EQ(validator->validate(cnText, cnPos), QValidator::Invalid) << "chinese password accepted";
+    }
+}

@@ -521,3 +521,73 @@ TEST_F(UT_ExtensionEmblemManager, onEmblemIconChanged_DesktopPlugin_PushesToCanv
 
     ExtensionEmblemManager::instance().onEmblemIconChanged(path, group);
 }
+
+// ===================== PMS sev-2 regression additions =====================
+#include <QTemporaryDir>
+#include <QFile>
+#include <QPixmap>
+
+// PMS:343229 makeIcon 二次调用同一图标应命中 iconCaches 缓存，不再重复 fromTheme
+TEST_F(UT_ExtensionEmblemManagerPrivate, BUG343229_MakeIcon_SecondCall_HitsCache)
+{
+    int fromThemeCalls = 0;
+    stub.set_lamda(static_cast<QIcon (*)(const QString &)>(&QIcon::fromTheme),
+                   [&fromThemeCalls](const QString &name) -> QIcon {
+                       if (name.endsWith(".png"))
+                           return QIcon();   // 文件路径走 QIcon(path) 分支
+                       ++fromThemeCalls;
+                       QIcon icon;
+                       icon.addPixmap(QPixmap(16, 16));
+                       return icon;
+                   });
+
+    QIcon first = d->makeIcon(QString("dialog-information"));
+    EXPECT_FALSE(first.isNull());
+    int afterFirst = fromThemeCalls;
+
+    QIcon second = d->makeIcon(QString("dialog-information"));
+    EXPECT_FALSE(second.isNull());
+
+    // 第二次必须命中缓存
+    EXPECT_EQ(fromThemeCalls, afterFirst);
+    EXPECT_EQ(fromThemeCalls, 1);
+    EXPECT_TRUE(d->iconCaches.contains(QString("dialog-information")));
+}
+
+// PMS:343229 真实存在的文件路径图标应被缓存，且路径会被规范化（cleanPath）
+TEST_F(UT_ExtensionEmblemManagerPrivate, BUG343229_MakeIcon_RealFile_CachesCleanedPath)
+{
+    QTemporaryDir tempDir;
+    ASSERT_TRUE(tempDir.isValid());
+    const QString rawPath = tempDir.filePath("a//sub/../real-icon.png");
+    const QString cleaned = QDir::cleanPath(rawPath);
+    ASSERT_TRUE(QDir().mkpath(QFileInfo(cleaned).absolutePath()));
+    QPixmap pm(8, 8);
+    pm.fill(Qt::red);
+    ASSERT_TRUE(pm.save(cleaned, "PNG"));
+
+    stub.set_lamda(static_cast<QIcon (*)(const QString &)>(&QIcon::fromTheme),
+                   [](const QString &name) -> QIcon {
+                       Q_UNUSED(name)
+                       return QIcon();   // 强制走 QIcon(path) 真实加载分支
+                   });
+
+    QIcon icon = d->makeIcon(rawPath);
+    EXPECT_FALSE(icon.isNull());
+    EXPECT_TRUE(d->iconCaches.contains(cleaned));
+}
+
+// PMS:343229 不存在的文件路径不应产生有效图标，也不应写入缓存
+TEST_F(UT_ExtensionEmblemManagerPrivate, BUG343229_MakeIcon_NonExistentFile_NotCached)
+{
+    stub.set_lamda(static_cast<QIcon (*)(const QString &)>(&QIcon::fromTheme),
+                   [](const QString &name) -> QIcon {
+                       Q_UNUSED(name)
+                       return QIcon();
+                   });
+
+    const QString ghost = "/nonexistent/ut-343229/ghost.png";
+    QIcon icon = d->makeIcon(ghost);
+    EXPECT_TRUE(icon.isNull());
+    EXPECT_FALSE(d->iconCaches.contains(QDir::cleanPath(ghost)));
+}

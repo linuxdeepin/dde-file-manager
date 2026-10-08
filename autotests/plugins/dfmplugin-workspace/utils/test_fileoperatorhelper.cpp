@@ -6,6 +6,8 @@
 #include <gmock/gmock.h>
 
 #include "dfm-base/base/application/settings.h"
+#include "dfm-base/dfm_event_defines.h"
+#include "dfm-base/utils/networkutils.h"
 #include "stubext.h"
 
 #include "utils/fileoperatorhelper.h"
@@ -511,4 +513,42 @@ TEST_F(FileOperatorHelperTest, RedoFiles_ValidView_RedoesFiles)
     
     // This should not crash
     helper->redoFiles(mockView);
+}
+
+// PMS:130603 工作区 Ctrl+Z 撤销时未携带窗口 ID，撤销结果展示在错误窗口。
+// 回归点：undoFiles 必须以 WorkspaceHelper::windowId(view) 的窗口 ID（12345）
+//        发布 GlobalEventType::kRevocation 撤销事件。
+TEST_F(FileOperatorHelperTest, BUG130603_UndoFiles_PublishesRevocationWithWindowId)
+{
+    stub.set_lamda(&dfmbase::NetworkUtils::checkFtpOrSmbBusy,
+                   [](dfmbase::NetworkUtils *, const QUrl &) { return false; });
+    stub.set_lamda(ADDR(dfmbase::Application, appAttribute),
+                   [](dfmbase::Application::ApplicationAttribute) { return QVariant(1); });
+    stub.set_lamda(ADDR(dfmbase::Application, setAppAttribute),
+                   [](dfmbase::Application::ApplicationAttribute, const QVariant &) {
+                   });
+
+    FileView *view = new FileView(QUrl::fromLocalFile("/tmp"));
+
+    bool published = false;
+    dpf::EventType gotType = static_cast<dpf::EventType>(-1);
+    quint64 gotWinId = 0;
+    typedef bool (dpf::EventDispatcherManager::*PublishFunc)(dpf::EventType, quint64,
+                                                            DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback &);
+    stub.set_lamda(static_cast<PublishFunc>(&dpf::EventDispatcherManager::publish),
+                   [&](dpf::EventDispatcherManager *, dpf::EventType type, quint64 winId,
+                       DFMBASE_NAMESPACE::AbstractJobHandler::OperatorHandleCallback &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       published = true;
+                       gotType = type;
+                       gotWinId = winId;
+                       return true;
+                   });
+
+    FileOperatorHelper::instance()->undoFiles(view);
+
+    delete view;
+    EXPECT_TRUE(published);
+    EXPECT_EQ(gotType, DFMBASE_NAMESPACE::GlobalEventType::kRevocation);
+    EXPECT_EQ(gotWinId, static_cast<quint64>(12345));
 }

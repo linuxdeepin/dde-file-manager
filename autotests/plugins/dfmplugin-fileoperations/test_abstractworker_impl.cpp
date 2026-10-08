@@ -530,3 +530,80 @@ TEST_F(AbstractWorkerImpl, ResumeThread_WithId)
     EXPECT_EQ(worker->currentState, AbstractJobHandler::JobState::kPauseState);
 }
 
+
+// ===================== PMS sev-2 regression additions =====================
+
+// 构造后即可用的探测用 Worker：通过 using 提升受保护成员的可见性
+class Bug307579Worker : public AbstractWorker
+{
+public:
+    using AbstractWorker::speedtimer;
+    using AbstractWorker::formatFileName;
+    using AbstractWorker::workData;
+
+    bool doWork() override { return true; }
+    bool statisticsFilesSize() override { return true; }
+};
+
+// PMS:307579 AbstractWorker 构造函数必须初始化 speedtimer（修复前为野指针/未启动）
+TEST_F(AbstractWorkerImpl, BUG307579_Constructor_InitializesSpeedtimer)
+{
+    Bug307579Worker worker;
+    EXPECT_NE(worker.speedtimer, nullptr);
+    EXPECT_TRUE(worker.speedtimer->isValid());
+}
+
+// PMS:307579 构造后未设置 workData 时调用 formatFileName 不得崩溃，且应原样返回文件名
+TEST_F(AbstractWorkerImpl, BUG307579_FormatFileName_NoWorkData_ReturnsOriginalName)
+{
+    Bug307579Worker worker;
+    EXPECT_EQ(worker.workData.get(), nullptr);
+    EXPECT_EQ(worker.formatFileName(QStringLiteral("a.txt")), QStringLiteral("a.txt"));
+    EXPECT_EQ(worker.formatFileName(QStringLiteral("/tmp/b.txt")), QStringLiteral("/tmp/b.txt"));
+}
+
+// PMS:310043 复制路径 copying-url 登记簿：FileOperateBaseWorker 在 cache→copy→remove 之间
+// 维护 FileUtils 的 copying 登记状态，修复提交 c9d645e7a 曾改为 OperatorsFileUtils 的
+// 500ms 延迟移除，后上游 revert（d83329f3a，位于当前分支祖先），当前分支契约 = 立即移除。
+// 回归点：remove 后不得残留 copying 状态（残留会污染后续复制/粘贴判定），且 remove 幂等安全。
+TEST_F(AbstractWorkerImpl, BUG310043_CopyingUrlRegistry_RemoveClearsImmediately)
+{
+    const QUrl urlA = QUrl::fromLocalFile(tempDir->path() + "/ut-310043-a.txt");
+    const QUrl urlB = QUrl::fromLocalFile(tempDir->path() + "/ut-310043-b.txt");
+
+    FileUtils::cacheCopyingFileUrl(urlA);
+    EXPECT_TRUE(FileUtils::containsCopyingFileUrl(urlA));
+
+    // 未登记的 URL 不得误报为复制中
+    EXPECT_FALSE(FileUtils::containsCopyingFileUrl(urlB));
+
+    // remove 后立即清理，不得残留
+    FileUtils::removeCopyingFileUrl(urlA);
+    EXPECT_FALSE(FileUtils::containsCopyingFileUrl(urlA));
+
+    // 幂等：对未登记 URL 重复 remove 必须安全且保持 false
+    FileUtils::removeCopyingFileUrl(urlA);
+    EXPECT_FALSE(FileUtils::containsCopyingFileUrl(urlA));
+
+    FileUtils::removeCopyingFileUrl(urlB);
+    EXPECT_FALSE(FileUtils::containsCopyingFileUrl(urlB));
+}
+
+// PMS:310043 多 URL 登记互不干扰：移除 A 不得影响仍处于复制中的 B
+TEST_F(AbstractWorkerImpl, BUG310043_CopyingUrlRegistry_IndependentPerUrl)
+{
+    const QUrl urlA = QUrl::fromLocalFile(tempDir->path() + "/ut-310043-c.txt");
+    const QUrl urlB = QUrl::fromLocalFile(tempDir->path() + "/ut-310043-d.txt");
+
+    FileUtils::cacheCopyingFileUrl(urlA);
+    FileUtils::cacheCopyingFileUrl(urlB);
+    EXPECT_TRUE(FileUtils::containsCopyingFileUrl(urlA));
+    EXPECT_TRUE(FileUtils::containsCopyingFileUrl(urlB));
+
+    FileUtils::removeCopyingFileUrl(urlA);
+    EXPECT_FALSE(FileUtils::containsCopyingFileUrl(urlA));
+    EXPECT_TRUE(FileUtils::containsCopyingFileUrl(urlB));
+
+    FileUtils::removeCopyingFileUrl(urlB);
+    EXPECT_FALSE(FileUtils::containsCopyingFileUrl(urlB));
+}

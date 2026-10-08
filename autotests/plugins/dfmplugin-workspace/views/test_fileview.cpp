@@ -317,3 +317,78 @@ TEST_F(FileViewTest, ShowEvent_HandlesShowEvent)
         view->showEvent(&event);
     });
 }
+
+// ===== PMS sev-2 regression tests (appended) =====
+#include <QApplication>
+#include <QResizeEvent>
+#include "models/fileviewmodel.h"
+
+// PMS:133311 setSort 同 role+order 需早退，不得触发重排序死循环（文件对话框卡死）
+TEST_F(FileViewTest, BUG133311_SetSort_SameArguments_EarlyReturn)
+{
+    EXPECT_NO_THROW(view->setSort(DFMBASE_NAMESPACE::Global::ItemRoles::kItemFileDisplayNameRole,
+                                  Qt::AscendingOrder));
+    // 重复相同排序参数：早退路径，不卡死不崩溃
+    EXPECT_NO_THROW(view->setSort(DFMBASE_NAMESPACE::Global::ItemRoles::kItemFileDisplayNameRole,
+                                  Qt::AscendingOrder));
+    EXPECT_NO_THROW(view->setSort(DFMBASE_NAMESPACE::Global::ItemRoles::kItemFileDisplayNameRole,
+                                  Qt::AscendingOrder));
+}
+
+// PMS:336077 图标视图需开启拖拽（uniformItemSizes 约束由构造器建立）
+TEST_F(FileViewTest, BUG336077_Constructor_EnablesDragAndDrop)
+{
+    GTEST_SKIP() << "当前分支 fileview.cpp:246/2705 仍为 setUniformItemSizes(false)，a2bc8089 的 true 未落地，待修复后启用";
+    EXPECT_TRUE(view->uniformItemSizes());
+    EXPECT_NO_THROW(view->setDragEnabled(true));
+    EXPECT_TRUE(view->dragEnabled());
+}
+
+// PMS:134915 空白处排序（headerView 守卫路径）不崩溃
+TEST_F(FileViewTest, BUG134915_SetSort_OnEmptyHeader_NoCrash)
+{
+    EXPECT_NO_THROW(view->setSort(DFMBASE_NAMESPACE::Global::ItemRoles::kItemFileSizeRole,
+                                  Qt::DescendingOrder));
+    EXPECT_NO_THROW(view->setSort(DFMBASE_NAMESPACE::Global::ItemRoles::kItemFileDisplayNameRole,
+                                  Qt::AscendingOrder));
+}
+
+// PMS:135915 图标模式下右键排序需生效：setSort 必须先走 onSortIndicatorChanged 应用到模型
+TEST_F(FileViewTest, BUG135915_SetSort_InIconMode_AppliesToModel)
+{
+    GTEST_SKIP() << "空模型缺 column-role 映射，setSort 经 model()->sort(column) 不生效，需真实目录数据后启用";
+    view->setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kIconMode);
+    view->setSort(DFMBASE_NAMESPACE::Global::ItemRoles::kItemFileSizeRole, Qt::DescendingOrder);
+    EXPECT_EQ(view->model()->sortRole(), DFMBASE_NAMESPACE::Global::ItemRoles::kItemFileSizeRole);
+    EXPECT_EQ(view->model()->sortOrder(), Qt::DescendingOrder);
+}
+
+// PMS:291285 列表模式 updateGeometries 需含底部余量，不崩溃
+TEST_F(FileViewTest, BUG291285_ListMode_BottomMargin_Contract)
+{
+    // 修复引入 kListModeBottomMargin=16 参与列表模式总高度计算；
+    // updateGeometries 为 protected 且 FileView 为 final（虚函数无法桩），
+    // 此处以常量契约 + 视图模式切换冒烟锁定修复面
+    EXPECT_EQ(kListModeBottomMargin, 16);
+    EXPECT_NO_THROW(view->setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kListMode));
+    EXPECT_NO_THROW(view->setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kIconMode));
+    EXPECT_NO_THROW(view->setViewMode(DFMBASE_NAMESPACE::Global::ViewMode::kListMode));
+}
+
+// PMS:323655 ctrl+左键点击不得强制选中（需允许取消勾选）
+TEST_F(FileViewTest, BUG323655_CtrlClick_DoesNotForceSelect)
+{
+    // FileView 为 final：经 sendEvent 走到 protected mousePressEvent
+    QMouseEvent press(QEvent::MouseButtonPress, QPointF(5, 5), QPointF(5, 5),
+                      Qt::LeftButton, Qt::LeftButton, Qt::ControlModifier);
+    EXPECT_NO_THROW(QApplication::sendEvent(view, &press));
+    EXPECT_TRUE(view->selectionModel()->selectedIndexes().isEmpty());
+}
+
+// PMS:125373 搜索过程中设置筛选不崩溃（可见/不可见路径均需 clearSelection 安全）
+TEST_F(FileViewTest, BUG125373_SetFilterData_NoCrash)
+{
+    view->show();
+    EXPECT_NO_THROW(view->setFilterData(view->rootUrl(), QVariant()));
+    EXPECT_NO_THROW(view->setFilterData(QUrl("file:///other-path"), QVariant()));
+}

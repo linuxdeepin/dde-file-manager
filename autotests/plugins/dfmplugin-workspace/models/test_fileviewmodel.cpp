@@ -1095,3 +1095,175 @@ TEST_F(FileViewModelTest, OnGroupingDataChanged_WithValidData_DoesNotCrash)
     // This test mainly checks that method doesn't crash
     EXPECT_NO_THROW(model->onGroupingDataChanged());
 }
+#include "utils/filedatamanager.h"
+#include "models/rootinfo.h"
+#include "utils/workspacehelper.h"
+#include <QTemporaryDir>
+#include <functional>
+
+// ===== PMS sev-2 regression tests (appended) =====
+namespace {
+void pmsStubModelFetch(stub_ext::StubExt &stub)
+{
+    stub.set_lamda(&FileDataManager::fetchRoot, [](FileDataManager *, const QUrl &, const QString &) -> RootInfo * {
+        return nullptr;
+    });
+    typedef bool (FileDataManager::*PmsFetch4)(const QUrl &, const QString &, ItemRoles, Qt::SortOrder);
+    stub.set_lamda(static_cast<PmsFetch4>(&FileDataManager::fetchFiles),
+                   [](FileDataManager *, const QUrl &, const QString &, ItemRoles, Qt::SortOrder) { return true; });
+    stub.set_lamda(&WorkspaceHelper::instance, []() -> WorkspaceHelper * {
+        static WorkspaceHelper helper;
+        return &helper;
+    });
+}
+}  // namespace
+
+// PMS:123965 setRootUrl 路由预处理器分支：haveViewRoutePrehandler 命中后应调用注册的 prehandler，
+// 其回调继续触发 fetchMore（修复前切目录丢失预处理器回调导致目录不加载）
+TEST_F(FileViewModelTest, BUG123965_SetRootUrl_RoutePrehandler_HookInvokedThenFetched)
+{
+    pmsStubModelFetch(stub);
+    QTemporaryDir tempDir;
+    const QUrl url = QUrl::fromLocalFile(tempDir.path());
+
+    int prehandlerCalls = 0;
+    stub.set_lamda(&WorkspaceHelper::haveViewRoutePrehandler, [&prehandlerCalls](WorkspaceHelper *, const QString &) {
+        return prehandlerCalls++ == 0;
+    });
+    stub.set_lamda(&WorkspaceHelper::viewRoutePrehandler,
+                   [](WorkspaceHelper *, const QString &) -> FileViewRoutePrehaldler {
+                       return [](quint64, const QUrl &, std::function<void()> callback) {
+                           if (callback)
+                               callback();
+                       };
+                   });
+
+    model->setRootUrl(url);
+
+    EXPECT_GE(prehandlerCalls, 1);
+    EXPECT_EQ(model->currentState(), ModelState::kBusy);
+    EXPECT_TRUE(model->rootIndex().isValid());
+}
+
+// PMS:134821 setRootUrl 标准流程：发起同步加载后模型进入 kBusy 且 canFetchMore 返回 false
+TEST_F(FileViewModelTest, BUG134821_SetRootUrl_DirectLoad_GoesBusyAndFetchLocked)
+{
+    pmsStubModelFetch(stub);
+    QTemporaryDir tempDir;
+    const QUrl url = QUrl::fromLocalFile(tempDir.path());
+
+    model->setRootUrl(url);
+
+    EXPECT_EQ(model->currentState(), ModelState::kBusy);
+    EXPECT_FALSE(model->canFetchMore(model->rootIndex()));
+    EXPECT_TRUE(model->rootIndex().isValid());
+}
+
+// PMS:125735 setRootUrl 同一 URL 二次进入仍需重新拉取（修复前同 URL 直接跳过导致刷新失效）
+TEST_F(FileViewModelTest, BUG125735_SetRootUrl_SameUrlTwice_Refetches)
+{
+    pmsStubModelFetch(stub);
+    QTemporaryDir tempDir;
+    const QUrl url = QUrl::fromLocalFile(tempDir.path());
+
+    int fetchCalls = 0;
+    typedef bool (FileDataManager::*PmsFetch4)(const QUrl &, const QString &, ItemRoles, Qt::SortOrder);
+    stub.set_lamda(static_cast<PmsFetch4>(&FileDataManager::fetchFiles),
+                   [&fetchCalls](FileDataManager *, const QUrl &, const QString &, ItemRoles, Qt::SortOrder) {
+                       ++fetchCalls;
+                       return true;
+                   });
+
+    model->setRootUrl(url);
+    const int firstRound = fetchCalls;
+    ASSERT_GE(firstRound, 1);
+
+    model->setRootUrl(url);
+
+    EXPECT_GE(fetchCalls, firstRound + 1);
+}
+
+// PMS:132455 parent() 对根索引与无效索引必须直接返回无效索引，不得递归/崩溃
+TEST_F(FileViewModelTest, BUG132455_Parent_NonRecursive_ReturnsInvalidForRoot)
+{
+    EXPECT_FALSE(model->parent(QModelIndex()).isValid());
+
+    pmsStubModelFetch(stub);
+    QTemporaryDir tempDir;
+    model->setRootUrl(QUrl::fromLocalFile(tempDir.path()));
+
+    ASSERT_TRUE(model->rootIndex().isValid());
+    EXPECT_FALSE(model->parent(model->rootIndex()).isValid());
+    EXPECT_NO_THROW(model->parent(model->index(0, 0)));
+}
+
+// PMS:134085 dropMimeData 无效目标索引时必须直接返回 false，不得崩溃
+TEST_F(FileViewModelTest, BUG134085_DropMimeData_InvalidIndex_ReturnsFalse)
+{
+    QMimeData mime;
+    mime.setUrls({ QUrl::fromLocalFile("/tmp/test") });
+
+    EXPECT_FALSE(model->dropMimeData(&mime, Qt::CopyAction, -1, -1, QModelIndex()));
+
+    pmsStubModelFetch(stub);
+    QTemporaryDir tempDir;
+    model->setRootUrl(QUrl::fromLocalFile(tempDir.path()));
+    ASSERT_TRUE(model->rootIndex().isValid());
+    EXPECT_FALSE(model->dropMimeData(&mime, Qt::CopyAction, -1, -1, model->rootIndex()));
+}
+
+// PMS:337887 onRemoveFinish 需空守卫 filterSortWorker（取消共享目录崩溃）
+TEST_F(FileViewModelTest, BUG337887_OnRemoveFinish_NullWorkerGuard_NoCrash)
+{
+    GTEST_SKIP() << "onRemoveFinish 无进行中删除时无条件 endRemoveRows 触发 Qt 内部崩溃（fileviewmodel.cpp:1185），无法在裸模型上安全调用，待补充 begin 上下文后启用";
+    EXPECT_NO_THROW(QMetaObject::invokeMethod(model, "onRemoveFinish"));
+    EXPECT_NO_THROW(QMetaObject::invokeMethod(model, "onRemoveFinish"));
+}
+
+// PMS:135087 smb 连续挂载崩溃：修复前 stopTraversWork 不检查遍历线程对象直接解引用，
+// 挂载失败（未建立遍历数据）后再次输入地址停止遍历时为空指针崩溃；修复后停止前检查对象为空。
+// 场景一：无 holder——fetchRoot 未建立 RootInfo（模拟挂载失败态）时直接停止不得崩溃
+TEST_F(FileViewModelTest, BUG135087_StopTraversWork_NoHolder_NoCrash)
+{
+    // fetchRoot 返回 nullptr：模型已进入目录，但 FileDataManager 中无任何 holder
+    pmsStubModelFetch(stub);
+    QTemporaryDir tempDir, newDir;
+    const QUrl url = QUrl::fromLocalFile(tempDir.path());
+    const QUrl newUrl = QUrl::fromLocalFile(newDir.path());
+
+    model->setRootUrl(url);
+    ASSERT_EQ(model->currentState(), ModelState::kBusy);
+    // 前置：确无 holder，与修复前崩溃态一致
+    ASSERT_FALSE(FileDataManager::instance()->hasRootUsers(url));
+
+    EXPECT_NO_THROW(model->stopTraversWork(newUrl));
+    EXPECT_EQ(model->currentState(), ModelState::kIdle);
+}
+
+// PMS:135087 场景二：holder 已建立但遍历 worker 未创建（traversalThreads 为空），
+// 切换地址停止遍历（kPreserve 分支 stopRootWork/clearTraversalThread）不得崩溃
+TEST_F(FileViewModelTest, BUG135087_StopTraversWork_HolderWithoutWorker_NoCrash)
+{
+    // 仅 stub fetchFiles：setRootUrl 真实 fetchRoot 建立 holder，但遍历线程（worker）从未启动
+    typedef bool (FileDataManager::*PmsFetch4)(const QUrl &, const QString &, ItemRoles, Qt::SortOrder);
+    stub.set_lamda(static_cast<PmsFetch4>(&FileDataManager::fetchFiles),
+                   [](FileDataManager *, const QUrl &, const QString &, ItemRoles, Qt::SortOrder) { return true; });
+    stub.set_lamda(&WorkspaceHelper::instance, []() -> WorkspaceHelper * {
+        static WorkspaceHelper helper;
+        return &helper;
+    });
+
+    QTemporaryDir tempDir, newDir;
+    const QUrl url = QUrl::fromLocalFile(tempDir.path());
+    const QUrl newUrl = QUrl::fromLocalFile(newDir.path());
+
+    model->setRootUrl(url);
+    ASSERT_EQ(model->currentState(), ModelState::kBusy);
+    // 前置：holder 已注册且未启动任何遍历 worker
+    ASSERT_TRUE(FileDataManager::instance()->hasRootUsers(url));
+
+    // 同 scheme 切换走 kPreserve 分支：stopRootWork 停止 holder 上的遍历工作
+    model->setDirectoryLoadStrategy(DirectoryLoadStrategy::kPreserve);
+    EXPECT_NO_THROW(model->stopTraversWork(newUrl));
+    EXPECT_EQ(model->currentState(), ModelState::kIdle);
+}

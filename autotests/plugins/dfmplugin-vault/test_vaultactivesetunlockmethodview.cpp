@@ -132,3 +132,28 @@ TEST_F(VaultActiveSetUnlockMethodViewTest, SlotLimiPasswordLength_Short_NoCrash)
 {
     EXPECT_NO_FATAL_FAILURE(view->slotLimiPasswordLength("short"));
 }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (vault creation view)
+// ---------------------------------------------------------------------------
+#include <type_traits>
+#include <DComboBox>
+#include "views/createvaultview/vaultbaseview.h"
+
+DWIDGET_USE_NAMESPACE
+
+// PMS:314353 the creation page must be rooted on VaultBaseView (shared creation
+// info plumbing), offer both key/transparent encryption modes and start with the
+// next button disabled so a half-built page (e.g. full-disk) cannot advance.
+TEST_F(VaultActiveSetUnlockMethodViewTest, BUG314353_InitUiOffersBothEncryptModes)
+{
+    static_assert(std::is_base_of<VaultBaseView, VaultActiveSetUnlockMethodView>::value,
+                  "VaultActiveSetUnlockMethodView must derive from VaultBaseView (BUG-314353)");
+
+    ASSERT_NE(view->typeCombo, nullptr);
+    EXPECT_EQ(view->typeCombo->count(), 2);
+    EXPECT_EQ(view->typeCombo->itemData(0).toInt(), static_cast<int>(EncryptMode::kKeyMode));
+    EXPECT_EQ(view->typeCombo->itemData(1).toInt(), static_cast<int>(EncryptMode::kTransparentMode));
+    EXPECT_NE(view->nextBtn, nullptr);
+    EXPECT_FALSE(view->nextBtn->isEnabled());
+}

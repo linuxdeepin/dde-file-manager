@@ -18,8 +18,12 @@
 #include <QColorSpace>
 #include <QIcon>
 #include <mutex>
+#include <climits>
+#include <QDBusConnection>
+#include <QDBusPendingCall>
 
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/file/local/syncfileinfo.h>
@@ -728,4 +732,216 @@ TEST(FileUtilsTest, IsContainProhibitPathWithProhibitedPaths)
     EXPECT_NO_FATAL_FAILURE({
         (void)FileUtils::isContainProhibitPath(urls);
     });
+}
+
+// ===== PMS sev-2 regression cluster: fileutils.cpp (work-order batch 2) =====
+
+// PMS:318199 resolveSymlink 符号链接循环防护：a->b->a 环应返回空串而非死循环/崩溃
+TEST(FileUtilsTest, BUG318199_ResolveSymlinkCycleReturnsEmpty)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString a = dir.filePath("link_a");
+    const QString b = dir.filePath("link_b");
+    ASSERT_TRUE(QFile::link(a, b));   // b -> a
+    ASSERT_TRUE(QFile::link(b, a));   // a -> b
+    const QString r = FileUtils::resolveSymlink(QUrl::fromLocalFile(a));
+    EXPECT_TRUE(r.isEmpty());
+}
+
+// PMS:318199 resolveSymlink 链式解析应终止于真实文件（BUG 318199 修复的核心契约）
+TEST(FileUtilsTest, BUG318199_ResolveSymlinkChainEndsAtRealFile)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString real = dir.filePath("real.txt");
+    {
+        QFile f(real);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    }
+    const QString l1 = dir.filePath("l1");
+    ASSERT_TRUE(QFile::link(real, l1));
+    const QString l2 = dir.filePath("l2");
+    ASSERT_TRUE(QFile::link(l1, l2));
+    const QString r = FileUtils::resolveSymlink(QUrl::fromLocalFile(l2));
+    EXPECT_EQ(r, real);
+}
+
+// PMS:326991 CMYK 图无色彩空间时转换不应返回空图/CMYK 格式（闪退根因兜底链）
+TEST(FileUtilsTest, BUG326991_ConvertToSRgbColorSpaceCmykWithoutColorSpace)
+{
+    QImage cmyk(8, 8, QImage::Format_CMYK8888);
+    cmyk.fill(Qt::black);
+    ASSERT_FALSE(cmyk.isNull());
+    ASSERT_FALSE(cmyk.colorSpace().isValid());
+    QImage out = FileUtils::convertToSRgbColorSpace(cmyk);
+    EXPECT_FALSE(out.isNull());
+    EXPECT_NE(out.format(), QImage::Format_CMYK8888);
+}
+
+// PMS:326991 已是 sRGB 色彩空间的图像应原样返回（不重复转换导致色彩漂移）
+TEST(FileUtilsTest, BUG326991_ConvertToSRgbColorSpaceSRgbImageUntouched)
+{
+    QImage img(4, 4, QImage::Format_RGB32);
+    img.fill(Qt::red);
+    img.setColorSpace(QColorSpace(QColorSpace::SRgb));
+    QImage out = FileUtils::convertToSRgbColorSpace(img);
+    EXPECT_FALSE(out.isNull());
+    EXPECT_EQ(out.colorSpace(), QColorSpace(QColorSpace::SRgb));
+}
+
+// PMS:309847 isSameDevice 契约：本地同设备返回 true；同 scheme 不同主机返回 false
+TEST(FileUtilsTest, BUG309847_IsSameDeviceSchemeHostContract)
+{
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString existing = dir.filePath("existing.txt");
+    {
+        QFile f(existing);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    }
+    EXPECT_TRUE(FileUtils::isSameDevice(QUrl::fromLocalFile(dir.path()),
+                                        QUrl::fromLocalFile(existing)));
+    EXPECT_FALSE(FileUtils::isSameDevice(QUrl("smb://hostA/share"), QUrl("smb://hostB/share")));
+    EXPECT_FALSE(FileUtils::isSameDevice(QUrl("smb://hostA/share"), QUrl("nfs://hostA/share")));
+}
+
+// PMS:309847 已知活体源码缺陷：isSameDevice 远程分支 url1.port() == url1.port() 自比较
+// （应为 url2.port()，2022 年 ab5a22703 引入；已录入 .ut-defects.json，源码修复后启用）
+TEST(FileUtilsTest, BUG309847_RemotePortSelfCompareKnownDefect)
+{
+    GTEST_SKIP() << "known source defect: isSameDevice compares url1.port() with itself; "
+                    "recorded in autotests/.ut-defects.json";
+    EXPECT_FALSE(FileUtils::isSameDevice(QUrl("smb://host:445/share"),
+                                         QUrl("smb://host:446/share")));
+}
+
+// PMS:129771 setBackGround 右键设置壁纸：无 Appearance 服务时仍应安全返回 true
+// （stub 掉 sessionBus asyncCall，避免真实改壁纸；同步覆盖 greeterbackground 兜底分支）
+TEST(FileUtilsTest, BUG129771_SetBackGroundSendsAppearanceDBusWithoutCrash)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(static_cast<QDBusPendingCall (QDBusConnection::*)(const QDBusMessage &, int) const>(
+                       &QDBusConnection::asyncCall),
+                   [](QDBusConnection *, const QDBusMessage &, int) {
+                       __DBG_STUB_INVOKE__
+                       // Qt6: QDBusPendingCall default ctor is not defined; use fromCompletedCall
+                       return QDBusPendingCall::fromCompletedCall(QDBusMessage());
+                   });
+    EXPECT_TRUE(FileUtils::setBackGround(QString("/tmp/ut-not-exist-wallpaper.png")));
+}
+
+// ============================================================
+// PMS sev-2 regression cluster: fileutils.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:165023 isSameFile(QUrl) 契约：同 inode（符号链接指向同一文件）的不同路径判定为同一文件；
+// 依赖 UniversalUtils::urlEquals 短路与 InfoFactory 拿不到 info 时安全返回 false
+TEST(FileUtilsTest, BUG165023_IsSameFileSameInodeViaSymlink)
+{
+    static std::once_flag flag;
+    std::call_once(flag, [] {
+        UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
+        InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+    });
+
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString realPath = dir.path() + "/real_165023.txt";
+    QFile f(realPath);
+    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    f.write("inode");
+    f.close();
+    const QString linkPath = dir.path() + "/link_165023.txt";
+    ASSERT_TRUE(QFile::link(realPath, linkPath));
+
+    const QUrl realUrl = QUrl::fromLocalFile(realPath);
+    const QUrl linkUrl = QUrl::fromLocalFile(linkPath);
+
+    // same object via urlEquals shortcut
+    EXPECT_TRUE(FileUtils::isSameFile(realUrl, realUrl, Global::CreateFileInfoType::kCreateFileInfoSync));
+    // different paths, same inode (stat follows the symlink)
+    EXPECT_TRUE(FileUtils::isSameFile(realUrl, linkUrl, Global::CreateFileInfoType::kCreateFileInfoSync));
+    // different files -> false
+    const QString otherPath = dir.path() + "/other_165023.txt";
+    QFile g(otherPath);
+    ASSERT_TRUE(g.open(QIODevice::WriteOnly));
+    g.write("other");
+    g.close();
+    EXPECT_FALSE(FileUtils::isSameFile(realUrl, QUrl::fromLocalFile(otherPath),
+                                       Global::CreateFileInfoType::kCreateFileInfoSync));
+    // missing file info -> false (no crash)
+    EXPECT_FALSE(FileUtils::isSameFile(realUrl, QUrl::fromLocalFile("/no/such/file_165023"),
+                                       Global::CreateFileInfoType::kCreateFileInfoSync));
+}
+
+// PMS:211431 processLength 按 UCS4 修剪光标前文本：全宽字符/emoji（UTF-16 代理对）必须作为单字符删除，
+// 不能在代理对中间截断；字符计数与字节计数两种模式均需正确
+TEST(FileUtilsTest, BUG211431_ProcessLengthTrimsUcs4Aware)
+{
+    QString dstText;
+    int dstPos = -1;
+
+    // byte-count mode: "ab😀cd" = 2+4+2 bytes, cursor after emoji (srcPos=4), max 5 bytes.
+    // The emoji must be removed as ONE character (UCS4), leaving "abcd" (4 bytes).
+    bool changed = FileUtils::processLength(QStringLiteral("ab😀cd"), 4, 5, false, dstText, dstPos);
+    EXPECT_TRUE(changed);
+    EXPECT_EQ(dstText, QStringLiteral("abcd"));
+    EXPECT_EQ(dstPos, 2);
+
+    // char-count mode: "😀abc" UTF-16 length 5, cursor after emoji (srcPos=2), max 3 chars -> "abc"
+    dstText.clear();
+    dstPos = -1;
+    changed = FileUtils::processLength(QStringLiteral("😀abc"), 2, 3, true, dstText, dstPos);
+    EXPECT_TRUE(changed);
+    EXPECT_EQ(dstText, QStringLiteral("abc"));
+    EXPECT_EQ(dstPos, 0);
+
+    // within limit -> no change, returns false, outputs keep input
+    dstText.clear();
+    dstPos = -1;
+    changed = FileUtils::processLength(QStringLiteral("hello"), 2, INT_MAX, false, dstText, dstPos);
+    EXPECT_FALSE(changed);
+    EXPECT_EQ(dstText, QStringLiteral("hello"));
+    EXPECT_EQ(dstPos, 2);
+
+    // cursor at start and already over limit -> cannot trim left, returns false safely
+    dstText.clear();
+    dstPos = -1;
+    changed = FileUtils::processLength(QStringLiteral("😀"), 0, 2, false, dstText, dstPos);
+    EXPECT_FALSE(changed);
+}
+
+// PMS:299425 trashIsEmpty：CIFS 挂载繁忙时直接短路返回 true（避免不可靠的回收站统计）
+TEST(FileUtilsTest, BUG299425_TrashIsEmptyShortCircuitsWhenCifsBusy)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(NetworkUtils, checkAllCIFSBusy), []() -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    EXPECT_TRUE(FileUtils::trashIsEmpty());
+}
+
+// PMS:303915 trashIsEmpty：非繁忙路径（CIFS 空闲）下 trash:// FileInfo 不可用时安全返回 true，不崩溃
+TEST(FileUtilsTest, BUG303915_TrashIsEmptySafeWhenTrashInfoUnavailable)
+{
+    stub_ext::StubExt stub;
+    stub.set_lamda(ADDR(NetworkUtils, checkAllCIFSBusy), []() -> bool {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+    // trash:// FileInfo class is not registered in this binary -> info is null -> true
+    EXPECT_TRUE(FileUtils::trashIsEmpty());
+    EXPECT_TRUE(FileUtils::trashIsEmpty());   // repeated call stays consistent
+}
+
+// PMS:178509 拖拽文件到回收站排序崩溃：修复引入的 FileUtils::isLocalFile/
+// isLocalDevice 已被 ProtocolUtils 重构删除（契约由 ProtocolUtils::isLocalFile
+// 继承并有独立覆盖），原修复函数不存在，无法在本文件回归
+TEST(FileUtilsTest, BUG178509_Skip_FixCodeRemovedByProtocolUtilsRefactor)
+{
+    GTEST_SKIP() << "fix introduced FileUtils::isLocalFile/isLocalDevice which were "
+                    "removed by the ProtocolUtils refactor; isLocalFile contract is "
+                    "covered by TestIsLocalFile (protocolutils tests)";
 }

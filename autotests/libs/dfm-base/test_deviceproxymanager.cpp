@@ -18,6 +18,7 @@
 #include "stubext.h"
 
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/base/device/private/deviceproxymanager_p.h>
 #include <dfm-base/base/device/devicemanager.h>
 
 #include <QString>
@@ -425,3 +426,78 @@ TEST(DeviceProxyManagerTest, QueryDeviceInfoByPathWithActualMount)
         "/protocol/test_query", "/tmp/test_query_mount");
 }
 
+
+// ===== PMS sev-2 regression cluster: deviceproxymanager.cpp (work-order batch 2) =====
+
+// PMS:357747 queryDeviceInfoByPath 多挂载点嵌套时必须命中最长挂载路径（修复前短路径先命中导致查错设备）
+TEST(DeviceProxyManagerTest, BUG357747_QueryDeviceInfoByPathPicksLongestMountPoint)
+{
+    auto *m = DeviceProxyManager::instance();
+    m->initService();
+
+    const QString parentId = "/org/freedesktop/UDisks2/block_devices/ut357747_parent";
+    const QString subId = "/org/freedesktop/UDisks2/block_devices/ut357747_sub";
+    const QString parentMpt = "/tmp/ut_357747_parent";
+    const QString subMpt = parentMpt + "/sub";
+
+    // DBus 在场时本地 DeviceManager 信号未连接到 addMounts（connectToDBus 只连 DBus 接口），
+    // 经 d_func 直接调用注入挂载（canonicalMountPoint 会在内部补尾斜杠）
+    auto *dd = m->d.data();
+    dd->addMounts(parentId, parentMpt);
+    dd->addMounts(subId, subMpt);
+
+    // stub queryBlockInfo（DeviceInfoByPath 内部入口）记录实际查询的 devId
+    QString lastQueriedId;
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DeviceProxyManager::queryBlockInfo,
+                   [&](DeviceProxyManager *, const QString &id, bool) -> QVariantMap {
+                       __DBG_STUB_INVOKE__
+                       lastQueriedId = id;
+                       return { { GlobalServerDefines::DeviceProperty::kId, id } };
+                   });
+
+    // 深层路径必须命中最长匹配的子挂载（subId），而非父挂载
+    (void)m->queryDeviceInfoByPath(subMpt + "/file.txt");
+    EXPECT_EQ(lastQueriedId, subId);
+
+    // 父挂载下的直接文件仍命中父挂载
+    (void)m->queryDeviceInfoByPath(parentMpt + "/file.txt");
+    EXPECT_EQ(lastQueriedId, parentId);
+
+    dd->removeMounts(subId);
+    dd->removeMounts(parentId);
+}
+
+// PMS:269413 getAllBlockIdsByUUID（revert 后保留的契约）：按 uuid 精确过滤，不存在的 uuid 返回空且不崩溃
+TEST(DeviceProxyManagerTest, BUG269413_GetAllBlockIdsByUUIDFiltersAndEmptySafe)
+{
+    auto *m = DeviceProxyManager::instance();
+    m->initService();
+
+    const QString idA = "/org/freedesktop/UDisks2/block_devices/ut269413_a";
+    const QString idB = "/org/freedesktop/UDisks2/block_devices/ut269413_b";
+
+    stub_ext::StubExt stub;
+    stub.set_lamda(&DeviceProxyManager::getAllBlockIds,
+                   [&](DeviceProxyManager *, GlobalServerDefines::DeviceQueryOptions) -> QStringList {
+                       __DBG_STUB_INVOKE__
+                       return { idA, idB };
+                   });
+    stub.set_lamda(&DeviceProxyManager::queryBlockInfo,
+                   [&](DeviceProxyManager *, const QString &id, bool) -> QVariantMap {
+                       __DBG_STUB_INVOKE__
+                       const QString uuid = (id == idA) ? QStringLiteral("ut-uuid-A") : QStringLiteral("ut-uuid-B");
+                       return { { GlobalServerDefines::DeviceProperty::kUUID, uuid } };
+                   });
+
+    const QStringList hit = m->getAllBlockIdsByUUID({ QStringLiteral("ut-uuid-B") });
+    EXPECT_EQ(hit, QStringList({ idB }));
+
+    // 不存在的 uuid → 空列表，且全程不崩溃（coredump 回归点）
+    const QStringList miss = m->getAllBlockIdsByUUID({ QStringLiteral("ut-uuid-NOPE") });
+    EXPECT_TRUE(miss.isEmpty());
+
+    // 空 uuid 列表 → 空列表
+    const QStringList empty = m->getAllBlockIdsByUUID({});
+    EXPECT_TRUE(empty.isEmpty());
+}

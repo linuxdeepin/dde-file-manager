@@ -194,3 +194,75 @@ TEST_F(UT_ShareControlWidget, ShowSharePasswordSettingsDialog)
     stub.set_lamda(&UserShareHelper::setSambaPasswd, [] { __DBG_STUB_INVOKE__ });
     EXPECT_NO_FATAL_FAILURE(widget->showSharePasswordSettingsDialog());
 }
+
+// PMS:303377 修改密码仅首次有响应：修复前对话框连接 finished→onButtonClicked，
+// QDialogPrivate::close 安装的事件过滤器拦截 Close 事件导致 closed 不触发、
+// UserSharePwdSettingDialogShown 常驻 true，再次点击修改密码按钮被属性拦截；
+// 修复后改连 buttonClicked→onButtonClicked，且 closed 需复位属性保证可再次打开
+TEST_F(UT_ShareControlWidget, BUG303377_ShowSharePasswordSettingsDialog_ButtonClickedWiredAndClosedResets)
+{
+    stub.set_lamda(VADDR(QDialog, show), [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&UserShareHelper::currentUserName, [] { __DBG_STUB_INVOKE__ return QString("test"); });
+    stub.set_lamda(&UserShareHelper::setSambaPasswd, [] { __DBG_STUB_INVOKE__ });
+    int onBtnCalls = 0;
+    stub.set_lamda(&UserSharePasswordSettingDialog::onButtonClicked,
+                   [&onBtnCalls] { __DBG_STUB_INVOKE__ ++onBtnCalls; });
+
+    widget->setProperty("UserSharePwdSettingDialogShown", false);
+    widget->showSharePasswordSettingsDialog();
+
+    UserSharePasswordSettingDialog *dlg = widget->findChild<UserSharePasswordSettingDialog *>();
+    ASSERT_NE(dlg, nullptr);
+    EXPECT_TRUE(widget->property("UserSharePwdSettingDialogShown").toBool());
+
+    // 修复后：buttonClicked 必须触发 onButtonClicked（密码提交入口）
+    emit dlg->buttonClicked(1, QString());
+    EXPECT_EQ(onBtnCalls, 1);
+
+    // 修复前缺陷路径：finished 不得再触发 onButtonClicked
+    emit dlg->finished(0);
+    EXPECT_EQ(onBtnCalls, 1);
+
+    // closed 必须复位属性，否则二次修改密码被 UserSharePwdSettingDialogShown 拦截（本缺陷现象）
+    emit dlg->closed();
+    EXPECT_FALSE(widget->property("UserSharePwdSettingDialogShown").toBool());
+
+    // 属性复位后二次打开不再被拦截，且创建的是新对话框实例
+    widget->showSharePasswordSettingsDialog();
+    EXPECT_EQ(widget->findChildren<UserSharePasswordSettingDialog *>().count(), 2);
+}
+
+// ---------- PMS sev-2 regression: BUG267179 ----------
+#include <dfm-base/file/local/syncfileinfo.h>
+
+// PMS:267179 系统盘-空白处右键单击属性文件管理器闪退（修复 c94d91d9e）：系统盘等特殊路径下
+// 父目录 watcher 创建失败（WatcherFactory::create 返回空），修复前 init() 未判空直接
+// watcher->startWatcher() 解引用空指针崩溃，initConnection() 亦未判空就 connect(watcher.data(),...)；
+// 修复后两处均需判空跳过。回归：watcher 创建返回空时属性页构造（init+initConnection）
+// 全程不得解引用空指针
+TEST_F(UT_ShareControlWidget, BUG267179_InitWatcherCreateFailedNoCrash)
+{
+    // 根因场景：info 创建成功但父目录 watcher 创建失败（系统盘路径 create 返回空）
+    stub.set_lamda(&WatcherFactory::create<AbstractFileWatcher>, [&](const QUrl &, bool, QString *) {
+        __DBG_STUB_INVOKE__
+        return AbstractFileWatcherPointer(nullptr);
+    });
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       __DBG_STUB_INVOKE__
+                       return QSharedPointer<FileInfo>(new SyncFileInfo(url));
+                   });
+    // 共享状态查询短路，避免依赖真实 samba 环境
+    stub.set_lamda(&UserShareHelper::shareNameByPath, [] { __DBG_STUB_INVOKE__ return QString(); });
+    stub.set_lamda(&UserShareHelper::isShared, [] { __DBG_STUB_INVOKE__ return false; });
+
+    // 构造即触发 init() + initConnection()：修复前空 watcher 解引用此处闪退
+    ShareControlWidget w(QUrl::fromLocalFile("/home"));
+
+    // init() 需越过 watcher 判空点，继续完成未共享状态的 UI 初始化
+    EXPECT_FALSE(w.shareSwitcher->isChecked());
+    EXPECT_FALSE(w.sharePermissionSelector->isEnabled());
+    EXPECT_FALSE(w.shareAnonymousSelector->isEnabled());
+    // initConnection() 需执行到底（其末尾 showMoreInfo(false) 收起更多信息区）
+    EXPECT_TRUE(w.moreInfoFrame->isHidden());
+}

@@ -272,3 +272,138 @@ TEST_F(UT_ExtendCanvasSceneCov, Scene_RegisteredAction_ReturnsSceneItself)
     EXPECT_EQ(ownerScene, scene);
     EXPECT_NE(foreignScene, scene);
 }
+
+// ---------------------------------------------------------------------------
+// PMS:159711 桌面文件右键菜单"重命名"不可用回归：
+// 1) initialize 必须把 focusFile 置为第一个选中文件（修复前为空，
+//    菜单重命名时拿到无效索引）；
+// 2) actionFilter 处理 rename：单选有效文件 → view->edit(focusFile 索引)；
+// 3) 单选无效文件 → 告警但仍返回 true（修复前直接 return false，
+//    中断菜单处理链导致重命名入口失效）。
+// ---------------------------------------------------------------------------
+#include "view/collectionview.h"
+#include "models/collectionmodel.h"
+#include "mode/collectiondataprovider.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+
+#include <QStandardItemModel>
+
+namespace {
+
+class RenameTestDataProvider : public CollectionDataProvider
+{
+public:
+    explicit RenameTestDataProvider() : CollectionDataProvider(nullptr) {}
+    QString replace(const QUrl &, const QUrl &) override { return QString(); }
+    QString append(const QUrl &) override { return QString(); }
+    QString prepend(const QUrl &) override { return QString(); }
+    void insert(const QUrl &, const QString &, const int) override {}
+    QString remove(const QUrl &) override { return QString(); }
+    QString change(const QUrl &) override { return QString(); }
+};
+
+// actionFilter 要求父场景名为 CanvasMenu（Q_ASSERT_X 校验）
+class CanvasMenuNameScene : public DFMBASE_NAMESPACE::AbstractMenuScene
+{
+public:
+    QString name() const override { return "CanvasMenu"; }
+};
+
+}   // namespace
+
+TEST_F(UT_ExtendCanvasSceneCov, BUG159711_Initialize_SetsFocusFileFromFirstSelectedFile)
+{
+    const QList<QUrl> files { QUrl::fromLocalFile("/tmp/first_file.txt"),
+                              QUrl::fromLocalFile("/tmp/second_file.txt") };
+    QVariantHash params;
+    params[MenuParamKey::kOnDesktop] = true;
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(files);
+
+    ASSERT_TRUE(scene->initialize(params));
+
+    EXPECT_EQ(scene->priv()->selectFiles.count(), 2);
+    // 修复核心：focusFile 必须落在第一个选中文件上
+    EXPECT_EQ(scene->priv()->focusFile, files.first());
+}
+
+TEST_F(UT_ExtendCanvasSceneCov, BUG159711_ActionFilter_RenameSingleFileEditsFocusedIndex)
+{
+    RenameTestDataProvider provider;
+    CollectionView view("ut_rename_view", &provider);
+    CollectionModel model;
+    view.setModel(&model);
+
+    const QUrl focusFile = QUrl::fromLocalFile("/tmp/rename_target.txt");
+    scene->priv()->onCollection = true;
+    scene->priv()->view = &view;
+    scene->priv()->selectFiles = { focusFile };
+    scene->priv()->focusFile = focusFile;
+
+    // 提供一个合法索引：修复后应触发 view->edit(focusFile 对应索引)
+    QStandardItemModel indexSource;
+    indexSource.setItem(0, 0, new QStandardItem("cell"));
+    const QModelIndex validIndex = indexSource.index(0, 0);
+
+    bool editCalled = false;
+    QModelIndex editedIndex;
+    stub.set_lamda(VADDR(CollectionView, edit),
+                   [&](CollectionView *, const QModelIndex &idx,
+                       QAbstractItemView::EditTrigger, QEvent *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       editCalled = true;
+                       editedIndex = idx;
+                       return true;
+                   });
+    stub.set_lamda(static_cast<QModelIndex (CollectionModel::*)(const QUrl &, int) const>(
+                       &CollectionModel::index),
+                   [&](CollectionModel *, const QUrl &url, int) -> QModelIndex {
+                       __DBG_STUB_INVOKE__
+                       return url == focusFile ? validIndex : QModelIndex();
+                   });
+
+    CanvasMenuNameScene caller;
+    QAction action;
+    action.setProperty(ActionPropertyKey::kActionID, QString(dfmplugin_menu::ActionID::kRename));
+
+    EXPECT_TRUE(scene->actionFilter(&caller, &action));
+    EXPECT_TRUE(editCalled);
+    EXPECT_EQ(editedIndex, validIndex);
+}
+
+TEST_F(UT_ExtendCanvasSceneCov, BUG159711_ActionFilter_RenameInvalidFile_WarnsAndReturnsTrue)
+{
+    RenameTestDataProvider provider;
+    CollectionView view("ut_rename_invalid_view", &provider);
+    CollectionModel model;
+    view.setModel(&model);
+
+    const QUrl focusFile = QUrl::fromLocalFile("/tmp/gone_file.txt");
+    scene->priv()->onCollection = true;
+    scene->priv()->view = &view;
+    scene->priv()->selectFiles = { focusFile };
+    scene->priv()->focusFile = focusFile;
+
+    bool editCalled = false;
+    stub.set_lamda(VADDR(CollectionView, edit),
+                   [&](CollectionView *, const QModelIndex &,
+                       QAbstractItemView::EditTrigger, QEvent *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       editCalled = true;
+                       return true;
+                   });
+    // 索引不存在：model->index 返回无效索引
+    stub.set_lamda(static_cast<QModelIndex (CollectionModel::*)(const QUrl &, int) const>(
+                       &CollectionModel::index),
+                   [](CollectionModel *, const QUrl &, int) -> QModelIndex {
+                       __DBG_STUB_INVOKE__
+                       return QModelIndex();
+                   });
+
+    CanvasMenuNameScene caller;
+    QAction action;
+    action.setProperty(ActionPropertyKey::kActionID, QString(dfmplugin_menu::ActionID::kRename));
+
+    // 修复前：无效索引直接 return false，重命名链路中断；修复后告警并返回 true
+    EXPECT_TRUE(scene->actionFilter(&caller, &action));
+    EXPECT_FALSE(editCalled);
+}

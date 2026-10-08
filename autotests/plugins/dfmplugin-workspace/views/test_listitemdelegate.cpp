@@ -413,3 +413,28 @@ TEST_F(ListItemDelegateTest, CanHandleEditorOperations)
     delete editor;
     delete parent;
 }
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:351423 编辑器会话守卫：旧会话 editor 销毁不得清空当前会话状态导致 coredump
+TEST_F(ListItemDelegateTest, BUG351423_CreateEditor_StaleSessionDestroy_NoCrash)
+{
+    QWidget *parent = new QWidget();
+    QStyleOptionViewItem option;
+    QModelIndex index;
+
+    QWidget *editor1 = delegate->createEditor(parent, option, index);
+    ASSERT_NE(editor1, nullptr);
+    QWidget *editor2 = delegate->createEditor(parent, option, index);
+    ASSERT_NE(editor2, nullptr);
+
+    // 旧会话 editor 销毁：会话守卫应跳过状态清理
+    delete editor1;
+
+    // 当前会话仍可继续创建/销毁编辑器，不崩溃
+    EXPECT_NO_THROW({
+        QWidget *editor3 = delegate->createEditor(parent, option, index);
+        delete editor3;
+    });
+
+    delete editor2;
+    delete parent;
+}

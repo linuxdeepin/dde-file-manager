@@ -258,3 +258,65 @@ TEST_F(UT_CanvasView, waterMask_isWaterMaskOn)
     
     SUCCEED();
 }
+// ---------------------------------------------------------------------------
+// PMS:337885 桌面图标与文字间隙区域点击无响应回归：baseIndexAt 的命中判定
+// 必须把图标矩形与文字矩形合并后再判断（修复前间隙点无法命中任何项），
+// 且 itemPaintGeomertys 返回空列表时不得越界崩溃（修复前对空列表取 at(0)）。
+// ---------------------------------------------------------------------------
+
+// 间隙点（图标矩形与文字矩形之间、二者并集之内）必须命中该项
+TEST_F(UT_CanvasView, BUG337885_BaseIndexAt_GapBetweenIconAndText_HitsItem)
+{
+    // 固定网格项名，避开 GridIns 依赖
+    stub.set_lamda(ADDR(CanvasViewPrivate, visualItem),
+                   [](CanvasViewPrivate *, const QPoint &) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return QString("ut_item_337885");
+                   });
+    // model()->index(item, 0)（QUrl 重载，QString 隐式转换）→ 返回有效索引
+    const QModelIndex expected = mockModel->createIndex(0, 0);
+    stub.set_lamda(static_cast<QModelIndex (CanvasProxyModel::*)(const QUrl &, int) const>(&CanvasProxyModel::index),
+                   [expected](CanvasProxyModel *, const QUrl &, int) -> QModelIndex {
+                       __DBG_STUB_INVOKE__
+                       return expected;
+                   });
+    // 图标矩形 (0,0,40,40) 与文字矩形 (0,60,40,30)：y∈[40,60) 为间隙带
+    stub.set_lamda(ADDR(CanvasView, itemPaintGeomertys),
+                   [](CanvasView *, const QModelIndex &) -> QList<QRect> {
+                       __DBG_STUB_INVOKE__
+                       return { QRect(0, 0, 40, 40), QRect(0, 60, 40, 30) };
+                   });
+
+    // 间隙点 (20,50)：不在图标/文字任一矩形内，但在二者并集内 → 应命中
+    const QModelIndex hit = view->baseIndexAt(QPoint(20, 50));
+    EXPECT_TRUE(hit.isValid());
+    EXPECT_EQ(hit, expected);
+
+    // 边界外点（不在并集内）不得命中
+    const QModelIndex miss = view->baseIndexAt(QPoint(20, 105));
+    EXPECT_FALSE(miss.isValid());
+}
+
+// itemPaintGeomertys 为空列表时不得越界，返回无效索引即可
+TEST_F(UT_CanvasView, BUG337885_BaseIndexAt_EmptyPaintGeometries_ReturnsInvalidNoCrash)
+{
+    stub.set_lamda(ADDR(CanvasViewPrivate, visualItem),
+                   [](CanvasViewPrivate *, const QPoint &) -> QString {
+                       __DBG_STUB_INVOKE__
+                       return QString("ut_item_337885");
+                   });
+    stub.set_lamda(static_cast<QModelIndex (CanvasProxyModel::*)(const QUrl &, int) const>(&CanvasProxyModel::index),
+                   [](CanvasProxyModel *, const QUrl &, int) -> QModelIndex {
+                       __DBG_STUB_INVOKE__
+                       return QModelIndex();
+                   });
+    stub.set_lamda(ADDR(CanvasView, itemPaintGeomertys),
+                   [](CanvasView *, const QModelIndex &) -> QList<QRect> {
+                       __DBG_STUB_INVOKE__
+                       return {};
+                   });
+
+    QModelIndex hit;
+    EXPECT_NO_THROW(hit = view->baseIndexAt(QPoint(20, 50)));
+    EXPECT_FALSE(hit.isValid());
+}

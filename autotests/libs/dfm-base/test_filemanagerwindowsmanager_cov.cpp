@@ -243,3 +243,31 @@ TEST_F(UT_FileManagerWindowsManagerCov, CreateWindow_OpenAndActivateLambdas_Expe
     EXPECT_EQ(urlSpy.at(0).at(1).toUrl(), QUrl::fromLocalFile("/tmp"));
     EXPECT_EQ(m.lastActivedWindowId(), static_cast<quint64>(w->internalWinId()));
 }
+
+// PMS:232817 首个窗口打开后目录跳转异常：showWindow 派发 currentUrlChanged 时
+// 重复 emit（createWindow 显示 lambda 中已 emit 一次，showWindow 又 emit 一次）。
+// 修复后 createWindow 不再派发该信号，showWindow 对窗口自身的
+// currentUrlChanged 信号必须恰好派发一次，参数为窗口当前 URL
+TEST_F(UT_FileManagerWindowsManagerCov, BUG232817_ShowWindowEmitsCurrentUrlChangedExactlyOnce)
+{
+    auto &m = FileManagerWindowsManager::instance();
+    const QUrl url = QUrl::fromLocalFile(tmpDir.path());
+    FileManagerWindow *w = m.createWindow(url, true);
+    ASSERT_NE(w, nullptr);
+
+    // Spy on the WINDOW's own signal (the signal showWindow emits directly).
+    QSignalSpy windowSpy(w, &FileManagerWindow::currentUrlChanged);
+    ASSERT_TRUE(windowSpy.isValid());
+
+    // Act
+    m.showWindow(w);
+
+    // Assert — exactly one emission, carrying the window's current URL.
+    ASSERT_EQ(windowSpy.count(), 1);
+    EXPECT_EQ(windowSpy.at(0).at(0).toUrl(), w->currentUrl());
+
+    // A second showWindow call re-emits (per-show contract, not once-only).
+    m.showWindow(w);
+    EXPECT_EQ(windowSpy.count(), 2);
+    EXPECT_EQ(windowSpy.at(1).at(0).toUrl(), w->currentUrl());
+}

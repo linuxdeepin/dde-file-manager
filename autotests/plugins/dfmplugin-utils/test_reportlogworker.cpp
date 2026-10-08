@@ -170,3 +170,46 @@ TEST_F(UT_ReportLogWorker, commit_InvalidArgs_Returns)
     QVariant invalid;
     worker->commit(invalid);
 }
+
+// ---------------------------------------------------------------------------
+// PMS sev-2 regression additions (report log worker)
+// ---------------------------------------------------------------------------
+
+// PMS:355011 when the deepin-event-log library fails to load, init() must bail
+// out cleanly and later commit calls must stay harmless (no dangling function
+// pointer dereference).
+TEST_F(UT_ReportLogWorker, BUG355011_InitFailureKeepsCommitSafe)
+{
+    stub.set_lamda(ADDR(QLibrary, load),
+                   [](QLibrary *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+
+    EXPECT_NO_THROW(worker->init());
+    EXPECT_NO_THROW(worker->commitLog(QStringLiteral("CrashProbe"), QVariantMap()));
+}
+
+// PMS:355011 init() is invoked on every plugin load; the second call must be a
+// no-op for the data registry — datas must not be registered twice.
+TEST_F(UT_ReportLogWorker, BUG355011_InitTwiceDoesNotReregisterDatas)
+{
+    stub.set_lamda(ADDR(QLibrary, load),
+                   [](QLibrary *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+
+    worker->init();   // first run populates the registry
+
+    int registerCalls = 0;
+    stub.set_lamda(ADDR(ReportLogWorker, registerLogData),
+                   [&registerCalls](ReportLogWorker *, const QString &, ReportDataInterface *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       ++registerCalls;
+                       return true;
+                   });
+
+    worker->init();   // second run must short-circuit on the idempotency guard
+    EXPECT_EQ(registerCalls, 0);
+}

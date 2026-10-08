@@ -408,3 +408,53 @@ TEST_F(UT_BurnHelper, localFileInfoListRecursive_NonExistentDirectory)
     QFileInfoList result = BurnHelper::localFileInfoListRecursive("/non/existent/path");
     EXPECT_TRUE(result.isEmpty());
 }
+
+// PMS:355565 刻录状态持久化改走 OpticalShareProxy D-Bus 服务：working=true 时
+// setBurnState 携带 {kId, kWorking} 字段；working=false 时 clearBurnState(dev)；
+// 废弃的 Application::dataPersistence 文件持久化入口不再被触碰。
+TEST_F(UT_BurnHelper, BUG355565_UpdateBurningState_UsesOpticalShareProxyWithFields_NoDataPersistence)
+{
+    QString setDev;
+    QVariantMap setInfo;
+    bool setCalled = false;
+    QString clearedDev;
+    bool clearedCalled = false;
+    bool dataPersistenceTouched = false;
+
+    stub.set_lamda(ADDR(OpticalShareProxy, setBurnState),
+                   [&](OpticalShareProxy *, const QString &dev, const QVariantMap &info) -> bool {
+                       __DBG_STUB_INVOKE__
+                       setCalled = true;
+                       setDev = dev;
+                       setInfo = info;
+                       return true;
+                   });
+
+    stub.set_lamda(ADDR(OpticalShareProxy, clearBurnState),
+                   [&](OpticalShareProxy *, const QString &dev) -> bool {
+                       __DBG_STUB_INVOKE__
+                       clearedCalled = true;
+                       clearedDev = dev;
+                       return true;
+                   });
+
+    // 废弃的文件持久化入口若被触碰即记录（修复后不应调用）
+    stub.set_lamda(ADDR(Application, dataPersistence), [&dataPersistenceTouched]() -> Settings * {
+        __DBG_STUB_INVOKE__
+        dataPersistenceTouched = true;
+        return nullptr;
+    });
+
+    BurnHelper::updateBurningStateToPersistence("test_id", "/dev/sr0", true);
+
+    EXPECT_TRUE(setCalled);
+    EXPECT_EQ(setDev, QString("/dev/sr0"));
+    EXPECT_EQ(setInfo.value(OpticalShareField::kId).toString(), QString("test_id"));
+    EXPECT_EQ(setInfo.value(OpticalShareField::kWorking).toBool(), true);
+    EXPECT_FALSE(clearedCalled);
+    EXPECT_FALSE(dataPersistenceTouched);   // 修复前写入 Settings 文件持久化
+
+    BurnHelper::updateBurningStateToPersistence("test_id", "/dev/sr0", false);
+    EXPECT_TRUE(clearedCalled);
+    EXPECT_EQ(clearedDev, QString("/dev/sr0"));
+}

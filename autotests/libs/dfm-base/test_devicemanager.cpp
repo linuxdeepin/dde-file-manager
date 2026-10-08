@@ -21,6 +21,10 @@
 
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/private/devicemanager_p.h>
+#include <dfm-base/base/device/private/devicehelper.h>
+#include <DDialog>
+#include <dfm-base/base/application/application.h>
+#include <dfm-base/dialogs/mountpasswddialog/mountaskpassworddialog.h>
 #include <dfm-base/base/device/private/devicewatcher.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-mount/base/dmount_global.h>
@@ -703,3 +707,186 @@ TEST(DeviceManagerTest, DoAutoMountProtocolWithTimeout)
     QCoreApplication::processEvents();
 }
 
+
+// ===== PMS sev-2 regression cluster: devicemanager.cpp (work-order batch 2) =====
+
+// PMS:195467 detachBlockDev 契约：可断电且非 flash_sd 介质才会 powerOff；SD 卡（flash_sd）必须只卸载不断电
+TEST(DeviceManagerTest, BUG195467_DetachFlashSdSkipsPowerOff)
+{
+    using namespace GlobalServerDefines::DeviceProperty;
+    stub_ext::StubExt stub;
+
+    stub.set_lamda(static_cast<QVariantMap (*)(const QString &)>(&DeviceHelper::loadBlockInfo),
+                   [&](const QString &) -> QVariantMap {
+                       __DBG_STUB_INVOKE__
+                       return { { kCanPowerOff, true }, { kMedia, "flash_sd" }, { kOpticalDrive, false } };
+                   });
+    stub.set_lamda(ADDR(DeviceManager, unmountBlockDevAsync),
+                   [](DeviceManager *, const QString &, const QVariantMap &, CallbackType2 cb) {
+                       __DBG_STUB_INVOKE__
+                       if (cb)
+                           cb(true, DFMMOUNT::OperationErrorInfo());
+                   });
+    bool powerOffCalled = false;
+    stub.set_lamda(ADDR(DeviceManager, powerOffBlockDevAsync),
+                   [&](DeviceManager *, const QString &, const QVariantMap &, CallbackType2 cb) {
+                       __DBG_STUB_INVOKE__
+                       powerOffCalled = true;
+                       if (cb)
+                           cb(true, DFMMOUNT::OperationErrorInfo());
+                   });
+    stub.set_lamda(&QThread::msleep, [](unsigned long) { __DBG_STUB_INVOKE__ });
+
+    auto *ins = DeviceManager::instance();
+    const QString id = "/org/freedesktop/UDisks2/block_devices/ut195467_sd";
+    ins->detachBlockDev(id, nullptr);
+    EXPECT_FALSE(powerOffCalled);
+}
+
+// PMS:195467 可断电普通介质（disk）detach 时必须走 powerOffBlockDevAsync（195467 曾出现不弹安全移除的回归）
+TEST(DeviceManagerTest, BUG195467_DetachNormalDiskPowersOff)
+{
+    using namespace GlobalServerDefines::DeviceProperty;
+    stub_ext::StubExt stub;
+
+    stub.set_lamda(static_cast<QVariantMap (*)(const QString &)>(&DeviceHelper::loadBlockInfo),
+                   [&](const QString &) -> QVariantMap {
+                       __DBG_STUB_INVOKE__
+                       return { { kCanPowerOff, true }, { kMedia, "disk" }, { kOpticalDrive, false } };
+                   });
+    stub.set_lamda(ADDR(DeviceManager, unmountBlockDevAsync),
+                   [](DeviceManager *, const QString &, const QVariantMap &, CallbackType2 cb) {
+                       __DBG_STUB_INVOKE__
+                       if (cb)
+                           cb(true, DFMMOUNT::OperationErrorInfo());
+                   });
+    bool powerOffCalled = false;
+    stub.set_lamda(ADDR(DeviceManager, powerOffBlockDevAsync),
+                   [&](DeviceManager *, const QString &, const QVariantMap &, CallbackType2 cb) {
+                       __DBG_STUB_INVOKE__
+                       powerOffCalled = true;
+                       if (cb)
+                           cb(true, DFMMOUNT::OperationErrorInfo());
+                   });
+    stub.set_lamda(&QThread::msleep, [](unsigned long) { __DBG_STUB_INVOKE__ });
+
+    auto *ins = DeviceManager::instance();
+    const QString id = "/org/freedesktop/UDisks2/block_devices/ut195467_disk";
+    ins->detachBlockDev(id, nullptr);
+    EXPECT_TRUE(powerOffCalled);
+}
+
+// PMS:180409 smb 整合视图开启时保存密码模式必须降级为 kSaveBeforeLogout（会话内保存）
+TEST(DeviceManagerTest, BUG180409_SmbIntegratedDowngradesSavePasswdMode)
+{
+    using namespace GlobalServerDefines::NetworkMountParamKey;
+    stub_ext::StubExt stub;
+
+    stub.set_lamda(VADDR(DTK_WIDGET_NAMESPACE::DDialog, exec), [] {
+        __DBG_STUB_INVOKE__
+        return QDialog::Accepted;
+    });
+    stub.set_lamda(ADDR(MountAskPasswordDialog, getLoginData),
+                   [](MountAskPasswordDialog *) -> QJsonObject {
+                       __DBG_STUB_INVOKE__
+                       return { { kUser, "utuser" },
+                                { kPasswd, "utpasswd" },
+                                { kDomain, "utdomain" },
+                                { kPasswdSaveMode, static_cast<int>(dfmmount::NetworkMountPasswdSaveMode::kNeverSavePasswd) } };
+                   });
+    stub.set_lamda(ADDR(Application, genericAttribute),
+                   [](const Application::GenericAttribute &) -> QVariant {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    auto info = DeviceManager::instance()->d.data()->askForPasswdWhenMountNetworkDevice(
+        "ut message", "u", "d", "smb://utserver/share");
+    EXPECT_FALSE(info.cancelled);
+    EXPECT_EQ(info.savePasswd, dfmmount::NetworkMountPasswdSaveMode::kSaveBeforeLogout);
+}
+
+// PMS:180409 非 smb 网络协议（sftp/ftp/dav/davs）无域概念，域输入行必须隐藏
+TEST(DeviceManagerTest, BUG180409_NoDomainSchemesHideDomainLine)
+{
+    using namespace GlobalServerDefines::NetworkMountParamKey;
+    stub_ext::StubExt stub;
+
+    stub.set_lamda(VADDR(DTK_WIDGET_NAMESPACE::DDialog, exec), [] {
+        __DBG_STUB_INVOKE__
+        return QDialog::Accepted;
+    });
+    stub.set_lamda(ADDR(MountAskPasswordDialog, getLoginData),
+                   [](MountAskPasswordDialog *) -> QJsonObject {
+                       __DBG_STUB_INVOKE__
+                       return { { kUser, "utuser" },
+                                { kPasswd, "utpasswd" },
+                                { kPasswdSaveMode, static_cast<int>(dfmmount::NetworkMountPasswdSaveMode::kNeverSavePasswd) } };
+                   });
+
+    bool domainHidden = true;
+    stub.set_lamda(ADDR(MountAskPasswordDialog, setDomainLineVisible),
+                   [&](MountAskPasswordDialog *, bool visible) {
+                       __DBG_STUB_INVOKE__
+                       domainHidden = !visible;
+                   });
+
+    DeviceManager::instance()->d.data()->askForPasswdWhenMountNetworkDevice(
+        "ut message", "u", "d", "sftp://uthost/path");
+    EXPECT_TRUE(domainHidden);
+}
+
+// ============================================================
+// PMS sev-2 regression cluster: devicemanager.cpp (work-order batch 3)
+// ============================================================
+
+// PMS:133421 块设备自动挂载白名单（shouldAutoMountBlockDevice）：
+// 加密盘/有加密后端设备/HintIgnore/loop 设备/无文件系统 一律不自动挂载
+TEST(DeviceManagerTest, BUG133421_ShouldAutoMountSkipsEncryptedDevice)
+{
+    using namespace GlobalServerDefines::DeviceProperty;
+    auto *d = DeviceManager::instance()->d.data();
+    const QString id = "/org/freedesktop/UDisks2/block_devices/sda1";
+
+    QVariantMap encrypted { { kIsEncrypted, true },
+                            { kCryptoBackingDevice, "/" },
+                            { kHasFileSystem, true } };
+    EXPECT_FALSE(d->shouldAutoMountBlockDevice(id, encrypted));
+
+    QVariantMap cryptoChild { { kIsEncrypted, false },
+                              { kCryptoBackingDevice, "/dev/sdb" },
+                              { kHasFileSystem, true } };
+    EXPECT_FALSE(d->shouldAutoMountBlockDevice(id, cryptoChild));
+
+    QVariantMap hint { { kIsEncrypted, false }, { kCryptoBackingDevice, "/" },
+                       { kHintIgnore, true }, { kHasFileSystem, true } };
+    EXPECT_FALSE(d->shouldAutoMountBlockDevice(id, hint));
+
+    QVariantMap loop { { kIsEncrypted, false }, { kCryptoBackingDevice, "/" },
+                       { kIsLoopDevice, true }, { kHasFileSystem, true } };
+    EXPECT_FALSE(d->shouldAutoMountBlockDevice(id, loop));
+
+    QVariantMap noFs { { kIsEncrypted, false }, { kCryptoBackingDevice, "/" },
+                       { kHasFileSystem, false } };
+    EXPECT_FALSE(d->shouldAutoMountBlockDevice(id, noFs));
+}
+
+// PMS:350715 自动挂载运行时门禁（shouldAutoMountBlockDeviceAtRuntime）：
+// 光驱设备（sr*）永不自动挂载；静态门禁通过后仅 Removable 设备可自动挂载
+TEST(DeviceManagerTest, BUG350715_ShouldAutoMountSkipsOpticalAndNonRemovable)
+{
+    using namespace GlobalServerDefines::DeviceProperty;
+    auto *d = DeviceManager::instance()->d.data();
+    const QString normalId = "/org/freedesktop/UDisks2/block_devices/sda1";
+    const QVariantMap base { { kIsEncrypted, false }, { kCryptoBackingDevice, "/" },
+                             { kHasFileSystem, true }, { kRemovable, true } };
+
+    // optical devices (sr*) are never auto-mounted
+    EXPECT_FALSE(d->shouldAutoMountBlockDevice("/org/freedesktop/UDisks2/block_devices/sr0", base));
+    // regular block device passes the static gate
+    EXPECT_TRUE(d->shouldAutoMountBlockDevice(normalId, base));
+    // runtime gate rejects non-removable devices
+    EXPECT_FALSE(d->shouldAutoMountBlockDeviceAtRuntime(normalId, { { kRemovable, false } }));
+    // runtime gate accepts removable devices (same static gate fields needed)
+    EXPECT_TRUE(d->shouldAutoMountBlockDeviceAtRuntime(normalId, base));
+}

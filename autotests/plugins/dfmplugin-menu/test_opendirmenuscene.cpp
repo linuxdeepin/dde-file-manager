@@ -595,3 +595,74 @@ TEST_F(UT_OpenDirMenuScene, Triggered_OpenInNewWindowAction_ReturnsTrue)
     ASSERT_NE(newWindowAction, nullptr);
     EXPECT_TRUE(scene->triggered(newWindowAction));
 }
+
+
+// ===================== PMS sev-2 regression additions =====================
+#include <dfm-base/dfm_event_defines.h>
+#include <dfm-framework/dpf.h>
+#include <QProcess>
+
+// PMS:129327 以管理员身份打开（kOpenAsAdmin）触发时必须发布 GlobalEventType::kOpenAsAdmin 全局事件并携带当前目录
+namespace {
+struct Probe129327 : QObject
+{
+    bool received = false;
+    QUrl url;
+    bool onOpenAsAdmin(const QUrl &u)
+    {
+        received = true;
+        url = u;
+        return true;
+    }
+};
+}   // namespace
+
+TEST_F(UT_OpenDirMenuScene, BUG129327_TriggeredOpenAsAdmin_PublishesGlobalEventWithCurrentDir)
+{
+    // 防御：若 GlobalEventReceiver 已订阅，阻止真实启动 pkexec 子进程
+    // 注：Qt6 startDetached 为单函数带默认参（4 形参），函数指针类型必须按 4 形参转换
+    stub.set_lamda(static_cast<bool (*)(const QString &, const QStringList &, const QString &, qint64 *)>(&QProcess::startDetached),
+                   [](const QString &, const QStringList &, const QString &, qint64 *) {
+                       __DBG_STUB_INVOKE__
+                       return true;
+                   });
+
+    stub.set_lamda(&SysInfoUtils::isDeveloperModeEnabled, []() {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    stub.set_lamda(&SysInfoUtils::isRootUser, []() {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+    stub.set_lamda(&SysInfoUtils::isServerSys, []() {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = QUrl::fromLocalFile("/tmp");
+    params[MenuParamKey::kIsEmptyArea] = true;
+
+    stubInitializeBase();
+    stubCreateBase();
+
+    scene->initialize(params);
+    QMenu menu;
+    ASSERT_TRUE(scene->create(&menu));
+
+    QAction *adminAction = odmsFindActionById(&menu, QString(ActionID::kOpenAsAdmin));
+    ASSERT_NE(adminAction, nullptr);
+
+    QUrl capturedUrl;
+    bool received = false;
+    // dpf 派发器 subscribe 仅接受 QObject 派生对象 + bool 返回成员函数（直接函数指针调用，无需 Q_OBJECT）
+    Probe129327 probe;
+    dpfSignalDispatcher->subscribe(GlobalEventType::kOpenAsAdmin, &probe, &Probe129327::onOpenAsAdmin);
+
+    EXPECT_TRUE(scene->triggered(adminAction));
+    EXPECT_TRUE(probe.received);
+    EXPECT_EQ(probe.url, QUrl::fromLocalFile("/tmp"));
+    Q_UNUSED(capturedUrl)
+    Q_UNUSED(received)
+}

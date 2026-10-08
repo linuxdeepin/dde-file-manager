@@ -704,3 +704,53 @@ TEST_F(UT_SendToMenuScene, Scene_OwnAction_ReturnsThis)
     ASSERT_NE(sendToAction, nullptr);
     EXPECT_EQ(scene->scene(sendToAction), scene);
 }
+
+// PMS:305073 右键“发送到移动设备”复制到不可移动设备时 windowId 丢失，任务进度窗与窗口关联失败。
+// 回归点：触发可移动设备动作时，publish(kCopy) 必须携带 initialize 读入的 kWindowId（8888），
+//        且源文件列表与设备目标 URL 正确传递。
+TEST_F(UT_SendToMenuScene, BUG305073_Triggered_RemovableDevicePublishesWithWindowId)
+{
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = QUrl::fromLocalFile("/tmp");
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(QList<QUrl> { QUrl::fromLocalFile("/tmp/test.txt") });
+    params[MenuParamKey::kIsEmptyArea] = false;
+    params[MenuParamKey::kWindowId] = QVariant::fromValue(static_cast<quint64>(8888));
+
+    stubPerfectMenuParams();
+    stubFileInfoCreate();
+    stubInitializeBase();
+
+    ASSERT_TRUE(scene->initialize(params));
+
+    bool published = false;
+    dpf::EventType publishedType = static_cast<dpf::EventType>(-1);
+    quint64 publishedWinId = 0;
+    QUrl publishedTarget;
+    typedef bool (dpf::EventDispatcherManager::*PublishFunc)(dpf::EventType, quint64, QList<QUrl> &, QUrl &&,
+                                                            AbstractJobHandler::JobFlag &&, std::nullptr_t &&);
+    stub.set_lamda(static_cast<PublishFunc>(&dpf::EventDispatcherManager::publish),
+                   [&](dpf::EventDispatcherManager *, dpf::EventType type, quint64 winId, QList<QUrl> &sources,
+                       QUrl target, AbstractJobHandler::JobFlag, std::nullptr_t) -> bool {
+                       __DBG_STUB_INVOKE__
+                       published = true;
+                       publishedType = type;
+                       publishedWinId = winId;
+                       publishedTarget = target;
+                       EXPECT_EQ(sources.count(), 1);
+                       EXPECT_EQ(sources.first(), QUrl::fromLocalFile("/tmp/test.txt"));
+                       return true;
+                   });
+
+    QMenu menu;
+    QAction devAction("usb");
+    devAction.setProperty(ActionPropertyKey::kActionID, QString("send-to-removable-0"));
+    devAction.setData(QUrl::fromLocalFile("/media/usb"));
+    menu.addAction(&devAction);
+    scene->d.data()->predicateAction["send-to-removable-0"] = &devAction;
+
+    EXPECT_TRUE(scene->triggered(&devAction));
+    EXPECT_TRUE(published);
+    EXPECT_EQ(publishedType, DFMBASE_NAMESPACE::GlobalEventType::kCopy);
+    EXPECT_EQ(publishedWinId, static_cast<quint64>(8888));
+    EXPECT_EQ(publishedTarget, QUrl::fromLocalFile("/media/usb"));
+}

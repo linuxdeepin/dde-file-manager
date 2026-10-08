@@ -252,3 +252,23 @@ TEST_F(TagMenuSceneTest, updateState)
     scene->updateState(&m);
     EXPECT_TRUE(isRun);
 }
+
+// PMS:161223 开启桌面整理后右键集合内文件标记菜单崩溃：桌面整理（OnColletion）场景下标记菜单初始化未正确处理
+TEST_F(TagMenuSceneTest, BUG161223_Initialize_OnDesktopCollection_NoCrash)
+{
+    FileInfoPointer info(new FileInfo(QUrl("file:///test")));
+    stub.set_lamda(static_cast<FileInfoPointer (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [info](const QUrl &, const Global::CreateFileInfoType, QString *) { return info; });
+
+    QList<QUrl> urls { QUrl::fromLocalFile("/tmp/collection-file.txt") };
+    ASSERT_TRUE(scene->initialize({
+            { "currentDir", QUrl::fromLocalFile("/tmp") },
+            { "selectFiles", QVariant::fromValue<QList<QUrl>>(urls) },
+            { "onDesktop", true },
+            { "OnColletion", true },
+            { "isEmptyArea", false } }));
+
+    EXPECT_TRUE(d->onDesktop);
+    EXPECT_TRUE(d->onCollection);
+    EXPECT_EQ(scene->name(), "TagMenu");
+}

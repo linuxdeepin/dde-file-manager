@@ -15,6 +15,8 @@
 #include "stubext.h"
 
 #include <gtest/gtest.h>
+#include <QSignalSpy>
+#include <QSignalSpy>
 
 DPSEARCH_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -125,4 +127,26 @@ TEST(SearchFileWatcherPrivateTest, ut_stop)
     watcher.dptr->urlToWatcherHash.insert(url, w);
 
     EXPECT_TRUE(watcher.dptr->stop());
+}
+
+// PMS:320195 复制搜索结果范围外的文件时，搜索界面也会出现该复制文件：文件监视器未校验文件是否位于搜索目录范围内
+TEST(SearchFileWatcherTest, BUG320195_HandleFileAdd_OutOfScopeUrl_NotEmitted)
+{
+    const QUrl dirUrl = QUrl::fromLocalFile("/tmp");
+    auto searchUrl = SearchHelper::fromSearchFile(dirUrl, "kw", "1");
+    ASSERT_TRUE(SearchHelper::isSearchFile(searchUrl));
+    SearchFileWatcher watcher(searchUrl);
+
+    QSignalSpy spy(&watcher, &SearchFileWatcher::subfileCreated);
+
+    // 范围外路径（前缀不匹配搜索目录 /tmp）→ 不应发出 subfileCreated
+    watcher.handleFileAdd(QUrl::fromLocalFile("/etc/kw_file"));
+    EXPECT_EQ(spy.count(), 0);
+
+    // 范围内且文件名包含搜索关键字 → 发出一次 subfileCreated
+    watcher.handleFileAdd(QUrl::fromLocalFile("/tmp/kw_file.txt"));
+    EXPECT_EQ(spy.count(), 1);
+    if (spy.count() == 1) {
+        EXPECT_EQ(spy.first().first().toUrl(), QUrl::fromLocalFile("/tmp/kw_file.txt"));
+    }
 }

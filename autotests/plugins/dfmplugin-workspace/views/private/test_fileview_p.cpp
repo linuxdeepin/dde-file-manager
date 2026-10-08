@@ -276,3 +276,30 @@ TEST_F(FileViewPrivateTest, AdjustIconModeSpacing_ValidStrategy_DoesNotCrash)
     
     EXPECT_NO_THROW(d->adjustIconModeSpacing(strategyName));
 }
+// ===== PMS sev-2 regression tests (appended) =====
+// PMS:370855 触摸长按后最大化，visualRect 脏坐标误判过疏：应重推列数而不是回退单列
+TEST_F(FileViewPrivateTest, BUG370855_UpdateHorizontalOffset_EmptyModel_NoCrash)
+{
+    // itemWidth = 150（itemSizeHint 150 + spacing 0），contentWidth = 700
+    stub.set_lamda(&FileView::itemSizeHint, [](FileView *) {
+        return QSize(150, 0);
+    });
+    stub.set_lamda(&FileView::isIconViewMode, [](FileView *) {
+        return true;
+    });
+    stub.set_lamda(&FileView::isGroupedView, [](FileView *) {
+        return false;
+    });
+    stub.set_lamda(&QAbstractScrollArea::maximumViewportSize, [](QAbstractScrollArea *) {
+        return QSize(700, 500);
+    });
+
+    // cpp-stub 无法桩被派生类重写的虚函数（PMF 指向 vtable 槽导致 memcpy 崩溃），
+    // 因此使用真实 visualRect/rowCount：空模型下全序列 left=0 → itemColumn=1 → 单列回退早退路径
+    d->updateHorizontalOffset();
+
+    // 空模型：itemColumn 扫描不出有效断行（<=0 或 >= rowCount）→ 早退，
+    // 不得产生水平偏移、不得错误回退单列
+    EXPECT_LE(d->columnCountByCalc, 1);
+    EXPECT_EQ(d->horizontalOffset, 0);
+}
