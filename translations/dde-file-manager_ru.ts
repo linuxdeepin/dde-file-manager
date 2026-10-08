@@ -2093,22 +2093,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="592"/>
         <source>Recovery key export path cannot be a symlink or non-directory!</source>
-        <translation type="unfinished"/>
+        <translation>Путь экспорта ключа восстановления не может быть символической ссылкой или не каталогом!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="600"/>
         <source>Cannot access the export path directory!</source>
-        <translation type="unfinished"/>
+        <translation>Нет доступа к каталогу пути экспорта!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="606"/>
         <source>The export path directory is world-writable, please choose a safer location!</source>
-        <translation type="unfinished"/>
+        <translation>Каталог пути экспорта доступен для записи всем, выберите более безопасное место!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="612"/>
         <source>The export path directory is not writable, please choose a writable directory!</source>
-        <translation type="unfinished"/>
+        <translation>Каталог пути экспорта недоступен для записи, выберите каталог, доступный для записи!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
@@ -7106,27 +7106,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="24"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Сейчас используется батарея, обновление индекса приостановлено</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="25"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Включён режим энергосбережения, обновление индекса приостановлено</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="26"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Ожидание перехода устройства в режим простоя для продолжения обновления</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="27"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
+        <translation>Ожидание обновления службы индексации</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Продолжить обновление</translation>
     </message>
 </context>
 <context>
@@ -7183,7 +7183,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="24"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Сейчас используется батарея, обновление индекса приостановлено</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="25"/>
