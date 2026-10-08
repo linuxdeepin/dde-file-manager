@@ -252,11 +252,7 @@ bool ExtendMenuScene::create(QMenu *parent)
     auto usedEntrys = builder.matchFileCombo(rootEntry, fileCombo);
 
     //匹配类型支持
-#ifdef MENU_CHECK_FOCUSONLY
-    usedEntrys = builder.matchActions({ d->focusFile }, usedEntrys);
-#else
     usedEntrys = builder.matchActions(d->selectFiles, usedEntrys);
-#endif
     fmDebug() << "selected combo" << fileCombo << "entry count" << usedEntrys.size();
 
     if (usedEntrys.isEmpty())
