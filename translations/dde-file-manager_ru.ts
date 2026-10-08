@@ -3413,7 +3413,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="814"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="259"/>
@@ -4619,7 +4619,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="233"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="248"/>
@@ -5141,7 +5141,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="443"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-dirshare/widget/sharecontrolwidget.cpp" line="445"/>
@@ -8064,7 +8064,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="62"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/private/bluetoothtransdialog.cpp" line="161"/>
@@ -8444,7 +8444,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/recoverykeyview.cpp" line="278"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
 </context>
 <context>
@@ -8841,7 +8841,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="349"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/unlockview/unlockview.cpp" line="345"/>
@@ -8889,7 +8889,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="221"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/createvaultview/vaultactivefinishedview.cpp" line="250"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
 </context>
 <context>
@@ -9174,7 +9174,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="71"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebynonewidget.cpp" line="84"/>
@@ -9232,7 +9232,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebypasswordview.cpp" line="248"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
 </context>
 <context>
@@ -9290,7 +9290,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremovebyrecoverykeyview.cpp" line="228"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
 </context>
 <context>
@@ -9303,7 +9303,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="72"/>
         <source>OK</source>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/views/removevaultview/vaultremoveprogressview.cpp" line="77"/>
@@ -9697,7 +9697,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="50"/>
         <source>OK</source>
         <comment>button</comment>
-        <translation>ОК</translation>
+        <translation>Хорошо</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/pluginpreviews/pdf-preview/encryptionpage.cpp" line="93"/>
