@@ -38,6 +38,7 @@ class FileView final : public DListView, public DFMBASE_NAMESPACE::AbstractBaseV
     friend class FileViewHelper;
     friend class ViewAnimationHelper;
     friend class IconItemDelegate;
+    friend class ListItemDelegate;
 
     QSharedPointer<FileViewPrivate> d;
 
@@ -257,6 +258,7 @@ private:
 
     bool isGroupHeader(const QModelIndex &index) const;
     bool isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex &index) const;
+    bool isClickInTopPadding(const QPoint &pos, const QModelIndex &index) const;
     QModelIndex indexAtForSelection(const QPoint &pos) const;
 };
 

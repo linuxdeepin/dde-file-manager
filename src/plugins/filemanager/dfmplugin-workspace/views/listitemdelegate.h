@@ -63,6 +63,8 @@ private:
 
     int dataWidth(const QStyleOptionViewItem &option, const QModelIndex &index, int role) const;
 
+    bool isFirstRowWithTopPadding(const QModelIndex &index) const;
+
     // Group functionality implementation
     int getGroupHeaderHeight(const QStyleOptionViewItem &option) const override;
     QRectF getGroupHeaderBackgroundRect(const QStyleOptionViewItem &option) const override;
