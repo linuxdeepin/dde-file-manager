@@ -58,6 +58,7 @@ private:
     ConfigInfo govCfg(QJsonObject *, bool cn);
     ConfigInfo entCfg(QJsonObject *, bool cn);
     ConfigInfo secCfg(QJsonObject *, bool cn);
+    ConfigInfo secMilCfg(QJsonObject *, bool cn);
 private:
     QString configFile;
     QMap<QString, ConfigInfo> configInfos;

@@ -261,7 +261,21 @@ void WatermaskSystem::stateChanged(int state, int prop)
     logoLabel->setPixmap(QPixmap());
 
     if (state == DeepinLicenseHelper::Authorized) {
-        const QString doc = docs.value(prop, QString(kDefaults));
+        QString doc = docs.value(prop, QString(kDefaults));
+
+        // 国防版密安授权使用专用水印资源，资源未就绪时回退到原目录
+        if (prop == DeepinLicenseHelper::LicenseProperty::Secretssecurity
+            && DSysInfo::uosEditionType() == DSysInfo::UosEdition::UosMilitary) {
+            QString milText;
+            getEditonResource("military", nullptr, &milText);
+            if (!milText.isEmpty()) {
+                doc = "military";
+                fmInfo() << "Military edition: using military watermask resources";
+            } else {
+                fmInfo() << "Military edition: military resources not ready, falling back to" << doc;
+            }
+        }
+
         fmInfo() << "System is authorized, using document type:" << doc;
 
         // find editon

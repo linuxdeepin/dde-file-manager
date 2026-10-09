@@ -27,6 +27,8 @@ static const char *CfgEntEn = "ent-en";
 static const char *CfgEntCn = "ent-cn";
 static const char *CfgSecEn = "sec-en";
 static const char *CfgSecCn = "sec-cn";
+static const char *CfgSecMilEn = "sec-mil-en";
+static const char *CfgSecMilCn = "sec-mil-cn";
 
 
 WaterMaskFrame::WaterMaskFrame(const QString &fileName, QWidget *parent)
@@ -88,6 +90,16 @@ void WaterMaskFrame::stateChanged(int state, int prop)
     // 已授权, 判断版本
     if (state == DeepinLicenseHelper::Authorized && showSate) {
         if (prop == DeepinLicenseHelper::LicenseProperty::Secretssecurity) {
+            // 国防版使用专用配置，无效时回退到标准密安配置
+            if (DSysInfo::uosEditionType() == DSysInfo::UosEdition::UosMilitary) {
+                auto milCfg = configInfos.value(cn ? CfgSecMilCn : CfgSecMilEn);
+                if (milCfg.valid) {
+                    fmInfo() << "Applying military secrets security configuration - locale_cn:" << cn;
+                    update(milCfg, false);
+                    return;
+                }
+                fmWarning() << "Military secrets security config invalid, falling back to standard - locale_cn:" << cn;
+            }
             auto cfg = configInfos.value(cn ? CfgSecCn : CfgSecEn);
             if (cfg.valid) {
                 fmInfo() << "Applying secrets security configuration - locale_cn:" << cn;
@@ -189,6 +201,16 @@ QMap<QString, WaterMaskFrame::ConfigInfo> WaterMaskFrame::parseJson(QJsonObject 
     {
         ConfigInfo cfgSecEn = secCfg(configs, false);
         ret.insert(CfgSecEn, cfgSecEn);
+    }
+
+    {
+        ConfigInfo cfgSecMilCn = secMilCfg(configs, true);
+        ret.insert(CfgSecMilCn, cfgSecMilCn);
+    }
+
+    {
+        ConfigInfo cfgSecMilEn = secMilCfg(configs, false);
+        ret.insert(CfgSecMilEn, cfgSecMilEn);
     }
 
     return ret;
@@ -483,6 +505,54 @@ WaterMaskFrame::ConfigInfo WaterMaskFrame::secCfg(QJsonObject *configs, bool cn)
         } else {
             cfg.maskLogoUri = maskLogoUri;
             fmDebug() << "Secrets security logo URI:" << maskLogoUri;
+        }
+    }
+
+    cfg.maskLogoTextSpacing = 0;
+
+    if (configs->contains("maskLogoWidth"))
+        cfg.maskLogoWidth = configs->value("maskLogoWidth").toInt();
+
+    if (configs->contains("maskLogoHeight"))
+        cfg.maskLogoHeight = configs->value("maskLogoHeight").toInt();
+
+//    if (configs->contains("maskLogoTextSpacing"))
+//        cfg.maskLogoTextSpacing = configs->value("maskLogoTextSpacing").toInt();
+
+    if (configs->contains("maskHeight"))
+        cfg.maskHeight = configs->value("maskHeight").toInt();
+
+    if (configs->contains("xRightBottom"))
+        cfg.xRightBottom = configs->value("xRightBottom").toInt();
+
+    if (configs->contains("yRightBottom"))
+        cfg.yRightBottom = configs->value("yRightBottom").toInt();
+
+    cfg.maskWidth = cfg.maskLogoWidth + cfg.maskTextWidth;
+    cfg.valid = true;
+    return cfg;
+}
+
+WaterMaskFrame::ConfigInfo WaterMaskFrame::secMilCfg(QJsonObject *configs, bool cn)
+{
+    fmDebug() << "Loading military secrets security configuration - locale_cn:" << cn;
+    ConfigInfo cfg;
+    {
+        const QString urlKey = cn ? "maskLogoMilitaryCnUri" : "maskLogoMilitaryEnUri";
+        QString maskLogoUri;
+        if (configs->contains(urlKey))
+            maskLogoUri = configs->value(urlKey).toString();
+
+        if (maskLogoUri.startsWith("~/"))
+            maskLogoUri.replace(0, 1, QDir::homePath());
+
+        if (maskLogoUri.isEmpty()) {
+            fmWarning() << "Cannot get military secrets security logo - locale_cn:" << cn;
+            cfg.valid = false;
+            return cfg;
+        } else {
+            cfg.maskLogoUri = maskLogoUri;
+            fmDebug() << "Military secrets security logo URI:" << maskLogoUri;
         }
     }
 
