@@ -28,7 +28,7 @@ public Q_SLOTS:
 
 Q_SIGNALS:
     void previewReady(const QUrl &url, const QPixmap &pixmap);
-    void animatedImageReady(const QUrl &url, const QString &filePath);
+    void animatedImageReady(const QUrl &url, const QString &filePath, const QByteArray &data = {});
     void loadFailed(const QUrl &url);
     void needIconFallback(const QUrl &url, const QSize &targetSize);
 
@@ -54,13 +54,13 @@ public:
 
 Q_SIGNALS:
     void previewReady(const QUrl &url, const QPixmap &pixmap);
-    void animatedImageReady(const QUrl &url, const QString &filePath);
+    void animatedImageReady(const QUrl &url, const QString &filePath, const QByteArray &data = {});
     void loadFailed(const QUrl &url);
     void doLoadPreview(const QUrl &url, const QSize &targetSize);
 
 private Q_SLOTS:
     void onNeedIconFallback(const QUrl &url, const QSize &targetSize);
-    void onAnimatedImageReady(const QUrl &url, const QString &filePath);
+    void onAnimatedImageReady(const QUrl &url, const QString &filePath, const QByteArray &data = {});
     void onThumbnailProduced(const QUrl &url, const QString &thumbnailPath);
 
 private:

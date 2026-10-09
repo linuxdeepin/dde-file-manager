@@ -12,6 +12,7 @@
 #include <QVBoxLayout>
 #include <QUrl>
 #include <QTimer>
+#include <QByteArray>
 
 class QScrollArea;
 
@@ -42,7 +43,7 @@ public slots:
 
 private slots:
     void onPreviewReady(const QUrl &url, const QPixmap &pixmap);
-    void onAnimatedImageReady(const QUrl &url, const QString &filePath);
+    void onAnimatedImageReady(const QUrl &url, const QString &filePath, const QByteArray &data = {});
 
 private:
     void initInfoUI();
