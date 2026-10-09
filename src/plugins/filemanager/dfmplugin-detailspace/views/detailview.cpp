@@ -56,7 +56,7 @@ void DetailView::onPreviewReady(const QUrl &url, const QPixmap &pixmap)
     }
 }
 
-void DetailView::onAnimatedImageReady(const QUrl &url, const QString &filePath)
+void DetailView::onAnimatedImageReady(const QUrl &url, const QString &filePath, const QByteArray &data)
 {
     if (url != m_currentUrl) {
         return;
@@ -65,7 +65,7 @@ void DetailView::onAnimatedImageReady(const QUrl &url, const QString &filePath)
     finishPreviewLoading();
 
     if (m_previewWidget) {
-        m_previewWidget->setAnimatedImage(filePath);
+        m_previewWidget->setAnimatedImage(filePath, data);
     }
 }
 

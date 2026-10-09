@@ -9,6 +9,7 @@
 #include <QMovie>
 #include <QPainter>
 #include <QApplication>
+#include <QBuffer>
 
 using namespace dfmplugin_detailspace;
 
@@ -39,15 +40,25 @@ QPixmap ImagePreviewWidget::pixmap() const
     return m_pixmap;
 }
 
-void ImagePreviewWidget::setAnimatedImage(const QString &filePath)
+void ImagePreviewWidget::setAnimatedImage(const QString &filePath, const QByteArray &data)
 {
+    // Stop and clean up any previous animated image state
+    stopAnimatedImage();
+
     if (!m_movie) {
         m_movie = new QMovie(this);
         connect(m_movie, &QMovie::frameChanged, this, &ImagePreviewWidget::onMovieFrameChanged);
     }
 
-    if (m_movie->fileName() != filePath) {
-        m_movie->stop();
+    if (!data.isEmpty()) {
+        // Remote file: use in-memory data via QBuffer to avoid seek issues
+        // on gvfs-fuse paths (e.g., FTP does not support reliable seek)
+        m_imageData = data;
+        m_buffer = new QBuffer(&m_imageData, this);
+        m_buffer->open(QIODevice::ReadOnly);
+        m_movie->setDevice(m_buffer);
+    } else {
+        // Local file: use file path directly
         m_movie->setFileName(filePath);
     }
 
@@ -63,9 +74,20 @@ void ImagePreviewWidget::stopAnimatedImage()
 {
     if (m_hasAnimatedImage && m_movie) {
         m_movie->stop();
-        m_movie->setFileName("");  // Release file descriptor to allow device unmounting
         m_hasAnimatedImage = false;
     }
+
+    // Release movie's device/file descriptor to allow unmounting
+    if (m_movie) {
+        m_movie->setFileName("");
+    }
+
+    // Clean up in-memory buffer and data
+    if (m_buffer) {
+        delete m_buffer;
+        m_buffer = nullptr;
+    }
+    m_imageData.clear();
 }
 
 QSize ImagePreviewWidget::sizeHint() const
