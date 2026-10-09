@@ -284,42 +284,45 @@ SearchHintController::HintType SearchHintController::evaluateHint(quint64 winId)
     if (!DConfigManager::instance()->value(cfg, DConfig::kEnableFileIndexSearch, false).toBool())
         return HintType::None;
 
+    const bool fullTextEnabled = DConfigManager::instance()->value(cfg, DConfig::kEnableFullTextSearch, true).toBool();
+    const bool ocrEnabled = DConfigManager::instance()->value(cfg, DConfig::kEnableOcrTextSearch, false).toBool();
+
     // 2. Failed (highest among index hints)
     if (!ws.dismissedTypes.contains(HintType::IndexFailed)) {
-        if ((m_textStatusValid && m_textState == "Failed")
-            || (m_ocrStatusValid && m_ocrState == "Failed"))
+        if ((fullTextEnabled && m_textStatusValid && m_textState == "Failed")
+            || (ocrEnabled && m_ocrStatusValid && m_ocrState == "Failed"))
             return HintType::IndexFailed;
     }
 
     // 3. Paused (battery > power save > idle > upgrade)
     if (!ws.dismissedTypes.contains(HintType::IndexPausedBattery)) {
-        if ((m_textStatusValid && m_textState == "WaitingPower")
-            || (m_ocrStatusValid && m_ocrState == "WaitingPower"))
+        if ((fullTextEnabled && m_textStatusValid && m_textState == "WaitingPower")
+            || (ocrEnabled && m_ocrStatusValid && m_ocrState == "WaitingPower"))
             return HintType::IndexPausedBattery;
     }
 
     if (!ws.dismissedTypes.contains(HintType::IndexPausedPowerSave)) {
-        if ((m_textStatusValid && m_textState == "WaitingPowerSave")
-            || (m_ocrStatusValid && m_ocrState == "WaitingPowerSave"))
+        if ((fullTextEnabled && m_textStatusValid && m_textState == "WaitingPowerSave")
+            || (ocrEnabled && m_ocrStatusValid && m_ocrState == "WaitingPowerSave"))
             return HintType::IndexPausedPowerSave;
     }
 
     if (!ws.dismissedTypes.contains(HintType::IndexPausedIdle)) {
-        if ((m_textStatusValid && m_textState == "WaitingIdle")
-            || (m_ocrStatusValid && m_ocrState == "WaitingIdle"))
+        if ((fullTextEnabled && m_textStatusValid && m_textState == "WaitingIdle")
+            || (ocrEnabled && m_ocrStatusValid && m_ocrState == "WaitingIdle"))
             return HintType::IndexPausedIdle;
     }
 
     if (!ws.dismissedTypes.contains(HintType::IndexWaitingUpgrade)) {
-        if ((m_textStatusValid && m_textState == "WaitingUpgrade")
-            || (m_ocrStatusValid && m_ocrState == "WaitingUpgrade"))
+        if ((fullTextEnabled && m_textStatusValid && m_textState == "WaitingUpgrade")
+            || (ocrEnabled && m_ocrStatusValid && m_ocrState == "WaitingUpgrade"))
             return HintType::IndexWaitingUpgrade;
     }
 
     // 5. Updating
     if (!ws.dismissedTypes.contains(HintType::IndexUpdating)) {
-        if ((m_textStatusValid && m_textState == "Running")
-            || (m_ocrStatusValid && m_ocrState == "Running"))
+        if ((fullTextEnabled && m_textStatusValid && m_textState == "Running")
+            || (ocrEnabled && m_ocrStatusValid && m_ocrState == "Running"))
             return HintType::IndexUpdating;
     }
 
