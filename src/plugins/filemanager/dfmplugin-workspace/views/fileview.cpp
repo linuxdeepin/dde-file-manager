@@ -322,10 +322,6 @@ bool FileView::setRootUrl(const QUrl &url)
     resetSelectionModes();
     updateListHeaderView();
 
-    // Adjust header layout margins based on grouping state for list/tree mode
-    // This handles both initialization and directory switching scenarios
-    d->adjustHeaderLayoutMargin(model()->groupingStrategy());
-
     // 初始化分组状态追踪
     d->previousGroupStrategy = model()->groupingStrategy();
 
@@ -712,13 +708,34 @@ FileView::RandeIndexList FileView::visibleIndexes(const QRect &rect) const
     int itemHeight = itemSize.height() + spacing * 2;
 
     if (isListViewMode() || isTreeViewMode()) {
-        int firstIndex = (rect.top() + spacing) / itemHeight;
-        int lastIndex = (rect.bottom() - spacing) / itemHeight;
+        // List/tree items may have variable heights (group-header spacing or
+        // first-row top padding). Use indexAtForSelection (Qt native, variable-
+        // height aware) instead of the uniform-height formula.
+        QRect viewportRect = rect;
+        viewportRect.translate(-horizontalOffset(), -verticalOffset());
 
-        if (firstIndex >= count)
-            return list;
+        QModelIndex firstIdx = indexAtForSelection(viewportRect.topLeft());
+        QModelIndex lastIdx = indexAtForSelection(viewportRect.bottomRight());
 
-        list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+        if (!firstIdx.isValid()) {
+            if (viewportRect.top() < 0) {
+                firstIdx = model()->index(0, 0, rootIndex());
+            } else {
+                return list;
+            }
+        }
+        if (!lastIdx.isValid()) {
+            if (viewportRect.bottom() >= 0) {
+                lastIdx = model()->index(count - 1, 0, rootIndex());
+            } else {
+                return list;
+            }
+        }
+        if (firstIdx.isValid() && lastIdx.isValid()) {
+            int startRow = qMin(firstIdx.row(), lastIdx.row());
+            int endRow = qMax(firstIdx.row(), lastIdx.row());
+            list << RandeIndex(qMax(startRow, 0), qMin(endRow, count - 1));
+        }
     } else if (isIconViewMode()) {
 
         // 分组绘制时计算区域内的list
@@ -744,54 +761,42 @@ FileView::RandeIndexList FileView::rectContainsIndexes(const QRect &rect) const
         return list;
 
     if (isListViewMode() || isTreeViewMode()) {
-        // For variable-height items (grouping enabled), use indexAtForSelection
-        if (isGroupedView()) {
-            // Convert rect to viewport coordinates for comparison
-            QRect viewportRect = rect;
-            viewportRect.translate(-horizontalOffset(), -verticalOffset());
+        // List/tree items may have variable heights in both grouped mode
+        // (non-first group headers add kGroupHeaderInterval) and non-grouped
+        // mode (first row adds a kDefaultHeaderBottomMargin top padding). Use
+        // indexAtForSelection (Qt native, variable-height aware) for both.
+        // Convert rect to viewport coordinates for comparison
+        QRect viewportRect = rect;
+        viewportRect.translate(-horizontalOffset(), -verticalOffset());
 
-            // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
-            QModelIndex firstIndex = indexAtForSelection(viewportRect.topLeft());
-            QModelIndex lastIndex = indexAtForSelection(viewportRect.bottomRight());
+        // Use indexAtForSelection to get items at corners (doesn't skip spacing areas)
+        QModelIndex firstIndex = indexAtForSelection(viewportRect.topLeft());
+        QModelIndex lastIndex = indexAtForSelection(viewportRect.bottomRight());
 
-            // Handle invalid indices by clamping to valid range
-            if (!firstIndex.isValid()) {
-                // Check if above viewport
-                if (viewportRect.top() < 0) {
-                    firstIndex = model()->index(0, 0, rootIndex());
-                } else {
-                    return list;   // Empty selection
-                }
+        // Handle invalid indices by clamping to valid range
+        if (!firstIndex.isValid()) {
+            // Check if above viewport
+            if (viewportRect.top() < 0) {
+                firstIndex = model()->index(0, 0, rootIndex());
+            } else {
+                return list;   // Empty selection
             }
+        }
 
-            if (!lastIndex.isValid()) {
-                // Check if below viewport content
-                if (viewportRect.bottom() >= 0) {
-                    lastIndex = model()->index(count - 1, 0, rootIndex());
-                } else {
-                    return list;   // Empty selection
-                }
+        if (!lastIndex.isValid()) {
+            // Check if below viewport content
+            if (viewportRect.bottom() >= 0) {
+                lastIndex = model()->index(count - 1, 0, rootIndex());
+            } else {
+                return list;   // Empty selection
             }
+        }
 
-            if (firstIndex.isValid() && lastIndex.isValid()) {
-                // Normalize rows to handle reversed selection (dragging upwards)
-                int startRow = qMin(firstIndex.row(), lastIndex.row());
-                int endRow = qMax(firstIndex.row(), lastIndex.row());
-                list << RandeIndex(startRow, endRow);
-            }
-        } else {
-            // Uniform height items (no grouping): use optimized calculation
-            QSize itemSize = itemSizeHint();
-            int spacing = this->spacing();
-            int itemHeight = itemSize.height() + spacing * 2;
-
-            int firstIndex = (rect.top() + spacing) / itemHeight;
-            int lastIndex = (rect.bottom() - spacing) / itemHeight;
-
-            if (firstIndex >= count)
-                return list;
-
-            list << RandeIndex(qMax(firstIndex, 0), qMin(lastIndex, count - 1));
+        if (firstIndex.isValid() && lastIndex.isValid()) {
+            // Normalize rows to handle reversed selection (dragging upwards)
+            int startRow = qMin(firstIndex.row(), lastIndex.row());
+            int endRow = qMax(firstIndex.row(), lastIndex.row());
+            list << RandeIndex(startRow, endRow);
         }
     } else if (isIconViewMode()) {
         QSize itemSize = itemSizeHint();
@@ -964,9 +969,7 @@ void FileView::setGroup(const QString &strategyName, const Qt::SortOrder order)
         setFileViewStateValue(url, "groupingOrder", static_cast<int>(order));
     }
 
-    // Dynamically adjust header layout margins based on grouped view state
-    // For list/tree mode: remove bottom margin when in grouped view to eliminate gap above first group-header
-    d->adjustHeaderLayoutMargin(strategyName);
+    // Dynamically adjust icon mode spacing based on grouped view state
     d->adjustIconModeSpacing(strategyName);
 }
 
@@ -1914,28 +1917,26 @@ QModelIndex FileView::indexAt(const QPoint &pos) const
         return index;
     }
 
-    // For list/tree mode with variable-height items (grouping enabled),
-    // use Qt's native indexAt which correctly handles variable heights
-    if (isGroupedView()) {
+    // For list/tree mode (both grouped and non-grouped) items may have variable
+    // heights: grouped views add kGroupHeaderInterval to non-first group headers,
+    // and non-grouped views add a kDefaultHeaderBottomMargin top padding to the
+    // first row. Use Qt's native indexAt which handles variable heights correctly,
+    // and treat the transparent spacing/padding areas as empty for selection.
+    if (isListViewMode() || isTreeViewMode()) {
         QModelIndex index = DListView::indexAt(pos);
 
         // Return invalid index if click is in group header spacing area
         if (isClickInGroupHeaderSpacing(pos, index))
             return QModelIndex();
 
+        // Return invalid index if click is in the first-row top padding area
+        if (isClickInTopPadding(pos, index))
+            return QModelIndex();
+
         return index;
     }
 
-    // For list/tree mode with uniform heights (no grouping),
-    // use optimized custom calculation
-    QSize itemSize = itemSizeHint();
-    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
-    int index = FileViewHelper::caculateListItemIndex(itemSize, actualPos);
-
-    if (index == -1 || index >= model()->rowCount(rootIndex()))
-        return QModelIndex();
-
-    return model()->index(index, 0, rootIndex());
+    return QModelIndex();
 }
 
 QRect FileView::visualRect(const QModelIndex &index) const
@@ -2000,6 +2001,11 @@ void FileView::updateGeometries()
         // For list/tree mode
         int rowCount = model()->rowCount(rootIndex());
         int listHeight = rowCount * itemSizeHint().height() + kListModeBottomMargin;
+
+        // Non-grouped list/tree: first row carries a 10px transparent top padding
+        if (!isGroupedView() && rowCount > 0) {
+            listHeight += kDefaultHeaderBottomMargin;
+        }
 
         if (isGroupedView()) {
             // In grouped view, non-first group headers have additional 16px spacing
@@ -2314,20 +2320,6 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
             return true;
         }
     } break;
-    case QEvent::MouseButtonPress: {
-        if (obj != d->headerWidget)
-            break;
-        auto e = dynamic_cast<QMouseEvent *>(event);
-        if (!e)
-            break;
-
-        if (e->button() == Qt::RightButton) {
-            d->mouseLeftPressed = false;
-            QContextMenuEvent menuEvent(QContextMenuEvent::Mouse, { -1, -1 });
-            contextMenuEvent(&menuEvent);
-            return true;
-        }
-    } break;
     case QEvent::Move:
         if (obj != horizontalScrollBar()->parentWidget())
             return DListView::eventFilter(obj, event);
@@ -2352,10 +2344,6 @@ bool FileView::eventFilter(QObject *obj, QEvent *event)
         break;
     default:
         break;
-    }
-
-    if (obj == d->headerWidget && event->type() == QEvent::Resize) {
-        d->headerView->adjustSize();
     }
 
     return DListView::eventFilter(obj, event);
@@ -2582,28 +2570,8 @@ void FileView::initializeScrollBarWatcher()
         if (d->scrollBarSliderPressed)
             d->scrollBarValueChangedTimer->start();
 
-        if (d->headerWidget && d->headerWidget->isVisible()) {
-            auto headerLayout = d->headerWidget->layout();
-            auto margins = headerLayout->contentsMargins();
-            if (value > 0 && margins.bottom() != 0) {
-                headerLayout->setContentsMargins(0, 0, 0, 0);
-                QTimer::singleShot(0, this, [this]() {
-                    if (!d->headerView)
-                        return;
-                    int hVal = horizontalScrollBar() ? horizontalScrollBar()->value() : 0;
-                    d->headerView->syncOffset(hVal);
-                });
-            } else if (value == 0 && margins.bottom() == 0) {
-                // Only restore bottom margin in non-grouped mode
-                int bottomMargin = isGroupedView() ? 0 : kDefaultHeaderBottomMargin;
-                headerLayout->setContentsMargins(0, 0, 0, bottomMargin);
-                QTimer::singleShot(0, this, [this]() {
-                    if (!d->headerView)
-                        return;
-                    int hVal = horizontalScrollBar() ? horizontalScrollBar()->value() : 0;
-                    d->headerView->syncOffset(hVal);
-                });
-            }
+        if (isGroupedView()) {
+            viewport()->update();
         }
     });
 }
@@ -2711,11 +2679,6 @@ void FileView::updateContentLabel()
         d->contentLabel->setText(QString());
     }
 
-    // Remove header bottom margin when empty to avoid unnecessary spacing
-    if (d->headerWidget && (isListViewMode() || isTreeViewMode())) {
-        int bottomMargin = isEmpty ? 0 : (isGroupedView() ? 0 : kDefaultHeaderBottomMargin);
-        d->headerWidget->layout()->setContentsMargins(0, 0, 0, bottomMargin);
-    }
 }
 
 void FileView::updateSelectedUrl()
@@ -2989,6 +2952,23 @@ bool FileView::isClickInGroupHeaderSpacing(const QPoint &pos, const QModelIndex 
     return (relativeY >= 0 && relativeY < kGroupHeaderInterval);
 }
 
+bool FileView::isClickInTopPadding(const QPoint &pos, const QModelIndex &index) const
+{
+    // Only the root's first row in non-grouped list/tree carries the top padding.
+    // Requiring parent == rootIndex avoids matching tree-mode expanded sub-items
+    // whose row is also 0 under a different parent.
+    if (!index.isValid() || isGroupedView() || isIconViewMode())
+        return false;
+    if (index.row() != 0 || index.parent() != rootIndex())
+        return false;
+
+    // The transparent top padding (kDefaultHeaderBottomMargin) sits at the top of
+    // the first row's visual rect; a click there is an empty area for selection.
+    QRect itemRect = visualRect(index);
+    int relativeY = pos.y() - itemRect.top();
+    return (relativeY >= 0 && relativeY < kDefaultHeaderBottomMargin);
+}
+
 QModelIndex FileView::indexAtForSelection(const QPoint &pos) const
 {
     // Similar to indexAt(), but doesn't skip 16px spacing areas for box selection
@@ -2996,7 +2976,9 @@ QModelIndex FileView::indexAtForSelection(const QPoint &pos) const
         return iconIndexAt(pos, itemSizeHint());
     }
 
-    if (isGroupedView()) {
+    // For list/tree mode (grouped or not) use Qt's native indexAt to support
+    // variable row heights (group-header spacing / first-row top padding).
+    if (isListViewMode() || isTreeViewMode()) {
         // For list mode (single column), clamp X coordinate to viewport range
         // Only Y coordinate matters for determining which row is selected
         QPoint clampedPos = pos;
@@ -3004,15 +2986,7 @@ QModelIndex FileView::indexAtForSelection(const QPoint &pos) const
         return DListView::indexAt(clampedPos);
     }
 
-    // For list/tree mode with uniform heights, use optimized calculation
-    QSize itemSize = itemSizeHint();
-    QPoint actualPos = QPoint(pos.x() + horizontalOffset(), pos.y() + verticalOffset());
-    int index = FileViewHelper::caculateListItemIndex(itemSize, actualPos);
-
-    if (index == -1 || index >= model()->rowCount(rootIndex()))
-        return QModelIndex();
-
-    return model()->index(index, 0, rootIndex());
+    return QModelIndex();
 }
 
 // Grouping-related slot implementations
