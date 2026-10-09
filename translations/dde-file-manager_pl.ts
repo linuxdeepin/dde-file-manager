@@ -2102,7 +2102,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="606"/>
         <source>This directory can be written by other users, please choose a safer directory!</source>
-        <translation>Wszyscy użytkownicy mają dostęp do wyznaczonego katalogu, wybierz bezpieczniejszą ścieżkę!</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="612"/>
