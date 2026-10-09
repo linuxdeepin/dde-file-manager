@@ -585,7 +585,10 @@ QMultiMap<QUrl, QString> AsyncFileInfo::notifyUrls() const
 // if url is unvalid, it will clear all notify urls
 void AsyncFileInfo::setNotifyUrl(const QUrl &url, const QString &infoPtr)
 {
-    assert(infoPtr != QString::number(quintptr(this), 16));
+    if (infoPtr == QString::number(quintptr(this), 16)) {
+        qCWarning(logDFMBase) << "AsyncFileInfo::setNotifyUrl: skip self-registration to avoid endless refresh loop, url:" << url << "token:" << infoPtr;
+        return;
+    }
     if (!url.isValid()) {
         QMutexLocker lk(&d->notifyLock);
         d->notifyUrls.clear();
@@ -1129,7 +1132,9 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
         && !ProtocolUtils::isLocalFile(QUrl::fromLocalFile(symlink))) {
         FileInfoPointer info = InfoFactory::create<FileInfo>(QUrl::fromLocalFile(symlink));
         auto asyncInfo = info.dynamicCast<AsyncFileInfo>();
-        if (asyncInfo) {
+        if (asyncInfo.data() == q) {
+            qCDebug(logDFMBase) << "AsyncFileInfoPrivate::cacheAllAttributes: skip notify registration and refresh for self-referenced symlink:" << q->fileUrl();
+        } else if (asyncInfo) {
             asyncInfo->setNotifyUrl(q->fileUrl(), QString::number(quintptr(q), 16));
             auto notifyUrls = q->notifyUrls();
             for (const auto &url : notifyUrls.keys()) {
