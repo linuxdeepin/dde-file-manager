@@ -64,12 +64,42 @@ void ImagePreviewWorker::loadPreview(const QUrl &url, const QSize &targetSize)
 
     // Strategy 1: For animated image types (GIF, etc.), verify with QMovie before emitting signal
     if (!mimeType.isEmpty() && ImagePreviewWidget::isAnimatedMimeType(mimeType)) {
-        // Verify the file is actually a valid animated image using QMovie
-        QMovie movie(filePath);
-        if (movie.isValid() && movie.frameCount() > 1) {
-            // Valid animated image - delegate to QMovie in main thread
-            Q_EMIT animatedImageReady(url, filePath);
-            return;
+        if (ProtocolUtils::isRemoteFile(url)) {
+            // Remote protocol files (FTP, SFTP, DAV, DAVS, etc.) are mounted via
+            // gvfs-fuse, which does not provide reliable seek operations for protocols
+            // that lack random access (e.g., FTP). QMovie needs seek to read multiple
+            // GIF frames, so we load the file into memory via DFMIO::DFile (using the
+            // original remote URL, not the gvfs-fuse path) and verify with QBuffer.
+            QUrl readUrl = url;
+            if (!readUrl.isValid()) {
+                readUrl = QUrl::fromLocalFile(filePath);
+            }
+            if (readUrl.isLocalFile()) {
+                const SyncFileInfo info(readUrl);
+                const QUrl originalUrl = info.urlOf(UrlInfoType::kOriginalUrl);
+                if (originalUrl.isValid()) {
+                    readUrl = originalUrl;
+                }
+            }
+
+            QByteArray fileData = DFMIO::DFile(readUrl).readAll();
+            if (!fileData.isEmpty()) {
+                QBuffer buffer(&fileData);
+                buffer.open(QIODevice::ReadOnly);
+                QMovie movie(&buffer);
+                if (movie.isValid() && movie.frameCount() > 1) {
+                    Q_EMIT animatedImageReady(url, filePath, fileData);
+                    return;
+                }
+            }
+            // Remote read failed or not animated - fall through to static image loading
+        } else {
+            // Local file - verify directly with QMovie using file path
+            QMovie movie(filePath);
+            if (movie.isValid() && movie.frameCount() > 1) {
+                Q_EMIT animatedImageReady(url, filePath);
+                return;
+            }
         }
         // Invalid or single-frame - fall through to static image loading
     }
@@ -362,10 +392,10 @@ void ImagePreviewController::onNeedIconFallback(const QUrl &url, const QSize &ta
     Q_EMIT loadFailed(url);
 }
 
-void ImagePreviewController::onAnimatedImageReady(const QUrl &url, const QString &filePath)
+void ImagePreviewController::onAnimatedImageReady(const QUrl &url, const QString &filePath, const QByteArray &data)
 {
     // Forward animated image signal
-    Q_EMIT animatedImageReady(url, filePath);
+    Q_EMIT animatedImageReady(url, filePath, data);
 }
 
 void ImagePreviewController::onThumbnailProduced(const QUrl &url, const QString &thumbnailPath)
