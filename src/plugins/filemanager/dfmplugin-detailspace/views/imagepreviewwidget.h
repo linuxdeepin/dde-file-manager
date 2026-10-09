@@ -11,6 +11,7 @@
 #include <QPixmap>
 
 class QMovie;
+class QBuffer;
 
 namespace dfmplugin_detailspace {
 
@@ -27,7 +28,7 @@ public:
     void setPixmap(const QPixmap &pixmap);
     QPixmap pixmap() const;
 
-    void setAnimatedImage(const QString &filePath);
+    void setAnimatedImage(const QString &filePath, const QByteArray &data = {});
     void stopAnimatedImage();
 
     QSize sizeHint() const override;
@@ -45,6 +46,8 @@ private:
     QPixmap m_pixmap;
     QMovie *m_movie { nullptr };
     bool m_hasAnimatedImage { false };
+    QBuffer *m_buffer { nullptr };
+    QByteArray m_imageData;
 };
 
 }
