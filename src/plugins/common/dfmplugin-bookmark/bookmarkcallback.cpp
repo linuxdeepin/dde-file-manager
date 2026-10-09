@@ -15,7 +15,6 @@
 #include <dfm-framework/event/event.h>
 #include <dfm-base/utils/networkutils.h>
 #include <dfm-base/utils/protocolutils.h>
-#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-io/dfile.h>
 
@@ -33,7 +32,7 @@ void BookmarkCallBack::contextMenuHandle(quint64 windowId, const QUrl &url, cons
     QFileInfo info(url.path());
     bool bEnabled = info.exists();
 
-    DMenu *menu = new DMenu(FMWindowsIns.findWindowById(windowId));
+    DMenu *menu = new DMenu;
 #ifdef ENABLE_TESTING
     dpfSlotChannel->push("dfmplugin_utils", "slot_Accessible_SetAccessibleName",
                          qobject_cast<QWidget *>(menu), AcName::kAcSidebarBookmarkMenu);
