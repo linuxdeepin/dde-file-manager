@@ -37,28 +37,38 @@ void FileInfoWidget::initUI()
     m_gridLayout->setColumnStretch(0, 1);
 
     // Create all 7 core fields once - they will be reused for every URL
-    auto createField = [this](const QString &label, const QString &name) -> KeyValueLabel * {
+    auto createField = [this](const QString &label) -> KeyValueLabel * {
         auto *field = new KeyValueLabel(this);
-        field->setObjectName(name);
-        field->setAccessibleName(name);
-        field->leftWidget()->setObjectName(name + "Label");
-        field->leftWidget()->setAccessibleName(name + "Label");
-        field->rightWidget()->setObjectName(name + "Value");
-        field->rightWidget()->setAccessibleName(name + "Value");
         field->setLeftValue(label, Qt::ElideMiddle, Qt::AlignLeft);
         field->setLeftFontSizeWeight(DFontSizeManager::SizeType::T7, QFont::Weight::DemiBold);
         field->setRightFontSizeWeight(DFontSizeManager::SizeType::T7);
         return field;
     };
 
-    m_fileName = createField(tr("Name"), "DetailFileName");
-    m_fileSize = createField(tr("Size"), "DetailFileSize");
-    m_fileViewSize = createField(tr("Resolution"), "DetailFileResolution");
+    m_fileName = createField(tr("Name"));
+    m_fileSize = createField(tr("Size"));
+    m_fileViewSize = createField(tr("Resolution"));
     m_fileViewSize->setMaximumHeight(30);
-    m_fileDuration = createField(tr("Duration"), "DetailFileDuration");
-    m_fileType = createField(tr("Type"), "DetailFileType");
-    m_fileAccessTime = createField(tr("Accessed"), "DetailFileAccessTime");
-    m_fileModifyTime = createField(tr("Modified"), "DetailFileModifyTime");
+    m_fileDuration = createField(tr("Duration"));
+    m_fileType = createField(tr("Type"));
+    m_fileAccessTime = createField(tr("Accessed"));
+    m_fileModifyTime = createField(tr("Modified"));
+
+    auto exposeFieldName = [](KeyValueLabel *field, const QString &name) {
+        field->setObjectName(name);
+        field->setAccessibleName(name);
+        field->leftWidget()->setObjectName(name + "Label");
+        field->leftWidget()->setAccessibleName(name + "Label");
+        field->rightWidget()->setObjectName(name + "Value");
+        field->rightWidget()->setAccessibleName(name + "Value");
+    };
+    exposeFieldName(m_fileName, "DetailFileName");
+    exposeFieldName(m_fileSize, "DetailFileSize");
+    exposeFieldName(m_fileViewSize, "DetailFileResolution");
+    exposeFieldName(m_fileDuration, "DetailFileDuration");
+    exposeFieldName(m_fileType, "DetailFileType");
+    exposeFieldName(m_fileAccessTime, "DetailFileAccessTime");
+    exposeFieldName(m_fileModifyTime, "DetailFileModifyTime");
 
     // Build field map for extensions
     m_fieldMap.insert(BasicFieldExpandEnum::kFileName, m_fileName);
