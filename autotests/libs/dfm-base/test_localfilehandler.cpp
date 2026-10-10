@@ -26,6 +26,7 @@
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-io/doperator.h>
+#include "dfm-base/file/local/localfilehandler_p.h"
 #include <QDBusConnection>
 #include <QDBusMessage>
 
@@ -599,6 +600,12 @@ TEST_F(LocalFileHandlerTest, BUG117493_TouchFileNotifiesFileAdded)
                        notified.append({ type, url });
                    });
 
+    stub.set_lamda(&LocalFileHandlerPrivate::loadTemplateUrl,
+                   [](LocalFileHandlerPrivate *, const QString &) -> QUrl {
+                       __DBG_STUB_INVOKE__
+                       return QUrl();   // no template -> touchFile returns the input url
+                   });
+
     const QString path = rootPath + "/touch_117493.txt";
     const QUrl result = handler.touchFile(QUrl::fromLocalFile(path));
     EXPECT_EQ(result, QUrl::fromLocalFile(path));
@@ -609,6 +616,16 @@ TEST_F(LocalFileHandlerTest, BUG117493_TouchFileNotifiesFileAdded)
 // PMS:177731 touchFile 在未显式初始化 dfmio 的进程中必须可用（当前实现无 init 前置）
 TEST_F(LocalFileHandlerTest, BUG177731_TouchFileWorks)
 {
+    // Isolate the system template dir: on hosts with the dde-file-manager
+    // template package installed, loadTemplateUrl("txt") matches newTxt.txt
+    // and touchFile would return the template URL instead of the new file.
+    stub_ext::StubExt stub;
+    stub.set_lamda(&LocalFileHandlerPrivate::loadTemplateUrl,
+                   [](LocalFileHandlerPrivate *, const QString &) -> QUrl {
+                       __DBG_STUB_INVOKE__
+                       return QUrl();   // no template -> touchFile returns the input url
+                   });
+
     const QString path = rootPath + "/created_177731.txt";
     const QUrl result = handler.touchFile(QUrl::fromLocalFile(path));
     EXPECT_EQ(result, QUrl::fromLocalFile(path));
