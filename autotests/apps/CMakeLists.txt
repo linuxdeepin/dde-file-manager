@@ -4,3 +4,4 @@
 
 # Unit tests for app-level plugins (e.g. dde-file-manager-preview plugins).
 add_subdirectory(dde-file-manager-preview)
+add_subdirectory(dde-file-manager)
