@@ -55,7 +55,7 @@ public:
     AsyncFileInfo *const q;
     mutable QMutex changesLock;
     QList<FileInfo::FileInfoAttributeID> changesAttributes;
-    QString fileIconName;
+    mutable QString fileIconName;
 
 public:
     explicit AsyncFileInfoPrivate(AsyncFileInfo *qq);

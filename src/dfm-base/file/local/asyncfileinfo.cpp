@@ -802,8 +802,30 @@ QString AsyncFileInfoPrivate::completeSuffix() const
 
 QString AsyncFileInfoPrivate::iconName() const
 {
-    QReadLocker wlk(&iconLock);
-    return fileIconName;
+    {
+        QReadLocker rlk(&iconLock);
+        if (!fileIconName.isEmpty())
+            return fileIconName;
+    }
+
+    if (this->attribute(DFileInfo::AttributeID::kStandardIsDir).toBool()) {
+        QWriteLocker wlk(&iconLock);
+        if (!fileIconName.isEmpty())
+            return fileIconName;
+        fileIconName = "inode-directory";
+        return fileIconName;
+    }
+
+    auto mimetype = q->fileMimeType();
+    QString iconNameValue = mimetype.iconName();
+
+    iconNameValue = IconUtils::normalizeIconName(iconNameValue);
+
+    QWriteLocker wlk(&iconLock);
+    if (!fileIconName.isEmpty())
+        return fileIconName;
+    fileIconName = iconNameValue;
+    return iconNameValue;
 }
 
 QString AsyncFileInfoPrivate::mimeTypeName() const
