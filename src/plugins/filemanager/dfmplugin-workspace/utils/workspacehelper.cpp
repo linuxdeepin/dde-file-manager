@@ -192,6 +192,9 @@ void WorkspaceHelper::addWorkspace(quint64 windowId, WorkspaceWidget *workspace)
     QMutexLocker locker(&WorkspaceHelper::mutex());
     if (!kWorkspaceMap.contains(windowId)) {
         kWorkspaceMap.insert(windowId, workspace);
+        QObject::connect(workspace, &QObject::destroyed, this, [windowId](QObject *) {
+            kWorkspaceMap.remove(windowId);
+        });
         fmDebug() << "Workspace added for window ID:" << windowId;
     } else {
         fmDebug() << "Workspace already exists for window ID:" << windowId;

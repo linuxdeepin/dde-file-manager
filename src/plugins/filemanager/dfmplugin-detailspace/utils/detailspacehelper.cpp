@@ -42,6 +42,9 @@ void DetailSpaceHelper::addDetailSpace(quint64 windowId)
         auto window = FMWindowsIns.findWindowById(windowId);
         window->installDetailView(detailSpaceWidget);
         kDetailSpaceMap.insert(windowId, detailSpaceWidget);
+        QObject::connect(detailSpaceWidget, &QObject::destroyed, [windowId](QObject *) {
+            kDetailSpaceMap.remove(windowId);
+        });
     }
 }
 
