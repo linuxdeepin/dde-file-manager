@@ -1,3 +1,13 @@
+dde-file-manager (6.5.175) unstable; urgency=medium
+
+  * fix: request full repaint on task widget hover state change
+  * fix: clarify disk encryption export path warning
+  * fix: make list/tree top gap part of viewport for selection
+  * fix: enable GIF animation preview for FTP remote files
+  * fix: fix wrong icons for remote files on network mounts
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Sat, 10 Oct 2026 13:39:09 +0800
+
 dde-file-manager (6.5.174) unstable; urgency=medium
 
   * fix: fix settings signal not emitted on first write
