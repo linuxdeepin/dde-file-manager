@@ -20,6 +20,7 @@ option(OPT_ENABLE_BUILD_UT_PLUGINS  "Build plugins unit tests"   ON)
 option(OPT_ENABLE_BUILD_UT_APPS     "Build apps unit tests"      ON)
 option(OPT_ENABLE_BUILD_UT_TOOLS    "Build tools unit tests"     ON)
 option(OPT_ENABLE_BUILD_UT_SERVICES "Build services unit tests"  ON)
+option(OPT_ENABLE_BUILD_UT_EXTERNAL "Build external unit tests"  ON)
 
 if(OPT_ENABLE_BUILD_UT_LIBS)
     add_subdirectory(libs)
@@ -39,4 +40,8 @@ endif()
 
 if(OPT_ENABLE_BUILD_UT_SERVICES)
     add_subdirectory(services)
+endif()
+
+if(OPT_ENABLE_BUILD_UT_EXTERNAL)
+    add_subdirectory(external)
 endif()
