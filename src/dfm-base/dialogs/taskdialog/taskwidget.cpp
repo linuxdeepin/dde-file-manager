@@ -354,6 +354,10 @@ void TaskWidget::onShowTaskProccess(const JobInfoPointer JobInfo)
         value = 100;
     }
 
+    // value must not go backward (PMS bug 117471), e.g. when the total size
+    // is re-resolved during the job and the percentage would drop
+    value = value > preValue ? value : preValue;
+
     if (value > 0 && value == preValue) {
         // value not change, return
         return;

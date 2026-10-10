@@ -339,7 +339,7 @@ bool FileUtils::isSameDevice(const QUrl &url1, const QUrl &url2)
         return DFMIO::DFMUtils::devicePathFromUrl(url1) == DFMIO::DFMUtils::devicePathFromUrl(url2);
     }
 
-    return url1.host() == url2.host() && url1.port() == url1.port();
+    return url1.host() == url2.host() && url1.port() == url2.port();
 }
 
 bool FileUtils::isSameFile(const QUrl &url1, const QUrl &url2, const Global::CreateFileInfoType infoCache)
