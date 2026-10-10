@@ -818,7 +818,7 @@ QString SyncFileInfoPrivate::iconName() const
             iconNameValue = *iter;
     }
 
-    if (!ProtocolUtils::isRemoteFile(q->fileUrl()) && iconNameValue.isEmpty())
+    if (iconNameValue.isEmpty())
         iconNameValue = q->fileMimeType().iconName();
 
     return iconNameValue;

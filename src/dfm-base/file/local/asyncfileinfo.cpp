@@ -792,15 +792,10 @@ QString AsyncFileInfoPrivate::completeSuffix() const
 QString AsyncFileInfoPrivate::iconName() const
 {
     QString iconNameValue;
-    if (SystemPathUtil::instance()->isSystemPath(asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).toString()))
-        iconNameValue = SystemPathUtil::instance()->systemPathIconNameByPath(asyncAttribute(FileInfo::FileInfoAttributeID::kStandardFilePath).toString());
-
-    if (iconNameValue.isEmpty()) {
-        const QStringList &list = asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIcon).toStringList();
-        if (!list.isEmpty())
-            iconNameValue = list.first();
-    }
-    if (!ProtocolUtils::isRemoteFile(q->fileUrl()) && iconNameValue.isEmpty())
+    const QStringList &list = asyncAttribute(FileInfo::FileInfoAttributeID::kStandardIcon).toStringList();
+    if (!list.isEmpty())
+        iconNameValue = list.first();
+    if (iconNameValue.isEmpty())
         iconNameValue = q->fileMimeType().iconName();
     if (iconNameValue.isEmpty() && q->isAttributes(OptInfoType::kIsDir))
         iconNameValue = "folder";
