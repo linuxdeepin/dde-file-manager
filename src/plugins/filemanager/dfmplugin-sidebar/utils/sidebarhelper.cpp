@@ -56,8 +56,12 @@ QList<SideBarWidget *> SideBarHelper::allSideBar()
 void SideBarHelper::addSideBar(quint64 windowId, SideBarWidget *sideBar)
 {
     QMutexLocker locker(&SideBarHelper::mutex());
-    if (!kSideBarMap.contains(windowId))
+    if (!kSideBarMap.contains(windowId)) {
         kSideBarMap.insert(windowId, sideBar);
+        QObject::connect(sideBar, &QObject::destroyed, [windowId](QObject *) {
+            SideBarHelper::removeSideBar(windowId);
+        });
+    }
 }
 
 void SideBarHelper::removeSideBar(quint64 windowId)
