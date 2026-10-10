@@ -61,8 +61,12 @@ TitleBarWidget *TitleBarHelper::findTileBarByWindowId(quint64 windowId)
 void TitleBarHelper::addTileBar(quint64 windowId, TitleBarWidget *titleBar)
 {
     QMutexLocker locker(&TitleBarHelper::mutex());
-    if (!kTitleBarMap.contains(windowId))
+    if (!kTitleBarMap.contains(windowId)) {
         kTitleBarMap.insert(windowId, titleBar);
+        QObject::connect(titleBar, &QObject::destroyed, [windowId](QObject *) {
+            TitleBarHelper::removeTitleBar(windowId);
+        });
+    }
 }
 
 void TitleBarHelper::removeTitleBar(quint64 windowId)
