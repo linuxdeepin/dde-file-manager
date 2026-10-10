@@ -16,7 +16,7 @@ SPDX-FileCopyrightText = "None"
 SPDX-License-Identifier = "CC0-1.0"
 
 [[annotations]]
-path = [".gitignore", ".clang-format", ".clog.toml", ".project.json", ".qmake.conf"]
+path = [".gitignore", "**.gitignore", ".clang-format", ".clog.toml", ".project.json", ".qmake.conf"]
 precedence = "aggregate"
 SPDX-FileCopyrightText = "None"
 SPDX-License-Identifier = "CC0-1.0"
