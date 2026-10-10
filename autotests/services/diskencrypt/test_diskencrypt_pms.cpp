@@ -146,11 +146,20 @@ public:
         svc = new DiskEncryptSetup();
         priv = svc->m_dptr;
         ASSERT_NE(priv, nullptr);
+        // initialize() posts a fire-and-forget task that calls the real
+        // mergeCryptTab()/remountBoot() on the global thread pool. Drain it
+        // here while the protective stubs are still installed, otherwise a
+        // late-scheduled task runs after a test-case stub.clear() and hits
+        // the real helpers (observed on loaded hosts as a duplicate
+        // saveCryptItems call failing BUG314847_MergeCryptTab).
+        QThreadPool::globalInstance()->waitForDone();
     }
 
     void TearDown() override
     {
+        QThreadPool::globalInstance()->waitForDone();
         delete svc;
+        QThreadPool::globalInstance()->waitForDone();
         svc = nullptr;
         priv = nullptr;
         stub.clear();
