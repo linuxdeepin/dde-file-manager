@@ -429,13 +429,29 @@ void TitleBarWidget::paintEvent(QPaintEvent *event)
     // a stale pending layout (e.g. right after a tab was appended). Flush it
     // so tabRect() reflects the up-to-date geometry (fixes 1->2 tab shift).
     bottomBar->ensureLayoutUpdated();
-    const QRect fullRect = bottomBar->tabRect(currentIndex);
-    if (!fullRect.isValid())
+    // While a cross-window drag hovers over this window a drag-preview (ghost)
+    // tab exists in the strip: the highlight belongs to the incoming tab, so
+    // suppress the selected-tab highlight entirely until the ghost is removed.
+    if (bottomBar->hasDragPreviewTab())
         return;
-
+    // While a tab is being dragged, DTK moves the drag snapshot independently
+    // of the static layout, so take the highlight rect from TabBar's live
+    // snapshot tracking instead of the now-detached tabRect().
+    QRect fullRect;
+    QRect visibleRect;
+    if (tabDragActive) {
+        fullRect = tabDragRect;
+        if (!fullRect.isValid())
+            return;
+        visibleRect = fullRect.intersected(bottomBar->tabViewportRect());
+    } else {
+        fullRect = bottomBar->tabRect(currentIndex);
+        if (!fullRect.isValid())
+            return;
+        visibleRect = bottomBar->visibleTabRect(currentIndex);
+    }
     // An empty result means the selected tab is scrolled completely out of
     // the viewport, so there is nothing visible left to highlight.
-    const QRect visibleRect = bottomBar->visibleTabRect(currentIndex);
     if (visibleRect.isEmpty())
         return;
 
@@ -562,6 +578,21 @@ void TitleBarWidget::initConnect()
     // strip's viewport, while internal scrolling repaints that viewport only;
     // re-run this paintEvent whenever the visible tab geometry shifts.
     connect(bottomBar, &TabBar::viewportScrolled, this, QOverload<>::of(&TitleBarWidget::update));
+    // Live-follow the dragged tab: the drag snapshot's real geometry (relayed
+    // by TabBar) feeds the highlight painted in paintEvent.
+    connect(bottomBar, &TabBar::tabDragStarted, this, [this](int) {
+        tabDragActive = true;
+        update();
+    });
+    connect(bottomBar, &TabBar::tabDragMoved, this, [this](const QRect &rect) {
+        tabDragRect = rect;
+        update();
+    });
+    connect(bottomBar, &TabBar::tabDragEnded, this, [this]() {
+        tabDragActive = false;
+        tabDragRect = QRect();
+        update();
+    });
 
 #ifdef DTKWIDGET_CLASS_DSizeMode
     connect(DGuiApplicationHelper::instance(), &DGuiApplicationHelper::sizeModeChanged, this, [this]() {

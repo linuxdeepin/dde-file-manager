@@ -25,6 +25,8 @@
 #include <DPaletteHelper>
 #include <DPlatformWindowHandle>
 
+#include <QChildEvent>
+#include <QGuiApplication>
 #include <QMouseEvent>
 #include <QBoxLayout>
 #include <QJsonDocument>
@@ -32,6 +34,7 @@
 #include <QCursor>
 #include <QIcon>
 #include <QPainterPath>
+#include <QPointer>
 #include <QUuid>
 #include <QUrlQuery>
 #include <QScreen>
@@ -144,6 +147,15 @@ public:
     int lastTooltipTabIndex { -1 };
     bool lastTooltipOnButton { false };
     QRect lastFirstTabRect;
+
+    // DTK's movable-tab snapshot (DMovableTabWidget) is created as a child of
+    // the inner tab bar when a tab drag starts and reports the dragged tab's
+    // real geometry through its Show/Move/Hide events. New widget children
+    // are watched by the event filter; the child that proves to be the
+    // snapshot on Show (left button held, positioned over the current tab)
+    // activates the tracking until its Hide.
+    QPointer<QWidget> movableTab;
+    bool dragFollowing { false };
 };
 }
 
@@ -701,7 +713,11 @@ void TabBarPrivate::paintTabBackground(QPainter *painter, int index, const QStyl
     painter->setRenderHint(QPainter::Antialiasing, true);
 
     const QRectF visualRect = tabVisualRect(index, rect);
-    if (isSelected) {
+    // While a cross-window drag is in progress a drag-preview (ghost) tab
+    // exists in this strip: the highlight belongs to the incoming tab, so
+    // drawing the selected background here conflicts with it and shows a
+    // misaligned background. Skip the fill until the ghost is removed.
+    if (isSelected && !hasDragPreviewTab()) {
         const QRectF selectedRect = visualRect.adjusted(0.0, kTabTopInset, 0.0, 0.0);
         const QPalette::ColorGroup bgGroup = q->isActiveWindow() ? QPalette::Active : QPalette::Inactive;
         painter->setBrush(pal.color(bgGroup, QPalette::Base));
@@ -1345,6 +1361,11 @@ void TabBar::paintTab(QPainter *painter, int index, const QStyleOptionTab &optio
     d->paintTabItemButton(painter, index, option);
 }
 
+bool TabBar::hasDragPreviewTab() const
+{
+    return d->hasDragPreviewTab();
+}
+
 QSize TabBar::tabSizeHint(int index) const
 {
     if (index < 0)
@@ -1524,8 +1545,48 @@ bool TabBar::eventFilter(QObject *obj, QEvent *e)
                     Q_EMIT tabCloseRequested(index);
                 return true;
             }
+        } else if (eventType == QEvent::ChildAdded) {
+            // Capture the drag snapshot DTK creates inside the inner tab bar
+            // so its Show/Move/Hide can be tracked below.
+            auto ce = static_cast<QChildEvent *>(e);
+            if (ce->child()->isWidgetType()) {
+                d->movableTab = static_cast<QWidget *>(ce->child());
+                d->movableTab->installEventFilter(this);
+            }
         }
         return DTabBar::eventFilter(obj, e);
+    }
+
+    // Track the drag snapshot (DMovableTabWidget living inside the inner tab
+    // bar): its geometry is the only reliable source of where the dragged
+    // tab really is. Inner-tab-bar local coordinates are translated into
+    // this TabBar's space so paintEvent can consume the rect directly.
+    if (obj == d->movableTab) {
+        const QRect geo = static_cast<QWidget *>(obj)->geometry();
+        switch (eventType) {
+        case QEvent::Show:
+            // Follow only a real drag of the current tab: left button held
+            // and the snapshot appears over the pressed tab.
+            if ((QGuiApplication::mouseButtons() & Qt::LeftButton)
+                && tabRect(currentIndex()).contains(d->tabBar->mapTo(this, geo.center()))) {
+                d->dragFollowing = true;
+                Q_EMIT tabDragStarted(currentIndex());
+            }
+            break;
+        case QEvent::Move:
+            if (d->dragFollowing)
+                Q_EMIT tabDragMoved(QRect(d->tabBar->mapTo(this, geo.topLeft()), geo.size()));
+            break;
+        case QEvent::Hide:
+            // DTK hides the snapshot in moveTabFinished when dragging ends.
+            if (d->dragFollowing) {
+                d->dragFollowing = false;
+                Q_EMIT tabDragEnded();
+            }
+            break;
+        default:
+            break;
+        }
     }
 
     // Handle Show/Hide events for left scroll button
