@@ -1030,7 +1030,7 @@ void FileOperateBaseWorker::setSkipValue(bool *skip, AbstractJobHandler::Support
 
 void FileOperateBaseWorker::setExpectedSizeForTarget(const QUrl &targetUrl, qint64 size)
 {
-    FileInfoPointer targetFileInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSyncAndCache);
+    FileInfoPointer targetFileInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoAuto);
     if (targetFileInfo) {
         targetFileInfo->setExtendedAttributes(ExtInfoType::kExpectedSize, size);
         fmDebug() << "Set expected size for target file:" << targetUrl << "size:" << size;
