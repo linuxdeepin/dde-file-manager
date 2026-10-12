@@ -99,7 +99,16 @@ void FileWatcherWorker::doFileUpdated(const QUrl &fileUrl)
     if (rootptr->stopped || !isSubFile(fileUrl) || UniversalUtils::urlEquals(fileUrl, rootptr->url))
         return;
 
-    if (adds.contains(fileUrl) || removes.contains(fileUrl) || updates.contains(fileUrl))
+    if (removes.contains(fileUrl))
+        return;
+
+    if (adds.contains(fileUrl)) {
+        updates.insert(fileUrl);
+        doCheckAndStartTimer();
+        return;
+    }
+
+    if (updates.contains(fileUrl))
         return;
 
     bool fileShowNow = rootptr->childrenUrlList.contains(fileUrl);
