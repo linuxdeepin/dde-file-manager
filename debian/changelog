@@ -1,3 +1,10 @@
+dde-file-manager (6.5.176) unstable; urgency=medium
+
+  * fix: prevent crash from dangling widget pointers in helpers
+  * fix: avoid sync FileInfo cache poisoning on SFTP paths
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Mon, 12 Oct 2026 17:19:27 +0800
+
 dde-file-manager (6.5.175) unstable; urgency=medium
 
   * fix: request full repaint on task widget hover state change
