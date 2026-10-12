@@ -104,6 +104,8 @@ private:
     QWidget *placeholder { nullptr };
 
     bool searchButtonSwitchState { false };
+    bool tabDragActive { false };
+    QRect tabDragRect;
 
     struct TitleBarState
     {
