@@ -189,7 +189,7 @@ Flash memory may be failing. Please back up data immediately.</source>
 <context>
     <name>MimeTypeDisplayManager</name>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="862"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="867"/>
         <source>Unknown</source>
         <translation>Desconegut</translation>
     </message>
@@ -446,13 +446,13 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>%1 tasques en execució</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="869"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="512"/>
         <source>%1 item</source>
         <translation>%1 element</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="870"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="875"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="513"/>
         <source>%1 items</source>
         <translation>%1 elements</translation>
@@ -586,7 +586,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="23"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="23"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="289"/>
         <source>Network</source>
         <translation>Xarxa</translation>
     </message>
@@ -602,7 +602,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="25"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="25"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="281"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="285"/>
         <source>Partitions</source>
         <translation>Particions</translation>
     </message>
@@ -610,7 +610,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="27"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="27"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="277"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="281"/>
         <source>Quick access</source>
         <translation>Accés ràpid</translation>
     </message>
@@ -618,7 +618,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="29"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="29"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="293"/>
         <source>Tag</source>
         <translation>Etiqueta</translation>
     </message>
@@ -1070,9 +1070,9 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="12"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="72"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="343"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="190"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="194"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="87"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="320"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="390"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="62"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="280"/>
         <source>Open in new window</source>
@@ -1084,9 +1084,9 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="16"/>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/myshares.cpp" line="75"/>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/utils/recentmanager.cpp" line="347"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="198"/>
         <location filename="../src/plugins/filemanager/dfmplugin-smbbrowser/smbbrowser.cpp" line="90"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="324"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="394"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="66"/>
         <source>Open in new tab</source>
         <translation>Obre en una pestanya nova</translation>
@@ -1106,7 +1106,7 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-bookmark/bookmarkcallback.cpp" line="60"/>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/utils/computerdatastruct.cpp" line="40"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="205"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="209"/>
         <location filename="../src/plugins/filemanager/dfmplugin-trash/utils/trashhelper.cpp" line="81"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="343"/>
         <source>Properties</source>
@@ -1535,42 +1535,42 @@ Escriviu el nom d&apos;usuari i la contrasenya per a %1</translation>
         <translation>Camí font</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="98"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="102"/>
         <source>New window</source>
         <translation>Finestra nova</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="102"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="106"/>
         <source>New tab</source>
         <translation>Pestanya nova</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="108"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="112"/>
         <source>Connect to Server</source>
         <translation>Connecta amb el servidor</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="112"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="116"/>
         <source>Set share password</source>
         <translation>Estableix la contrasenya de compartició</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="117"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="121"/>
         <source>Change disk password</source>
         <translation>Canvia la contrasenya del disc</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="122"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="126"/>
         <source>Settings</source>
         <translation>Configuració</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="311"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="381"/>
         <source>Copy path</source>
         <translation>Copia&apos;n el camí</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="334"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="404"/>
         <source>Edit address</source>
         <translation>Edita l&apos;adreça</translation>
     </message>
@@ -2038,17 +2038,17 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Ha fallat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="245"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="249"/>
         <source>Sidebar</source>
         <translation>Barra lateral</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="248"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="252"/>
         <source>Sidebar tree directory</source>
         <translation>Arbre de directoris de la barra lateral</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="250"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="254"/>
         <source>Display sidebar disk partitions as a tree structure</source>
         <translation>Mostra les particions de disc de la barra lateral en una estructura d&apos;arbre.</translation>
     </message>
@@ -2156,7 +2156,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="990"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="1005"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="194"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="65"/>
         <source>Cancel</source>
         <translation>Cancel·la</translation>
     </message>
@@ -2169,7 +2169,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="992"/>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="1006"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="195"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="66"/>
         <source>Confirm</source>
         <translation>Confirmeu-ho</translation>
     </message>
@@ -4353,49 +4353,49 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Crear el fitxer de destinació %1 Info ha fallat en mostrar la funció d&apos;informació del conflicte!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="859"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="864"/>
         <source>Time modified: %1</source>
         <translation>Hora de modificació: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="864"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="869"/>
         <source>Original folder</source>
         <translation>Carpeta original</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="871"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="876"/>
         <source>Contains: %1</source>
         <translation>Contingut: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="879"/>
         <source>Original file</source>
         <translation>Fitxer original</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="875"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="880"/>
         <source>Size: %1</source>
         <translation>Mida: %1</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="864"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="869"/>
         <source>Target folder</source>
         <translation>Carpeta de destinació</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="636"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="863"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="640"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="868"/>
         <source>In data statistics ...</source>
         <translation>A les estadístiques de dades...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="874"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="879"/>
         <source>Target file</source>
         <translation>Fitxer de destinació</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="391"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="392"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="395"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="396"/>
         <source>Syncing data</source>
         <translation>Se sincronitzen dades</translation>
     </message>
@@ -4410,49 +4410,49 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Aquesta acció no es pot desfer. Si us plau, procediu amb precaució!</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="393"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="394"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="397"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="398"/>
         <source>Please wait</source>
         <translation>Espereu, si us plau...</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="544"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="548"/>
         <source>Keep both</source>
         <comment>button</comment>
         <translation>Mantén-los ambdós</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="549"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="553"/>
         <source>Skip</source>
         <comment>button</comment>
         <translation>Omet</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="556"/>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="731"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="560"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="735"/>
         <source>Replace</source>
         <comment>button</comment>
         <translation>Reemplaça</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="566"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="570"/>
         <source>Permanently delete</source>
         <comment>button</comment>
         <translation>Elimina&apos;l permanentment</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="593"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="597"/>
         <source>Do not ask again</source>
         <translation>No ho tornis a preguntar.</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="728"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="732"/>
         <source>Retry</source>
         <comment>button</comment>
         <translation>Torna-ho a provar</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="734"/>
+        <location filename="../src/dfm-base/dialogs/taskdialog/taskwidget.cpp" line="738"/>
         <source>Merge</source>
         <comment>button</comment>
         <translation>Fusiona</translation>
@@ -4985,37 +4985,37 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_detailspace::FileInfoWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="45"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="48"/>
         <source>Name</source>
         <translation>Nom</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="46"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
         <source>Size</source>
         <translation>Mida</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="47"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
         <source>Resolution</source>
         <translation>Resolució</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
         <source>Duration</source>
         <translation>Durada</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="53"/>
         <source>Type</source>
         <translation>Tipus</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="51"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="54"/>
         <source>Accessed</source>
         <translation>Accedit</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="55"/>
         <source>Modified</source>
         <translation>Modificat</translation>
     </message>
@@ -7016,44 +7016,78 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_search::CheckBoxWithFileIndex</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="28"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="21"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
         <translation>Habilita la creació immediata de l&apos;índex de fitxers per a cerques de noms de fitxer més ràpides</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="22"/>
         <source>Building index</source>
         <translation>Es construeix l&apos;índex</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
-        <source>Index update failed</source>
-        <translation>L&apos;actualització de l&apos;índex ha fallat.</translation>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="23"/>
+        <source>Building index, %1 files indexed</source>
+        <translation>Es construeix l&apos;índex: %1 fitxers indexats</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="143"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="158"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="24"/>
+        <source>Building index, %1/%2 items indexed</source>
+        <translation>Es construeix l&apos;índex, %1 / %2 elements indexats</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="25"/>
+        <source>Index update failed, please</source>
+        <translation>L&apos;actualització de l&apos;índex ha fallat, si us plau,</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="26"/>
         <source>try updating again</source>
         <translation>proveu de tornar a fer-ne l&apos;actualització.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="167"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="27"/>
         <source>Index update completed, last update time: %1</source>
         <translation>Actualització de l&apos;índex completada. Hora de la darrera actualització: %1</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="168"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="28"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="34"/>
         <source>Update index now</source>
         <translation>Actualitza l&apos;índex ara</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="192"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
+        <source>Currently using battery, index update has been paused</source>
+        <translation>Ara s&apos;usa la bateria; l&apos;actualització de l&apos;índex s&apos;ha pausat.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="30"/>
+        <source>Power saving mode is enabled, index update has been paused</source>
+        <translation>El mode d&apos;estalvi d&apos;energia està activat; l&apos;actualització de l&apos;índex s&apos;ha pausat.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="31"/>
+        <source>Waiting for the device to become idle to continue updating</source>
+        <translation>S&apos;espera que el dispositiu quedi inactiu per continuar l&apos;actualització.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="32"/>
+        <source>Waiting for index service upgrade</source>
+        <translation>S&apos;espera l&apos;actualització del servei d&apos;índex.</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="33"/>
+        <source>Continue updating</source>
+        <translation>Continua l&apos;actualització</translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="63"/>
         <source>Confirm turning off file index?</source>
         <translation>Confirmeu que voleu inhabilitar la indexació de fitxers?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="64"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable.</source>
         <translation>Si es desactiva, les cerques de fitxers recorreran el sistema de fitxers i reduiran considerablement la velocitat de cerca, i la funcionalitat de cerca intel·ligent no estarà disponible.</translation>
     </message>
@@ -7254,7 +7288,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_search::SearchHelper</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="224"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhelper.cpp" line="232"/>
         <source>Path</source>
         <translation>Camí</translation>
     </message>
@@ -7277,85 +7311,85 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Podeu activar manualment %1 a Configuració — Avançat — Cerca.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="341"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="344"/>
         <source>Enable</source>
         <translation>Habilita</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="346"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="349"/>
         <source>Some index updates failed. Search results may be incomplete.</source>
         <translation>Algunes actualitzacions de l&apos;índex han fallat. És possible que els resultats de la cerca estiguin incomplets.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="347"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="371"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="350"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="374"/>
         <source>Retry update</source>
         <translation>Reintenta l&apos;actualització</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="348"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="354"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="360"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="366"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="372"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="377"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="351"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="357"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="363"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="369"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="375"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="380"/>
         <source>View</source>
         <translation>Visualització</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="355"/>
         <source>Running on battery. Some content indexing has been paused.</source>
         <translation>Es funciona amb bateria. La indexació d&apos;alguns continguts s&apos;ha pausat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="353"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="359"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="365"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="356"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="362"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="368"/>
         <source>Continue updating</source>
         <translation>Continua l&apos;actualització</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="358"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="361"/>
         <source>Power save mode is enabled. Some content indexing has been paused.</source>
         <translation>El mode d&apos;estalvi d&apos;energia està activat. S&apos;ha pausat la indexació d&apos;alguns continguts.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="364"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="367"/>
         <source>Waiting for the device to become idle. Some content indexing has been paused.</source>
         <translation>S&apos;espera que el dispositiu quedi inactiu. S&apos;ha pausat la indexació d&apos;alguns continguts.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="370"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="373"/>
         <source>Waiting for index service upgrade. Some content indexing has been paused.</source>
         <translation>S&apos;espera l&apos;actualització del servei d&apos;indexació. La indexació d&apos;alguns continguts s&apos;ha pausat.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="397"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="400"/>
         <source>Index is being updated. File name and file content search are available.</source>
         <translation>S&apos;actualitza l&apos;índex. Estan disponibles la cerca per nom de fitxer i la cerca per contingut del fitxer.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="399"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="402"/>
         <source>Index is being updated. File name and image content search are available.</source>
         <translation>S&apos;actualitza l&apos;índex. Estan disponibles la cerca per nom de fitxer i la cerca pel contingut de la imatge.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="400"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="403"/>
         <source>Index is being updated. File name search is available.</source>
         <translation>S&apos;actualitza l&apos;índex. La cerca per nom de fitxer està disponible.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="520"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="523"/>
         <source>&quot;Full-Text search&quot;</source>
         <translation>Cerca de text complet</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="522"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="525"/>
         <source>&quot;Image-Content search&quot;</source>
         <translation>Cerca per contingut de la imatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="525"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="528"/>
         <source>&quot;Smart search&quot;</source>
         <translation>Cerca intel·ligent</translation>
     </message>
@@ -7507,7 +7541,7 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_tag::TagWidgetPrivate</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="40"/>
+        <location filename="../src/plugins/common/dfmplugin-tag/widgets/private/tagwidget_p.cpp" line="43"/>
         <source>Tag</source>
         <translation>Etiqueta</translation>
     </message>
@@ -7772,34 +7806,34 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="315"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="345"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="413"/>
         <source>Unpin tab</source>
         <translation>Desenganxa la pestanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="317"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="347"/>
         <source>Pin tab</source>
         <translation>Enganxa la pestanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="322"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="378"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="413"/>
         <source>Close tab</source>
         <translation>Tanca la pestanya</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="325"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="355"/>
         <source>Close other tabs</source>
         <translation>Tanca altres pestanyes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="326"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="356"/>
         <source>Close tabs to the left</source>
         <translation>Tanca les pestanyes de l&apos;esquerra</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="329"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="359"/>
         <source>Close tabs to the right</source>
         <translation>Tanca les pestanyes de la dreta</translation>
     </message>
@@ -7807,23 +7841,23 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="618"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="720"/>
         <source>Directory not found</source>
         <translation>No s&apos;ha trobat el directori.</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="619"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="721"/>
         <source>Directory not found. Remove it?</source>
         <translation>No s&apos;ha trobat el directori. El voleu eliminar?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="722"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="620"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="722"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>Elimina</translation>
@@ -7852,7 +7886,7 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Alçada de la llista</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="175"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewoptionswidget.cpp" line="177"/>
         <source>Display preview</source>
         <translation>Visualització prèvia</translation>
     </message>
@@ -8121,49 +8155,49 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_utils::OpenWithDialog</name>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="273"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="277"/>
         <source>Open with</source>
         <translation>Obre amb...</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="297"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="303"/>
         <source>Add other programs</source>
         <translation>Afegiu-hi altres programes</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="300"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="306"/>
         <source>Set as default</source>
         <translation>Estableix com a predeterminat</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="304"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="310"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>Cancel·la</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="307"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="313"/>
         <source>Confirm</source>
         <comment>button</comment>
         <translation>Confirmeu-ho</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="316"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="322"/>
         <source>Recommended Applications</source>
         <translation>Aplicacions recomanades</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="318"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="324"/>
         <source>Other Applications</source>
         <translation>Altres aplicacions</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="479"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="485"/>
         <source>Open File</source>
         <translation>Obre el fitxer</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="481"/>
+        <location filename="../src/plugins/common/dfmplugin-utils/openwith/openwithdialog.cpp" line="487"/>
         <source>Applications (*.desktop);;All files (*)</source>
         <translation>Aplicacions (*.desktop);;Tots els fitxers (*)</translation>
     </message>
@@ -9347,12 +9381,12 @@ Si us plau, esborreu els fitxers d&apos;aquest directori i intenteu tornar a des
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2486"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2494"/>
         <source>Mount error</source>
         <translation>Error de muntatge</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2487"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2495"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>Les credencials d&apos;inici de sessió del servidor no són vàlides. Desinstal·leu&lt;-lo i torneu-lo a muntar.</translation>
     </message>
