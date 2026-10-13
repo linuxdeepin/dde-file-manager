@@ -147,6 +147,13 @@ static bool blackListFilter(const QString &name)
         if (isAdmin && !blackNames.contains("dfmplugin-smbbrowser"))
             blackNames << "dfmplugin-smbbrowser";
 #endif
+        /*
+         * NOTE: the tag plugin relies on user-level services/databases that are
+         * unavailable in admin (root) mode, causing tags to silently fail.
+         * Remove the tag plugin in admin mode to avoid a broken UX.
+         */
+        if (isAdmin && !blackNames.contains("dfmplugin-tag"))
+            blackNames << "dfmplugin-tag";
         static QStringList disableNames { DConfigManager::instance()->value(kPluginsDConfName, "filemanager.disablelist").toStringList() };
         std::copy_if(disableNames.begin(), disableNames.end(), std::back_inserter(blackNames),
                      [](const QString &name) {
