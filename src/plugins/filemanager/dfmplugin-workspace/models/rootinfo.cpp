@@ -433,7 +433,7 @@ FileInfoPointer RootInfoWorker::fileInfo(const QUrl &url)
 {
     if (stopped)
         return nullptr;
-    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoSync);
+    FileInfoPointer info = InfoFactory::create<FileInfo>(url, Global::CreateFileInfoType::kCreateFileInfoAuto);
     if (!info.isNull())
         return info;
 
