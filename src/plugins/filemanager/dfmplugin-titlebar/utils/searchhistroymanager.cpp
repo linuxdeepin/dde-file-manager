@@ -33,6 +33,24 @@ QString trimTrailingSlashes(const QString &input)
     }
     return trimmed;
 }
+
+// Normalize a network address to "protocol://ip" form by stripping
+// query parameters (e.g. "?charset=utf8") and trailing path slashes.
+// This ensures consistent cache keys regardless of whether the address
+// came from getCurrentUrlString() (e.g. "ftp://1.2.3.4?charset=utf8")
+// or from the mount result signal (which may have "/" inserted before
+// the query by url.setPath("/") in handleJumpToPressed, producing
+// "ftp://1.2.3.4/?charset=utf8").
+QString normalizeAddress(const QString &input)
+{
+    QString addr = input;
+    int queryPos = addr.indexOf('?');
+    if (queryPos >= 0)
+        addr = addr.left(queryPos);
+    while (addr.endsWith("/"))
+        addr.chop(1);
+    return addr;
+}
 }
 
 SearchHistroyManager *SearchHistroyManager::instance()
@@ -53,7 +71,7 @@ SearchHistroyManager::SearchHistroyManager(QObject *parent)
 
 void SearchHistroyManager::handleMountNetworkResult(const QString &address, bool ret, dfmmount::DeviceError err, const QString &)
 {
-    auto addr = trimTrailingSlashes(address);
+    auto addr = normalizeAddress(address);
     if (!isValidMount(addr, ret, err)) {
         fmWarning() << "Network mount failed or invalid for address:" << addr << "error:" << static_cast<int>(err);
         // Remove the address only if it was in the cache, as before.
@@ -123,7 +141,7 @@ void SearchHistroyManager::writeIntoSearchHistory(QString keyword)
 
 void SearchHistroyManager::addIPHistoryCache(const QString &address)
 {
-    auto addr = trimTrailingSlashes(address);
+    auto addr = normalizeAddress(address);
     if (ipAddressCache.contains(addr))
         return;
 
