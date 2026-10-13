@@ -29,8 +29,9 @@ void SideBar::initialize()
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowOpened, this, &SideBar::onWindowOpened);
     connect(&FMWindowsIns, &FileManagerWindowsManager::windowClosed, this, &SideBar::onWindowClosed);
     connect(DConfigManager::instance(), &DConfigManager::valueChanged, this, &SideBar::onConfigChanged);
-    connect(Application::genericSetting(), &Settings::valueEdited,
-            SideBarEventReceiver::instance(), &SideBarEventReceiver::handleAliasSettingChanged);
+    connect(Application::genericSetting(), &Settings::valueChanged,
+            SideBarEventReceiver::instance(), &SideBarEventReceiver::handleAliasSettingChanged
+        , Qt::QueuedConnection);
 
     SideBarEventReceiver::instance()->bindEvents();
 }
