@@ -233,7 +233,7 @@ void ConnectToServerDialog::initServerDatas()
     QStringList hosts;
     const QStringList expectedSchemes { "smb", "ftp", "sftp" };
 
-    auto processUrl = [this, &hosts, &expectedSchemes](const QString &urlStr, CharsetOption opt = kDefault, bool prepend = true) {
+    auto processUrl = [this, &hosts, &expectedSchemes](const QString &urlStr, CharsetOption opt = kDefault) {
         QString processedUrl = urlStr.toLower().replace("/?", "?");
         while (processedUrl.endsWith("/")) {
             processedUrl.chop(1);
@@ -247,13 +247,8 @@ void ConnectToServerDialog::initServerDatas()
 
         processedUrl = processedUrl.section('?', 0, 0);
         if (!hosts.contains(processedUrl)) {
-            if (prepend) {
-                hosts.prepend(processedUrl);
-                serverComboBox->insertItem(0, processedUrl, opt);
-            } else {
-                hosts.append(processedUrl);
-                serverComboBox->addItem(processedUrl, opt);
-            }
+            hosts.prepend(processedUrl);
+            serverComboBox->insertItem(0, processedUrl, opt);
         }
     };
 
@@ -281,14 +276,14 @@ void ConnectToServerDialog::initServerDatas()
                     opt = kUtf8;
             }
         }
-        processUrl(urlStr, opt, false);
+        processUrl(urlStr, opt);
     }
 
     completer->setModel(new QStringListModel(hosts, completer));
     if (!hosts.isEmpty()) {
         // Add a clear-history action as the last item (customData true)
         serverComboBox->addItem(tr("Clear History"), true);
-        onCurrentInputChanged(hosts.first());
+        onCurrentInputChanged(hosts.last());
     } else {
         // No history: show a disabled placeholder so dropdown shows a hint
         serverComboBox->addItem(tr("No history"));
