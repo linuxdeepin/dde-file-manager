@@ -1297,6 +1297,13 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
             return true;
     }
 
+    const QString &newName = newUrl.fileName();
+    if (newName == "." || newName == "..") {
+        dialogManager->showErrorDialog(
+            tr("The name \"%1\" is reserved by the system and cannot be used.").arg(newName), "");
+        return false;
+    }
+
     // async fileinfo need wait file quer over todo:: liyigang
     FileInfoPointer toFileInfo = InfoFactory::create<FileInfo>(newUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
     if (toFileInfo && toFileInfo->exists()) {
