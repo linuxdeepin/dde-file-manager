@@ -101,7 +101,7 @@ protected:
 std::once_flag UT_TaskWidgetPms::flag;
 
 // PMS:117471 进度显示回退：后到的较小进度不得把已显示的进度拉回去
-// （探测用例：当前源码的防回退钳制已被后续重构移除，若复现则记录缺陷并跳过）
+// 修复 (8759d130): onShowTaskProccess 中增加防回退钳制 value = max(value, preValue)
 TEST_F(UT_TaskWidgetPms, BUG117471_ProcessValueNeverRegresses)
 {
     // Arrange — drive the progress to 100% first.
@@ -112,14 +112,8 @@ TEST_F(UT_TaskWidgetPms, BUG117471_ProcessValueNeverRegresses)
     widget->onShowTaskProccess(makeProgressInfo(50, 100));
 
     // Assert — the shown progress must never go backwards.
-    if (widget->progress->value() < 100) {
-        GTEST_SKIP() << "known source defect: onShowTaskProccess regressed the "
-                        "displayed progress from 100 to "
-                     << widget->progress->value()
-                     << "; the anti-regress clamp (value = max(value, preValue)) "
-                        "introduced by fix of PMS:117471 was removed by later "
-                        "refactors";
-    }
+    // The anti-regression clamp (value = max(value, preValue)) ensures
+    // the progress stays at 100 even when a smaller value arrives.
     EXPECT_EQ(widget->progress->value(), 100);
 }
 
