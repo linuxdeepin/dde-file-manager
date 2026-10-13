@@ -31,6 +31,7 @@
 #    include <DSizeMode>
 #endif
 
+#include <algorithm>
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QIcon>
@@ -252,10 +253,15 @@ void ConnectToServerDialog::initServerDatas()
         }
     };
 
-    const QList<IPHistroyData> ipHistoryData = SearchHistroyManager::instance()->getIPHistory();
+    QList<IPHistroyData> ipHistoryData = SearchHistroyManager::instance()->getIPHistory();
+    std::sort(ipHistoryData.begin(), ipHistoryData.end(), [](const IPHistroyData &a, const IPHistroyData &b) {
+        return a.lastAccessed < b.lastAccessed;
+    });
+    QString mostRecentUrl;
     for (const auto &ipData : ipHistoryData) {
         if (ipData.isRecentlyAccessed()) {
             const QString ipStr = QString("%1://%2").arg(ipData.accessedType, ipData.ipData);
+            mostRecentUrl = ipStr.toLower();
             processUrl(ipStr);
         }
     }
@@ -283,7 +289,13 @@ void ConnectToServerDialog::initServerDatas()
     if (!hosts.isEmpty()) {
         // Add a clear-history action as the last item (customData true)
         serverComboBox->addItem(tr("Clear History"), true);
-        onCurrentInputChanged(hosts.last());
+        const QString &restoreUrl = mostRecentUrl.isEmpty() ? hosts.first() : mostRecentUrl;
+        const int restoreIndex = serverComboBox->findText(restoreUrl);
+        if (restoreIndex >= 0)
+            serverComboBox->setCurrentIndex(restoreIndex);
+        // initServerDatas runs before initConnect, so the currentTextChanged
+        // signal is not wired yet; split scheme/IP explicitly.
+        onCurrentInputChanged(restoreUrl);
     } else {
         // No history: show a disabled placeholder so dropdown shows a hint
         serverComboBox->addItem(tr("No history"));
