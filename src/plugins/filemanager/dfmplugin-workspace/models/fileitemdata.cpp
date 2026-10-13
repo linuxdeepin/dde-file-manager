@@ -8,7 +8,6 @@
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
-#include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/utils/thumbnail/thumbnailfactory.h>
 #include <dfm-base/utils/highlightprovider.h>
 
@@ -162,12 +161,10 @@ QVariant FileItemData::data(int role) const
     case kItemCreateFileInfoRole:
         assert(qApp->thread() == QThread::currentThread());
         if (info.isNull()) {
-            bool isCacheMiss = false;
-            const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url, &isCacheMiss);
+            const_cast<FileItemData *>(this)->info = InfoFactory::create<FileInfo>(url);
             if (info) {
                 info->customData(kItemFileRefreshIcon);
-                if (isCacheMiss || ProtocolUtils::isRemoteFile(url))
-                    info->updateAttributes();
+                info->updateAttributes();
             } else {
                 fmWarning() << "Failed to create FileInfo for URL:" << url.toString();
             }
