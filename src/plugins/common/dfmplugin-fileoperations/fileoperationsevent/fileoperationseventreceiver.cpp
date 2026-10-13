@@ -1288,6 +1288,12 @@ bool FileOperationsEventReceiver::handleOperationRenameFile(const quint64 window
     bool ok = false;
     QString error;
 
+    const QString &newName = newUrl.fileName();
+    if (newName == "." || newName == "..") {
+        dialogManager->showMessageDialog(tr("The name \"%1\" is reserved by the system, please use another name.").arg(newName));
+        return false;
+    }
+
     bool isSymLink { DFMIO::DFileInfo(oldUrl).attribute(DFMIO::DFileInfo::AttributeID::kStandardIsSymlink).toBool() };
     if (FileUtils::isDesktopFile(oldUrl) && !isSymLink)
         return doRenameDesktopFile(windowId, oldUrl, newUrl, flags);
