@@ -1,0 +1,71 @@
+diff --git a/src/dfm-base/file/local/localfilehandler.cpp b/src/dfm-base/file/local/localfilehandler.cpp
+index 31a69b4622..fe9a403009 100644
+--- a/src/dfm-base/file/local/localfilehandler.cpp
++++ b/src/dfm-base/file/local/localfilehandler.cpp
+@@ -1078,6 +1078,12 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
+         const QUrl &fileUrl = url;
+         const QString &filePath = fileUrl.path();
+ 
++        // Network check: avoid blocking GIO calls when network is down
++        if (NetworkUtils::instance()->checkFtpOrSmbBusy(fileUrl)) {
++            DialogManager::instance()->showUnableToVistDir(fileUrl.path());
++            continue;
++        }
++
+         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
+         if (!fileInfo) {
+             qCWarning(logDFMBase) << "Failed to create FileInfo for:" << fileUrl;
+@@ -1336,6 +1342,14 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
+ 
+     QFileInfo fileInfo(currentPath);
+     while (fileInfo.isSymLink()) {
++        // Use symLinkTarget (non-blocking readlink) to check network availability
++        // before canonicalFilePath() which may block on network I/O
++        QString symLinkTarget = fileInfo.symLinkTarget();
++        if (!symLinkTarget.isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(symLinkTarget))) {
++            DialogManager::instance()->showUnableToVistDir(symLinkTarget);
++            return std::nullopt;
++        }
++
+         // Get absolute path of link target (automatically handles relative paths)
+         QString canonicalPath = fileInfo.canonicalFilePath();
+ 
+diff --git a/src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp b/src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp
+index 8f9f15908c..daf0cd76c2 100644
+--- a/src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp
++++ b/src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp
+@@ -321,6 +321,12 @@ bool FileView::setRootUrl(const QUrl &url)
+ 
+     const QUrl &fileUrl = parseSelectedUrl(url);
+ 
++    // Network check: avoid blocking GIO directory enumeration when network is down
++    if (NetworkUtils::instance()->checkFtpOrSmbBusy(fileUrl)) {
++        DialogManager::instance()->showUnableToVistDir(fileUrl.path());
++        return false;
++    }
++
+     const QModelIndex &index = model()->setRootUrl(fileUrl);
+     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
+             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
+@@ -2824,9 +2830,18 @@ void FileView::openIndex(const QModelIndex &index)
+ 
+     QUrl fileUrl = info->urlOf(UrlInfoType::kUrl);
+     fmInfo() << "Opening file:" << fileUrl;
+-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(fileUrl)) {
+-        fmWarning() << "Cannot open file: FTP or SMB is busy for URL:" << fileUrl;
+-        DialogManager::instance()->showUnableToVistDir(fileUrl.path());
++    // For symlinks, check the resolved target path instead of the local link path
++    QUrl checkUrl = fileUrl;
++    QFileInfo checkInfo(fileUrl.toLocalFile());
++    if (checkInfo.isSymLink()) {
++        QString target = checkInfo.symLinkTarget();
++        if (!target.isEmpty())
++            checkUrl = QUrl::fromLocalFile(target);
++    }
++
++    if (NetworkUtils::instance()->checkFtpOrSmbBusy(checkUrl)) {
++        fmWarning() << "Cannot open file: FTP or SMB is busy for URL:" << checkUrl;
++        DialogManager::instance()->showUnableToVistDir(checkUrl.path());
+         return;
+     }
+ 
