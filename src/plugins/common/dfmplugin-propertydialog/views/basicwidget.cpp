@@ -285,6 +285,7 @@ void BasicWidget::basicFill(const QUrl &url)
                                : fileModified->setVisible(false);
     }
     if (fileSize && fileSize->RightValue().isEmpty()) {
+        info->updateAttributes();
         fSize = info->size();
         fCount = 1;
         fileSize->setRightValue(FileUtils::formatSize(fSize), Qt::ElideNone, Qt::AlignVCenter, true);
