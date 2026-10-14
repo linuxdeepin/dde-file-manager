@@ -148,5 +148,180 @@ suites:
     action: assert_element
     selector:
       name: PasswordEdit_2
+- id: suite_dialogs_005_s1
+  name: 网络挂载认证对话框用户输入
+  description: 验证 AnonymousButton/RegisterButton/UsernameLineEdit/DomainLineEdit 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: AnonymousButton
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: RegisterButton
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: UsernameLineEdit
+      role: text
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: DomainLineEdit
+      role: text
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AnonymousButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RegisterButton
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: UsernameLineEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DomainLineEdit
+      role: text
+- id: suite_dialogs_006_s1
+  name: 挂载密码对话框密码选项
+  description: 验证 PasswordCheckBox/PasswordButtonGroup/PasswordEdit_2 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordCheckBox
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordEdit_2
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordEdit_2
+- id: suite_dialogs_007_s1
+  name: 文件冲突确认对话框
+  description: 验证 ChkboxNotAskAgain/BtnCoexist/BtnSkip/BtnReplace/BtnDelete 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnCoexist
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnSkip
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnReplace
+      role: push button
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnDelete
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ChkboxNotAskAgain
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnCoexist
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+- id: suite_dialogs_008_s1
+  name: 批量操作进度对话框
+  description: 验证 TaskListWidget/BtnStop/BtnPause 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: TaskListWidget
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnPause
+    do: click
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnStop
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: TaskListWidget
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnStop
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnPause
+- id: suite_dialogs_009_s1
+  name: SMB 共享密码设置对话框
+  description: 验证 PasswordLineEdit/PasswordCheckBox 交互
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordLineEdit
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: PasswordCheckBox
+      role: check box
+    do: click
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordLineEdit
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PasswordCheckBox
+      role: check box
 teardown:
 - action: session_stop
