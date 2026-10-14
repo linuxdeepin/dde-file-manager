@@ -299,6 +299,7 @@ bool LocalFileHandler::openFiles(const QList<QUrl> &fileUrls)
     QList<QUrl> pathList;
     bool result = false;
     d->invalidPath.clear();
+    d->networkUnreachablePath.clear();
 
     // Process each file
     for (const QUrl &fileUrl : fileUrls) {
@@ -1078,6 +1079,12 @@ bool LocalFileHandlerPrivate::doOpenFiles(const QList<QUrl> &urls, const QString
         const QUrl &fileUrl = url;
         const QString &filePath = fileUrl.path();
 
+        // Network check: avoid blocking GIO calls when network is down
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(fileUrl)) {
+            networkUnreachablePath << fileUrl;
+            continue;
+        }
+
         FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(fileUrl);
         if (!fileInfo) {
             qCWarning(logDFMBase) << "Failed to create FileInfo for:" << fileUrl;
@@ -1264,6 +1271,11 @@ QList<QUrl> LocalFileHandler::getInvalidPath()
     return d->invalidPath;
 }
 
+QList<QUrl> LocalFileHandler::getNetworkUnreachablePath()
+{
+    return d->networkUnreachablePath;
+}
+
 GlobalEventType LocalFileHandler::lastEventType()
 {
     return d->lastEvent;
@@ -1336,6 +1348,14 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
 
     QFileInfo fileInfo(currentPath);
     while (fileInfo.isSymLink()) {
+        // Use symLinkTarget (non-blocking readlink) to check network availability
+        // before canonicalFilePath() which may block on network I/O
+        QString symLinkTarget = fileInfo.symLinkTarget();
+        if (!symLinkTarget.isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(symLinkTarget))) {
+            networkUnreachablePath << url;
+            return std::nullopt;
+        }
+
         // Get absolute path of link target (automatically handles relative paths)
         QString canonicalPath = fileInfo.canonicalFilePath();
 
@@ -1364,7 +1384,7 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
 
         // Network file check
         if (NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(canonicalPath))) {
-            DialogManager::instance()->showUnableToVistDir(canonicalPath);
+            networkUnreachablePath << url;
             return std::nullopt;
         }
 

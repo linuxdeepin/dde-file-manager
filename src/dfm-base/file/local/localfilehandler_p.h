@@ -84,6 +84,7 @@ public:
     DFMIOError lastError;
     GlobalEventType lastEvent = GlobalEventType::kUnknowType;
     QList<QUrl> invalidPath;   // BUG:259909,记录无效链接路径
+    QList<QUrl> networkUnreachablePath;   // 网络不可达路径，与 invalidPath 分离避免误删
 };
 
 }
