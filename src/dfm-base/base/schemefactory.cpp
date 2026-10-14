@@ -4,6 +4,7 @@
 
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/fileutils.h>
 
 namespace dfmbase {
 
@@ -22,11 +23,9 @@ QString InfoFactory::scheme(const QUrl &url)
     if (ProtocolUtils::isRemoteFile(url))
         return Global::Scheme::kAsyncFile;
 
-    dfmio::DFileInfo dinfo(url);
-    if (!dinfo.attribute(dfmio::DFileInfo::AttributeID::kStandardIsSymlink).toBool())
-        return scheme;
-
-    auto targetPath = dinfo.attribute(dfmio::DFileInfo::AttributeID::kStandardSymlinkTarget).toString();
+    // Use readlink (non-blocking) to check symlink target; creating DFileInfo triggers
+    // statx via g_file_query_info which follows the symlink and blocks on stale SMB mounts
+    auto targetPath = FileUtils::symlinkTarget(url);
     if (!targetPath.isEmpty() && ProtocolUtils::isRemoteFile(QUrl::fromLocalFile(targetPath)))
         scheme = Global::Scheme::kAsyncFile;
 
