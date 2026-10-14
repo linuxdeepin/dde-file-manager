@@ -1177,6 +1177,15 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
 
     DFMBASE_NAMESPACE::LocalFileHandler fileHandler;
     bool ok = fileHandler.openFiles(urls);
+
+    // Show unable-to-visit dialog for network-unreachable paths (separate from invalidPath
+    // to avoid lastEvent state pollution causing network paths to be deleted/trashed)
+    const QList<QUrl> &unreachablePaths = fileHandler.getNetworkUnreachablePath();
+    if (!unreachablePaths.isEmpty()) {
+        for (const QUrl &path : unreachablePaths)
+            DialogManagerInstance->showUnableToVistDir(path.path());
+    }
+
     if (!ok) {
         DFMBASE_NAMESPACE::GlobalEventType lastEvent = fileHandler.lastEventType();
         if (lastEvent != DFMBASE_NAMESPACE::GlobalEventType::kUnknowType) {
@@ -1184,6 +1193,9 @@ bool FileOperationsEventReceiver::handleOperationOpenFiles(const quint64 windowI
                 dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kDeleteFiles, windowId, fileHandler.getInvalidPath(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
             else if (lastEvent == DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash)
                 dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kMoveToTrash, windowId, fileHandler.getInvalidPath(), AbstractJobHandler::JobFlag::kNoHint, nullptr);
+        } else if (!unreachablePaths.isEmpty()) {
+            // Network-unreachable paths: dialog already shown above
+            ok = true;
         } else {
             // deal open file with custom dialog
             dpfSlotChannel->push("dfmplugin_utils", "slot_OpenWith_ShowDialog", windowId, urls);
