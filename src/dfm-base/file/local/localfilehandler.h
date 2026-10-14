@@ -55,6 +55,7 @@ public:
     QString errorString();
     DFMIOErrorCode errorCode();
     QList<QUrl> getInvalidPath();
+    QList<QUrl> getNetworkUnreachablePath();
 
 private:
     QScopedPointer<LocalFileHandlerPrivate> d;

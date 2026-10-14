@@ -308,6 +308,17 @@ bool FileView::setRootUrl(const QUrl &url)
 
     const QUrl &fileUrl = parseSelectedUrl(url);
 
+    // Network check: avoid blocking GIO directory enumeration when network is down
+    // Resolve symlink target to catch local symlinks pointing to SMB mounts
+    QUrl checkUrl = fileUrl;
+    QString target = FileUtils::resolveSymlink(fileUrl);
+    if (!target.isEmpty())
+        checkUrl = QUrl::fromLocalFile(target);
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(checkUrl)) {
+        DialogManager::instance()->showUnableToVistDir(checkUrl.path());
+        return false;
+    }
+
     const QModelIndex &index = model()->setRootUrl(fileUrl);
     d->itemsExpandable = DConfigManager::instance()->value(kViewDConfName, kTreeViewEnable, true).toBool()
             && WorkspaceHelper::instance()->isViewModeSupported(rootUrl().scheme(), DFMGLOBAL_NAMESPACE::ViewMode::kTreeMode);
@@ -2878,9 +2889,17 @@ void FileView::openIndex(const QModelIndex &index)
 
     QUrl fileUrl = info->urlOf(UrlInfoType::kUrl);
     fmInfo() << "Opening file:" << fileUrl;
-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(fileUrl)) {
-        fmWarning() << "Cannot open file: FTP or SMB is busy for URL:" << fileUrl;
-        DialogManager::instance()->showUnableToVistDir(fileUrl.path());
+    // For symlinks, check the resolved target path instead of the local link path
+    QUrl checkUrl = fileUrl;
+    if (info->isAttributes(OptInfoType::kIsSymLink)) {
+        QString target = info->pathOf(PathInfoType::kSymLinkTarget);
+        if (!target.isEmpty())
+            checkUrl = QUrl::fromLocalFile(target);
+    }
+
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(checkUrl)) {
+        fmWarning() << "Cannot open file: FTP or SMB is busy for URL:" << checkUrl;
+        DialogManager::instance()->showUnableToVistDir(checkUrl.path());
         return;
     }
 
