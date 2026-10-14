@@ -1348,9 +1348,9 @@ std::optional<QUrl> LocalFileHandlerPrivate::resolveSymlink(const QUrl &url)
 
     QFileInfo fileInfo(currentPath);
     while (fileInfo.isSymLink()) {
-        // Use symLinkTarget (non-blocking readlink) to check network availability
-        // before canonicalFilePath() which may block on network I/O
-        QString symLinkTarget = fileInfo.symLinkTarget();
+        // Use readlink (non-blocking) to get symlink target; QFileInfo::symLinkTarget()
+        // internally calls statx which follows the symlink and blocks on stale SMB mounts
+        QString symLinkTarget = FileUtils::symlinkTarget(QUrl::fromLocalFile(fileInfo.filePath()));
         if (!symLinkTarget.isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(symLinkTarget))) {
             networkUnreachablePath << url;
             return std::nullopt;
