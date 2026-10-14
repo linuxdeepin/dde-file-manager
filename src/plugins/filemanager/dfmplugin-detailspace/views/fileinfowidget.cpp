@@ -281,6 +281,7 @@ void FileInfoWidget::fillFieldValues(const QUrl &url)
         m_fileSize->setVisible(false);   // Default hidden
         if (!info->isAttributes(OptInfoType::kIsDir) && m_fileSize->RightValue().isEmpty()) {
             m_fileSize->setVisible(true);
+            info->updateAttributes();
             m_fileSize->setRightValue(FileUtils::formatSize(info->size()),
                                       Qt::ElideNone, Qt::AlignLeft, true);
             m_fileSize->adjustHeight();

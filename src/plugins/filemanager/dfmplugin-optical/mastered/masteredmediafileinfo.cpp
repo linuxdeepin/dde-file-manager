@@ -129,22 +129,26 @@ QVariantHash MasteredMediaFileInfo::extraProperties() const
 void MasteredMediaFileInfo::refresh()
 {
     ProxyFileInfo::refresh();
-    if (proxy) {
+
+    QUrl oldBackerUrl = d->backerUrl;
+    d->backupInfo(urlOf(UrlInfoType::kUrl));
+    if (proxy && d->backerUrl == oldBackerUrl) {
         return;
     }
 
-    d->backupInfo(urlOf(UrlInfoType::kUrl));
     setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
 void MasteredMediaFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> &types)
 {
     ProxyFileInfo::updateAttributes(types);
-    if (proxy) {
+
+    QUrl oldBackerUrl = d->backerUrl;
+    d->backupInfo(urlOf(UrlInfoType::kUrl));
+    if (proxy && d->backerUrl == oldBackerUrl) {
         return;
     }
 
-    d->backupInfo(urlOf(UrlInfoType::kUrl));
     setProxy(InfoFactory::create<FileInfo>(d->backerUrl));
 }
 
