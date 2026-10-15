@@ -167,6 +167,8 @@ QString BluetoothTransDialog::humanizeObexErrMsg(const QString &msg)
                || msg.contains("Connection refused")
                || msg.contains("Connection reset by peer")) {
         return TXT_ERROR_REASON;
+    } else if (msg.contains("no such file or directory")) {
+        return TXT_FILE_NOEXIST;
     } else {   // ...TO BE CONTINUE
         fmWarning() << "bluetooth error message: " << msg;
         return "";
@@ -339,9 +341,10 @@ void BluetoothTransDialog::initConn()
     connect(BluetoothManagerInstance, &BluetoothManager::transferFailed, this, [this](const QString &sessionPath, const QString &filePath, const QString &errMsg) {
         if (sessionPath != currSessionPath)
             return;
+        failedErrorMsgLabel->setText(humanizeObexErrMsg(errMsg));
         stackedWidget->setCurrentIndex(kFailedPage);
         BluetoothManagerInstance->cancelTransfer(sessionPath);
-        fmDebug() << "filePath: " << filePath
+        fmWarning() << "filePath: " << filePath
                   << "\nerrorMsg: " << errMsg;
     });
 
