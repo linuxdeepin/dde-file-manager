@@ -6229,7 +6229,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1305"/>
         <source>The name &quot;%1&quot; is reserved by the system, please use another name.</source>
-        <translation type="unfinished"/>
+        <translation>O nome &quot;%1&quot; é reservado pelo sistema. Escolha outro nome.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1485"/>
