@@ -3524,7 +3524,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>Error occurred while mounting device</source>
-        <translation type="unfinished"/>
+        <translation>Wystąpił błąd podczas montowania urządzenia</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="458"/>
@@ -6228,7 +6228,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1305"/>
         <source>The name &quot;%1&quot; is reserved by the system, please use another name.</source>
-        <translation type="unfinished"/>
+        <translation>Nazwa &quot;%1&quot; jest już zajęta przez system. Użyj innej nazwy.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1485"/>
