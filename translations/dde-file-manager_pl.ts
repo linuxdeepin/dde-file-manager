@@ -7773,12 +7773,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="169"/>
         <source>back</source>
-        <translation>wróć</translation>
+        <translation>poprzednia</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/navwidget.cpp" line="174"/>
         <source>forward</source>
-        <translation>dalej</translation>
+        <translation>następna</translation>
     </message>
 </context>
 <context>
