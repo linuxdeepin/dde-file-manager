@@ -167,7 +167,7 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
                      && err.code <= DeviceError::kGIOErrorMessageTooLarge))
             errMsg = err.message;
         else
-            errMsg = tr("Authentication failed");
+            errMsg = tr("Error occurred while mounting device");
 
         if (err.message.contains("Operation not permitted.")) {   // TASK(222725)
             errMsg = tr("The device has been blocked and you do not have permission to access it. "
