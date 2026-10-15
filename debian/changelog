@@ -1,3 +1,22 @@
+dde-file-manager (6.5.177) unstable; urgency=medium
+
+  * fix: preserve isCacheMiss optimization for local while fixing SFTP display
+  * fix: disable tag plugin in admin mode
+  * fix: remove isCacheMiss optimization to fix stale file attributes
+  * fix: prevent UI freeze on network-down SMB symlink access
+  * fix: refresh proxy and cached info before reading attributes
+  * fix: restore generic mount error message for unhandled error codes
+  * fix: use readlink for symlink target to avoid statx block
+  * fix: show correct error when BT source file deleted
+  * fix: reject reserved names "." and ".." on file rename
+  * fix: restore most recently accessed server
+  * fix: update sidebar alias on setting change
+  * chore: update translations
+  * fix: update translation files with line number corrections and missing translations
+  * chore: update translations
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Thu, 15 Oct 2026 16:51:50 +0800
+
 dde-file-manager (6.5.176) unstable; urgency=medium
 
   * fix: prevent crash from dangling widget pointers in helpers
