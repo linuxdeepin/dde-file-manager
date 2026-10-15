@@ -584,3 +584,84 @@ TEST_F(UT_BluetoothTransDialog, Constructor_GeneratesUniqueToken)
     delete dialog1;
     delete dialog2;
 }
+
+/**
+ * @brief BUG-379499: humanizeObexErrMsg returns dfmplugin_utils::BluetoothTransDialog::tr("File doesn't exist") for "no such file or directory"
+ */
+TEST_F(UT_BluetoothTransDialog, BUG379499_humanizeObexErrMsg_FileNoExist_ReturnsCorrectMessage)
+{
+    __DBG_STUB_INVOKE__
+
+    QStringList urls = { "/tmp/file1.txt" };
+    BluetoothTransDialog *dialog = new BluetoothTransDialog(urls);
+
+    QString result = dialog->humanizeObexErrMsg("no such file or directory");
+
+    EXPECT_EQ(result, dfmplugin_utils::BluetoothTransDialog::tr("File doesn't exist"));
+
+    delete dialog;
+}
+
+/**
+ * @brief BUG-379499: humanizeObexErrMsg matches "no such file or directory" as substring
+ */
+TEST_F(UT_BluetoothTransDialog, BUG379499_humanizeObexErrMsg_FileNoExistSubstring_ReturnsCorrectMessage)
+{
+    __DBG_STUB_INVOKE__
+
+    QStringList urls = { "/tmp/file1.txt" };
+    BluetoothTransDialog *dialog = new BluetoothTransDialog(urls);
+
+    QString result = dialog->humanizeObexErrMsg("Error: open /tmp/test.txt: no such file or directory");
+
+    EXPECT_EQ(result, dfmplugin_utils::BluetoothTransDialog::tr("File doesn't exist"));
+
+    delete dialog;
+}
+
+/**
+ * @brief BUG-379499: transferFailed signal updates failedErrorMsgLabel with humanized message
+ */
+TEST_F(UT_BluetoothTransDialog, BUG379499_transferFailed_UpdatesFailedErrorMsgLabel)
+{
+    __DBG_STUB_INVOKE__
+
+    stub.set_lamda(ADDR(BluetoothManager, cancelTransfer), [](BluetoothManager *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    QStringList urls = { "/tmp/file1.txt" };
+    BluetoothTransDialog *dialog = new BluetoothTransDialog(urls);
+
+    dialog->currSessionPath = "/org/bluez/session/test1";
+    emit BluetoothManagerInstance->transferFailed("/org/bluez/session/test1", "/tmp/file1.txt", "no such file or directory");
+
+    EXPECT_EQ(dialog->failedErrorMsgLabel->text(), dfmplugin_utils::BluetoothTransDialog::tr("File doesn't exist"));
+
+    delete dialog;
+}
+
+/**
+ * @brief BUG-379499: transferFailed with non-matching sessionPath does not update label
+ */
+TEST_F(UT_BluetoothTransDialog, BUG379499_transferFailed_WrongSessionPath_NoUpdate)
+{
+    __DBG_STUB_INVOKE__
+
+    stub.set_lamda(ADDR(BluetoothManager, cancelTransfer), [](BluetoothManager *, const QString &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    QStringList urls = { "/tmp/file1.txt" };
+    BluetoothTransDialog *dialog = new BluetoothTransDialog(urls);
+
+    dialog->currSessionPath = "/org/bluez/session/expected";
+    QString originalText = dialog->failedErrorMsgLabel->text();
+    emit BluetoothManagerInstance->transferFailed("/org/bluez/session/different", "/tmp/file1.txt", "no such file or directory");
+
+    EXPECT_EQ(dialog->failedErrorMsgLabel->text(), originalText);
+
+    delete dialog;
+}

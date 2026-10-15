@@ -981,3 +981,55 @@ TEST_F(DialogManagerTest, BUG133251_AuthenticationFailedSilentOnUnmount)
     dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err);
     EXPECT_EQ(callCount, 0);
 }
+
+// PMS: BUG-378677 挂载失败兜底提示恢复为通用错误信息：
+// 未显式处理的 UDISKS 错误码（如 kUDisksErrorFailed/400）不再误显"Authentication failed"，
+// 应显示"Error occurred while mounting device"
+TEST_F(DialogManagerTest, BUG378677_UnhandledErrorCode_ShowsGenericMountError)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    QString capturedTitle;
+    QString capturedMessage;
+    int callCount = 0;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &title, const QString &message) {
+                       __DBG_STUB_INVOKE__
+                       capturedTitle = title;
+                       capturedMessage = message;
+                       ++callCount;
+                   });
+
+    DFMMOUNT::OperationErrorInfo err;
+    err.code = DFMMOUNT::DeviceError::kUDisksErrorFailed;
+    err.message = "mount failed unexpectedly";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+
+    EXPECT_EQ(callCount, 1);
+    EXPECT_EQ(capturedTitle, DialogManager::tr("Mount failed"));
+    EXPECT_EQ(capturedMessage, DialogManager::tr("Error occurred while mounting device"));
+}
+
+// PMS: BUG-378677 确保兜底分支不再返回"Authentication failed"：
+// 使用另一个未处理错误码验证同样走通用提示
+TEST_F(DialogManagerTest, BUG378677_UnhandledErrorCode_DoesNotShowAuthenticationFailed)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    QString capturedMessage;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &, const QString &message) {
+                       __DBG_STUB_INVOKE__
+                       capturedMessage = message;
+                   });
+
+    DFMMOUNT::OperationErrorInfo err;
+    err.code = static_cast<DFMMOUNT::DeviceError>(9999);
+    err.message = "unknown error";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+
+    EXPECT_NE(capturedMessage, DialogManager::tr("Authentication failed"));
+    EXPECT_EQ(capturedMessage, DialogManager::tr("Error occurred while mounting device"));
+}
