@@ -17,12 +17,12 @@
 <context>
     <name>Application</name>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="346"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="353"/>
         <source>File Manager</source>
         <translation>ຕົວຈັດການໄຟລ໌</translation>
     </message>
     <message>
-        <location filename="../src/apps/dde-file-manager/main.cpp" line="351"/>
+        <location filename="../src/apps/dde-file-manager/main.cpp" line="358"/>
         <source>File Manager is a powerful and easy-to-use file management tool, featured with searching, copying, trash, compression/decompression, file property and other useful functions.</source>
         <translation>ຕົວຈັດການໄຟລ໌ແມ່ນເຄື່ອງມືຈັດການໄຟລ໌ທີ່ມີພະລັງງານແລະໃຊ້ງານງ່າຍ, ມີຟັງຊັນຄົ້ນຫາ, ສຳເນົາ, ຖັງຂີ້ເຫຍື້ອ, ບີບອັດ/ເປີດບີບອັດ, ຄຸນສົມບັດໄຟລ໌ ແລະຟັງຊັນອື່ນໆທີ່ມີປະໂຫຍດ.</translation>
     </message>
@@ -459,7 +459,7 @@ Enter user and password for %1</source>
         <translation>%1 ធាតុ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1355"/>
+        <location filename="../src/dfm-base/file/local/localfilehandler.cpp" line="1375"/>
         <source>Unable to find the original file</source>
         <translation>មិនអាចស្វែងរកឯកសារបង្កើតបានទេ</translation>
     </message>
@@ -484,7 +484,7 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/dfm-base/interfaces/fileinfo.cpp" line="438"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="193"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-optical/mastered/masteredmediafileinfo.cpp" line="197"/>
         <source>Folder is empty</source>
         <translation>ថតុប្រជែលទើបទឺំទួច</translation>
     </message>
@@ -3376,11 +3376,6 @@ You need to upgrade this vault to continue using it.</source>
         <translation>ไม่สามารถสร้าง mountpoint ได้: ชื่อไฟล์ยาวเกินไป</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
-        <source>Authentication failed</source>
-        <translation>การตรวจสอบความถูกต้องล้มเหลว</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="165"/>
         <source>No such file or directory</source>
         <translation>ไม่มีไฟล์หรือไดเรกทอรี</translation>
@@ -3526,6 +3521,11 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="163"/>
         <source>Permission denied</source>
         <translation></translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
+        <source>Error occurred while mounting device</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="458"/>
@@ -6227,18 +6227,23 @@ You need to upgrade this vault to continue using it.</source>
         <translation>ບໍ່ສາມາດສ້າງເຄື່ອງມືໄດເລີ່ມຕົ້ນໄດ້</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1467"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1305"/>
+        <source>The name &quot;%1&quot; is reserved by the system, please use another name.</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1485"/>
         <source>Failed to create the file</source>
         <translation>ບໍ່ສາມາດສ້າງໄຟລ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1573"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1591"/>
         <source>link file error</source>
         <translation>ຂໍ້ຜິດພາດໄຟລລິ່ງ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1615"/>
-        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1624"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1633"/>
+        <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1642"/>
         <source>Failed to modify file permissions</source>
         <translation>ບໍ່ສາມາດແກ້ໄຂການອະນຸຍາດໄຟລ</translation>
     </message>
@@ -6577,13 +6582,13 @@ You need to upgrade this vault to continue using it.</source>
         <translation>ເວລາປະຕິບັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="381"/>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="487"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="382"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="488"/>
         <source>%1 item</source>
         <translation>%1 ລາຍການ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="487"/>
+        <location filename="../src/plugins/common/dfmplugin-propertydialog/views/basicwidget.cpp" line="488"/>
         <source>%1 items</source>
         <translation>%1 ລາຍການ</translation>
     </message>
@@ -7559,70 +7564,70 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::ConnectToServerDialog</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="72"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="73"/>
         <source>Connect to Server</source>
         <translation>ភ្នំងទៅមេសាស់</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="285"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="291"/>
         <source>Clear History</source>
         <translation>ລិст ളුපිරියා ൊන්න</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="226"/>
         <source>Unfavorite</source>
         <translation>ທີ່ມັກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="140"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="289"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="141"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="301"/>
         <source>No history</source>
         <translation>ບໍ່ມີປະຫວັດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="308"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="320"/>
         <source>Error</source>
         <translation>ຜິດພາດ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="309"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="321"/>
         <source>Unable to favorite illegitimate url!</source>
         <translation>ບໍ່ສາມາດທີ່ມັກລາຍການທີ່ບໍ່ຖືກຕ້ອງ!</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="366"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="378"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="367"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="379"/>
         <source>Connect</source>
         <comment>button</comment>
         <translation>ເຊື່ອມຕໍ່</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="415"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="427"/>
         <source>Charset Encoding</source>
         <translation>ການເຂົ້າລະຫັດຊຸດຕົວອັກສອນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="422"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="434"/>
         <source>Default</source>
         <translation>ຄ່າເລີ່ມຕົ້ນ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="483"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="495"/>
         <source>My Favorites</source>
         <translation>ລາຍການທີ່ມັກຂອງຂ້ອຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="470"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="482"/>
         <source>No favorites yet</source>
         <translation>ຍັງບໍ່ມີລາຍການທີ່ມັກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="225"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/dialogs/connecttoserverdialog.cpp" line="226"/>
         <source>Favorite</source>
         <translation>ທີ່ມັກ</translation>
     </message>
@@ -7808,34 +7813,34 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TabBar</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="345"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="413"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="357"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="425"/>
         <source>Unpin tab</source>
         <translation>ຍົກເລີກການປັນແທັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="347"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="359"/>
         <source>Pin tab</source>
         <translation>ປັນແທັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="352"/>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="413"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="364"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="425"/>
         <source>Close tab</source>
         <translation>ປິດແທັບ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="355"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="367"/>
         <source>Close other tabs</source>
         <translation>ປິດແທັບອື່ນໆ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="356"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="368"/>
         <source>Close tabs to the left</source>
         <translation>ປິດແທັບທາງຊ້າຍ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="359"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/tabbar.cpp" line="371"/>
         <source>Close tabs to the right</source>
         <translation>ປິດແທັບທາງຂວາ</translation>
     </message>
@@ -7843,23 +7848,23 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_titlebar::TitleBarWidget</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="720"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="751"/>
         <source>Directory not found</source>
         <translation>ບໍ່ພົບໂຟນເດີດັ່ງກ່າວ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="721"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="752"/>
         <source>Directory not found. Remove it?</source>
         <translation>ບໍ່ພົບໂຟນເດີດັ່ງກ່າວ, ຕ້ອງການລຶບອອກບໍ?</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="722"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="753"/>
         <source>Cancel</source>
         <comment>button</comment>
         <translation>ຍົກເລີກ</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="722"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/titlebarwidget.cpp" line="753"/>
         <source>Remove</source>
         <comment>button</comment>
         <translation>ລູກອົບຮົມ</translation>
@@ -9383,12 +9388,12 @@ You need to upgrade this vault to continue using it.</source>
 <context>
     <name>dfmplugin_workspace::FileView</name>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2494"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2505"/>
         <source>Mount error</source>
         <translation>ຜິດພາດໃນການເມາທ໌</translation>
     </message>
     <message>
-        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2495"/>
+        <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileview.cpp" line="2506"/>
         <source>Server login credentials are invalid. Please uninstall and remount</source>
         <translation>ຂໍ້ມູນການເຂົ້າລະບົບເຊີບເວີບໍ່ຖືກຕ້ອງ. ກະລຸນາຖອນການຕິດຕັ້ງແລະເມາທ໌ໃໝ່</translation>
     </message>
