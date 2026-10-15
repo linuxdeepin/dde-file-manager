@@ -3136,11 +3136,6 @@ You need to upgrade this vault to continue using it.</source>
         <translation>ھۆججەت نامى بەك ئۇزۇن، يۈكلىگىلى بولمىدى</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
-        <source>Authentication failed</source>
-        <translation type="unfinished"></translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
         <source>No such file or directory</source>
         <translation>ھۆججەت ياكى مۇندەرىجىنى تاپالمىدى</translation>
@@ -3286,6 +3281,11 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
         <source>Permission denied</source>
         <translation type="unfinished">ھوقۇقىڭىز يەتمىدى</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
+        <source>Error occurred while mounting device</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>

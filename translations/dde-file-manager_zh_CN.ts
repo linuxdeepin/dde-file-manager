@@ -3137,11 +3137,6 @@ You need to upgrade this vault to continue using it.</source>
         <translation>文件名过长，无法挂载</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
-        <source>Authentication failed</source>
-        <translation>认证失败</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
         <source>No such file or directory</source>
         <translation>没有找到文件或者目录</translation>
@@ -3287,6 +3282,11 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
         <source>Permission denied</source>
         <translation>权限不足</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
+        <source>Error occurred while mounting device</source>
+        <translation>挂载设备时发生错误</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>
