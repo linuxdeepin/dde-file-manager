@@ -1,6 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!DOCTYPE TS>
-<TS version="2.1" language="ar">
+<?xml version="1.0" ?><!DOCTYPE TS><TS version="2.1" language="ar">
 <context>
     <name>AccessControlDBus</name>
     <message>
@@ -2105,12 +2103,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="606"/>
         <source>This directory can be written by other users, please choose a safer directory!</source>
-        <translation>هذا الدليل يمكن كتابته بواسطة مستخدمين آخرين، يرجى اختيار دليل أكثر أماناً</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="612"/>
         <source>The export path directory is not writable, please choose a writable directory!</source>
-        <translation type="unfinished"></translation>
+        <translation>مجلد مسار التصدير غير قابل للكتابة، يرجى اختيار مجلد قابل للكتابة!</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="620"/>
@@ -3530,7 +3528,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="171"/>
         <source>Error occurred while mounting device</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="458"/>
@@ -5311,7 +5309,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/chgpassphrasedialog.cpp" line="195"/>
         <source>Validate with recovery key</source>
-        <translation>التحقق من مفتاح الاسترداد&#xa0;</translation>
+        <translation>التحقق من مفتاح الاسترداد </translation>
     </message>
 </context>
 <context>
@@ -5347,7 +5345,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="61"/>
         <source>Validate with recovery key</source>
-        <translation>التحقق من مفتاح الاسترداد&#xa0;</translation>
+        <translation>التحقق من مفتاح الاسترداد </translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/decryptparamsinputdialog.cpp" line="85"/>
@@ -6236,7 +6234,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1305"/>
         <source>The name &quot;%1&quot; is reserved by the system, please use another name.</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperationsevent/fileoperationseventreceiver.cpp" line="1485"/>
@@ -7042,17 +7040,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="23"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished">جارٍ بناء الفهرس، تمت فهرسة %1 ملف</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="24"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished">جارٍ بناء الفهرس، تمت فهرسة %1/%2 عنصر</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="25"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished">فشل تحديث الفهرس، يرجى</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="26"/>
@@ -7073,27 +7071,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished">جارٍ استخدام البطارية، تم إيقاف تحديث الفهرس مؤقتاً</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="30"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished">وضع توفير الطاقة مفعّل، تم إيقاف تحديث الفهرس مؤقتاً</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="31"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished">بانتظار خمول الجهاز لمتابعة التحديث</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="32"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished">بانتظار ترقية خدمة الفهرس</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="33"/>
         <source>Continue updating</source>
-        <translation type="unfinished">متابعة التحديث</translation>
+        <translation type="unfinished"/>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="63"/>
