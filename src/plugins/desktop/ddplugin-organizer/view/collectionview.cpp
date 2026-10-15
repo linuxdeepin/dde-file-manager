@@ -1141,6 +1141,9 @@ void CollectionViewPrivate::updateColumnCount(const int &viewWidth, const int &i
         columnCount = 1;
     } else {
         cellWidth = itemWidth;
+        int remaining = availableWidth - columnCount * itemWidth;
+        viewMargins.setLeft(remaining / 2);
+        viewMargins.setRight(remaining - remaining / 2);
     }
 
     if (Q_UNLIKELY(cellWidth < 1)) {
