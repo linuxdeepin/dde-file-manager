@@ -3135,11 +3135,6 @@ You need to upgrade this vault to continue using it.</source>
         <translation>Cannot create the mountpoint: the file name is too long</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
-        <source>Authentication failed</source>
-        <translation>Authentication failed</translation>
-    </message>
-    <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="164"/>
         <source>No such file or directory</source>
         <translation>No such file or directory</translation>
@@ -3285,6 +3280,11 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="162"/>
         <source>Permission denied</source>
         <translation type="unfinished">Permission denied</translation>
+    </message>
+    <message>
+        <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="170"/>
+        <source>Error occurred while mounting device</source>
+        <translation type="unfinished"></translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="436"/>
