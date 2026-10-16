@@ -1,0 +1,973 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: search_suite
+app: dde-file-manager
+module: search
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_search_001_s1
+  name: 智能语义搜索-中文数字转换
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 25年十二月创建的表格
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_002_s1
+  name: 智能语义搜索-时间槽两种时间叠加
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 去年12月创建的表格
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_003_s1
+  name: 智能语义搜索-隐藏文件扩展名搜索
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 音乐目录里的pdf
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_004_s1
+  name: 智能语义搜索-类型槽音频
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: mp3的歌
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_005_s1
+  name: 智能语义搜索-类型槽视频wmv
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 文档目录下的wmv视频
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_006_s1
+  name: 智能语义搜索-类型槽照片gif
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 文档目录下的gif图片
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_007_s1
+  name: 智能语义搜索-时间槽错误日期格式
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 1月33日创建的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_008_s1
+  name: 智能语义搜索-时间槽本年精确月份
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 5月创建的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_009_s1
+  name: 智能语义搜索-时间槽精确年份
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 2025年创建的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_010_s1
+  name: 智能语义搜索-时间槽绝对日期
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 2026年5月1日创建的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_011_s1
+  name: 智能语义搜索-时间槽本月
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 本月创建的excel表格
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_012_s1
+  name: 智能语义搜索-时间槽上周
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 上周创建的pdf
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_013_s1
+  name: 智能语义搜索-时间槽本周
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 本周创建的Word文档
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_014_s1
+  name: 智能语义搜索-位置槽微信
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 今天微信接受的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_015_s1
+  name: 智能语义搜索-位置槽图片目录
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 图片目录的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_016_s1
+  name: 智能语义搜索-位置槽文档目录
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 我的文档里的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_017_s1
+  name: 智能语义搜索-位置槽下载目录
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 今天下载文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_018_s1
+  name: 智能语义搜索-属性槽动态大小
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 今天创建的超过1G的文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_019_s1
+  name: 智能语义搜索-类型槽安装包
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 昨天创建的安装包
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+- id: suite_search_020_s1
+  name: 智能语义搜索-类型槽源文件
+  description: ''
+  steps:
+  - step_type: action
+    action: session_start
+    command: dde-file-manager
+    wait: 3.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+l
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: /home
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  - step_type: action
+    action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - step_type: action
+    action: keyboard_type_text
+    text: 昨天创建的源文件
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: enter
+    wait: 2.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ItemViewParent
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddressBar
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: StatusBar
+      role: status bar
+teardown:
+- action: session_stop
