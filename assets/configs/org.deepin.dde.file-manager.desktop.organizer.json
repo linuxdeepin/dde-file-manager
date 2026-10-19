@@ -58,7 +58,7 @@
                         "visibility": "public"
                 },
                 "organizeCategories": {
-                        "value": ["kDocument", "kPicture", "kVideo", "kMusic", "kFolder"],
+                        "value": ["kApp", "kDocument", "kPicture", "kVideo", "kMusic", "kFolder"],
                         "serial": 0,
                         "flags": [],
                         "name": "Organize categories",
