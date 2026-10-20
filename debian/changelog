@@ -1,3 +1,10 @@
+dde-file-manager (6.5.178) unstable; urgency=medium
+
+  * fix: resolve icon jitter when resizing desktop collection
+  * fix: use CSPRNG for vault password generation
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 20 Oct 2026 15:50:27 +0800
+
 dde-file-manager (6.5.177) unstable; urgency=medium
 
   * fix: preserve isCacheMiss optimization for local while fixing SFTP display
