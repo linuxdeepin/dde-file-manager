@@ -20,7 +20,7 @@
 #include <QPainter>
 #include <QStandardPaths>
 #include <QStorageInfo>
-#include <QTime>
+#include <QRandomGenerator>
 #include <QtGlobal>
 #include <QProcess>
 #include <QtConcurrent>
@@ -740,23 +740,21 @@ QString OperatorCenter::autoGeneratePassword(int length)
         return "";
     }
 
-    ::srand(uint(QTime(0, 0, 0).secsTo(QTime::currentTime())));
-
     QString strPassword("");
 
     QString strNum("0123456789");
-    strPassword += strNum.at(::rand() % 10);
+    strPassword += strNum.at(QRandomGenerator::system()->bounded(strNum.length()));
 
     QString strSpecialChar("`~!@#$%^&*");
-    strPassword += strSpecialChar.at(::rand() % 10);
+    strPassword += strSpecialChar.at(QRandomGenerator::system()->bounded(strSpecialChar.length()));
 
     QString strABC("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ");
-    strPassword += strABC.at(::rand() % 10);
+    strPassword += strABC.at(QRandomGenerator::system()->bounded(strABC.length()));
 
     QString strAllChar = strNum + strSpecialChar + strABC;
     int nCount = length - 3;
     for (int i = 0; i < nCount; ++i) {
-        strPassword += strAllChar.at(::rand() % 52);
+        strPassword += strAllChar.at(QRandomGenerator::system()->bounded(strAllChar.length()));
     }
 
     fmDebug() << "Vault: Generated password success";
