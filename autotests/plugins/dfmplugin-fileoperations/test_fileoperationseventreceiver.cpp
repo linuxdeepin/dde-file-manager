@@ -20,6 +20,7 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/applaunchutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/clipboard.h>
@@ -579,6 +580,17 @@ TEST_F(TestFileOperationsEventReceiver, HandleOperationOpenInTerminal_LocalFiles
         return "/usr/bin/konsole";
     });
 
+    // Simulate AM1 unavailable: executeCommand fails and falls back to QProcess::startDetached
+    stub.set_lamda(static_cast<bool (AppLaunchUtils::*)(const QString &, const QStringList &,
+                                                        const QString &, const QString &,
+                                                        const QString &, const QStringMap &)>(
+                       &AppLaunchUtils::executeCommand),
+                   [](AppLaunchUtils *, const QString &, const QStringList &, const QString &,
+                      const QString &, const QString &, const QStringMap &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       return false;
+                   });
+
     stub.set_lamda(static_cast<bool (*)(const QString &, const QStringList &, const QString &, qint64 *)>(&QProcess::startDetached),
                    [](const QString &, const QStringList &, const QString &, qint64 *) -> bool {
                        __DBG_STUB_INVOKE__
@@ -591,6 +603,47 @@ TEST_F(TestFileOperationsEventReceiver, HandleOperationOpenInTerminal_LocalFiles
     bool result = receiver->handleOperationOpenInTerminal(0, urls);
 
     EXPECT_TRUE(result);
+}
+
+// AM1 available: terminal is opened via AM1 executeCommand, the QProcess fallback is never taken
+TEST_F(TestFileOperationsEventReceiver, HandleOperationOpenInTerminal_AM1Success)
+{
+    stub.set_lamda(&LocalFileHandler::defaultTerminalPath, [](LocalFileHandler *) -> QString {
+        __DBG_STUB_INVOKE__
+        return "/usr/bin/konsole";
+    });
+
+    QUrl testDir = createTestDir("terminal_dir_am1");
+
+    stub.set_lamda(static_cast<bool (AppLaunchUtils::*)(const QString &, const QStringList &,
+                                                        const QString &, const QString &,
+                                                        const QString &, const QStringMap &)>(
+                       &AppLaunchUtils::executeCommand),
+                   [&testDir](AppLaunchUtils *, const QString &program, const QStringList &args,
+                              const QString &type, const QString &workdir,
+                              const QString &, const QStringMap &) -> bool {
+                       __DBG_STUB_INVOKE__
+                       EXPECT_EQ(program, QStringLiteral("/usr/bin/konsole"));
+                       EXPECT_EQ(type, QStringLiteral("shortcut"));
+                       EXPECT_EQ(args.count(), 0);
+                       EXPECT_EQ(workdir, testDir.toLocalFile());
+                       return true;
+                   });
+
+    bool fallbackCalled = false;
+    stub.set_lamda(static_cast<bool (*)(const QString &, const QStringList &, const QString &, qint64 *)>(&QProcess::startDetached),
+                   [&fallbackCalled](const QString &, const QStringList &, const QString &, qint64 *) -> bool {
+                       __DBG_STUB_INVOKE__
+                       fallbackCalled = true;
+                       return true;
+                   });
+
+    QList<QUrl> urls = { testDir };
+
+    bool result = receiver->handleOperationOpenInTerminal(0, urls);
+
+    EXPECT_TRUE(result);
+    EXPECT_FALSE(fallbackCalled);
 }
 
 // ========== Hide Files Tests ==========
