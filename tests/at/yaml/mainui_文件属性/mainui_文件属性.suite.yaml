@@ -1,0 +1,82 @@
+name: 文件属性_suite
+app: dde-file-manager
+description: 文件属性模块 AT-SPI 用例
+module: 文件属性
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_mainui_文件属性_001
+  name: 属性复制-属性字段最长支持4行，超出从中间隐藏字符
+  description: '来源用例编号: 1807433'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件属性_002
+  name: 属性复制-快捷键全选
+  description: '来源用例编号: 1807431'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+a
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件属性_003
+  name: 属性复制-右键菜单全选
+  description: '来源用例编号: 1807423'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_mainui_文件属性_004
+  name: 在计算机视图页面，操作快捷键 Ctrl+I查看属性
+  description: '来源用例编号: 1807393'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+i
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+i
+    wait: 1.0
+  - action: element_action
+    ref: 数据盘
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+i
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

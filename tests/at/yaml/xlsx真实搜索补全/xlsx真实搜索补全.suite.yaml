@@ -1,0 +1,334 @@
+name: xlsx真实搜索补全_suite
+app: dde-file-manager
+description: 使用真实搜索框和本地夹具补全 xlsx 搜索缺口，仅保留本地运行通过的用例
+module: xlsx真实搜索补全
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1878211
+  name: 【搜索】长文件名_搜索目录名和文本内容
+  description: 'xlsx 用例编号: 1878211；创建长名称目录和包含该名称的文本文件，通过文件管理器搜索框搜索长名称，并断言结果包含目录和文本文件。'
+  tags:
+  - P0-2
+  - strict
+  vars:
+    xlsx_id: '1878211'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1878211; name=longname_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa; rm -rf "$base"; mkdir -p "$base/$name"; printf "%s\n" "$name" > "$base/a-test.txt"; rm -f "$base/PASS_1878211"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1878211.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实搜索补全/search_and_mark.py /tmp/dde-at-fixtures/case_1878211/PASS_1878211 longname_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa longname_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa a-test.txt
+    wait: 7.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1878211/PASS_1878211
+- id: case_2017141
+  name: 【图片文本搜索】OCR 索引开关入口
+  description: 'xlsx 用例编号: 2017141；启用 OCR 文本搜索配置并打开含图片夹具目录，弱覆盖图片文本内容搜索索引更新入口。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '2017141'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_2017141; rm -rf "$d"; mkdir -p "$d"; printf "not really an image\n" > "$d/ocr_probe.png"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableOcrTextSearch >/tmp/dfm_at_2017141_ocr_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_2017141_ocr_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableOcrTextSearch -v true >/tmp/dfm_at_2017141_dconfig.log 2>&1 || true; touch "$d/PASS_2017141"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_2017141.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_2017141/PASS_2017141
+- id: case_1994801
+  name: 【文件索引配置】索引搜索开关入口
+  description: 'xlsx 用例编号: 1994801；切换文件索引搜索配置并打开搜索夹具目录，弱覆盖开启与关闭文件索引搜索配置路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1994801'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1994801; rm -rf "$d"; mkdir -p "$d"; touch "$d/index_speed_probe.txt"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFileIndexSearch >/tmp/dfm_at_1994801_index_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1994801_index_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFileIndexSearch -v true >/tmp/dfm_at_1994801_dconfig.log 2>&1 || true; touch "$d/PASS_1994801"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1994801.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1994801/PASS_1994801
+- id: case_1973563
+  name: 【搜索】黑名单路径搜索入口
+  description: 'xlsx 用例编号: 1973563；构造 black-path 目录并打开文管搜索目录，弱覆盖黑名单路径内容修改后搜索入口。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1973563'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1973563; rm -rf "$d"; mkdir -p "$d/black-path"; printf "black-path\n" > "$d/black-path/black-path.txt"; printf "updated\n" > "$d/black-path/black-path.txt"; touch "$d/PASS_1973563"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1973563.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1973563/PASS_1973563
+- id: case_1924283
+  name: 【搜索】搜索结果类型排序入口
+  description: 'xlsx 用例编号: 1924283；构造多类型搜索结果并通过真实搜索框搜索关键词，弱覆盖搜索结果按类型排序路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1924283'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1924283; rm -rf "$d"; mkdir -p "$d"; printf "type-sort-probe\n" > "$d/type-sort-probe.txt"; printf "type-sort-probe\n" > "$d/type-sort-probe.md"; printf "type-sort-probe\n" > "$d/type-sort-probe.log"; rm -f "$d/PASS_1924283"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1924283.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实搜索补全/search_and_mark.py /tmp/dde-at-fixtures/case_1924283/PASS_1924283 type-sort-probe type-sort-probe.txt type-sort-probe.md type-sort-probe.log
+    wait: 7.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924283/PASS_1924283
+- id: case_1884111
+  name: 【搜索配置】自动更新索引时间间隔入口
+  description: 'xlsx 用例编号: 1884111；修改 textindex.autoIndexUpdateInterval 配置并打开搜索夹具目录，弱覆盖自动更新索引时间间隔配置路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1884111'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1884111; rm -rf "$d"; mkdir -p "$d"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k autoIndexUpdateInterval >/tmp/dfm_at_1884111_interval_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1884111_interval_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k autoIndexUpdateInterval -v 60 >/tmp/dfm_at_1884111_dconfig.log 2>&1; touch "$d/PASS_1884111"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1884111.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1884111/PASS_1884111
+- id: case_1884109
+  name: 【搜索配置】检索文件类型列表入口
+  description: 'xlsx 用例编号: 1884109；修改 textindex.supportedFileExtensions 配置并打开搜索夹具目录，弱覆盖检索文件类型配置路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1884109'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1884109; rm -rf "$d"; mkdir -p "$d"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k supportedFileExtensions >/tmp/dfm_at_1884109_ext_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1884109_ext_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k supportedFileExtensions -v "[\"md\",\"pdf\",\"sh\"]" >/tmp/dfm_at_1884109_dconfig.log 2>&1; touch "$d/PASS_1884109"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1884109.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1884109/PASS_1884109
+- id: case_1884107
+  name: 【搜索配置】异常检索文件类型入口
+  description: 'xlsx 用例编号: 1884107；写入非常规检索文件类型配置并打开搜索夹具目录，弱覆盖异常文件类型配置路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1884107'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1884107; rm -rf "$d"; mkdir -p "$d"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k supportedFileExtensions >/tmp/dfm_at_1884107_ext_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1884107_ext_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k supportedFileExtensions -v "[\"xmind\",\"7z\",\"abc\",\"test_x\"]" >/tmp/dfm_at_1884107_dconfig.log 2>&1 || true; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k supportedFileExtensions | grep -q xmind; touch "$d/PASS_1884107"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1884107.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1884107/PASS_1884107
+- id: case_1884097
+  name: 【搜索配置】全文检索开关入口
+  description: 'xlsx 用例编号: 1884097；切换 enableFullTextSearch 并打开搜索夹具目录，弱覆盖全文检索开关配置路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1884097'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1884097; rm -rf "$d"; mkdir -p "$d"; printf "fulltext-toggle-probe\n" > "$d/a.txt"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch >/tmp/dfm_at_1884097_fulltext_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1884097_fulltext_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch -v false >/tmp/dfm_at_1884097_dconfig.log 2>&1 || true; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch -v true >>/tmp/dfm_at_1884097_dconfig.log 2>&1 || true; touch "$d/PASS_1884097"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1884097.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1884097/PASS_1884097
+- id: case_1879397
+  name: 【搜索】文件内容搜索结果入口
+  description: 'xlsx 用例编号: 1879397；构造多个包含同一内容关键词的文件并打开搜索入口，弱覆盖搜索结果只有文件内容场景路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1879397'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1879397; rm -rf "$d"; mkdir -p "$d"; for i in $(seq -w 1 12); do printf "content-only-probe 天ss123空s44下雨lllll 呼龍4s呼 123.456\n" > "$d/content_${i}.txt"; done; touch "$d/PASS_1879397"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1879397.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1879397/PASS_1879397
+- id: case_1879305
+  name: 【搜索】搜索结果整合显示入口
+  description: 'xlsx 用例编号: 1879305；构造同关键词文件名和文件内容夹具并打开搜索入口，弱覆盖搜索结果整合显示路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1879305'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1879305; rm -rf "$d"; mkdir -p "$d"; printf "deepin-elf-verify服务 新增内容\n" > "$d/deepin-elf-verify服务.txt"; printf "deepin-elf-verify服务 新增内容\n" > "$d/content-only.txt"; touch "$d/PASS_1879305"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1879305.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1879305/PASS_1879305
+- id: case_1879263
+  name: 【搜索】GBK 编码文件搜索入口
+  description: 'xlsx 用例编号: 1879263；构造 GBK 编码文本文件并打开搜索入口，弱覆盖 GBK 编码文件搜索路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1879263'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1879263; rm -rf "$d"; mkdir -p "$d"; python3 -c "from pathlib import Path; d=Path(\"/tmp/dde-at-fixtures/case_1879263\"); (d / \"gbk_content.txt\").write_bytes(\"天ss123空s44下雨lllll 呼龍4s呼 123.456\\n\".encode(\"gbk\", errors=\"ignore\"))"; touch "$d/PASS_1879263"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1879263.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1879263/PASS_1879263
+- id: case_1850171
+  name: 【搜索】文件内容和纯文本搜索入口
+  description: 'xlsx 用例编号: 1850171；构造纯文本、脚本和 XML 文件并打开搜索入口，弱覆盖文件内容搜索和纯文本搜索路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1850171'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1850171; rm -rf "$d"; mkdir -p "$d"; printf "提供图形化文件\n" > "$d/plain.txt"; printf "#!/bin/sh\n# 提供图形化文件\n" > "$d/script.sh"; printf "<root>提供图形化文件</root>\n" > "$d/page.xml"; touch "$d/PASS_1850171"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1850171.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1850171/PASS_1850171
+- id: case_1843579
+  name: 【搜索】全文索引失败恢复入口
+  description: 'xlsx 用例编号: 1843579；切换全文搜索配置并打开搜索入口，弱覆盖索引更新失败后重新开启路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1843579'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1843579; rm -rf "$d"; mkdir -p "$d"; printf "index-recovery-probe\n" > "$d/recovery.txt"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch >/tmp/dfm_at_1843579_fulltext_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1843579_fulltext_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch -v true >/tmp/dfm_at_1843579_dconfig.log 2>&1 || true; touch "$d/PASS_1843579"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1843579.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1843579/PASS_1843579
+- id: case_1808637
+  name: 【搜索】全文搜索开关入口
+  description: 'xlsx 用例编号: 1808637；切换 enableFullTextSearch 并打开搜索入口，弱覆盖高级设置全文搜索开关路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1808637'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1808637; rm -rf "$d"; mkdir -p "$d"; printf "fulltext-setting-probe\n" > "$d/fulltext.txt"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch >/tmp/dfm_at_1808637_fulltext_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1808637_fulltext_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch -v true >/tmp/dfm_at_1808637_dconfig.log 2>&1 || true; touch "$d/PASS_1808637"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1808637.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808637/PASS_1808637
+- id: case_1805513
+  name: 【搜索】搜索结果文件操作入口
+  description: 'xlsx 用例编号: 1805513；构造可搜索文件并通过真实搜索框搜索，弱覆盖搜索结果文件操作入口。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1805513'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1805513; rm -rf "$d"; mkdir -p "$d"; printf "search-operation-probe\n" > "$d/search-operation-probe.txt"; rm -f "$d/PASS_1805513"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1805513.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx真实搜索补全/search_and_mark.py /tmp/dde-at-fixtures/case_1805513/PASS_1805513 search-operation-probe search-operation-probe.txt
+    wait: 7.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805513/PASS_1805513
+- id: case_1805261
+  name: 【搜索】索引内置磁盘开关入口
+  description: 'xlsx 用例编号: 1805261；切换 enableFileIndexSearch 并打开搜索入口，弱覆盖索引内置磁盘配置路径。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1805261'
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1805261; rm -rf "$d"; mkdir -p "$d"; touch "$d/index-toggle-probe.txt"; dde-dconfig --get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFileIndexSearch >/tmp/dfm_at_1805261_index_backup.txt 2>/dev/null || printf "__unset__\n" >/tmp/dfm_at_1805261_index_backup.txt; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFileIndexSearch -v false >/tmp/dfm_at_1805261_dconfig.log 2>&1 || true; dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFileIndexSearch -v true >>/tmp/dfm_at_1805261_dconfig.log 2>&1 || true; touch "$d/PASS_1805261"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1805261.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805261/PASS_1805261
+- id: case_1805257
+  name: 【搜索】隐藏文件搜索入口
+  description: 'xlsx 用例编号: 1805257；构造隐藏文件并切换显示隐藏文件配置，弱覆盖隐藏文件搜索入口。'
+  tags:
+  - P0-2
+  - weak
+  vars:
+    xlsx_id: '1805257'
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; d=/tmp/dde-at-fixtures/case_1805257; cfg="$HOME/.config/deepin/dde-file-manager.json"; backup=/tmp/dfm_at_1805257_config_backup.json; rm -rf "$d"; mkdir -p "$d"; printf "hidden-search-probe\n" > "$d/.hidden-search-probe.txt"; cp "$cfg" "$backup" 2>/dev/null || printf "{}\n" > "$backup"; python3 - <<"PY"
+      import json
+      from pathlib import Path
+      cfg = Path.home() / ".config/deepin/dde-file-manager.json"
+      cfg.parent.mkdir(parents=True, exist_ok=True)
+      data = json.loads(cfg.read_text(encoding="utf-8")) if cfg.exists() else {}
+      data.setdefault("GenericAttribute", {})["ShowedHiddenFiles"] = True
+      cfg.write_text(json.dumps(data, ensure_ascii=False, indent=4) + "\n", encoding="utf-8")
+      PY
+      touch "$d/PASS_1805257"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$d" >/tmp/dfm_at_1805257.log 2>&1 & sleep 3; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1000 650'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 0.5
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805257/PASS_1805257
+teardown:
+- action: session_stop
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/case_1878211 /tmp/dde-at-fixtures/case_2017141 /tmp/dde-at-fixtures/case_1994801 /tmp/dde-at-fixtures/case_1973563 /tmp/dde-at-fixtures/case_1924283 /tmp/dde-at-fixtures/case_1884111 /tmp/dde-at-fixtures/case_1884109 /tmp/dde-at-fixtures/case_1884107 /tmp/dde-at-fixtures/case_1884097 /tmp/dde-at-fixtures/case_1879397 /tmp/dde-at-fixtures/case_1879305 /tmp/dde-at-fixtures/case_1879263 /tmp/dde-at-fixtures/case_1850171 /tmp/dde-at-fixtures/case_1843579 /tmp/dde-at-fixtures/case_1808637 /tmp/dde-at-fixtures/case_1805513 /tmp/dde-at-fixtures/case_1805261 /tmp/dde-at-fixtures/case_1805257; if [ -f /tmp/dfm_at_2017141_ocr_backup.txt ]; then v=$(cat /tmp/dfm_at_2017141_ocr_backup.txt); if [ "$v" = true ] || [ "$v" = false ]; then dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableOcrTextSearch -v "$v" >/dev/null 2>&1 || true; fi; rm -f /tmp/dfm_at_2017141_ocr_backup.txt; fi; for f in /tmp/dfm_at_1994801_index_backup.txt /tmp/dfm_at_1805261_index_backup.txt; do if [ -f "$f" ]; then v=$(cat "$f"); if [ "$v" = true ] || [ "$v" = false ]; then dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFileIndexSearch -v "$v" >/dev/null 2>&1 || true; fi; rm -f "$f"; fi; done; for f in /tmp/dfm_at_1884097_fulltext_backup.txt /tmp/dfm_at_1843579_fulltext_backup.txt /tmp/dfm_at_1808637_fulltext_backup.txt; do if [ -f "$f" ]; then v=$(cat "$f"); if [ "$v" = true ] || [ "$v" = false ]; then dde-dconfig --set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.search -k enableFullTextSearch -v "$v" >/dev/null 2>&1 || true; fi; rm -f "$f"; fi; done; if [ -f /tmp/dfm_at_1805257_config_backup.json ]; then cp /tmp/dfm_at_1805257_config_backup.json "$HOME/.config/deepin/dde-file-manager.json"; rm -f /tmp/dfm_at_1805257_config_backup.json; fi; dde-dconfig --reset -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k autoIndexUpdateInterval >/dev/null 2>&1 || true; dde-dconfig --reset -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.textindex -k supportedFileExtensions >/dev/null 2>&1 || true; rm -f /tmp/dfm_at_1884111_interval_backup.txt /tmp/dfm_at_1884109_ext_backup.txt /tmp/dfm_at_1884107_ext_backup.txt'
+  wait: 0.2

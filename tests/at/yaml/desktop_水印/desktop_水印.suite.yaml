@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 水印_suite
+app: dde-file-manager
+description: 水印模块 AT-SPI 用例
+module: 水印
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites: []

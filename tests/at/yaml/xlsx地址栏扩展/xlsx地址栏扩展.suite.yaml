@@ -1,0 +1,121 @@
+name: xlsx地址栏扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的地址栏路径输入用例
+module: xlsx地址栏扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: dde-file-manager --open-home
+  wait: 5.0
+suites:
+- id: case_1850151
+  name: 绝对路径的搜索
+  description: 'xlsx 用例编号: 1850151
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 点击顶部地址栏
+
+    2. 输入框内输入“trash:///” 回车
+
+    3. 输入框内输入“/home”回车
+
+    预期结果:
+
+    1. 出现输入框，输入框中显示当前绝对路径
+
+    2. 进入回收站
+
+    3. 进入 /home 路径
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1850151'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.5
+  - action: keyboard_type
+    text: trash:///
+    wait: 0.5
+  - action: keyboard_press
+    key: enter
+    wait: 1.5
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.5
+  - action: keyboard_type
+    text: /home
+    wait: 0.5
+  - action: keyboard_press
+    key: enter
+    wait: 1.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1805255
+  name: 【搜索】绝对路径、相对路径搜索
+  description: 'xlsx 用例编号: 1805255
+
+    前置条件: 当前系统存在 /etc/apt、computer:///、~/Downloads 路径
+
+    测试步骤:
+
+    1. 在地址栏中输入绝对路径：/etc/apt，回车
+
+    2. 在地址栏中输入：computer:///，回车
+
+    3. 在地址栏中输入路径：~/Downloads，回车
+
+    预期结果:
+
+    1. 进入 /etc/apt 目录
+
+    2. 进入计算机界面
+
+    3. 进入下载目录
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1805255'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.5
+  - action: keyboard_type
+    text: /etc/apt
+    wait: 0.5
+  - action: keyboard_press
+    key: enter
+    wait: 1.5
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.5
+  - action: keyboard_type
+    text: computer:///
+    wait: 0.5
+  - action: keyboard_press
+    key: enter
+    wait: 1.5
+  - action: keyboard_hot_key
+    key: ctrl+l
+    wait: 0.5
+  - action: keyboard_type
+    text: ~/Downloads
+    wait: 0.5
+  - action: keyboard_press
+    key: enter
+    wait: 1.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

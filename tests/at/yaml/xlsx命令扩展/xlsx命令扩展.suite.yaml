@@ -1,0 +1,33 @@
+name: xlsx命令扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的命令方式扩展用例
+module: xlsx命令扩展
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1805557
+  name: dde-file-manager -p 显示文件属性对话框_-根目录
+  description: 按 xlsx 步骤执行 dde-file-manager -p /，验证文件管理器进程可用
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager -p /
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_1805557_s2
+  name: dde-file-manager -p 显示文件属性对话框_-计算机
+  description: 按 xlsx 步骤执行 dde-file-manager -p computer:///，验证文件管理器进程可用
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager -p computer:///
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
