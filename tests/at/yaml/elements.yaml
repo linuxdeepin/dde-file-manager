@@ -396,3 +396,18 @@ elements:
     name: ToggleModeBtn
   CollectionView:
     name: CollectionView
+  SearchEdit:
+    name: SearchEdit
+    role: text
+  SearchButton:
+    name: SearchButton
+    role: push button
+  AdvancedButton:
+    name: AdvancedButton
+    role: push button
+  AddItemBtn:
+    name: AddItemBtn
+    role: push button
+  DeleteButton:
+    name: DeleteButton
+    role: push button
