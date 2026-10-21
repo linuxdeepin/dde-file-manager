@@ -1,3 +1,61 @@
+dde-file-manager (6.6.7) unstable; urgency=medium
+
+  * fix(propertydialog): fix edit button focus after rename
+  * fix(openwith): adjust list item width and add horizontal spacing
+  * fix: refresh recent visibility in open dialog on config change
+  * chore: remove unused old autotests directory
+  * chore: drop stale references to removed autotests/old dir
+  * fix: show at least two crumb levels in narrow windows
+  * fix: skip hide/show for unchanged windows to prevent flicker
+  * fix: detach selection model before deleting view model
+  * fix: invalidate selection cache on row removal in FileSelectionModel
+  * fix: enable GIF animation preview for FTP remote files
+  * fix(search): gate index hints by search sub-switches
+  * fix: restore on-demand iconName computation for AsyncFileInfo
+  * fix: prevent crash from dangling widget pointers in helpers
+  * fix: avoid sync FileInfo cache poisoning on SFTP paths
+  * fix: preserve isCacheMiss optimization for local while fixing SFTP display
+  * fix: disable tag plugin in admin mode
+  * fix: remove isCacheMiss optimization to fix stale file attributes
+  * fix: prevent UI freeze on network-down SMB symlink access
+  * fix: refresh proxy and cached info before reading attributes
+  * fix: restore generic mount error message for unhandled error codes
+  * fix: use readlink for symlink target to avoid statx block
+  * fix: show correct error when BT source file deleted
+  * fix: resolve icon jitter when resizing desktop collection
+  * fix(organizer): keep organizer text layout valid after monitor hotplug
+  * fix: use built-in file dialog of DFileChooserEdit for vault key file selection
+  * fix(openwith): fix layout margins and elide long app names
+  * fix: show most recent server in connect dialog
+  * fix: reject reserved names "." and ".." on file rename
+  * fix: fix index state race condition and recovery logic
+  * feat(textindex): add filename index service and backlog degradation
+  * perf: optimize vfs event reading with batched recvmmsg
+  * refactor(textindex): move index service to deepin-anything-index
+  * fix: Add DBus service watcher for immediate index service recovery
+  * feat: add DBus service monitoring and failure handling
+  * chore: remove redundant CreateResumeHandler test file
+  * fix: prevent endless refresh in async file info notify
+  * chore: update translations
+  * chore: update translations
+  * feat: enhance terminal opening to use AM1 and improve compatibility
+  * fix: raise settings dialog when already open
+  * fix: update search index retry button label
+  * style: redesign tab bar with rounded visuals
+  * fix: flush tab layout and clip scrolled highlight
+  * fix: request full repaint on task widget hover state change
+  * fix: clarify export directory permission warning
+  * fix: update sidebar alias on setting change
+  * fix: track DTK drag snapshot for tab highlight
+  * fix: restore most recently accessed server
+  * fix: take value after the first '=' when parsing kernel parameters
+  * fix: compare the same port in FileUtils::isSameDevice
+  * fix: prevent task progress from going backward
+  * Revert "fix: show most recent server in connect dialog"
+  * fix: use CSPRNG for vault password generation
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 21 Oct 2026 13:46:31 +0800
+
 dde-file-manager (6.6.6) unstable; urgency=medium
 
   * fix: support MIME type aliases for ISO image recognition
