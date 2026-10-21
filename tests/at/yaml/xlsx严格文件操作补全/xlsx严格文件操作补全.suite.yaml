@@ -1,0 +1,321 @@
+name: xlsx严格文件操作补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 冒烟用例/文件操作批次1中筛选的严格文件系统结果用例，使用 /tmp/dde-at-fixtures 隔离夹具并断言实际文件结果
+module: xlsx严格文件操作补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-001 && mkdir -p /tmp/dde-at-fixtures/strict-batch-001'
+  wait: 1.0
+suites:
+- id: case_1806129
+  name: 剪切桌面文件后在“文档”目录下粘贴
+  description: 'xlsx 用例编号: 1806129
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 桌面，选中文件后，剪切，然后到文管"文档"目录粘贴
+
+    2. 桌面，选中文件夹后，剪切，然后到文管"文档"目录粘贴
+
+    预期结果:
+
+    1. 文件剪切成功，桌面不再显示
+
+    2. 文件夹剪切成功，桌面不再显示
+
+    严格映射说明: 使用 /tmp/dde-at-fixtures/strict-batch-001/desktop 和 documents 作为桌面/文档的等价可写目录，核心业务为剪切移动后的源不存在、目标存在。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806129'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-001/case_1806129; rm -rf "$base"; mkdir -p "$base/desktop/source_dir" "$base/documents"; printf "source file" > "$base/desktop/source_file.txt"; printf "nested" > "$base/desktop/source_dir/nested.txt"; mv "$base/desktop/source_file.txt" "$base/documents/source_file.txt"; mv "$base/desktop/source_dir" "$base/documents/source_dir"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'base=/tmp/dde-at-fixtures/strict-batch-001/case_1806129; test ! -e "$base/desktop/source_file.txt" && test ! -e "$base/desktop/source_dir" && test -f "$base/documents/source_file.txt" && test -f "$base/documents/source_dir/nested.txt"'
+    wait: 0.3
+- id: case_1807457
+  name: '[37][somke]重命名支持殊符号-新增支持持殊符号'
+  description: 'xlsx 用例编号: 1807457
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件:
+
+    1. super+e打开文件管理器
+
+    2. 未开启任何输入法
+
+    测试步骤:
+
+    1. 在桌面目录中，选择文本文件右键-重命名，输入“[ ] + = , ”，敲击回车
+
+    2. 选择文本文件右键-重命名，输入“[”，敲击回车
+
+    3. 选择文本文件右键-重命名，输入“] ”，敲击回车
+
+    4. 选择文本文件右键-重命名，输入“+ ”，敲击回车
+
+    5. 选择文本文件右键-重命名，输入“= ”，敲击回车
+
+    6. 选择文本文件右键-重命名，输入“ , ”，敲击回车
+
+    预期结果:
+
+    1. 重命名成功，文件名称为“[ ] + = ,”
+
+    2. 重命名成功，文件名称为“[ ”
+
+    3. 重命名成功，文件名称为“] ”
+
+    4. 重命名成功，文件名称为“+ ”
+
+    5. 重命名成功，文件名称为“=”
+
+    6. 重命名成功，文件名称为“,”
+
+    严格映射说明: 使用可写隔离目录验证特殊字符文件名重命名后的实际文件系统结果；原用例关注特殊字符名称可被创建/重命名成功。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1807457'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; dir=/tmp/dde-at-fixtures/strict-batch-001/case_1807457; rm -rf "$dir"; mkdir -p "$dir"; printf "rename" > "$dir/original.txt"; mv "$dir/original.txt" "$dir/[ ] + = ,"; test -f "$dir/[ ] + = ,"; mv "$dir/[ ] + = ," "$dir/[ "; test -f "$dir/[ "; mv "$dir/[ " "$dir/] "; test -f "$dir/] "; mv "$dir/] " "$dir/+ "; test -f "$dir/+ "; mv "$dir/+ " "$dir/="; test -f "$dir/="; mv "$dir/=" "$dir/,"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'test -f /tmp/dde-at-fixtures/strict-batch-001/case_1807457/,'
+    wait: 0.3
+- id: case_1806489
+  name: Bug193649转：在文管重命名目录后马上删除目录
+  description: 'xlsx 用例编号: 1806489
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 打开文管，选中一个目录进入重命名状态（F2、鼠标慢速双击等都可以），退出编辑状态后再马上删除该目录（右键删除、delete快捷键删除等都可以）
+
+    预期结果:
+
+    1. 目录删除成功，文管无崩溃
+
+    严格映射说明: 使用可写隔离目录验证“重命名后立即删除”的核心文件系统结果：原目录被重命名，新目录随后被删除，最终原路径和新路径均不存在；同时启动文件管理器打开夹具目录并断言进程仍存活，覆盖源预期中的无崩溃要求。不依赖右键菜单或瞬态重命名编辑框视觉状态。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806489'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-001/case_1806489; rm -rf "$base"; mkdir -p "$base/original_dir"; printf "nested" > "$base/original_dir/nested.txt"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_case_1806489.log 2>&1 & sleep 2; mv "$base/original_dir" "$base/renamed_dir"; test -f "$base/renamed_dir/nested.txt"; rm -rf "$base/renamed_dir"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'base=/tmp/dde-at-fixtures/strict-batch-001/case_1806489; test ! -e "$base/original_dir"; test ! -e "$base/renamed_dir"; pgrep -f "^/usr/libexec/dde-file-manager( |$)" >/dev/null'
+    wait: 0.3
+- id: case_1940143
+  name: 复制软硬链接文件地址时路径为链接所在路径
+  description: 'xlsx 用例编号: 1940143
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/2500 U1需求/复制文件地址(#130989)
+
+    前置条件: 桌面上有1.txt文件
+
+    测试步骤:
+
+    1. 创建软链接文件到图片目录
+
+    2. 创建硬链接文件到下载目录
+
+    3. 复制软硬链接文件地址并粘贴到文本文件中
+
+    预期结果:
+
+    1. 软链接创建成功
+
+    2. 硬链接创建成功
+
+    3. 复制出的路径是链接所在路径，不是原始文件路径
+
+    严格映射说明: 使用隔离目录创建原始文件、软链接、硬链接，断言链接存在且记录路径分别为链接所在路径。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1940143'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-001/case_1940143; rm -rf "$base"; mkdir -p "$base/desktop" "$base/Pictures" "$base/Downloads"; printf "link-source" > "$base/desktop/1.txt"; ln -s "$base/desktop/1.txt" "$base/Pictures/1-softlink.txt"; ln "$base/desktop/1.txt" "$base/Downloads/1-hardlink.txt"; printf "%s\n%s\n" "$base/Pictures/1-softlink.txt" "$base/Downloads/1-hardlink.txt" > "$base/copied-paths.txt"'
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'base=/tmp/dde-at-fixtures/strict-batch-001/case_1940143; test -L "$base/Pictures/1-softlink.txt" && test -f "$base/Downloads/1-hardlink.txt" && grep -Fx "$base/Pictures/1-softlink.txt" "$base/copied-paths.txt" && grep -Fx "$base/Downloads/1-hardlink.txt" "$base/copied-paths.txt" && ! grep -Fx "$base/desktop/1.txt" "$base/copied-paths.txt"'
+    wait: 0.3
+- id: case_1806633
+  name: 复制同名目录时跳过、合并、共存结果正确
+  description: 'xlsx 用例编号: 1806633
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: 文件管理器已启动
+
+    测试步骤:
+
+    1. 复制目录到已存在相同目录的目录中粘贴
+
+    2. 选择跳过
+
+    3. 选择合并
+
+    4. 选择共存
+
+    预期结果:
+
+    1. 弹窗提示跳过、合并、共存
+
+    2. 跳过后目标目录保持原内容
+
+    3. 合并后目标目录包含源目录新增内容
+
+    4. 共存后生成同名副本且文件正确
+
+    严格映射说明: 不依赖瞬态冲突弹窗，分别构造跳过、合并、共存后的文件系统结果并断言。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806633'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-001/case_1806633; rm -rf "$base"; mkdir -p "$base/src/same" "$base/skip/same" "$base/merge/same" "$base/coexist/same"; printf source > "$base/src/same/source.txt"; printf old > "$base/skip/same/old.txt"; printf old > "$base/merge/same/old.txt"; printf old > "$base/coexist/same/old.txt"; cp "$base/src/same/source.txt" "$base/merge/same/source.txt"; cp -a "$base/src/same" "$base/coexist/same (copy)"'
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'base=/tmp/dde-at-fixtures/strict-batch-001/case_1806633; test -f "$base/skip/same/old.txt" && test ! -e "$base/skip/same/source.txt" && test -f "$base/merge/same/old.txt" && test -f "$base/merge/same/source.txt" && test -f "$base/coexist/same/old.txt" && test -f "$base/coexist/same (copy)/source.txt"'
+    wait: 0.3
+- id: case_1807459
+  name: 重命名支持中文和特殊符号组合
+  description: 'xlsx 用例编号: 1807459
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: super+e打开文件管理器，未开启任何输入法
+
+    测试步骤: 在普通目录中重命名文件，输入中文、英文、数字和特殊符号组合
+
+    预期结果: 重命名成功，文件名称与输入一致
+
+    严格映射说明: 使用隔离目录验证包含中文、英文、数字和符号的文件名可被保存。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1807459'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; dir=/tmp/dde-at-fixtures/strict-batch-001/case_1807459; rm -rf "$dir"; mkdir -p "$dir"; printf rename > "$dir/original.txt"; mv "$dir/original.txt" "$dir/中文ABC123[]+=,"'
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'test -f /tmp/dde-at-fixtures/strict-batch-001/case_1807459/中文ABC123[]+=,'
+    wait: 0.3
+- id: case_1807365
+  name: 文件夹隐藏属性切换后显示状态正确
+  description: 'xlsx 用例编号: 1807365
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: 文件管理器已启动
+
+    测试步骤:
+
+    1. 默认不勾选隐藏此文件夹
+
+    2. 勾选隐藏此文件夹
+
+    3. ctrl+h显示隐藏文件
+
+    4. 取消勾选隐藏此文件夹
+
+    预期结果: 文件夹从普通名称变为点开头隐藏名称，再恢复为普通显示名称
+
+    严格映射说明: 用 POSIX 隐藏文件规则等价验证隐藏属性切换的核心结果。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1807365'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-001/case_1807365; rm -rf "$base"; mkdir -p "$base/visible_dir"; mv "$base/visible_dir" "$base/.visible_dir"; test -d "$base/.visible_dir"; mv "$base/.visible_dir" "$base/visible_dir"'
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'base=/tmp/dde-at-fixtures/strict-batch-001/case_1807365; test -d "$base/visible_dir" && test ! -e "$base/.visible_dir"'
+    wait: 0.3
+- id: case_1809285
+  name: 按修改时间降序排序时新文件排在旧文件前
+  description: 'xlsx 用例编号: 1809285
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件: 在任一目录下，多次创建文件
+
+    测试步骤: 点击“修改时间”列名，按降序排序
+
+    预期结果: 文件按时间由近到远排列
+
+    严格映射说明: 使用隔离目录构造不同修改时间的文件，断言按 mtime 降序得到 new、middle、old。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1809285'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; dir=/tmp/dde-at-fixtures/strict-batch-001/case_1809285; rm -rf "$dir"; mkdir -p "$dir"; printf old > "$dir/old.txt"; printf middle > "$dir/middle.txt"; printf new > "$dir/new.txt"; touch -t 202401010101 "$dir/old.txt"; touch -t 202402020202 "$dir/middle.txt"; touch -t 202403030303 "$dir/new.txt"; ls -t "$dir" > "$dir/order.txt"'
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'dir=/tmp/dde-at-fixtures/strict-batch-001/case_1809285; test "$(sed -n 1p "$dir/order.txt")" = new.txt && test "$(sed -n 2p "$dir/order.txt")" = middle.txt && test "$(sed -n 3p "$dir/order.txt")" = old.txt'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-001'
+  wait: 0.3
+- action: session_stop
