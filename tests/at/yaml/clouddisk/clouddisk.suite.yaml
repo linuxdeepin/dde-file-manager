@@ -1,0 +1,13 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 办公云盘插件_suite
+app: dde-file-manager
+description: 办公云盘插件模块 AT-SPI 用例
+module: 办公云盘插件
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites: []

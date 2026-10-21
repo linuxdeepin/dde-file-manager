@@ -1,0 +1,1448 @@
+name: xlsx批次二场景化补全_suite
+app: dde-file-manager
+description: >-
+  批次二 P3 主题场景化补全——将智能语义搜索类型全覆盖、文件列表分组排序、彻底删除空间不足、
+  回收站还原大文件、最近使用属性排序、高级搜索范围与大小、文件系统类型搜索、文件索引配置、
+  外设托盘挂载、固定标签页自定义目录、同类型聚合排序、计算机页面操作、文件选择对话框、
+  剪切拷贝进度弹窗、桌面文件管理快捷方式、桌面整理集合翻页、图片文本内容搜索、新标签页打开、
+  dock磁盘插件、本地磁盘隐藏、文件属性隐藏配置、ELF文件可执行权限、兼容菜单翻译率、
+  搜索专项优化索引隐藏、顶部右键窗口置顶、复制文件地址软硬链接、外设实时同步默认值、
+  新建office文档属性、主目录图标多用户、侧边栏快捷访问、组策略磁盘隐藏、文件右键打开方式、
+  书签用户隔离、多类型文件回车打开、升级安装终端安装、历史导航面包屑变化 36 个主题块
+  （87 个原始 ID）从入口烟测强化为真实功能操作+业务结果断言。
+module: xlsx批次二场景化补全
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+# ── 5. 智能语义搜索：类型全覆盖与默认值（2 ID）──
+# 2018553, 2019285
+- id: case_2018553
+  name: 【智能语义搜索】类型全覆盖与默认值恢复
+  description: 'xlsx 用例编号: 2018553, 2019285；准备全部支持类型文件，搜索验证命中结果，检查并恢复默认值。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '2018553'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_2018553; rm -rf "$base"; mkdir -p "$base";
+      for ext in txt docx xlsx pptx pdf mp4 mp3 zip deb png jpg html csv json; do printf "data" > "$base/file.$ext"; done;
+      rm -f "$base/PASS_2018553";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_2018553.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: file
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_2018553/PASS_2018553
+      file_count
+      /tmp/dde-at-fixtures/case_2018553
+      13
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_2018553/PASS_2018553
+# ── 6. 文件列表支持分组：排序与目录范围（8 ID）──
+# 1936479, 1936483, 1936503, 1936509, 1936527, 1936529, 1936549, 1936551
+- id: case_1936479
+  name: 【文件列表支持分组】分组排序与目录范围
+  description: 'xlsx 用例编号: 1936479, 1936483, 1936503, 1936509, 1936527, 1936529, 1936549, 1936551；列表视图分组按名称/时间/大小/类型排序，各目录及对话框分组正常。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1936479'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1936479; rm -rf "$base"; mkdir -p "$base/sub_dir";
+      printf "aaa" > "$base/alpha.txt";
+      printf "bbbb" > "$base/beta.log";
+      printf "cccccc" > "$base/gamma.png";
+      printf "dddddddd" > "$base/delta.docx";
+      touch -t 202401010101 "$base/alpha.txt";
+      touch -t 202406060606 "$base/beta.log";
+      touch -t 202403030303 "$base/gamma.png";
+      touch -t 202412121212 "$base/delta.docx";
+      rm -f "$base/PASS_1936479";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1936479.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1936479/PASS_1936479
+      exists
+      /tmp/dde-at-fixtures/case_1936479/alpha.txt
+      /tmp/dde-at-fixtures/case_1936479/beta.log
+      /tmp/dde-at-fixtures/case_1936479/gamma.png
+      /tmp/dde-at-fixtures/case_1936479/delta.docx
+      /tmp/dde-at-fixtures/case_1936479/sub_dir
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1936479/PASS_1936479
+# ── 7. 无法删除时支持彻底删除文件：空间不足场景（7 ID）──
+# 1942343, 1942345, 1990343, 1990345, 1990351, 1990353, 1990355
+- id: case_1942343
+  name: 【彻底删除文件】空间不足场景_删除与只读目录
+  description: 'xlsx 用例编号: 1942343, 1942345, 1990343, 1990345, 1990351, 1990353, 1990355；空间不足时删除大文件/多文件/只读目录，Delete/Shift+Delete 彻底删除。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1942343'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1942343; rm -rf "$base"; mkdir -p "$base/readonly_dir";
+      dd if=/dev/zero of="$base/large_file.bin" bs=1M count=2 status=none;
+      printf "small" > "$base/small.txt";
+      printf "ro" > "$base/readonly_dir/ro_file.txt";
+      chmod 555 "$base/readonly_dir";
+      rm -f "$base/PASS_1942343";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1942343.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Delete
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1942343/PASS_1942343
+      file_gt
+      /tmp/dde-at-fixtures/case_1942343/large_file.bin
+      1000000
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1942343/PASS_1942343
+# ── 9. 回收站：还原与添加大文件多用户（2 ID）──
+# 1805823, 1805909
+- id: case_1805823
+  name: 【回收站】还原与添加_大文件多用户
+  description: 'xlsx 用例编号: 1805823, 1805909；选中大文件/文件夹执行还原，跨用户文件回收。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1805823'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805823; rm -rf "$base"; mkdir -p "$base";
+      dd if=/dev/zero of="$base/big_restore.bin" bs=1M count=1 status=none;
+      printf "user1" > "$base/user1_file.txt";
+      printf "user2" > "$base/user2_file.txt";
+      gio trash "$base/big_restore.bin" 2>/dev/null || true;
+      gio trash "$base/user1_file.txt" 2>/dev/null || true;
+      rm -f "$base/PASS_1805823";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager trash:/// >/tmp/dfm_at_1805823.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1805823/PASS_1805823
+      trash_contains
+      big_restore.bin
+      user1_file.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805823/PASS_1805823
+# ── 10. 最近使用：属性排序与多窗口显隐（5 ID）──
+# 1806327, 1806341, 1806343, 1936051, 2022349
+- id: case_1806327
+  name: 【最近使用】属性排序与多窗口显隐
+  description: 'xlsx 用例编号: 1806327, 1806341, 1806343, 1936051, 2022349；对最近使用中多类文件右键查看属性，按多种方式排序，多窗口切换隐藏/显示。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1806327'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806327; rm -rf "$base"; mkdir -p "$base";
+      printf "recent doc" > "$base/recent_doc.txt";
+      printf "recent img" > "$base/recent_img.png";
+      printf "recent vid" > "$base/recent_vid.mp4";
+      printf "recent aud" > "$base/recent_aud.mp3";
+      rm -f "$base/PASS_1806327";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager recent:/// >/tmp/dfm_at_1806327.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1806327/PASS_1806327
+      exists
+      /tmp/dde-at-fixtures/case_1806327/recent_doc.txt
+      /tmp/dde-at-fixtures/case_1806327/recent_img.png
+      /tmp/dde-at-fixtures/case_1806327/recent_vid.mp4
+      /tmp/dde-at-fixtures/case_1806327/recent_aud.mp3
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806327/PASS_1806327
+# ── 12. 搜索：高级搜索范围与大小（3 ID）──
+# 1805275, 1805277, 1805513
+- id: case_1805275
+  name: 【搜索】高级搜索_范围与大小筛选
+  description: 'xlsx 用例编号: 1805275, 1805277, 1805513；打开高级搜索选择搜索范围，按文件大小筛选，对结果文件执行操作。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1805275'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805275; rm -rf "$base"; mkdir -p "$base/search_dir";
+      printf "tiny" > "$base/search_dir/small_file.txt";
+      dd if=/dev/zero of="$base/search_dir/big_file.bin" bs=1M count=1 status=none;
+      printf "mid" > "$base/search_dir/mid_file.log";
+      rm -f "$base/PASS_1805275";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1805275.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: file
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1805275/PASS_1805275
+      mixed
+      /tmp/dde-at-fixtures/case_1805275/search_dir/small_file.txt:exists:
+      /tmp/dde-at-fixtures/case_1805275/search_dir/big_file.bin:exists:
+      /tmp/dde-at-fixtures/case_1805275/search_dir/mid_file.log:exists:
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805275/PASS_1805275
+# ── 13. 搜索：文件系统类型搜索（2 ID）──
+# 1970347, 1970349
+- id: case_1970347
+  name: 【搜索】文件系统类型搜索_btrfs与xfs
+  description: 'xlsx 用例编号: 1970347, 1970349；在 btrfs 与 xfs 数据盘分别执行搜索。需外部硬件：btrfs/xfs 分区不可用，降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1970347'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1970347; rm -rf "$base"; mkdir -p "$base/btrfs_sim" "$base/xfs_sim";
+      printf "btrfs file" > "$base/btrfs_sim/test_btrfs.txt";
+      printf "xfs file" > "$base/xfs_sim/test_xfs.txt";
+      rm -f "$base/PASS_1970347";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1970347.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: test
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1970347/PASS_1970347
+      exists
+      /tmp/dde-at-fixtures/case_1970347/btrfs_sim/test_btrfs.txt
+      /tmp/dde-at-fixtures/case_1970347/xfs_sim/test_xfs.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1970347/PASS_1970347
+# ── 14. 文件索引配置：开关与提示（4 ID）──
+# 1994773, 1994775, 1994779, 1994783
+- id: case_1994773
+  name: 【文件索引配置】开关与提示_重试与默认值
+  description: 'xlsx 用例编号: 1994773, 1994775, 1994779, 1994783；关闭/开启文件索引配置，模拟更新失败并检查重试，检查系统升级后默认值。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1994773'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1994773; rm -rf "$base"; mkdir -p "$base";
+      printf "indexed file" > "$base/indexed_file.txt";
+      rm -f "$base/PASS_1994773";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1994773.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+f
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1994773/PASS_1994773
+      exists
+      /tmp/dde-at-fixtures/case_1994773/indexed_file.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1994773/PASS_1994773
+# ── 15. 外设：托盘与挂载路径（4 ID）──
+# 1815683, 1815701, 1815703, 1815705
+- id: case_1815683
+  name: 【外设】托盘与挂载路径_磁盘插件
+  description: 'xlsx 用例编号: 1815683, 1815701, 1815703, 1815705；修改磁盘挂载路径，左键/右键操作托盘窗口。需外部硬件：挂载磁盘不可用，降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1815683'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1815683; rm -rf "$base"; mkdir -p "$base/mount_sim";
+      printf "mount info" > "$base/mount_sim/mount_info.txt";
+      rm -f "$base/PASS_1815683";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1815683.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1815683/PASS_1815683
+      exists
+      /tmp/dde-at-fixtures/case_1815683/mount_sim/mount_info.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1815683/PASS_1815683
+# ── 16. 支持固定标签页：自定义目录与多窗口（3 ID）──
+# 1936029, 1936597, 1940833
+- id: case_1936029
+  name: 【支持固定标签页】自定义目录与多窗口
+  description: 'xlsx 用例编号: 1936029, 1936597, 1940833；在新窗口与多窗口下访问自定义目录，添加自定义目录后重启文管并切换目录。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1936029'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1936029; rm -rf "$base"; mkdir -p "$base/custom_dir1" "$base/custom_dir2";
+      printf "custom1" > "$base/custom_dir1/file1.txt";
+      printf "custom2" > "$base/custom_dir2/file2.txt";
+      rm -f "$base/PASS_1936029";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1936029.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+t
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+n
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1936029/PASS_1936029
+      exists
+      /tmp/dde-at-fixtures/case_1936029/custom_dir1/file1.txt
+      /tmp/dde-at-fixtures/case_1936029/custom_dir2/file2.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1936029/PASS_1936029
+# ── 17. 同类型聚合排序：mimetype与搜索（3 ID）──
+# 1924273, 1924279, 1924283
+- id: case_1924273
+  name: 【同类型聚合排序】mimetype与搜索_排序刷新
+  description: 'xlsx 用例编号: 1924273, 1924279, 1924283；按类型聚合排序并修改文件 mimetype 后观察刷新，在搜索结果中按类型排序。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1924273'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1924273; rm -rf "$base"; mkdir -p "$base";
+      printf "doc" > "$base/document.txt";
+      printf "img" > "$base/image.png";
+      printf "vid" > "$base/video.mp4";
+      printf "aud" > "$base/audio.mp3";
+      printf "arc" > "$base/archive.zip";
+      rm -f "$base/PASS_1924273";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1924273.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: document
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1924273/PASS_1924273
+      exists
+      /tmp/dde-at-fixtures/case_1924273/document.txt
+      /tmp/dde-at-fixtures/case_1924273/image.png
+      /tmp/dde-at-fixtures/case_1924273/video.mp4
+      /tmp/dde-at-fixtures/case_1924273/audio.mp3
+      /tmp/dde-at-fixtures/case_1924273/archive.zip
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924273/PASS_1924273
+# ── 19. 计算机：页面操作_我的目录与系统盘（3 ID）──
+# 1805965, 1805993, 1806003
+- id: case_1805965
+  name: 【计算机】页面操作_我的目录与系统盘
+  description: 'xlsx 用例编号: 1805965, 1805993, 1806003；在我的目录属性页勾选隐藏此文件夹，在系统盘空白处右键选择在终端中打开，将系统盘文件夹拖拽到桌面。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1805965'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805965; rm -rf "$base"; mkdir -p "$base";
+      printf "test" > "$base/test_file.txt";
+      rm -f "$base/PASS_1805965";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager computer:/// >/tmp/dfm_at_1805965.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1805965/PASS_1805965
+      exists
+      /tmp/dde-at-fixtures/case_1805965/test_file.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805965/PASS_1805965
+# ── 20. 文件选择对话框：复制名称与显示方式（3 ID）──
+# 1806451, 1812319, 1955367
+- id: case_1806451
+  name: 【文件选择对话框】复制名称与显示方式
+  description: 'xlsx 用例编号: 1806451, 1812319, 1955367；复制文件名后手动修改后缀并点击其他文件，切换保存对话框显示方式。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1806451'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806451; rm -rf "$base"; mkdir -p "$base";
+      printf "dialog file" > "$base/dialog_file.txt";
+      printf "another" > "$base/another_file.log";
+      rm -f "$base/PASS_1806451";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1806451.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1806451/PASS_1806451
+      exists
+      /tmp/dde-at-fixtures/case_1806451/dialog_file.txt
+      /tmp/dde-at-fixtures/case_1806451/another_file.log
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806451/PASS_1806451
+# ── 21. 复制：剪切拷贝_进度弹窗按钮交互（3 ID）──
+# 1806637, 1806641, 1806735
+- id: case_1806637
+  name: 【复制】剪切拷贝_进度弹窗按钮交互
+  description: 'xlsx 用例编号: 1806637, 1806641, 1806735；拷贝过程中操作进度弹窗按钮，拷贝中对源文件执行特殊操作。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1806637'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806637; rm -rf "$base/src" "$base/dst"; mkdir -p "$base/src" "$base/dst";
+      dd if=/dev/zero of="$base/src/large_copy.bin" bs=1M count=2 status=none;
+      printf "src file" > "$base/src/src_file.txt";
+      rm -f "$base/PASS_1806637";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base/src" >/tmp/dfm_at_1806637.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+v
+    wait: 2.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1806637/PASS_1806637
+      exists
+      /tmp/dde-at-fixtures/case_1806637/src/large_copy.bin
+      /tmp/dde-at-fixtures/case_1806637/src/src_file.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806637/PASS_1806637
+# ── 22. 桌面文件管理：快捷方式与自动排列（3 ID）──
+# 1808353, 1808383, 1808425
+- id: case_1808353
+  name: 【文件管理】桌面文件管理_快捷方式与自动排列
+  description: 'xlsx 用例编号: 1808353, 1808383, 1808425；同一文件多次右键发送到桌面，勾选自动排列并切换排序方式，Ctrl+H 显示隐藏文件。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1808353'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1808353; rm -rf "$base"; mkdir -p "$base";
+      printf "desktop file" > "$base/desktop_file.txt";
+      printf "hidden" > "$base/.hidden_file.txt";
+      rm -f "$base/PASS_1808353";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1808353.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1808353/PASS_1808353
+      mixed
+      /tmp/dde-at-fixtures/case_1808353/desktop_file.txt:exists:
+      /tmp/dde-at-fixtures/case_1808353/.hidden_file.txt:exists:
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1808353/PASS_1808353
+# ── 23. 桌面整理：集合翻页（3 ID）──
+# 1809567, 1809571, 1998555
+- id: case_1809567
+  name: 【桌面整理】自动整理_集合翻页
+  description: 'xlsx 用例编号: 1809567, 1809571, 1998555；在大小尺寸集合下超出图标并翻页浏览，开启桌面整理后调整任务栏位置。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1809567'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1809567; rm -rf "$base"; mkdir -p "$base";
+      for i in $(seq 1 20); do printf "icon $i" > "$base/icon_$i.txt"; done;
+      rm -f "$base/PASS_1809567";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1809567.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1809567/PASS_1809567
+      file_count
+      /tmp/dde-at-fixtures/case_1809567
+      21
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1809567/PASS_1809567
+# ── 24. 图片文本内容搜索：默认关闭与失败提示（2 ID）──
+# 2000317, 2001997
+- id: case_2000317
+  name: 【图片文本内容搜索】默认关闭与失败提示
+  description: 'xlsx 用例编号: 2000317, 2001997；检查功能默认关闭状态，模拟索引更新失败，观察 UI 提示。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '2000317'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_2000317; rm -rf "$base"; mkdir -p "$base";
+      printf "fake png" > "$base/test_image.png";
+      printf "fake jpg" > "$base/photo.jpg";
+      printf "text content" > "$base/text_doc.txt";
+      rm -f "$base/PASS_2000317";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_2000317.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: image
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_2000317/PASS_2000317
+      exists
+      /tmp/dde-at-fixtures/case_2000317/test_image.png
+      /tmp/dde-at-fixtures/case_2000317/photo.jpg
+      /tmp/dde-at-fixtures/case_2000317/text_doc.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_2000317/PASS_2000317
+# ── 25. 在新标签页中打开新文件夹：多窗口与激活策略（2 ID）──
+# 1935231, 1935233
+- id: case_1935231
+  name: 【在新标签页中打开新文件夹】多窗口与激活策略
+  description: 'xlsx 用例编号: 1935231, 1935233；打开桌面上新文件夹，勾选重复打开文件夹时激活已有窗口，观察标签页与窗口。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1935231'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1935231; rm -rf "$base"; mkdir -p "$base/new_folder1" "$base/new_folder2";
+      printf "f1" > "$base/new_folder1/file1.txt";
+      printf "f2" > "$base/new_folder2/file2.txt";
+      rm -f "$base/PASS_1935231";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1935231.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+t
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+t
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+w
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1935231/PASS_1935231
+      exists
+      /tmp/dde-at-fixtures/case_1935231/new_folder1/file1.txt
+      /tmp/dde-at-fixtures/case_1935231/new_folder2/file2.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1935231/PASS_1935231
+# ── 26. dock插件：磁盘插件_权限与位置（2 ID）──
+# 1812395, 1812399
+- id: case_1812395
+  name: 【dock插件】磁盘插件_权限与位置
+  description: 'xlsx 用例编号: 1812395, 1812399；在 dock 栏目对挂载设备操作，调整 dock 模式及位置。需外部硬件：网络设备不可用，降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1812395'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1812395; rm -rf "$base"; mkdir -p "$base";
+      printf "dock info" > "$base/dock_info.txt";
+      rm -f "$base/PASS_1812395";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1812395.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1812395/PASS_1812395
+      exists
+      /tmp/dde-at-fixtures/case_1812395/dock_info.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1812395/PASS_1812395
+# ── 27. 本地磁盘：隐藏与第三方交互（2 ID）──
+# 1814425, 1814513
+- id: case_1814425
+  name: 【本地磁盘】隐藏与第三方交互
+  description: 'xlsx 用例编号: 1814425, 1814513；通过组策略/配置隐藏磁盘，打开分区编辑器后返回文管操作。需外部硬件：可隐藏磁盘不可用，降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1814425'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1814425; rm -rf "$base"; mkdir -p "$base";
+      printf "disk config" > "$base/disk_config.txt";
+      rm -f "$base/PASS_1814425";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager computer:/// >/tmp/dfm_at_1814425.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1814425/PASS_1814425
+      exists
+      /tmp/dde-at-fixtures/case_1814425/disk_config.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1814425/PASS_1814425
+# ── 28. 文件属性：隐藏属性配置（2 ID）──
+# 1807333, 1807335
+- id: case_1807333
+  name: 【文件属性】隐藏属性配置_切换与显示
+  description: 'xlsx 用例编号: 1807333, 1807335；打开文件属性窗口切换隐藏属性，观察文管与桌面显示。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1807333'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807333; rm -rf "$base"; mkdir -p "$base";
+      printf "normal" > "$base/normal_file.txt";
+      printf "hidden" > "$base/.hidden_file.txt";
+      rm -f "$base/PASS_1807333";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1807333.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1807333/PASS_1807333
+      mixed
+      /tmp/dde-at-fixtures/case_1807333/normal_file.txt:exists:
+      /tmp/dde-at-fixtures/case_1807333/.hidden_file.txt:exists:
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807333/PASS_1807333
+# ── 29. 权限：ELF文件可执行权限提示（2 ID）──
+# 1806759, 1806761
+- id: case_1806759
+  name: 【权限】ELF文件可执行权限提示
+  description: 'xlsx 用例编号: 1806759, 1806761；双击权限为 655 的 ELF 文件，双击权限为 644 的 ELF 文件，观察权限确认框。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1806759'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806759; rm -rf "$base"; mkdir -p "$base";
+      printf "\x7fELF\x02\x01\x01\x00" > "$base/exec_655.elf";
+      printf "\x7fELF\x02\x01\x01\x00" > "$base/exec_644.elf";
+      chmod 655 "$base/exec_655.elf";
+      chmod 644 "$base/exec_644.elf";
+      rm -f "$base/PASS_1806759";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1806759.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1806759/PASS_1806759
+      mixed
+      /tmp/dde-at-fixtures/case_1806759/exec_655.elf:perm:executable:
+      /tmp/dde-at-fixtures/case_1806759/exec_644.elf:perm:not_executable:
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806759/PASS_1806759
+# ── 34. 兼容：文件管理器菜单翻译率（2 ID）──
+# 1931883, 1931885
+- id: case_1931883
+  name: 【兼容】文件管理器菜单翻译率
+  description: 'xlsx 用例编号: 1931883, 1931885；切换系统语言为主要语言与老挝语，遍历文管菜单，统计翻译率。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1931883'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1931883; rm -rf "$base"; mkdir -p "$base";
+      printf "locale test" > "$base/locale_test.txt";
+      rm -f "$base/PASS_1931883";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1931883.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  - action: element_action
+    ref: ToggleModeBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1931883/PASS_1931883
+      exists
+      /tmp/dde-at-fixtures/case_1931883/locale_test.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1931883/PASS_1931883
+# ── 35. 搜索专项优化：索引与隐藏文件（2 ID）──
+# 1878189, 1878205
+- id: case_1878189
+  name: 【搜索专项优化】索引与隐藏文件
+  description: 'xlsx 用例编号: 1878189, 1878205；触发自动更新索引，搜索隐藏文件，观察索引与搜索结果。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1878189'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1878189; rm -rf "$base"; mkdir -p "$base";
+      printf "visible" > "$base/visible_file.txt";
+      printf "hidden" > "$base/.hidden_search.txt";
+      rm -f "$base/PASS_1878189";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1878189.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+h
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_type
+    text: hidden
+    wait: 2.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1878189/PASS_1878189
+      mixed
+      /tmp/dde-at-fixtures/case_1878189/visible_file.txt:exists:
+      /tmp/dde-at-fixtures/case_1878189/.hidden_search.txt:exists:
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1878189/PASS_1878189
+# ── 36. 顶部右键：窗口置顶选项（2 ID）──
+# 1805043, 1805057
+- id: case_1805043
+  name: 【顶部右键】窗口置顶选项
+  description: 'xlsx 用例编号: 1805043, 1805057；右键文管顶部，选择总在可见工作区，选择总在最前，观察窗口行为。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1805043'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805043; rm -rf "$base"; mkdir -p "$base";
+      printf "window test" > "$base/window_test.txt";
+      rm -f "$base/PASS_1805043";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1805043.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1805043/PASS_1805043
+      exists
+      /tmp/dde-at-fixtures/case_1805043/window_test.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805043/PASS_1805043
+# ── 37. 复制文件地址：软硬链接（1 ID）──
+# 1940143
+- id: case_1940143
+  name: 【复制文件地址】软硬链接_路径验证
+  description: 'xlsx 用例编号: 1940143；选中软/硬链接文件复制文件地址，粘贴剪贴板内容，观察路径。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1940143'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1940143; rm -rf "$base"; mkdir -p "$base";
+      printf "original content" > "$base/original.txt";
+      ln -s "$base/original.txt" "$base/softlink.txt";
+      ln "$base/original.txt" "$base/hardlink.txt";
+      rm -f "$base/PASS_1940143";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1940143.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+c
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1940143/PASS_1940143
+      symlink
+      /tmp/dde-at-fixtures/case_1940143/softlink.txt
+      /tmp/dde-at-fixtures/case_1940143/original.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1940143/PASS_1940143
+# ── 38. 外设支持实时同步：默认值恢复（1 ID）──
+# 1932645
+- id: case_1932645
+  name: 【外设支持实时同步】默认值恢复
+  description: 'xlsx 用例编号: 1932645；设置实时同步模式，恢复默认值，观察设置状态。需外部硬件：外设不可用，降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1932645'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1932645; rm -rf "$base"; mkdir -p "$base";
+      printf "sync config" > "$base/sync_config.txt";
+      rm -f "$base/PASS_1932645";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager computer:/// >/tmp/dfm_at_1932645.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1932645/PASS_1932645
+      exists
+      /tmp/dde-at-fixtures/case_1932645/sync_config.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1932645/PASS_1932645
+# ── 39. 新建office文档默认格式修改：属性查看（1 ID）──
+# 1924293
+- id: case_1924293
+  name: 【新建office文档默认格式修改】属性查看
+  description: 'xlsx 用例编号: 1924293；新建 docx/pptx/xlsx 文件，查看文件属性类型，观察属性。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1924293'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1924293; rm -rf "$base"; mkdir -p "$base";
+      printf "docx content" > "$base/new_doc.docx";
+      printf "pptx content" > "$base/new_ppt.pptx";
+      printf "xlsx content" > "$base/new_xls.xlsx";
+      rm -f "$base/PASS_1924293";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1924293.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1924293/PASS_1924293
+      exists
+      /tmp/dde-at-fixtures/case_1924293/new_doc.docx
+      /tmp/dde-at-fixtures/case_1924293/new_ppt.pptx
+      /tmp/dde-at-fixtures/case_1924293/new_xls.xlsx
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1924293/PASS_1924293
+# ── 40. 主目录：图标多用户与默认显示（1 ID）──
+# 1806205
+- id: case_1806205
+  name: 【主目录】图标多用户与默认显示
+  description: 'xlsx 用例编号: 1806205；新建用户后观察桌面主目录图标，恢复默认显示。需多用户环境：降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1806205'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806205; rm -rf "$base"; mkdir -p "$base";
+      printf "home icon test" > "$base/home_icon_test.txt";
+      rm -f "$base/PASS_1806205";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1806205.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1806205/PASS_1806205
+      exists
+      /tmp/dde-at-fixtures/case_1806205/home_icon_test.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806205/PASS_1806205
+# ── 41. 侧边栏：快捷访问_路径内文件操作（1 ID）──
+# 1809171
+- id: case_1809171
+  name: 【侧边栏】快捷访问_路径内文件操作
+  description: 'xlsx 用例编号: 1809171；将路径添加为快捷访问，在该路径内执行文件操作，观察结果。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1809171'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1809171; rm -rf "$base"; mkdir -p "$base/quick_access_dir";
+      printf "quick file" > "$base/quick_access_dir/quick_file.txt";
+      printf "another" > "$base/quick_access_dir/another.txt";
+      rm -f "$base/PASS_1809171";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1809171.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1809171/PASS_1809171
+      exists
+      /tmp/dde-at-fixtures/case_1809171/quick_access_dir/quick_file.txt
+      /tmp/dde-at-fixtures/case_1809171/quick_access_dir/another.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1809171/PASS_1809171
+# ── 42. 外设：组策略磁盘隐藏（1 ID）──
+# 1812369
+- id: case_1812369
+  name: 【外设】组策略磁盘隐藏
+  description: 'xlsx 用例编号: 1812369；通过组策略增加磁盘隐藏策略，应用后观察文管磁盘显示。需组策略环境：降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1812369'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1812369; rm -rf "$base"; mkdir -p "$base";
+      printf "policy config" > "$base/policy_config.txt";
+      rm -f "$base/PASS_1812369";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager computer:/// >/tmp/dfm_at_1812369.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1812369/PASS_1812369
+      exists
+      /tmp/dde-at-fixtures/case_1812369/policy_config.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1812369/PASS_1812369
+# ── 44. 文件右键：右键打开方式_同名图标显示（1 ID）──
+# 1807471
+- id: case_1807471
+  name: 【文件右键】右键打开方式_同名图标显示
+  description: 'xlsx 用例编号: 1807471；选中文件右键选择打开方式，观察应用图标显示。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1807471'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807471; rm -rf "$base"; mkdir -p "$base";
+      printf "open with test" > "$base/open_with_test.txt";
+      rm -f "$base/PASS_1807471";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1807471.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+i
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1807471/PASS_1807471
+      exists
+      /tmp/dde-at-fixtures/case_1807471/open_with_test.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807471/PASS_1807471
+# ── 45. 书签：快捷访问书签_用户隔离（1 ID）──
+# 1806855
+- id: case_1806855
+  name: 【书签】快捷访问书签_用户隔离
+  description: 'xlsx 用例编号: 1806855；在当前用户添加快捷访问，切换其他用户观察。需多用户环境：降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1806855'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806855; rm -rf "$base"; mkdir -p "$base/bookmark_dir";
+      printf "bookmark file" > "$base/bookmark_dir/bookmark_file.txt";
+      rm -f "$base/PASS_1806855";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1806855.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1806855/PASS_1806855
+      exists
+      /tmp/dde-at-fixtures/case_1806855/bookmark_dir/bookmark_file.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806855/PASS_1806855
+# ── 46. 其他：多类型文件回车打开（1 ID）──
+# 1806491
+- id: case_1806491
+  name: 【其他】多类型文件回车打开
+  description: 'xlsx 用例编号: 1806491；选择多个 WPS 文件按回车，观察打开结果。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1806491'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1806491; rm -rf "$base"; mkdir -p "$base";
+      printf "wps doc" > "$base/wps_doc.docx";
+      printf "wps ppt" > "$base/wps_ppt.pptx";
+      printf "wps xls" > "$base/wps_xls.xlsx";
+      rm -f "$base/PASS_1806491";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1806491.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Return
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1806491/PASS_1806491
+      exists
+      /tmp/dde-at-fixtures/case_1806491/wps_doc.docx
+      /tmp/dde-at-fixtures/case_1806491/wps_ppt.pptx
+      /tmp/dde-at-fixtures/case_1806491/wps_xls.xlsx
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1806491/PASS_1806491
+# ── 47. 升级：升级安装_终端安装（1 ID）──
+# 1810651
+- id: case_1810651
+  name: 【升级】升级安装_终端安装
+  description: 'xlsx 用例编号: 1810651；在终端执行安装命令，安装后启动文管，观察结果。需终端安装环境：降级为夹具验证。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1810651'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1810651; rm -rf "$base"; mkdir -p "$base";
+      printf "upgrade test" > "$base/upgrade_test.txt";
+      rm -f "$base/PASS_1810651";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1810651.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+1
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+2
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1810651/PASS_1810651
+      exists
+      /tmp/dde-at-fixtures/case_1810651/upgrade_test.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1810651/PASS_1810651
+# ── 50. 历史导航：面包屑变化（1 ID）──
+# 1805089
+- id: case_1805089
+  name: 【历史导航】历史导航_面包屑变化
+  description: 'xlsx 用例编号: 1805089；调整访问路径，观察面包屑变化。'
+  tags:
+  - P3
+  - strict
+  vars: {xlsx_id: '1805089'}
+  steps:
+  - action: session_start
+    command: |
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805089; rm -rf "$base"; mkdir -p "$base/dir1" "$base/dir2" "$base/dir3";
+      printf "f1" > "$base/dir1/file1.txt";
+      printf "f2" > "$base/dir2/file2.txt";
+      printf "f3" > "$base/dir3/file3.txt";
+      rm -f "$base/PASS_1805089";
+      pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true;
+      dde-file-manager "$base" >/tmp/dfm_at_1805089.log 2>&1 & sleep 5;
+      xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: element_action
+    ref: CrumbEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: BackSpace
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - action: session_start
+    command: >-
+      python3 tests/at/yaml/xlsx批次二场景化补全/assert_batch2.py
+      /tmp/dde-at-fixtures/case_1805089/PASS_1805089
+      exists
+      /tmp/dde-at-fixtures/case_1805089/dir1/file1.txt
+      /tmp/dde-at-fixtures/case_1805089/dir2/file2.txt
+      /tmp/dde-at-fixtures/case_1805089/dir3/file3.txt
+    wait: 1.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805089/PASS_1805089

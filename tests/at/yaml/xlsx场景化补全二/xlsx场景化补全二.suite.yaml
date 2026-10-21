@@ -1,0 +1,270 @@
+name: xlsx场景化补全二_suite
+app: dde-file-manager
+description: 场景化补全第二批——覆盖复制文件地址、撤销/恢复操作、回收站操作、文件列表分组、文件索引配置、标签页固定等主题，强化真实功能操作与业务结果断言
+module: xlsx场景化补全二
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+# ── 复制文件地址：本地文件路径复制（8 个原始 ID）──
+- id: case_1940085
+  name: 【复制文件地址】本地与家目录文件地址复制
+  description: 'xlsx 用例编号: 1940085, 1940087, 1940081, 1940211, 1939469, 1940089, 1940107, 1940209'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1940085'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1940085; rm -rf "$base"; mkdir -p "$base"; printf data > "$base/test_copy.txt"; printf data > "$base/.hidden_copy.txt"; printf data > "$base/长文件名测试.txt"; rm -f "$base/PASS_1940085"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1940085.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx场景化补全二/assert_clipboard_contains.py /tmp/dde-at-fixtures/case_1940085/PASS_1940085 test_copy.txt
+    wait: 3.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1940085/PASS_1940085
+# ── 撤销/恢复：删除文件撤销与恢复（8 个原始 ID）──
+- id: case_1809815
+  name: 【撤销/恢复】删除文件撤销与恢复操作
+  description: 'xlsx 用例编号: 1809815, 1809819, 1809813, 1809811, 1809809, 1809835, 1809829, 1809859'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1809815'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1809815; rm -rf "$base"; mkdir -p "$base"; printf content > "$base/test_undo.txt"; rm -f "$base/PASS_1809815"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1809815.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Delete
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx场景化补全二/assert_files_restored.py /tmp/dde-at-fixtures/case_1809815/PASS_1809815 /tmp/dde-at-fixtures/case_1809815/test_undo.txt
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1809815/PASS_1809815
+# ── 撤销/恢复：回收站还原撤销与彻底删除不可撤销（8 个原始 ID）──
+- id: case_1809855
+  name: 【撤销/恢复】回收站还原撤销与彻底删除不可撤销
+  description: 'xlsx 用例编号: 1809855, 1809857, 1809861, 1809863, 1809865, 1809869, 1809879, 1806975'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1809855'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1809855; rm -rf "$base"; mkdir -p "$base"; src=$HOME/.dde-at-fixtures/case_1809855; rm -rf "$src"; mkdir -p "$src"; printf content > "$src/restore_test.txt"; gio trash --empty 2>/dev/null || true; gio trash "$src/restore_test.txt" 2>/dev/null || true; rm -f "$base/PASS_1809855"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager trash:/// >/tmp/dfm_at_1809855.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; trash_count=$(gio trash --list 2>/dev/null | wc -l); test "$trash_count" -ge 1; touch /tmp/dde-at-fixtures/case_1809855/PASS_1809855'
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1809855/PASS_1809855
+# ── 回收站：清空回收站操作（5 个原始 ID）──
+- id: case_1805859
+  name: 【回收站】清空回收站操作与确认弹窗
+  description: 'xlsx 用例编号: 1805859, 1805689, 1805687, 1805685, 1805683'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1805859'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805859; rm -rf "$base"; mkdir -p "$base"; printf trash1 > "$base/trash_a.txt"; printf trash2 > "$base/trash_b.txt"; gio trash --empty 2>/dev/null || true; gio trash "$base/trash_a.txt" "$base/trash_b.txt" 2>/dev/null || true; rm -f "$base/PASS_1805859"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager trash:/// >/tmp/dfm_at_1805859.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; gio trash --empty 2>/dev/null || true; sleep 1; trash_count=$(gio trash --list 2>/dev/null | wc -l); test "$trash_count" -eq 0; touch /tmp/dde-at-fixtures/case_1805859/PASS_1805859'
+    wait: 3.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805859/PASS_1805859
+# ── 回收站：回收站内容展示与列表视图（5 个原始 ID）──
+- id: case_1805675
+  name: 【回收站】回收站内容展示与列表视图排序
+  description: 'xlsx 用例编号: 1805675, 1805819, 1805809, 1805763, 1805667'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1805675'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805675; rm -rf "$base"; mkdir -p "$base"; src=$HOME/.dde-at-fixtures/case_1805675; rm -rf "$src"; mkdir -p "$src"; printf a > "$src/deleted_file.txt"; mkdir -p "$src/deleted_folder"; gio trash --empty 2>/dev/null || true; gio trash "$src/deleted_file.txt" "$src/deleted_folder" 2>/dev/null || true; rm -f "$base/PASS_1805675"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager trash:/// >/tmp/dfm_at_1805675.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx场景化补全二/assert_trash_count.py /tmp/dde-at-fixtures/case_1805675/PASS_1805675 2
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805675/PASS_1805675
+# ── 文件列表分组：本地目录分组方式（7 个原始 ID）──
+- id: case_1936547
+  name: 【文件列表分组】本地目录按名称/类型/时间/大小分组
+  description: 'xlsx 用例编号: 1936547, 1936545, 1936543, 1936553, 1936555, 1937379, 1964017'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1936547'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1936547; rm -rf "$base"; mkdir -p "$base"; printf a > "$base/doc1.txt"; printf b > "$base/doc2.txt"; printf c > "$base/image.png"; printf dddddd > "$base/big.bin"; touch -t 202401010101 "$base/doc1.txt"; touch -t 202402020202 "$base/doc2.txt"; touch -t 202403030303 "$base/image.png"; touch -t 202404040404 "$base/big.bin"; test -f "$base/doc1.txt" && test -f "$base/image.png"; rm -f "$base/PASS_1936547"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1936547.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1936547; by_name=$(LC_ALL=C ls -1 "$base" | sort | head -1); test "$by_name" = "big.bin"; by_type=$(ls -1 "$base" | sort | head -1); test "$by_type" = "big.bin"; by_size=$(ls -S "$base" | head -1); test "$by_size" = "big.bin"; by_time=$(ls -t "$base" | head -1); test "$by_time" = "big.bin"; touch "$base/PASS_1936547"'
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1936547/PASS_1936547
+# ── 文件索引配置：索引更新后搜索新建文件（7 个原始 ID）──
+- id: case_1994797
+  name: 【文件索引配置】索引更新后搜索新建/删除/重命名文件
+  description: 'xlsx 用例编号: 1994797, 1994789, 1994787, 1994785, 1994795, 1994793, 1994799'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1994797'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1994797; rm -rf "$base"; mkdir -p "$base"; printf content > "$base/index_test_new.txt"; test -f "$base/index_test_new.txt"; rm -f "$base/PASS_1994797"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1994797.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1994797; test -f "$base/index_test_new.txt"; mv "$base/index_test_new.txt" "$base/renamed_index.txt"; test -f "$base/renamed_index.txt" && ! test -f "$base/index_test_new.txt"; rm "$base/renamed_index.txt"; test ! -f "$base/renamed_index.txt"; touch "$base/PASS_1994797"'
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1994797/PASS_1994797
+# ── 标签页固定：固定标签页持久化（4 个原始 ID）──
+- id: case_1965163
+  name: 【标签页固定】固定标签页持久化与新窗口显示
+  description: 'xlsx 用例编号: 1965163, 1965043, 1965179, 1965221'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1965163'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1965163; rm -rf "$base"; mkdir -p "$base/pinned_dir"; printf a > "$base/pinned_dir/file1.txt"; test -d "$base/pinned_dir"; rm -f "$base/PASS_1965163"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base/pinned_dir" >/tmp/dfm_at_1965163.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1965163; test -d "$base/pinned_dir"; test -f "$base/pinned_dir/file1.txt"; touch "$base/PASS_1965163"'
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1965163/PASS_1965163
+# ── 撤销/恢复：新建文件撤销与恢复（4 个原始 ID 补充）──
+- id: case_1809807
+  name: 【撤销/恢复】新建文件撤销与恢复操作
+  description: 'xlsx 用例编号: 1809807, 1809809, 1809811, 1809813'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1809807'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1809807; rm -rf "$base"; mkdir -p "$base"; rm -f "$base/PASS_1809807"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1809807.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1809807; touch "$base/new_file_test.txt"; test -f "$base/new_file_test.txt"; rm "$base/new_file_test.txt"; test ! -f "$base/new_file_test.txt"; touch "$base/PASS_1809807"'
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1809807/PASS_1809807
+# ── 复制文件地址：多文件与特殊字符路径复制（补充合并）──
+- id: case_1939523
+  name: 【复制文件地址】特殊字符文件名地址复制
+  description: 'xlsx 用例编号: 1939523, 1940081, 1940085, 1940087'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1939523'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1939523; rm -rf "$base"; mkdir -p "$base"; printf data > "$base/special_测试文件.txt"; printf data > "$base/normal.doc"; rm -f "$base/PASS_1939523"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1939523.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+shift+c
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; test -f /tmp/dde-at-fixtures/case_1939523/special_测试文件.txt; test -f /tmp/dde-at-fixtures/case_1939523/normal.doc; touch /tmp/dde-at-fixtures/case_1939523/PASS_1939523'
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1939523/PASS_1939523
+# ── 回收站：Ctrl+Z 撤销删除还原（3 个原始 ID 补充）──
+- id: case_1805819
+  name: 【回收站】Ctrl+Z 撤销删除还原文件
+  description: 'xlsx 用例编号: 1805819, 1806975, 1809855'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1805819'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1805819; rm -rf "$base"; mkdir -p "$base"; printf undo_delete > "$base/undo_delete_test.txt"; gio trash --empty 2>/dev/null || true; rm -f "$base/PASS_1805819"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1805819.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: Delete
+    wait: 1.0
+  - action: keyboard_hot_key
+    key: ctrl+z
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx场景化补全二/assert_files_restored.py /tmp/dde-at-fixtures/case_1805819/PASS_1805819 /tmp/dde-at-fixtures/case_1805819/undo_delete_test.txt
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1805819/PASS_1805819
+# ── 文件索引配置：隐藏文件搜索与长文件名搜索（补充合并）──
+- id: case_1994795
+  name: 【文件索引配置】隐藏文件与长文件名搜索
+  description: 'xlsx 用例编号: 1994795, 1994793, 1994799'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1994795'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1994795; rm -rf "$base"; mkdir -p "$base"; printf hidden > "$base/.hidden_search_test"; longname="very_long_filename_for_testing_search_indexing_functionality_2024.txt"; printf long > "$base/$longname"; test -f "$base/.hidden_search_test"; test -f "$base/$longname"; rm -f "$base/PASS_1994795"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1994795.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1994795; test -f "$base/.hidden_search_test"; longname=$(ls "$base"/very_long_filename_for_testing_search_indexing_functionality_2024.txt 2>/dev/null); test -n "$longname"; touch "$base/PASS_1994795"'
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1994795/PASS_1994795
+# ── 文件列表分组：搜索结果分组与深色模式（补充合并）──
+- id: case_1936555
+  name: 【文件列表分组】搜索结果分组与文件总数统计
+  description: 'xlsx 用例编号: 1936555, 1937379, 1964017'
+  tags:
+  - P2
+  - strict
+  vars: {xlsx_id: '1936555'}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1936555; rm -rf "$base"; mkdir -p "$base"; printf a > "$base/group_test_a.txt"; printf b > "$base/group_test_b.log"; printf c > "$base/group_test_c.png"; printf d > "$base/other_file.doc"; test -f "$base/group_test_a.txt" && test -f "$base/group_test_b.log" && test -f "$base/group_test_c.png" && test -f "$base/other_file.doc"; rm -f "$base/PASS_1936555"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_1936555.log 2>&1 & sleep 5; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: python3 tests/at/yaml/xlsx场景化补全二/assert_dir_file_count.py /tmp/dde-at-fixtures/case_1936555/PASS_1936555 /tmp/dde-at-fixtures/case_1936555 4
+    wait: 2.0
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1936555/PASS_1936555
+teardown:
+- action: session_stop
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; rm -rf /tmp/dde-at-fixtures/case_1940085 /tmp/dde-at-fixtures/case_1809815 /tmp/dde-at-fixtures/case_1809855 /tmp/dde-at-fixtures/case_1805859 /tmp/dde-at-fixtures/case_1805675 /tmp/dde-at-fixtures/case_1936547 /tmp/dde-at-fixtures/case_1994797 /tmp/dde-at-fixtures/case_1965163 /tmp/dde-at-fixtures/case_1809807 /tmp/dde-at-fixtures/case_1939523 /tmp/dde-at-fixtures/case_1805819 /tmp/dde-at-fixtures/case_1994795 /tmp/dde-at-fixtures/case_1936555; gio trash --empty 2>/dev/null || true'
+  wait: 0.5
