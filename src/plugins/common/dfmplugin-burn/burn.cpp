@@ -21,6 +21,8 @@
 
 #include <QWidget>
 #include <QTimer>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
 
 
 DFMBASE_USE_NAMESPACE
@@ -37,10 +39,25 @@ void clearStaleBurnStates()
     // On session bus, the daemon runs as the current user, so all stored
     // burn states belong to this user. Clear all stale states from the
     // previous session on startup.
-    const auto states = OpticalShareProxy::instance().burnStates();
-    for (auto iter = states.cbegin(); iter != states.cend(); ++iter) {
-        OpticalShareProxy::instance().clearBurnState(iter.key());
-    }
+    //
+    // Use async D-Bus calls so the main thread is never blocked while
+    // waiting for the daemon service to activate or respond.
+    auto pending = OpticalShareProxy::instance().burnStatesAsync();
+    auto *watcher = new QDBusPendingCallWatcher(pending);
+    QObject::connect(watcher, &QDBusPendingCallWatcher::finished,
+                     &OpticalShareProxy::instance(), [](QDBusPendingCallWatcher *w) {
+        w->deleteLater();
+        QDBusPendingReply<QVariantMap> reply = *w;
+        if (!reply.isValid()) {
+            fmWarning() << "[clearStaleBurnStates] invalid reply, error:" << reply.error().message();
+            return;
+        }
+
+        const QVariantMap states = reply.value();
+        for (auto iter = states.cbegin(); iter != states.cend(); ++iter) {
+            OpticalShareProxy::instance().clearBurnStateAsync(iter.key());
+        }
+    });
 }
 
 }   // namespace

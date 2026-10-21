@@ -11,6 +11,7 @@
 #include <QScopedPointer>
 #include <QVariantMap>
 #include <QDBusInterface>
+#include <QDBusPendingCall>
 
 namespace dfmbase {
 
@@ -26,6 +27,9 @@ public:
     QVariantMap burnStates();
     bool setBurnState(const QString &dev, const QVariantMap &state);
     bool clearBurnState(const QString &dev);
+
+    QDBusPendingCall burnStatesAsync();
+    QDBusPendingCall clearBurnStateAsync(const QString &dev);
 
     QVariantMap burnAttribute(const QString &tag);
     bool setBurnAttribute(const QString &tag, const QVariantMap &attribute);
