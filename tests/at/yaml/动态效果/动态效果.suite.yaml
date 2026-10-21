@@ -4,27 +4,37 @@
 
 name: 动态效果_suite
 app: dde-file-manager
-description: '动态效果模块 AT-SPI 用例：侧边栏视图及导航项交互'
+description: '动态效果模块 AT-SPI 用例：侧边栏视图验证与导航项交互场景'
 module: 动态效果
 tags: []
 fast_fail: false
 env_check: []
 setup: []
 suites:
-- id: case_dynamic_sidebar_view
-  name: 侧边栏视图验证
-  description: '验证侧边栏树视图(side_bar_view)存在'
+- id: case_dynamic_sidebar_view_and_desktop
+  name: 侧边栏视图验证与桌面导航
+  description: '启动文件管理器后验证侧边栏树视图存在，点击桌面导航项切换至桌面目录，验证导航项仍可见'
   tags: []
   steps:
   - action: session_start
     command: dde-file-manager --open-home
     wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 0.5
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
   assert_steps:
   - action: assert_element
     ref: side_bar_view
-- id: case_dynamic_sidebar_desktop
-  name: 侧边栏导航-桌面
-  description: '验证侧边栏"桌面"导航项存在并可点击'
+  - action: assert_element
+    ref: 桌面
+- id: case_dynamic_sidebar_quick_access
+  name: 侧边栏快捷访问导航切换
+  description: '从桌面导航切换到快捷访问，验证导航项存在且可点击切换'
   tags: []
   steps:
   - action: session_start
@@ -34,17 +44,6 @@ suites:
     ref: 桌面
     do: click
     wait: 1.0
-  assert_steps:
-  - action: assert_element
-    ref: 桌面
-- id: case_dynamic_sidebar_quick_access
-  name: 侧边栏导航-快捷访问
-  description: '验证侧边栏"快捷访问"导航项存在并可点击'
-  tags: []
-  steps:
-  - action: session_start
-    command: dde-file-manager --open-home
-    wait: 5.0
   - action: element_action
     ref: 快捷访问
     do: click

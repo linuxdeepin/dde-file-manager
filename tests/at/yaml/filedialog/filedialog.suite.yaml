@@ -10,15 +10,15 @@ setup:
   wait: 3.0
 suites:
 - id: suite_filedialog_001_s1
-  name: 打开文件对话框基本交互
-  description: ''
+  name: 打开文件对话框——文件名输入与过滤器选择
+  description: '在文件对话框中输入文件名，验证标题标签、文件名标签、过滤器标签和过滤器下拉框可用，验证确认按钮可用'
   steps:
   - step_type: action
-    action: element_set_value
+    action: element_action
     selector:
-      name: FileNameEdit
-      role: text
-    text: test.txt
+      name: TitleLabel
+      role: label
+    do: focus
     wait: 1.0
   - step_type: action
     action: element_action
@@ -26,30 +26,49 @@ suites:
       name: FileNameLabel
       role: label
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_set_value
+    selector:
+      name: FileNameEdit
+      role: text
+    text: test.txt
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileNameEdit
+      role: text
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersLabel
       role: label
     do: point
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersComboBox
       role: combo box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersComboBox
       role: combo box
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CurAcceptButton
+      role: push button
     do: focus
+    wait: 0.5
   assert_steps:
   - step_type: assert
     action: assert_element
@@ -59,10 +78,31 @@ suites:
   - step_type: assert
     action: assert_element
     selector:
+      name: FileNameLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersLabel
+      role: label
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
       name: CurAcceptButton
+      role: push button
 - id: suite_filedialog_002_s1
-  name: 保存文件对话框与取消操作
-  description: ''
+  name: 保存文件对话框——输入文件名并取消保存
+  description: '在保存文件对话框中输入新文件名，选择过滤器后点击取消按钮，验证取消后对话框关闭'
   steps:
   - step_type: action
     action: element_action
@@ -83,37 +123,57 @@ suites:
       name: FileNameEdit
       role: text
     do: focus
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersComboBox
       role: combo box
     do: click
-    wait: 1.0
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: FiltersLabel
       role: label
     do: point
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: FileNameLabel
+      role: label
+    do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CurRejectButton
       role: push button
     do: focus
+    wait: 0.5
   - step_type: action
     action: element_action
     selector:
       name: CurRejectButton
       role: push button
-    do: point
+    do: click
+    wait: 1.0
   assert_steps:
   - step_type: assert
     action: assert_element
     selector:
       name: CurRejectButton
       role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FileNameEdit
+      role: text
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: FiltersComboBox
+      role: combo box
 teardown:
 - action: session_stop
