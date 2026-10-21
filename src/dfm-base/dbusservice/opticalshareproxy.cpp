@@ -86,6 +86,17 @@ bool OpticalShareProxy::clearBurnState(const QString &dev)
     return reply.value();
 }
 
+
+QDBusPendingCall OpticalShareProxy::burnStatesAsync()
+{
+    return dbusInterface()->asyncCall("GetBurnStates");
+}
+
+QDBusPendingCall OpticalShareProxy::clearBurnStateAsync(const QString &dev)
+{
+    return dbusInterface()->asyncCall("ClearBurnState", dev);
+}
+
 QVariantMap OpticalShareProxy::burnAttribute(const QString &tag)
 {
     QDBusReply<QVariantMap> reply = dbusInterface()->call("GetBurnAttribute", tag);
