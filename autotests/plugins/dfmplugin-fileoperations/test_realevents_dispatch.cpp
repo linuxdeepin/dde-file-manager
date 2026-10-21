@@ -42,6 +42,7 @@
 #include <dfm-base/file/local/syncfileinfo.h>
 #include <dfm-base/file/local/localfilehandler.h>
 #include <dfm-base/base/urlroute.h>
+#include <dfm-base/utils/applaunchutils.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/clipboard.h>
@@ -642,6 +643,14 @@ TEST_F(FileOpsEventDispatchTest, OpenInTerminalEvent_PublishTwoArgs_ProcessDetac
     // force a terminal to be found regardless of the host environment
     stub.set_lamda(static_cast<bool (*)(const QString &)>(&QFileInfo::exists),
                    [](const QString &) -> bool { return true; });
+
+    // force the QProcess fallback path (AM1 executeCommand unavailable)
+    stub.set_lamda(static_cast<bool (AppLaunchUtils::*)(const QString &, const QStringList &,
+                                                        const QString &, const QString &,
+                                                        const QString &, const QStringMap &)>(
+                       &AppLaunchUtils::executeCommand),
+                   [](AppLaunchUtils *, const QString &, const QStringList &, const QString &,
+                      const QString &, const QString &, const QStringMap &) -> bool { return false; });
 
     bool published = dpfSignalDispatcher->publish(GlobalEventType::kOpenInTerminal, quint64(13), QList<QUrl> { src });
 
