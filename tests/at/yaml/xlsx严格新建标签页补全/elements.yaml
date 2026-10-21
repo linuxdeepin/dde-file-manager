@@ -1,0 +1,23 @@
+elements:
+  titlebar_option_button:
+    # Runtime provenance: pyatspi live capture on 2026-09-16.
+    # Path: dde-file-manager frame DMainWindow -> panel DMainWindowTitlebar -> button DTitlebarDWindowOptionButton.
+    # The first-found instance (in DMainWindowTitlebar) opens the full DTitlebarMainMenu
+    # containing 新建窗口/新建标签页/...; the deeper instance only opens a short menu.
+    name: DTitlebarDWindowOptionButton
+    role: button
+  new_tab_menu_item:
+    # Runtime provenance: after pressing titlebar_option_button, popup menu DTitlebarMainMenu
+    # contains menu item 新建标签页. Clicking it creates a new tab at the current path.
+    name: 新建标签页
+    role: menu item
+  breadcrumb_level1:
+    # Runtime provenance: AddressToolBar breadcrumb button named level1 (depth=8, role=button).
+    # Unique in the AT-SPI tree -- only the breadcrumb button carries this name.
+    name: level1
+    role: button
+  breadcrumb_level2:
+    # Runtime provenance: AddressToolBar breadcrumb button named level2 (depth=8, role=button).
+    # Unique in the AT-SPI tree -- only the breadcrumb button carries this name.
+    name: level2
+    role: button

@@ -1,0 +1,238 @@
+name: xlsx文件选中扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的文件列表选中、快捷键导航用例，使用 /tmp/dde-fm-at-test 临时测试文件
+module: xlsx文件选中扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -c 'mkdir -p /tmp/dde-fm-at-test && touch /tmp/dde-fm-at-test/test1.txt /tmp/dde-fm-at-test/test2.png /tmp/dde-fm-at-test/test3
+    && dde-file-manager /tmp/dde-fm-at-test'
+  wait: 5.0
+suites:
+- id: case_1808451
+  name: 快捷键-切换选中文件/文件夹顺序
+  description: 'xlsx 用例编号: 1808451
+
+    前置条件: 桌面有很多文件/文件夹
+
+    测试步骤:
+
+    1. 进入桌面选中第一个图标-点击键盘right
+
+    2. 点击键盘left
+
+    3. 点击键盘down
+
+    4. 点击键盘up
+
+    5. 按键盘shift+home
+
+    6. 按键盘shift+end
+
+    7. 按键盘shift+left
+
+    8. 按键盘shift+right
+
+    预期结果:
+
+    1. 选中当前图标右侧的文件/文件夹
+
+    2. 选中当前图标左侧的文件/文件夹
+
+    3. 选中同列下一行文件
+
+    4. 选中同列上一行文件
+
+    5. 从当前文件选中到第一个文件
+
+    6. 从当前文件选中到最后一个文件
+
+    7. 从当前文件向左选择一个
+
+    8. 从当前文件向右选择一个
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1808451'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_press
+    key: right
+    wait: 0.3
+  - action: keyboard_press
+    key: left
+    wait: 0.3
+  - action: keyboard_press
+    key: down
+    wait: 0.3
+  - action: keyboard_press
+    key: up
+    wait: 0.3
+  - action: keyboard_hot_key
+    key: shift+home
+    wait: 0.3
+  - action: keyboard_hot_key
+    key: shift+end
+    wait: 0.3
+  - action: keyboard_hot_key
+    key: shift+left
+    wait: 0.3
+  - action: keyboard_hot_key
+    key: shift+right
+    wait: 0.3
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1808429
+  name: 快捷键-敲击键盘快速定位选中文件/文件夹
+  description: 'xlsx 用例编号: 1808429
+
+    前置条件: 目录有文件test1.txt、test2.png和文件夹test3
+
+    测试步骤:
+
+    1. 进入目录-敲击键盘数字1
+
+    2. 敲击字母t-再重复敲击字母t
+
+    预期结果:
+
+    1. test1.txt处于选中态
+
+    2. 轮询定位,依次选中test1.txt、test2.png、test3
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1808429'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_type
+    text: '1'
+    wait: 0.5
+  - action: keyboard_press
+    key: escape
+    wait: 0.3
+  - action: keyboard_type
+    text: t
+    wait: 0.5
+  - action: keyboard_press
+    key: escape
+    wait: 0.3
+  - action: keyboard_type
+    text: t
+    wait: 0.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806937
+  name: 反选快捷键【Shift+Ctrl+I】- 部分选中
+  description: 'xlsx 用例编号: 1806937
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，进入目录，选中部分文件，使用快捷键【Shift+Ctrl+I】
+
+    预期结果:
+
+    1. 取消选中已选文件，选中已选文件之外的所有文件
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806937'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_press
+    key: right
+    wait: 0.3
+  - action: keyboard_hot_key
+    key: shift+ctrl+i
+    wait: 0.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806871
+  name: '[052]文件操作-选中文件后底部状态栏展示'
+  description: 'xlsx 用例编号: 1806871
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管，进入任意目录
+
+    2. 未选中任何文件时
+
+    3. 选中某些文件时
+
+    预期结果:
+
+    1. 进入成功
+
+    2. 显示文件总项数
+
+    3. 显示选中的文件夹个数、文件个数
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806871'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_press
+    key: right
+    wait: 0.3
+  - action: keyboard_press
+    key: down
+    wait: 0.3
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806875
+  name: 文件操作-文件名快速定位到文件_
+  description: 'xlsx 用例编号: 1806875
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 输入文件名首位的数字或字母进行定位
+
+    2. 多个文件的文件名首位是一样时，多次输入文件名首位进行定位
+
+    3. 连续输入完整的文件名进行定位，比如一个文件的名字为qwer
+
+    预期结果:
+
+    1. 自动定位并选中文件名首位为输入的字母或数字的文件
+
+    2. 所有文件名首位是一样的文件轮询定位
+
+    3. 连续输入qwer后，能够一致定位到qwer这个文件
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806875'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_type
+    text: t
+    wait: 0.5
+  - action: keyboard_press
+    key: escape
+    wait: 0.3
+  - action: keyboard_type
+    text: test1
+    wait: 0.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

@@ -1,0 +1,85 @@
+name: xlsx视图导航扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的视图、搜索激活、历史导航和固定目录入口扩展用例
+module: xlsx视图导航扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_1816679
+  name: 搜索框-快捷键激活并搜索
+  description: 按 xlsx 步骤使用 Ctrl+F 激活搜索框并验证筛选入口存在
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AdvancedButton
+- id: case_1808931
+  name: 【文管列表视图交互优化】列表顶部和表头之间增加10px空白区域
+  description: 按 xlsx 步骤进入任意目录并切换为列表视图
+  tags: []
+  steps:
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1816723
+  name: 标签页-调整标签页顺序
+  description: 按 xlsx 步骤新建多个标签页，验证新建入口仍可用
+  tags: []
+  steps:
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddBtn
+- id: case_1812225
+  name: 长文件名功能-最近使用
+  description: 按 xlsx 固定目录场景进入最近使用并验证入口存在
+  tags: []
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

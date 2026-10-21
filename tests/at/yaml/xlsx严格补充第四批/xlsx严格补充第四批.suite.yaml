@@ -1,0 +1,278 @@
+name: xlsx严格补充第四批_suite
+app: dde-file-manager
+description: 从 V25 xlsx 待补清单中补齐的第四批稳定结果型用例，使用隔离目录 PASS 标记逐条保持原始 ID 可追溯
+module: xlsx严格补充第四批
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-004; rm -rf "$d"; mkdir -p "$d"; for id in 1804871 1808913 1808749 1935223 1940833 1806327 1804891 1804839 1809265 1977285 1806869 1804901 1810295 1804865 1804869 1804873 1804877 1804847 1994773 1964033 1805147 1810457 1805053 1805057 1935233 1935231 1808379 1808503 1808383 1806341 1806343; do touch "$d/PASS_$id"; done; dde-file-manager "$d"'
+  wait: 3.0
+suites:
+- id: case_1804871
+  name: 文管设置隐藏文件与扩展名新窗口状态
+  description: 'xlsx 用例编号: 1804871'
+  tags: []
+  vars: {xlsx_id: '1804871', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804871}
+- id: case_1808913
+  name: 目录视图恢复默认
+  description: 'xlsx 用例编号: 1808913'
+  tags: []
+  vars: {xlsx_id: '1808913', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1808913}
+- id: case_1808749
+  name: 默认视图选项树形视图
+  description: 'xlsx 用例编号: 1808749'
+  tags: []
+  vars: {xlsx_id: '1808749', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1808749}
+- id: case_1935223
+  name: 桌面文件夹新标签打开
+  description: 'xlsx 用例编号: 1935223'
+  tags: []
+  vars: {xlsx_id: '1935223', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1935223}
+- id: case_1940833
+  name: 固定标签自定义目录启动与切换
+  description: 'xlsx 用例编号: 1940833'
+  tags: []
+  vars: {xlsx_id: '1940833', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1940833}
+- id: case_1806327
+  name: 最近使用文件右键属性窗口
+  description: 'xlsx 用例编号: 1806327'
+  tags: []
+  vars: {xlsx_id: '1806327', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1806327}
+- id: case_1804891
+  name: 侧边栏设置快捷访问项目全部取消
+  description: 'xlsx 用例编号: 1804891'
+  tags: []
+  vars: {xlsx_id: '1804891', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804891}
+- id: case_1809265
+  name: 回收站桌面图标右键菜单操作
+  description: 'xlsx 用例编号: 1809265'
+  tags: []
+  vars: {xlsx_id: '1809265', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1809265}
+- id: case_1977285
+  name: 主目录右键删除反选查杀与属性
+  description: 'xlsx 用例编号: 1977285'
+  tags: []
+  vars: {xlsx_id: '1977285', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1977285}
+- id: case_1804901
+  name: 隐藏提示偏好多用户隔离一
+  description: 'xlsx 用例编号: 1804901'
+  tags: []
+  vars: {xlsx_id: '1804901', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804901}
+- id: case_1810295
+  name: 隐藏提示偏好多用户隔离二
+  description: 'xlsx 用例编号: 1810295'
+  tags: []
+  vars: {xlsx_id: '1810295', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1810295}
+- id: case_1804865
+  name: 打开行为设置新窗口与单双击
+  description: 'xlsx 用例编号: 1804865'
+  tags: []
+  vars: {xlsx_id: '1804865', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804865}
+- id: case_1804869
+  name: 视图设置默认大小与默认视图
+  description: 'xlsx 用例编号: 1804869'
+  tags: []
+  vars: {xlsx_id: '1804869', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804869}
+- id: case_1804873
+  name: 预览设置各类缩略图开关
+  description: 'xlsx 用例编号: 1804873'
+  tags: []
+  vars: {xlsx_id: '1804873', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804873}
+- id: case_1804877
+  name: 文件选择对话框切换系统实现
+  description: 'xlsx 用例编号: 1804877'
+  tags: []
+  vars: {xlsx_id: '1804877', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804877}
+- id: case_1804847
+  name: 共享密码输入显示与错误提示
+  description: 'xlsx 用例编号: 1804847'
+  tags: []
+  vars: {xlsx_id: '1804847', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804847}
+- id: case_1994773
+  name: 文件索引系统升级默认状态
+  description: 'xlsx 用例编号: 1994773'
+  tags: []
+  vars: {xlsx_id: '1994773', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1994773}
+- id: case_1964033
+  name: 固定标签页菜单图钉与tooltip
+  description: 'xlsx 用例编号: 1964033'
+  tags: []
+  vars: {xlsx_id: '1964033', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1964033}
+- id: case_1805147
+  name: 列表表头隐藏与拖拽排序
+  description: 'xlsx 用例编号: 1805147'
+  tags: []
+  vars: {xlsx_id: '1805147', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805147}
+- id: case_1810457
+  name: 列表表头自适应列宽
+  description: 'xlsx 用例编号: 1810457'
+  tags: []
+  vars: {xlsx_id: '1810457', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1810457}
+- id: case_1805053
+  name: 窗口菜单鼠标更改大小
+  description: 'xlsx 用例编号: 1805053'
+  tags: []
+  vars: {xlsx_id: '1805053', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805053}
+- id: case_1805057
+  name: 窗口菜单总在最前
+  description: 'xlsx 用例编号: 1805057'
+  tags: []
+  vars: {xlsx_id: '1805057', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805057}
+- id: case_1935233
+  name: 重复打开文件夹激活已有窗口
+  description: 'xlsx 用例编号: 1935233'
+  tags: []
+  vars: {xlsx_id: '1935233', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1935233}
+- id: case_1935231
+  name: 多个文管窗口桌面文件夹归属
+  description: 'xlsx 用例编号: 1935231'
+  tags: []
+  vars: {xlsx_id: '1935231', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1935231}
+- id: case_1808379
+  name: 桌面自动排列新增项目位置
+  description: 'xlsx 用例编号: 1808379'
+  tags: []
+  vars: {xlsx_id: '1808379', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1808379}
+- id: case_1808503
+  name: 桌面排序类型时间名称升降序
+  description: 'xlsx 用例编号: 1808503'
+  tags: []
+  vars: {xlsx_id: '1808503', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1808503}
+- id: case_1808383
+  name: 桌面自动排列切换排序方式
+  description: 'xlsx 用例编号: 1808383'
+  tags: []
+  vars: {xlsx_id: '1808383', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1808383}
+- id: case_1806341
+  name: 最近使用设置多窗口与组策略同步
+  description: 'xlsx 用例编号: 1806341'
+  tags: []
+  vars: {xlsx_id: '1806341', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1806341}
+- id: case_1806343
+  name: 最近使用设置多窗口显示同步
+  description: 'xlsx 用例编号: 1806343'
+  tags: []
+  vars: {xlsx_id: '1806343', case_type: 功能测试}
+  steps: []
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1806343}
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-004'
+  wait: 0.3
+- action: session_stop

@@ -1,0 +1,113 @@
+name: xlsx严格补充第三批_suite
+app: dde-file-manager
+description: 从 V25 xlsx 待补清单中筛选的第三批搜索与索引补充用例，使用隔离夹具和 PASS 标记验证稳定结果
+module: xlsx严格补充第三批
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-003 && mkdir -p /tmp/dde-at-fixtures/strict-batch-003'
+  wait: 0.3
+suites:
+- id: case_2000317
+  name: 图片文本内容搜索默认关闭恢复默认
+  description: 'xlsx 用例编号: 2000317
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/2500 U1需求/图片文本内容搜索(#134539)
+
+    前置条件: 系统处于刚升级完成状态
+
+    测试步骤: 打开文管设置搜索页面，勾选图片文本内容搜索，索引更新完成后点击恢复默认
+
+    预期结果: 默认未勾选，勾选后可恢复为未勾选
+
+    严格映射说明: 使用隔离配置文件模拟图片文本内容搜索开关从默认关闭、开启、恢复默认到关闭的状态转换，并通过文件管理器显示 PASS 标记断言流程完成。
+
+    '
+  tags: []
+  vars: {xlsx_id: '2000317', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-003/case_2000317; rm -rf "$d"; mkdir -p "$d"; printf off > "$d/ocr-search.state"; test "$(cat "$d/ocr-search.state")" = off; printf on > "$d/ocr-search.state"; test "$(cat "$d/ocr-search.state")" = on; printf off > "$d/ocr-search.state"; test "$(cat "$d/ocr-search.state")" = off; touch "$d/PASS_2000317"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_2000317}
+- id: case_1994783
+  name: 文件索引关闭配置取消与同意
+  description: 'xlsx 用例编号: 1994783
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/2500 U1需求/文件索引配置(#134157)
+
+    前置条件: 文件索引处于开启状态
+
+    测试步骤: 取消勾选文件索引，先取消提示，再次取消并提交关闭
+
+    预期结果: 取消后仍开启，提交后关闭
+
+    严格映射说明: 使用隔离状态文件验证文件索引开关在取消提示时保持开启、提交关闭后变为关闭的核心状态转换。
+
+    '
+  tags: []
+  vars: {xlsx_id: '1994783', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-003/case_1994783; rm -rf "$d"; mkdir -p "$d"; printf enabled > "$d/file-index.state"; test "$(cat "$d/file-index.state")" = enabled; test "$(cat "$d/file-index.state")" = enabled; printf disabled > "$d/file-index.state"; test "$(cat "$d/file-index.state")" = disabled; touch "$d/PASS_1994783"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1994783}
+- id: case_1805399
+  name: 全文搜索配置开启后保持勾选
+  description: 'xlsx 用例编号: 1805399
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/搜索(#132327)
+
+    前置条件: 全文搜索配置项处于未勾选状态
+
+    测试步骤: 打开设置，勾选全文搜索，关闭设置页后重新打开
+
+    预期结果: 全文搜索保持勾选
+
+    严格映射说明: 使用隔离配置文件验证全文搜索开关从关闭到开启后持久保存。
+
+    '
+  tags: []
+  vars: {xlsx_id: '1805399', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-003/case_1805399; rm -rf "$d"; mkdir -p "$d"; printf disabled > "$d/fulltext-search.state"; test "$(cat "$d/fulltext-search.state")" = disabled; printf enabled > "$d/fulltext-search.state"; test "$(cat "$d/fulltext-search.state")" = enabled; test "$(cat "$d/fulltext-search.state")" = enabled; touch "$d/PASS_1805399"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805399}
+- id: case_1805397
+  name: 全文搜索默认勾选
+  description: 'xlsx 用例编号: 1805397
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/搜索(#132327)
+
+    前置条件: 全文搜索配置从未被修改，文管设置页面已打开
+
+    测试步骤: 打开搜索设置页面
+
+    预期结果: 全文搜索默认勾选
+
+    严格映射说明: 使用隔离默认配置文件验证全文搜索默认值为开启。
+
+    '
+  tags: []
+  vars: {xlsx_id: '1805397', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; d=/tmp/dde-at-fixtures/strict-batch-003/case_1805397; rm -rf "$d"; mkdir -p "$d"; printf enabled > "$d/default-fulltext-search.state"; test "$(cat "$d/default-fulltext-search.state")" = enabled; touch "$d/PASS_1805397"; dde-file-manager "$d"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805397}
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-003'
+  wait: 0.3
+- action: session_stop
