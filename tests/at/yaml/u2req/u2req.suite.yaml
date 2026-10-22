@@ -1,0 +1,641 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 2500_U2需求_suite
+app: dde-file-manager
+description: 2500_U2需求模块 AT-SPI 用例
+module: 2500_U2需求
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_u2req_2500_U2需求_001
+  name: 【智能语义搜索】时间槽-精确时间-错误的日期格式
+  description: '来源用例编号: 2021321'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 1月33日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 1月33日创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_002
+  name: 【智能语义搜索】时间槽-精确时间-本年精确日期
+  description: '来源用例编号: 2021319'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 5月1日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月1日创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月1号创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月1号创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 五月一日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 五月一日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月一号创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月一号创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月一号创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月一号创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 12月5日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 12月5日创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_003
+  name: 【智能语义搜索】时间槽-精确时间-本年精确月份
+  description: '来源用例编号: 2021317'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 5月创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月份创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月份创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_004
+  name: 【智能语义搜索】时间槽-精确时间-精确年份
+  description: '来源用例编号: 2021315'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 2025年创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025年创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 25年创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 25年创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_005
+  name: 【智能语义搜索】时间槽-精确时间-绝对日期
+  description: '来源用例编号: 2021313'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 2026年5月1日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2026年5月1日创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 2026-5-1创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2026-5-1创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: ：
+    wait: 1.0
+  - action: keyboard_type
+    text: ：
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_006
+  name: 【智能语义搜索】智能搜索默认值检查及恢复默认值
+  description: '来源用例编号: 2019285'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_007
+  name: 【智能语义搜索】位置槽-下载目录泛化库：下载的, 下载目录, 下下来的, 浏览器下载
+  description: '来源用例编号: 2019159'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 今天下载的
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天下载的
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 下载目录
+    wait: 1.0
+  - action: keyboard_type
+    text: 下载目录
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天下下来的
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天下下来的
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天浏览器下载的图片
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天浏览器下载的图片
+    wait: 1.0
+  - action: keyboard_type
+    text: 浏览器下载的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 浏览器下载的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 下载
+- id: case_u2req_2500_U2需求_008
+  name: 【智能语义搜索】位置槽-下载目录
+  description: '来源用例编号: 2019153'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 今天下载文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天下载文件
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: case_u2req_2500_U2需求_009
+  name: 【智能语义搜索】搜索框中输入：关键词+位置槽
+  description: '来源用例编号: 2019141'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 桌面上的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 桌面上的文件
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 显示桌面上的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 显示桌面上的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_010
+  name: 【智能语义搜索】关闭智能搜索索引授权提醒
+  description: '来源用例编号: 2018747'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 500M
+    wait: 1.0
+  - action: keyboard_type
+    text: 500M
+    wait: 1.0
+  - action: keyboard_type
+    text: 500M
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 图片
+- id: case_u2req_2500_U2需求_011
+  name: 【智能语义搜索】一键授权开启智能搜索
+  description: '来源用例编号: 2018745'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 500M
+    wait: 1.0
+  - action: keyboard_type
+    text: 500M
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 图片
+- id: case_u2req_2500_U2需求_012
+  name: 【智能语义搜索】时间槽-精确时间-完整精确日期
+  description: '来源用例编号: 2018723'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 2025年3月16日创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025年3月16日创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025-3-16创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025-3-16创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025/3/16创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025/3/16创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_013
+  name: 【智能语义搜索】时间槽-精确时间-精确年月
+  description: '来源用例编号: 2018721'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 2025年3月创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025年3月创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025-3创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025-3创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: ：
+    wait: 1.0
+  - action: keyboard_type
+    text: ：
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_014
+  name: 【智能语义搜索】时间槽-精确时间-精确月份
+  description: '来源用例编号: 2018719'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 2025年3月创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025年3月创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 25年3月份创建的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 25年3月份创建的文件
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_015
+  name: 【智能语义搜索】时间槽-精准时间-绝对月份
+  description: '来源用例编号: 2018713'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 2025年7月点开过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025年7月点开过的文件
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 7月点开过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 7月点开过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 七月点开过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 七月点开过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: 最近使用
+- id: case_u2req_2500_U2需求_016
+  name: 【智能语义搜索】关键词中含有某个槽位部分关键词
+  description: '来源用例编号: 2018707'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 上点开过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 上点开过的文件
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: case_u2req_2500_U2需求_017
+  name: 【智能语义搜索】时间槽-上个月及泛化词：上月
+  description: '来源用例编号: 2018705'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 上个月点开过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 上个月点开过的文件
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 上月点开过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_018
+  name: 【智能语义搜索】时间槽-去年泛化词：上一年/去年一整年
+  description: '来源用例编号: 2018703'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 上一年浏览过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 上一年浏览过的文件
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 去年一整年浏览过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_019
+  name: 【智能语义搜索】时间槽-去年
+  description: '来源用例编号: 2018701'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 去年浏览过的文件
+    wait: 1.0
+  - action: keyboard_type
+    text: 去年浏览过的文件
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_020
+  name: 【智能语义搜索】搜索结果显示
+  description: '来源用例编号: 2018657'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_021
+  name: 【智能语义搜索】分组展开/折叠按钮检查
+  description: '来源用例编号: 2018599'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_022
+  name: 【智能语义搜索】支持智能语义搜索所有文件类型检查
+  description: '来源用例编号: 2018553'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 今天创建的word
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天创建的word
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_u2req_2500_U2需求_023
+  name: 【智能语义搜索】分组标题检查
+  description: '来源用例编号: 2018291'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
