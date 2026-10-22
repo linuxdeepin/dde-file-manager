@@ -1,0 +1,30 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 兼容性_suite
+app: dde-file-manager
+description: 兼容性模块 AT-SPI 用例
+module: 兼容性
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 兼容性_0001_s1
+  name: 测试在不同网络环境下的表现
+  description: 测试在不同网络环境下的表现
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+teardown:
+- action: session_stop

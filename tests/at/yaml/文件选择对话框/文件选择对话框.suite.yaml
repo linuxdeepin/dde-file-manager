@@ -1,0 +1,486 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件选择对话框_suite
+app: dde-file-manager
+description: 文件选择对话框模块 AT-SPI 用例
+module: 文件选择对话框
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件选择对话框_0001_s1
+  name: 最佳性能模式下文管/对话框显示
+  description: 最佳性能模式下文管/对话框显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: AddressBar
+- id: 文件选择对话框_0002_s1
+  name: 长文件名功能 -  文件选择对话框(保存)，显示方式
+  description: 长文件名功能 -  文件选择对话框(保存)，显示方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0003_s1
+  name: 长文件名功能 -  文件选择对话框(保存)，复制粘贴
+  description: 长文件名功能 -  文件选择对话框(保存)，复制粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0004_s1
+  name: 长文件名功能 -  文件选择对话框(保存)，重命名
+  description: 长文件名功能 -  文件选择对话框(保存)，重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0005_s1
+  name: 长文件名功能 -  文件选择对话框(打开)，新建
+  description: 长文件名功能 -  文件选择对话框(打开)，新建
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0006_s1
+  name: 长文件名功能 -  文件选择对话框(打开)，排序方式
+  description: 长文件名功能 -  文件选择对话框(打开)，排序方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0007_s1
+  name: 长文件名功能 -  文件选择对话框(打开)，剪切粘贴
+  description: 长文件名功能 -  文件选择对话框(打开)，剪切粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0008_s1
+  name: 长文件名功能 -  文件选择对话框(打开)，批量重命名，自定义文本
+  description: 长文件名功能 -  文件选择对话框(打开)，批量重命名，自定义文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0009_s1
+  name: 长文件名功能 -  文件选择对话框(打开)，删除
+  description: 长文件名功能 -  文件选择对话框(打开)，删除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 文件选择对话框_0010_s1
+  name: 文件选择对话框-勾选【总是在新窗口打开文件夹】后检查文件选择对话框进入目录
+  description: 文件选择对话框-勾选【总是在新窗口打开文件夹】后检查文件选择对话框进入目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0011_s1
+  name: 文管选择窗口-添加其他程序支持筛选.desktop文件
+  description: 文管选择窗口-添加其他程序支持筛选.desktop文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件选择对话框_0012_s1
+  name: 文件选择对话框，搜索输入框进行搜索
+  description: 文件选择对话框，搜索输入框进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 123(总共的搜索字符为a123)
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 文件选择对话框_0013_s1
+  name: Bug211857转：关闭文件选择对话框后进程在60秒后正常销毁
+  description: Bug211857转：关闭文件选择对话框后进程在60秒后正常销毁
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件选择对话框_0014_s1
+  name: 文管选择窗-复制名称-文件名复制
+  description: 文管选择窗-复制名称-文件名复制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0015_s1
+  name: 文管选择窗-复制名称-手动修改后缀后点击其他文件
+  description: 文管选择窗-复制名称-手动修改后缀后点击其他文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0016_s1
+  name: 文管选择窗-文件名包含特殊字符
+  description: 文管选择窗-文件名包含特殊字符
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件选择对话框_0017_s1
+  name: 文管选择窗-重名优化-向333权限目录中添加重名文件
+  description: 文管选择窗-重名优化-向333权限目录中添加重名文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0018_s1
+  name: 文管选择窗-文件过滤
+  description: 文管选择窗-文件过滤
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 图片
+- id: 文件选择对话框_0019_s1
+  name: 文管选择窗-不同权限目录下的操作
+  description: 文管选择窗-不同权限目录下的操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0020_s1
+  name: 文管选择窗-打开新的文管窗口
+  description: 文管选择窗-打开新的文管窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 文件选择对话框_0021_s1
+  name: 文管选择窗-访问不同权限的目录
+  description: 文管选择窗-访问不同权限的目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0022_s1
+  name: 文管选择窗-影院调用_
+  description: 文管选择窗-影院调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 文件选择对话框_0023_s1
+  name: 文管选择窗-音乐调用_
+  description: 文管选择窗-音乐调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+- id: 文件选择对话框_0024_s1
+  name: 文管选择窗-截图调用_
+  description: 文管选择窗-截图调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件选择对话框_0025_s1
+  name: 文管选择窗-看图调用_
+  description: 文管选择窗-看图调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 文件选择对话框_0026_s1
+  name: 文管选择窗-文本编辑器调用_
+  description: 文管选择窗-文本编辑器调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件选择对话框_0027_s1
+  name: 文管选择窗-文档查看器调用_
+  description: 文管选择窗-文档查看器调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 文件选择对话框_0028_s1
+  name: 文管选择窗-归档管理器调用_
+  description: 文管选择窗-归档管理器调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0029_s1
+  name: 文管选择窗-软件包安装器调用_
+  description: 文管选择窗-软件包安装器调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0030_s1
+  name: 文管选择窗-系统监视器调用_
+  description: 文管选择窗-系统监视器调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0031_s1
+  name: 文管选择窗-控制中心调用_
+  description: 文管选择窗-控制中心调用_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0032_s1
+  name: 文管选择窗-单个文件夹/文件右键操作
+  description: 文管选择窗-单个文件夹/文件右键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0033_s1
+  name: 文管选择窗-右键菜单检查
+  description: 文管选择窗-右键菜单检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0034_s1
+  name: 文管选择窗-选中多个文件
+  description: 文管选择窗-选中多个文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0035_s1
+  name: 文管选择窗-记录排序方式_
+  description: 文管选择窗-记录排序方式_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件选择对话框_0036_s1
+  name: 文管选择窗-保存文件功能检查
+  description: 文管选择窗-保存文件功能检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

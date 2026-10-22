@@ -1,0 +1,96 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 桌面图标选中样式优化_suite
+app: dde-file-manager
+description: 桌面图标选中样式优化模块 AT-SPI 用例
+module: 桌面图标选中样式优化
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 桌面图标选中样式优化_0001_s1
+  name: 【桌面图标选中样式优化】 拖拽时不显示底色
+  description: 【桌面图标选中样式优化】 拖拽时不显示底色
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 桌面图标选中样式优化_0002_s1
+  name: 【桌面图标选中样式优化】 稳定性测试
+  description: 【桌面图标选中样式优化】 稳定性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面图标选中样式优化_0003_s1
+  name: 【桌面图标选中样式优化】 性能测试
+  description: 【桌面图标选中样式优化】 性能测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面图标选中样式优化_0004_s1
+  name: 【桌面图标选中样式优化】 兼容性测试
+  description: 【桌面图标选中样式优化】 兼容性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面图标选中样式优化_0005_s1
+  name: 【桌面图标选中样式优化】选中桌面文件后，文件缩略图显示底色
+  description: 【桌面图标选中样式优化】选中桌面文件后，文件缩略图显示底色
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

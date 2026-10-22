@@ -1,0 +1,120 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件属性_suite
+app: dde-file-manager
+description: 文件属性模块 AT-SPI 用例
+module: 文件属性
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件属性_0001_s1
+  name: 长文件名功能(关闭)  - 属性，重命名
+  description: 长文件名功能(关闭)  - 属性，重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 图片
+- id: 文件属性_0002_s1
+  name: 属性复制-属性字段最长支持4行，超出从中间隐藏字符
+  description: 属性复制-属性字段最长支持4行，超出从中间隐藏字符
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 文件属性_0003_s1
+  name: 属性复制-快捷键全选
+  description: 属性复制-快捷键全选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件属性_0004_s1
+  name: 属性复制-右键菜单全选
+  description: 属性复制-右键菜单全选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件属性_0005_s1
+  name: 在计算机视图页面，操作快捷键 Ctrl+I查看属性
+  description: 在计算机视图页面，操作快捷键 Ctrl+I查看属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+- id: 文件属性_0006_s1
+  name: 桌面属性窗口-隐藏属性配置
+  description: 桌面属性窗口-隐藏属性配置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件属性_0007_s1
+  name: 文件管理器属性窗口-隐藏属性配置
+  description: 文件管理器属性窗口-隐藏属性配置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

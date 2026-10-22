@@ -1,0 +1,77 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 网络共享支持设置备注_suite
+app: dde-file-manager
+description: 网络共享支持设置备注模块 AT-SPI 用例
+module: 网络共享支持设置备注
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 网络共享支持设置备注_0001_s1
+  name: 【网络共享目录设置备注】文件选择对话框显示备注名
+  description: 【网络共享目录设置备注】文件选择对话框显示备注名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 网络共享支持设置备注_0002_s1
+  name: 【网络共享目录设置备注】不同服务器各种协议设置备注
+  description: 【网络共享目录设置备注】不同服务器各种协议设置备注
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 网络共享支持设置备注_0003_s1
+  name: 【网络共享目录设置备注】非smb协议共享目录设置备注
+  description: 【网络共享目录设置备注】非smb协议共享目录设置备注
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: AddressBar
+- id: 网络共享支持设置备注_0004_s1
+  name: 【网络共享目录设置备注】设置备注-异常系
+  description: 【网络共享目录设置备注】设置备注-异常系
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+teardown:
+- action: session_stop

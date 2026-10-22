@@ -1,0 +1,72 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 办公云盘_suite
+app: dde-file-manager
+description: 办公云盘模块 AT-SPI 用例
+module: 办公云盘
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 办公云盘_0001_s1
+  name: 云盘插件登录-云盘客户端初次启动
+  description: 云盘插件登录-云盘客户端初次启动
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 办公云盘_0002_s1
+  name: 云盘插件-首页登录引导页面显示
+  description: 云盘插件-首页登录引导页面显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 计算机
+- id: 办公云盘_0003_s1
+  name: 云盘插件-已登录时右键菜单-同步详情
+  description: 云盘插件-已登录时右键菜单-同步详情
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 计算机
+teardown:
+- action: session_stop

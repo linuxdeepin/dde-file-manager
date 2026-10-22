@@ -1,0 +1,172 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 普通目录_suite
+app: dde-file-manager
+description: 普通目录模块 AT-SPI 用例
+module: 普通目录
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 普通目录_0001_s1
+  name: 侧边栏支持毛玻璃效果
+  description: 侧边栏支持毛玻璃效果
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 普通目录_0002_s1
+  name: 我的共享-展示本机所有的共享目录
+  description: 我的共享-展示本机所有的共享目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 普通目录_0003_s1
+  name: 剪切-剪切深层目录
+  description: 剪切-剪切深层目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 普通目录_0004_s1
+  name: Bug181151转：网络邻居页面顶部工具栏检查
+  description: Bug181151转：网络邻居页面顶部工具栏检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: side_bar_view
+- id: 普通目录_0005_s1
+  name: 侧边栏固定目录，点击后跳转
+  description: 侧边栏固定目录，点击后跳转
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: side_bar_view
+- id: 普通目录_0006_s1
+  name: 单击侧边栏网络邻居入口，操作windwos网络
+  description: 单击侧边栏网络邻居入口，操作windwos网络
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: side_bar_view
+- id: 普通目录_0007_s1
+  name: 不同用户在普通目录操作
+  description: 不同用户在普通目录操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 普通目录_0008_s1
+  name: 固定栏目下选中多个不同类文件右键
+  description: 固定栏目下选中多个不同类文件右键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 普通目录_0009_s1
+  name: 普通目录中进行快捷键操作
+  description: 普通目录中进行快捷键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

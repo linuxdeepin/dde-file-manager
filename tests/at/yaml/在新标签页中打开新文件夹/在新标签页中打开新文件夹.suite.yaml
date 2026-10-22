@@ -1,0 +1,202 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 在新标签页中打开新文件夹_suite
+app: dde-file-manager
+description: 在新标签页中打开新文件夹模块 AT-SPI 用例
+module: 在新标签页中打开新文件夹
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 在新标签页中打开新文件夹_0001_s1
+  name: 【在新标签页中打开新文件夹】安全性测试
+  description: 【在新标签页中打开新文件夹】安全性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 在新标签页中打开新文件夹_0002_s1
+  name: 【在新标签页中打开新文件夹】性能&稳定性测试
+  description: 【在新标签页中打开新文件夹】性能&稳定性测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 在新标签页中打开新文件夹_0003_s1
+  name: 【在新标签页中打开新文件夹】第三方应用打开
+  description: 【在新标签页中打开新文件夹】第三方应用打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 桌面
+- id: 在新标签页中打开新文件夹_0004_s1
+  name: 【在新标签页中打开新文件夹】标签页UI检查
+  description: 【在新标签页中打开新文件夹】标签页UI检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: TabBar
+- id: 在新标签页中打开新文件夹_0005_s1
+  name: 【在新标签页中打开新文件夹】以管理员身份打开新文件夹
+  description: 【在新标签页中打开新文件夹】以管理员身份打开新文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 在新标签页中打开新文件夹_0006_s1
+  name: 【在新标签页中打开新文件夹】从侧边栏打开新文件夹
+  description: 【在新标签页中打开新文件夹】从侧边栏打开新文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: side_bar_view
+- id: 在新标签页中打开新文件夹_0007_s1
+  name: 【在新标签页中打开新文件夹】勾选“重复打开文件夹时激活已有窗口”
+  description: 【在新标签页中打开新文件夹】勾选“重复打开文件夹时激活已有窗口”
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: TabBar
+- id: 在新标签页中打开新文件夹_0008_s1
+  name: 【在新标签页中打开新文件夹】打开多个文管窗口后打开桌面上新文件夹
+  description: 【在新标签页中打开新文件夹】打开多个文管窗口后打开桌面上新文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 在新标签页中打开新文件夹_0009_s1
+  name: 【在新标签页中打开新文件夹】在文管打开新文件夹
+  description: 【在新标签页中打开新文件夹】在文管打开新文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+teardown:
+- action: session_stop

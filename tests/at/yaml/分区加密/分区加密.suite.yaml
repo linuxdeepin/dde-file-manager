@@ -1,0 +1,488 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 分区加密_suite
+app: dde-file-manager
+description: 分区加密模块 AT-SPI 用例
+module: 分区加密
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 分区加密_0001_s1
+  name: 【磁盘加密默认算法修改】升级回退后磁盘加密算法不变
+  description: 【磁盘加密默认算法修改】升级回退后磁盘加密算法不变
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0002_s1
+  name: 【磁盘加密默认算法修改】手动修改加密算法后可正常进行磁盘加密
+  description: 【磁盘加密默认算法修改】手动修改加密算法后可正常进行磁盘加密
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0003_s1
+  name: 【磁盘加密默认算法修改】手动分区安装算法修改
+  description: 【磁盘加密默认算法修改】手动分区安装算法修改
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0004_s1
+  name: 【文管分区加密】非fstab分区加密
+  description: 【文管分区加密】非fstab分区加密
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0005_s1
+  name: 【文管分区加密】文管有弹窗时进行分区加密
+  description: 【文管分区加密】文管有弹窗时进行分区加密
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+- id: 分区加密_0006_s1
+  name: 【文管分区加密】加密过程中对文管进行常规操作
+  description: 【文管分区加密】加密过程中对文管进行常规操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 分区加密_0007_s1
+  name: 【文管分区加密】一次仅允许一个分区加密
+  description: 【文管分区加密】一次仅允许一个分区加密
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+- id: 分区加密_0008_s1
+  name: 【文管分区加密】解锁加密期间，鼠标忙状态检查
+  description: 【文管分区加密】解锁加密期间，鼠标忙状态检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0009_s1
+  name: 【文管分区加密】加密弹窗期间，鼠标忙状态检查
+  description: 【文管分区加密】加密弹窗期间，鼠标忙状态检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0010_s1
+  name: 【文管分区加密】组策略设置关闭了导出恢复密钥功能
+  description: 【文管分区加密】组策略设置关闭了导出恢复密钥功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0011_s1
+  name: 【文管分区加密】恢复密钥导出失败
+  description: 【文管分区加密】恢复密钥导出失败
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0012_s1
+  name: 【文管分区加密】普通分区，加密途中，其他普通分区【取消分区加密】
+  description: 【文管分区加密】普通分区，加密途中，其他普通分区【取消分区加密】
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0013_s1
+  name: 【文管分区加密】普通分区，加密途中，其他普通分区【开启分区加密】
+  description: 【文管分区加密】普通分区，加密途中，其他普通分区【开启分区加密】
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0014_s1
+  name: 【文管分区加密】更改组策略加密算法
+  description: 【文管分区加密】更改组策略加密算法
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0015_s1
+  name: 【文管分区加密】取消加密流程检查
+  description: 【文管分区加密】取消加密流程检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0016_s1
+  name: 【文管分区加密】修改加密口令-密钥解锁，使用恢复密钥验证，校验
+  description: 【文管分区加密】修改加密口令-密钥解锁，使用恢复密钥验证，校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0017_s1
+  name: 【文管分区加密】修改加密口令-密钥解锁，按钮、链接
+  description: 【文管分区加密】修改加密口令-密钥解锁，按钮、链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0018_s1
+  name: 【文管分区加密】修改加密口令-密钥解锁，校验
+  description: 【文管分区加密】修改加密口令-密钥解锁，校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0019_s1
+  name: 【文管分区加密】修改加密PIN码-PIN码解锁，使用恢复密钥验证，按钮、链接
+  description: 【文管分区加密】修改加密PIN码-PIN码解锁，使用恢复密钥验证，按钮、链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0020_s1
+  name: 【文管分区加密】修改加密PIN码-PIN码解锁，使用恢复密钥验证，校验
+  description: 【文管分区加密】修改加密PIN码-PIN码解锁，使用恢复密钥验证，校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0021_s1
+  name: 【文管分区加密】修改加密PIN码-PIN码解锁，按钮、链接
+  description: 【文管分区加密】修改加密PIN码-PIN码解锁，按钮、链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0022_s1
+  name: 【文管分区加密】修改加密PIN码-PIN码解锁，PIN码校验
+  description: 【文管分区加密】修改加密PIN码-PIN码解锁，PIN码校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0023_s1
+  name: 【文管分区加密】PIN码加密方式右键菜单检查
+  description: 【文管分区加密】PIN码加密方式右键菜单检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0024_s1
+  name: 【文管分区加密】加密磁盘外接-密钥解锁
+  description: 【文管分区加密】加密磁盘外接-密钥解锁
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0025_s1
+  name: 【文管分区加密】加密磁盘外接-自动解锁
+  description: 【文管分区加密】加密磁盘外接-自动解锁
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0026_s1
+  name: 【文管分区加密】非fstab分区解密
+  description: 【文管分区加密】非fstab分区解密
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0027_s1
+  name: 【文管分区加密】解锁入口
+  description: 【文管分区加密】解锁入口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 分区加密_0028_s1
+  name: 【文管分区加密】确认加密-加密失败
+  description: 【文管分区加密】确认加密-加密失败
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0029_s1
+  name: 【文管分区加密】分区加密
+  description: 【文管分区加密】分区加密
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 分区加密_0030_s1
+  name: 【文管分区加密】加密流程检查
+  description: 【文管分区加密】加密流程检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0031_s1
+  name: 【文管分区加密】设置解锁方式-密钥解锁，重复密码，密码一致性校验
+  description: 【文管分区加密】设置解锁方式-密钥解锁，重复密码，密码一致性校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0032_s1
+  name: 【文管分区加密】设置解锁方式-密钥解锁，设置密码，字符校验
+  description: 【文管分区加密】设置解锁方式-密钥解锁，设置密码，字符校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0033_s1
+  name: 【文管分区加密】无TPM芯片加解密窗口中各功能检查
+  description: 【文管分区加密】无TPM芯片加解密窗口中各功能检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0034_s1
+  name: 【文管分区加密】设置解锁方式-PIN码解锁，重复PIN码，密码一致性校验
+  description: 【文管分区加密】设置解锁方式-PIN码解锁，重复PIN码，密码一致性校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0035_s1
+  name: 【文管分区加密】有tpm芯片加解密窗口中各功能检查
+  description: 【文管分区加密】有tpm芯片加解密窗口中各功能检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 分区加密_0036_s1
+  name: 【文管分区加密】外部存储设备
+  description: 【文管分区加密】外部存储设备
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0037_s1
+  name: 【文管分区加密】分区右键菜单新增选项："开启分区加密"
+  description: 【文管分区加密】分区右键菜单新增选项："开启分区加密"
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+- id: 分区加密_0038_s1
+  name: 【文管分区加密】U盘取消加密，过程中拔掉U盘
+  description: 【文管分区加密】U盘取消加密，过程中拔掉U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 分区加密_0039_s1
+  name: 【文管分区加密】U盘加密，过程中拔掉U盘
+  description: 【文管分区加密】U盘加密，过程中拔掉U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

@@ -1,0 +1,601 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文管设置_suite
+app: dde-file-manager
+description: 文管设置模块 AT-SPI 用例
+module: 文管设置
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文管设置_0001_s1
+  name: 侧边栏显示项目设置取消勾选标签分组下所有设置项目
+  description: 侧边栏显示项目设置取消勾选标签分组下所有设置项目
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0002_s1
+  name: 【水印】[smoke]专业版状态-系统不激活/试用期激活/激活水印检查
+  description: 【水印】[smoke]专业版状态-系统不激活/试用期激活/激活水印检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文管设置_0003_s1
+  name: 全盘加密密码修改 - 修改磁盘密码弹窗-磁盘密码校验
+  description: 全盘加密密码修改 - 修改磁盘密码弹窗-磁盘密码校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0004_s1
+  name: 全盘加密密码修改 - 全盘加密显示修改磁盘密码入口
+  description: 全盘加密密码修改 - 全盘加密显示修改磁盘密码入口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0005_s1
+  name: 【菜单】全盘加密密码修改 - 非全盘加密不显示修改磁盘密码入口
+  description: 【菜单】全盘加密密码修改 - 非全盘加密不显示修改磁盘密码入口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0006_s1
+  name: 全盘加密密码修改 - 异常测试 - 无法获取加密磁盘列表
+  description: 全盘加密密码修改 - 异常测试 - 无法获取加密磁盘列表
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0007_s1
+  name: 全盘加密密码修改 - 入口显示控制
+  description: 全盘加密密码修改 - 入口显示控制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0008_s1
+  name: 全盘加密密码修改 - 英文翻译检查
+  description: 全盘加密密码修改 - 英文翻译检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0009_s1
+  name: '[core]系统盘-选中计算机页面系统盘右键'
+  description: '[core]系统盘-选中计算机页面系统盘右键'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+- id: 文管设置_0010_s1
+  name: 盘符名称修改-重命名输入框唤起及保存-重命名
+  description: 盘符名称修改-重命名输入框唤起及保存-重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 文管设置_0011_s1
+  name: 盘符名称修改-重命名输入框唤起及保存-侧边栏重命名
+  description: 盘符名称修改-重命名输入框唤起及保存-侧边栏重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0012_s1
+  name: '[068~072][core]设置--“隐藏文件”'
+  description: '[068~072][core]设置--“隐藏文件”'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+- id: 文管设置_0013_s1
+  name: 【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏第三方项
+  description: 【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏第三方项
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0014_s1
+  name: 【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏我的目录
+  description: 【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏我的目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0015_s1
+  name: '[smoke]计算机图标右键菜单'
+  description: '[smoke]计算机图标右键菜单'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 文管设置_0016_s1
+  name: 查看计算机属性窗口展示信息
+  description: 查看计算机属性窗口展示信息
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 文管设置_0017_s1
+  name: '[042]计算机页面和侧边栏系统盘、数据盘右键_'
+  description: '[042]计算机页面和侧边栏系统盘、数据盘右键_'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0018_s1
+  name: 同时隐藏侧边栏和计算机视图中系统盘、数据盘
+  description: 同时隐藏侧边栏和计算机视图中系统盘、数据盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 文管设置_0019_s1
+  name: 计算机属性显示变更-属性界面显示
+  description: 计算机属性显示变更-属性界面显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 文管设置_0020_s1
+  name: '[022 023][core]系统盘-选中侧边栏系统盘右键'
+  description: '[022 023][core]系统盘-选中侧边栏系统盘右键'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0021_s1
+  name: 【计算机】系统盘-单击侧边栏系统盘
+  description: 【计算机】系统盘-单击侧边栏系统盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0022_s1
+  name: 【计算机】系统盘-双击计算机页面系统盘
+  description: 【计算机】系统盘-双击计算机页面系统盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+- id: 文管设置_0023_s1
+  name: 【计算机】我的目录-双击打开目录
+  description: 【计算机】我的目录-双击打开目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 视频
+- id: 文管设置_0024_s1
+  name: '[core]计算机属性-其他信息检查'
+  description: '[core]计算机属性-其他信息检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0025_s1
+  name: 文件和文件夹混合排序-未设置“文件和文件夹混合”，勾选后功能后，文管内混合排序立即生效
+  description: 文件和文件夹混合排序-未设置“文件和文件夹混合”，勾选后功能后，文管内混合排序立即生效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+- id: 文管设置_0026_s1
+  name: 不勾选【显示隐藏文件】-在文管普通目录内以“.”开头批量重命名文件-弹窗提示-点击【隐藏】
+  description: 不勾选【显示隐藏文件】-在文管普通目录内以“.”开头批量重命名文件-弹窗提示-点击【隐藏】
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0027_s1
+  name: 侧边栏显示项目设置取消勾选快捷访问分组下所有设置项目
+  description: 侧边栏显示项目设置取消勾选快捷访问分组下所有设置项目
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0028_s1
+  name: 侧边栏显示项目设置取消勾选分区分组下所有设置项目
+  description: 侧边栏显示项目设置取消勾选分区分组下所有设置项目
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0029_s1
+  name: 侧边栏显示项目设置取消勾选网络分组下所有设置项目
+  description: 侧边栏显示项目设置取消勾选网络分组下所有设置项目
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0030_s1
+  name: 设置--“隐藏文件”
+  description: 设置--“隐藏文件”
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+  - action: assert_element
+    ref: 最近使用
+- id: 文管设置_0031_s1
+  name: 设置页面开启普通删除提示选项检查
+  description: 设置页面开启普通删除提示选项检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+  - action: assert_element
+    ref: side_bar_view
+- id: 文管设置_0032_s1
+  name: 已设置/未设置开启普通删除提示时操作强制删除文件
+  description: 已设置/未设置开启普通删除提示时操作强制删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 保险箱
+- id: 文管设置_0033_s1
+  name: '[179]扩展名隐藏-取消勾选“显示文件扩展名”后，检查多扩展名文件是否正确隐藏扩展名'
+  description: '[179]扩展名隐藏-取消勾选“显示文件扩展名”后，检查多扩展名文件是否正确隐藏扩展名'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文管设置_0034_s1
+  name: 勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-不弹窗提示
+  description: 勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-不弹窗提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

@@ -1,0 +1,275 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: U盘_suite
+app: dde-file-manager
+description: U盘模块 AT-SPI 用例
+module: U盘
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: U盘_0001_s1
+  name: 【U盘】USB移动硬盘当做数据盘
+  description: 【U盘】USB移动硬盘当做数据盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+- id: U盘_0002_s1
+  name: 【U盘】剪切大文件到U盘中去
+  description: 【U盘】剪切大文件到U盘中去
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0003_s1
+  name: 【U盘】删除文件后，原路径权限不够，还原
+  description: 【U盘】删除文件后，原路径权限不够，还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: U盘_0004_s1
+  name: 【U盘】删除文件后，原路径父目录不存在，还原
+  description: 【U盘】删除文件后，原路径父目录不存在，还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: U盘_0005_s1
+  name: 【U盘】删除文件后，原路径不存在，还原
+  description: 【U盘】删除文件后，原路径不存在，还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: U盘_0006_s1
+  name: 【U盘】创建链接文件到U盘
+  description: 【U盘】创建链接文件到U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: U盘_0007_s1
+  name: 【U盘】加载大量文件缩略图的时候移除u盘
+  description: 【U盘】加载大量文件缩略图的时候移除u盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0008_s1
+  name: 【U盘】dock栏托盘U盘无右键菜单
+  description: 【U盘】dock栏托盘U盘无右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0009_s1
+  name: 【U盘】Bug194699转：U盘中复制多层次级的文件到本地
+  description: 【U盘】Bug194699转：U盘中复制多层次级的文件到本地
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0010_s1
+  name: 【U盘】Bug195163转：安全中心USB存储设备禁用后再切换为只读，快速到文管点击U盘
+  description: 【U盘】Bug195163转：安全中心USB存储设备禁用后再切换为只读，快速到文管点击U盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: U盘_0011_s1
+  name: 【U盘】Bug187785转：剪切包含文件的目录到U盘中去
+  description: 【U盘】Bug187785转：剪切包含文件的目录到U盘中去
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0012_s1
+  name: 【U盘】Bug194943转：往NTFS格式U盘剪切大文件不会导致U盘损坏
+  description: 【U盘】Bug194943转：往NTFS格式U盘剪切大文件不会导致U盘损坏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0013_s1
+  name: 【U盘】安全扫描-卸载移动设备弹窗检查
+  description: 【U盘】安全扫描-卸载移动设备弹窗检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 计算机
+- id: U盘_0014_s1
+  name: 【U盘】移除-有数据正在读写时不可移除
+  description: 【U盘】移除-有数据正在读写时不可移除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: U盘_0015_s1
+  name: 【U盘】文件搜索-多分区多文件系统格式U盘内文件搜索
+  description: 【U盘】文件搜索-多分区多文件系统格式U盘内文件搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0016_s1
+  name: 【U盘】只读U盘文件右键菜单功能检查
+  description: 【U盘】只读U盘文件右键菜单功能检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 快捷访问
+- id: U盘_0017_s1
+  name: 【U盘】[091]添加数据-从smb右键发送到移动设备目录下
+  description: 【U盘】[091]添加数据-从smb右键发送到移动设备目录下
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: U盘_0018_s1
+  name: 最近使用添加数据-新增U盘目录文件
+  description: 最近使用添加数据-新增U盘目录文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+teardown:
+- action: session_stop

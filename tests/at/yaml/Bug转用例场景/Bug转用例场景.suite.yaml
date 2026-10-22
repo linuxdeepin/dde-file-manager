@@ -1,0 +1,319 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: Bug转用例场景_suite
+app: dde-file-manager
+description: Bug转用例场景模块 AT-SPI 用例
+module: Bug转用例场景
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: Bug转用例场景_0001_s1
+  name: 正常访问windows创建的gb2312编码格式的文件
+  description: 正常访问windows创建的gb2312编码格式的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: Bug转用例场景_0002_s1
+  name: 打乱快捷键摁下顺序仍可正常使用快捷键功能
+  description: 打乱快捷键摁下顺序仍可正常使用快捷键功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: Bug转用例场景_0003_s1
+  name: 【Bug转用例场景】鼠标滚轮滚动查看文件
+  description: 【Bug转用例场景】鼠标滚轮滚动查看文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: Bug转用例场景_0004_s1
+  name: 【Bug转用例场景】框选最近使用的多个文件，拖拽到其他目录，中间点取消
+  description: 【Bug转用例场景】框选最近使用的多个文件，拖拽到其他目录，中间点取消
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: Bug转用例场景_0005_s1
+  name: 【Bug转用例场景】网络邻居页面顶部工具栏检查
+  description: 【Bug转用例场景】网络邻居页面顶部工具栏检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: side_bar_view
+- id: Bug转用例场景_0006_s1
+  name: 【Bug转用例场景】从保险箱复制1000个文件到保险箱外时点击终止按钮
+  description: 【Bug转用例场景】从保险箱复制1000个文件到保险箱外时点击终止按钮
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 保险箱
+- id: Bug转用例场景_0007_s1
+  name: 【Bug转用例场景】找回密码后，再次点击侧边栏保险箱
+  description: 【Bug转用例场景】找回密码后，再次点击侧边栏保险箱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: Bug转用例场景_0008_s1
+  name: 【Bug转用例场景】保险箱文件较多时，拖动侧边栏滚动条
+  description: 【Bug转用例场景】保险箱文件较多时，拖动侧边栏滚动条
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: Bug转用例场景_0009_s1
+  name: 【Bug转用例场景】指定路径密码找回-文件选中对话框UI层级检查
+  description: 【Bug转用例场景】指定路径密码找回-文件选中对话框UI层级检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: Bug转用例场景_0010_s1
+  name: 【Bug转用例场景】外设或网络存储，拷贝文件到保险箱
+  description: 【Bug转用例场景】外设或网络存储，拷贝文件到保险箱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: Bug转用例场景_0011_s1
+  name: 【Bug转用例场景】长文件名开启，回收站还原原始目录已存在同名文件的
+  description: 【Bug转用例场景】长文件名开启，回收站还原原始目录已存在同名文件的
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: Bug转用例场景_0012_s1
+  name: 【Bug转用例场景】长文件名-/tmp目录删除新建
+  description: 【Bug转用例场景】长文件名-/tmp目录删除新建
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: Bug转用例场景_0013_s1
+  name: 【Bug转用例场景】使用2022文本中的内容重命名文件时不会导致文管崩溃
+  description: 【Bug转用例场景】使用2022文本中的内容重命名文件时不会导致文管崩溃
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: Bug转用例场景_0014_s1
+  name: 【Bug转用例场景】选中多个文件删除时，会删除所有
+  description: 【Bug转用例场景】选中多个文件删除时，会删除所有
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: Bug转用例场景_0015_s1
+  name: 【Bug转用例场景】在文管重命名目录后马上删除目录
+  description: 【Bug转用例场景】在文管重命名目录后马上删除目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: Bug转用例场景_0016_s1
+  name: 【Bug转用例场景】关闭文件选择对话框后进程在60秒后正常销毁
+  description: 【Bug转用例场景】关闭文件选择对话框后进程在60秒后正常销毁
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: Bug转用例场景_0017_s1
+  name: 从回收站拖拽文件到U盘后进行撤销
+  description: 从回收站拖拽文件到U盘后进行撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: Bug转用例场景_0018_s1
+  name: 【文件管理器】其他应用打开文件夹时对文件进行删除操作，并且Ctrl+Z进行撤回，文件被还原
+  description: 【文件管理器】其他应用打开文件夹时对文件进行删除操作，并且Ctrl+Z进行撤回，文件被还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: Bug转用例场景_0019_s1
+  name: 桌面快速右键不同文件，不会触发打开操作_
+  description: 桌面快速右键不同文件，不会触发打开操作_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: Bug转用例场景_0020_s1
+  name: Bug207839转：标记文件时从多窗口切回文管窗口，不出现输入法弹窗等其他多余窗口
+  description: Bug207839转：标记文件时从多窗口切回文管窗口，不出现输入法弹窗等其他多余窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

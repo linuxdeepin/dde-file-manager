@@ -1,0 +1,82 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 外设支持实时同步_suite
+app: dde-file-manager
+description: 外设支持实时同步模块 AT-SPI 用例
+module: 外设支持实时同步
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 外设支持实时同步_0001_s1
+  name: 【外设支持实时同步】设置模式后恢复默认值
+  description: 【外设支持实时同步】设置模式后恢复默认值
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设支持实时同步_0002_s1
+  name: 【外设支持实时同步】大文件&大量文件实时同步
+  description: 【外设支持实时同步】大文件&大量文件实时同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外设支持实时同步_0003_s1
+  name: 【外设支持实时同步】其他外设数据实时同步
+  description: 【外设支持实时同步】其他外设数据实时同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: 外设支持实时同步_0004_s1
+  name: 【外设支持实时同步】不同格式移动硬盘拷贝时性能优先
+  description: 【外设支持实时同步】不同格式移动硬盘拷贝时性能优先
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 外设支持实时同步_0005_s1
+  name: 【外设支持实时同步】不同格式U盘拷贝时数据实时同步
+  description: 【外设支持实时同步】不同格式U盘拷贝时数据实时同步
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+teardown:
+- action: session_stop

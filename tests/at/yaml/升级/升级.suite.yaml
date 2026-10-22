@@ -1,0 +1,106 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 升级_suite
+app: dde-file-manager
+description: 升级模块 AT-SPI 用例
+module: 升级
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 升级_0001_s1
+  name: 【交互场景/升级】升级配置兼容-组策略配置保留
+  description: 【交互场景/升级】升级配置兼容-组策略配置保留
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: side_bar_view
+- id: 升级_0002_s1
+  name: 【交互场景/升级】升级配置兼容-个性化设置保留
+  description: 【交互场景/升级】升级配置兼容-个性化设置保留
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 升级_0003_s1
+  name: 【交互场景/升级】升级配置兼容-共享设置保留
+  description: 【交互场景/升级】升级配置兼容-共享设置保留
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 升级_0004_s1
+  name: 【交互场景/升级】升级-配置默认外网仓库升级，升级正常
+  description: 【交互场景/升级】升级-配置默认外网仓库升级，升级正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 升级_0005_s1
+  name: 字体调节
+  description: 字体调节
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 升级_0006_s1
+  name: 适配不同的图标主题
+  description: 适配不同的图标主题
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 升级_0007_s1
+  name: 终端安装
+  description: 终端安装
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+teardown:
+- action: session_stop

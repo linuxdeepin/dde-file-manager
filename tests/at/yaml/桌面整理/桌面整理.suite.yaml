@@ -1,0 +1,1096 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 桌面整理_suite
+app: dde-file-manager
+description: 桌面整理模块 AT-SPI 用例
+module: 桌面整理
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 桌面整理_0001_s1
+  name: 开启桌面整理后设置任务栏在不同位置
+  description: 开启桌面整理后设置任务栏在不同位置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0002_s1
+  name: 【桌面整理】桌面整理后编辑集合中的文件
+  description: 【桌面整理】桌面整理后编辑集合中的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 视频
+- id: 桌面整理_0003_s1
+  name: 桌面整理-埋点数据上报（待补充桌面整理埋点编号）
+  description: 桌面整理-埋点数据上报（待补充桌面整理埋点编号）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0004_s1
+  name: 桌面整理-兼容性测试-升级前关闭桌面整理
+  description: 桌面整理-兼容性测试-升级前关闭桌面整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0005_s1
+  name: 桌面整理-兼容性测试-升级前开启桌面整理
+  description: 桌面整理-兼容性测试-升级前开启桌面整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0006_s1
+  name: 桌面右键菜单关闭桌面整理
+  description: 桌面右键菜单关闭桌面整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0007_s1
+  name: 桌面右键菜单隐藏所有集合
+  description: 桌面右键菜单隐藏所有集合
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 设置
+- id: 桌面整理_0008_s1
+  name: 桌面右键菜单开启桌面整理
+  description: 桌面右键菜单开启桌面整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0009_s1
+  name: 拖动改变集合窗口大小
+  description: 拖动改变集合窗口大小
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0010_s1
+  name: 【1071桌面整理】单次整理，拖拽桌面文件到符合规则集合内
+  description: 【1071桌面整理】单次整理，拖拽桌面文件到符合规则集合内
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0011_s1
+  name: 【1071桌面整理】视图选项，关闭桌面整理
+  description: 【1071桌面整理】视图选项，关闭桌面整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0012_s1
+  name: 【1071桌面整理】自动整理，拖拽移动图标-Ctrl+拖拽到集合外
+  description: 【1071桌面整理】自动整理，拖拽移动图标-Ctrl+拖拽到集合外
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0013_s1
+  name: 【桌面整理】视图选项-自动排列图标(已开启桌面整理)
+  description: 【桌面整理】视图选项-自动排列图标(已开启桌面整理)
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0014_s1
+  name: 【1071桌面整理】整理桌面
+  description: 【1071桌面整理】整理桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 桌面整理_0015_s1
+  name: 【1071桌面整理】集合悬浮在上一层
+  description: 【1071桌面整理】集合悬浮在上一层
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0016_s1
+  name: 【桌面整理】自由拖动集合
+  description: 【桌面整理】自由拖动集合
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0017_s1
+  name: 【1071桌面整理】集合尺寸设置，从小尺寸调节到大尺寸
+  description: 【1071桌面整理】集合尺寸设置，从小尺寸调节到大尺寸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0018_s1
+  name: 【1071桌面整理】集合尺寸设置，从大尺寸调节到小尺寸
+  description: 【1071桌面整理】集合尺寸设置，从大尺寸调节到小尺寸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0019_s1
+  name: 【桌面整理】集合尺寸调节，边框拉伸
+  description: 【桌面整理】集合尺寸调节，边框拉伸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0020_s1
+  name: 【1071桌面整理】集合尺寸调节，边角拉伸
+  description: 【1071桌面整理】集合尺寸调节，边角拉伸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0021_s1
+  name: 【桌面整理】集合尺寸调节，与其他集合相邻-上下拉伸
+  description: 【桌面整理】集合尺寸调节，与其他集合相邻-上下拉伸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0022_s1
+  name: 【1071桌面整理】集合尺寸调节，与其他集合相邻-左右拉伸
+  description: 【1071桌面整理】集合尺寸调节，与其他集合相邻-左右拉伸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0023_s1
+  name: 【1071桌面整理】集合尺寸调节，与其他集合相邻-边角拉伸
+  description: 【1071桌面整理】集合尺寸调节，与其他集合相邻-边角拉伸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0024_s1
+  name: 【1071桌面整理】集合尺寸调节，最小尺寸
+  description: 【1071桌面整理】集合尺寸调节，最小尺寸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0025_s1
+  name: 【1071桌面整理】集合尺寸调节，最大尺寸
+  description: 【1071桌面整理】集合尺寸调节，最大尺寸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0026_s1
+  name: 【1071桌面整理】集合尺寸调节，集合间最小边距
+  description: 【1071桌面整理】集合尺寸调节，集合间最小边距
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0027_s1
+  name: 【1071桌面整理】集合尺寸调节，集合间不能重叠
+  description: 【1071桌面整理】集合尺寸调节，集合间不能重叠
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0028_s1
+  name: 【桌面整理】拖拽集合，集合吸附
+  description: 【桌面整理】拖拽集合，集合吸附
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0029_s1
+  name: 【桌面整理】拖拽集合到集合，显示辅助框
+  description: 【桌面整理】拖拽集合到集合，显示辅助框
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0030_s1
+  name: 【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间足(拖拽对象尺寸相比较小，中心点距上方左侧近)
+  description: 【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间足(拖拽对象尺寸相比较小，中心点距上方左侧近)
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0031_s1
+  name: 【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间足(拖拽对象尺寸相比较小，中心点距上方右侧近)
+  description: 【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间足(拖拽对象尺寸相比较小，中心点距上方右侧近)
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0032_s1
+  name: 【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间不足
+  description: 【1071桌面整理】拖拽集合到集合，插空位置预告，上方空间不足
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0033_s1
+  name: 【1071桌面整理】多屏扩展，调节尺寸
+  description: 【1071桌面整理】多屏扩展，调节尺寸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0034_s1
+  name: 【1071桌面整理】多屏扩展，拖拽集合
+  description: 【1071桌面整理】多屏扩展，拖拽集合
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0035_s1
+  name: 【1071桌面整理】多屏扩展，极限场景
+  description: 【1071桌面整理】多屏扩展，极限场景
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0036_s1
+  name: 【1071桌面整理】记忆布局，多屏切换模式
+  description: 【1071桌面整理】记忆布局，多屏切换模式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0037_s1
+  name: 【1071桌面整理】记忆布局，多屏拔插
+  description: 【1071桌面整理】记忆布局，多屏拔插
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0038_s1
+  name: 【桌面整理】单次整理，记忆布局，开启/关闭桌面整理
+  description: 【桌面整理】单次整理，记忆布局，开启/关闭桌面整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0039_s1
+  name: 【1071桌面整理】自动整理，记忆布局，开启/关闭桌面整理
+  description: 【1071桌面整理】自动整理，记忆布局，开启/关闭桌面整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0040_s1
+  name: 【1071桌面整理】视图选项配置，关闭一键隐藏集合，快捷键设置
+  description: 【1071桌面整理】视图选项配置，关闭一键隐藏集合，快捷键设置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0041_s1
+  name: 【1071桌面整理】视图选项配置，开启一键隐藏集合，快捷键设置
+  description: 【1071桌面整理】视图选项配置，开启一键隐藏集合，快捷键设置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0042_s1
+  name: 【1071桌面整理】集合文件归类-应用程序
+  description: 【1071桌面整理】集合文件归类-应用程序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0043_s1
+  name: 【1071桌面整理】集合文件归类-其他
+  description: 【1071桌面整理】集合文件归类-其他
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0044_s1
+  name: 【1071桌面整理】调节集合尺寸，集合内图标布局
+  description: 【1071桌面整理】调节集合尺寸，集合内图标布局
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0045_s1
+  name: 【桌面整理】单次生效，新建文件不自动整理
+  description: 【桌面整理】单次生效，新建文件不自动整理
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0046_s1
+  name: 【1071桌面整理】单次整理，粘贴到桌面文件
+  description: 【1071桌面整理】单次整理，粘贴到桌面文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0047_s1
+  name: 桌面文件来回右键点击，右键菜单选项显示正确
+  description: 桌面文件来回右键点击，右键菜单选项显示正确
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0048_s1
+  name: 检查桌面右键菜单的刷新
+  description: 检查桌面右键菜单的刷新
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0049_s1
+  name: 【桌面自动整理】图标焦点优化-跨集合选中多个文件，拖拽
+  description: 【桌面自动整理】图标焦点优化-跨集合选中多个文件，拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0050_s1
+  name: 【桌面自动整理】图标焦点优化-跨集合选中多个文件，快捷键粘贴
+  description: 【桌面自动整理】图标焦点优化-跨集合选中多个文件，快捷键粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0051_s1
+  name: 【桌面自动整理】图标焦点优化-跨集合选中多个文件，反选
+  description: 【桌面自动整理】图标焦点优化-跨集合选中多个文件，反选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0052_s1
+  name: 【文件管理】【桌面自动整理】桌面选项-集合方式
+  description: 【文件管理】【桌面自动整理】桌面选项-集合方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 桌面整理_0053_s1
+  name: 【桌面自动整理】桌面选项-非模态窗口
+  description: 【桌面自动整理】桌面选项-非模态窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0054_s1
+  name: 【文件管理】【桌面自动整理】拖拽移动图标-集合内拖拽
+  description: 【文件管理】【桌面自动整理】拖拽移动图标-集合内拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0055_s1
+  name: 【文件管理】【桌面自动整理】集合交互-选项设置-集合尺寸
+  description: 【文件管理】【桌面自动整理】集合交互-选项设置-集合尺寸
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0056_s1
+  name: 【桌面自动整理】集合交互-选项设置
+  description: 【桌面自动整理】集合交互-选项设置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0057_s1
+  name: 【文件管理】【桌面自动整理】集合交互-标题栏
+  description: 【文件管理】【桌面自动整理】集合交互-标题栏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0058_s1
+  name: 【桌面自动整理】集合文件归类-软链接
+  description: 【桌面自动整理】集合文件归类-软链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0059_s1
+  name: 【桌面自动整理】集合显示，分屏显示，桌面整理模式切换
+  description: 【桌面自动整理】集合显示，分屏显示，桌面整理模式切换
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0060_s1
+  name: 【桌面自动整理】集合显示，分屏显示-复制模式
+  description: 【桌面自动整理】集合显示，分屏显示-复制模式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0061_s1
+  name: 【桌面自动整理】集合显示，分屏显示-扩展模式
+  description: 【桌面自动整理】集合显示，分屏显示-扩展模式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0062_s1
+  name: 【桌面自动整理】集合显示，超出屏幕处
+  description: 【桌面自动整理】集合显示，超出屏幕处
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0063_s1
+  name: 【桌面自动整理】大尺寸集合，不限制集合内图标总容量
+  description: 【桌面自动整理】大尺寸集合，不限制集合内图标总容量
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0064_s1
+  name: 【桌面自动整理】小尺寸集合，不限制集合内图标总容量
+  description: 【桌面自动整理】小尺寸集合，不限制集合内图标总容量
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0065_s1
+  name: 【桌面自动整理】大尺寸集合，超出集合图标，翻页浏览
+  description: 【桌面自动整理】大尺寸集合，超出集合图标，翻页浏览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0066_s1
+  name: 【文件管理】【桌面自动整理】超出集合图标
+  description: 【文件管理】【桌面自动整理】超出集合图标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0067_s1
+  name: 【桌面自动整理】小尺寸集合，超出集合图标，翻页浏览
+  description: 【桌面自动整理】小尺寸集合，超出集合图标，翻页浏览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 桌面整理_0068_s1
+  name: 【桌面自动整理】快捷键缩放图标大小
+  description: 【桌面自动整理】快捷键缩放图标大小
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0069_s1
+  name: 【桌面自动整理】桌面整理模式，切换到非桌面整理模式-图标大小为极小
+  description: 【桌面自动整理】桌面整理模式，切换到非桌面整理模式-图标大小为极小
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0070_s1
+  name: 【桌面自动整理】非桌面整理模式，切换到桌面整理模式-图标大小为极大
+  description: 【桌面自动整理】非桌面整理模式，切换到桌面整理模式-图标大小为极大
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0071_s1
+  name: 【桌面自动整理】网格布局-集合图标大小布局
+  description: 【桌面自动整理】网格布局-集合图标大小布局
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0072_s1
+  name: 【桌面自动整理】网格布局-其他分辨率和缩放
+  description: 【桌面自动整理】网格布局-其他分辨率和缩放
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0073_s1
+  name: '[010][core]桌面右键菜单-排序方式'
+  description: '[010][core]桌面右键菜单-排序方式'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 桌面整理_0074_s1
+  name: 勾选自动排列-取消勾选自动排列
+  description: 勾选自动排列-取消勾选自动排列
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0075_s1
+  name: '[138][core]勾选自动排列-删除桌面文件/文件夹'
+  description: '[138][core]勾选自动排列-删除桌面文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0076_s1
+  name: '[061][core]勾选自动排列-桌面添加文件/文件夹'
+  description: '[061][core]勾选自动排列-桌面添加文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 桌面整理_0077_s1
+  name: 桌面刷新优化-快捷键-桌面空白处点击右键【刷新】按钮刷新桌面
+  description: 桌面刷新优化-快捷键-桌面空白处点击右键【刷新】按钮刷新桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0078_s1
+  name: '[core]聚合拖拽-桌面未铺满时，拖拽6个文件至桌面空白处_'
+  description: '[core]聚合拖拽-桌面未铺满时，拖拽6个文件至桌面空白处_'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 桌面整理_0079_s1
+  name: '[005][core]角标设置-桌面文件/文件夹设置角标'
+  description: '[005][core]角标设置-桌面文件/文件夹设置角标'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

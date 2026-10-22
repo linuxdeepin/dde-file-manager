@@ -1,0 +1,136 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 命令方式_suite
+app: dde-file-manager
+description: 命令方式模块 AT-SPI 用例
+module: 命令方式
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 命令方式_0001_s1
+  name: 长文件名功能 -  添加单个角标
+  description: 长文件名功能 -  添加单个角标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 命令方式_0002_s1
+  name: 长文件名功能(关闭) -  添加单个角标
+  description: 长文件名功能(关闭) -  添加单个角标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 命令方式_0003_s1
+  name: dde-file-manager -p 显示文件属性对话框_
+  description: dde-file-manager -p 显示文件属性对话框_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+- id: 命令方式_0004_s1
+  name: 使用命令打开 root 模式文件管理器
+  description: 使用命令打开 root 模式文件管理器
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 命令方式_0005_s1
+  name: dde-file-manager -d 无窗口显示
+  description: dde-file-manager -d 无窗口显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 命令方式_0006_s1
+  name: 命令行新建文件管理器窗口
+  description: 命令行新建文件管理器窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 命令方式_0007_s1
+  name: 在命令行查看文件管理器版本_
+  description: 在命令行查看文件管理器版本_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 命令方式_0008_s1
+  name: 在命令行查看文件管理器帮助信息_
+  description: 在命令行查看文件管理器帮助信息_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 命令方式_0009_s1
+  name: '[078]命令行启动'
+  description: '[078]命令行启动'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+teardown:
+- action: session_stop

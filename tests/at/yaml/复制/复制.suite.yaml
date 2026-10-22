@@ -1,0 +1,461 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 复制_suite
+app: dde-file-manager
+description: 复制模块 AT-SPI 用例
+module: 复制
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 复制_0001_s1
+  name: 【IO性能优化】U盘空间不足时复制替换文件
+  description: 【IO性能优化】U盘空间不足时复制替换文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制_0002_s1
+  name: 【IO性能优化】数据盘空间不足时复制替换文件
+  description: 【IO性能优化】数据盘空间不足时复制替换文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制_0003_s1
+  name: 【IO性能优化】复制替换先生成临时文件，删除原文件，临时文件重命名为原文件名
+  description: 【IO性能优化】复制替换先生成临时文件，删除原文件，临时文件重命名为原文件名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 下载
+- id: 复制_0004_s1
+  name: 【IO性能优化】存在多个复制窗口时，仅停止其中的一个复制窗口
+  description: 【IO性能优化】存在多个复制窗口时，仅停止其中的一个复制窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 复制_0005_s1
+  name: 【IO性能优化】复制多个文件中途停止拷贝，自动删除未复制完的残留文件
+  description: 【IO性能优化】复制多个文件中途停止拷贝，自动删除未复制完的残留文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制_0006_s1
+  name: 【IO性能优化】复制中途停止拷贝，自动删除残留文件
+  description: 【IO性能优化】复制中途停止拷贝，自动删除残留文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 复制_0007_s1
+  name: 目标目录存在同名文件/文件夹，可以再次复制
+  description: 目标目录存在同名文件/文件夹，可以再次复制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制_0008_s1
+  name: Bug185669转：从文管一次性拷贝大量文件到外设（ntfs等）时，取消拷贝不会使文管卡死
+  description: Bug185669转：从文管一次性拷贝大量文件到外设（ntfs等）时，取消拷贝不会使文管卡死
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制_0009_s1
+  name: Bug184679转：从文管一次性拷贝大量文件到外设（ntfs等），文管不会卡死
+  description: Bug184679转：从文管一次性拷贝大量文件到外设（ntfs等），文管不会卡死
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制_0010_s1
+  name: Bug181153转：目标目录存在同名文件/文件夹，可以再次复制
+  description: Bug181153转：目标目录存在同名文件/文件夹，可以再次复制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制_0011_s1
+  name: 剪切拷贝-从剪切板拖拽文件到桌面/文管窗口
+  description: 剪切拷贝-从剪切板拖拽文件到桌面/文管窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制_0012_s1
+  name: 剪切拷贝-拷贝过程中操作进度弹窗的按钮_
+  description: 剪切拷贝-拷贝过程中操作进度弹窗的按钮_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制_0013_s1
+  name: 剪切拷贝-从桌面复制500个快捷方式到其他目录_
+  description: 剪切拷贝-从桌面复制500个快捷方式到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0014_s1
+  name: 剪切拷贝-从Android/IOS手机复制文件共存到其他目录_
+  description: 剪切拷贝-从Android/IOS手机复制文件共存到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0015_s1
+  name: 剪切拷贝-从光盘复制文件共存到其他目录_
+  description: 剪切拷贝-从光盘复制文件共存到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0016_s1
+  name: 剪切拷贝-从U盘复制文件共存到其他目录_
+  description: 剪切拷贝-从U盘复制文件共存到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0017_s1
+  name: 剪切拷贝-从保险箱复制文件共存到其他目录_
+  description: 剪切拷贝-从保险箱复制文件共存到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0018_s1
+  name: 剪切拷贝-从桌面复制文件共存到其他目录_
+  description: 剪切拷贝-从桌面复制文件共存到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0019_s1
+  name: 剪切拷贝-从U盘复制2G文件和500个文件的文件夹到其他目录_
+  description: 剪切拷贝-从U盘复制2G文件和500个文件的文件夹到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0020_s1
+  name: 剪切拷贝-从保险箱复制2G文件和500个文件的文件夹到其他目录_
+  description: 剪切拷贝-从保险箱复制2G文件和500个文件的文件夹到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0021_s1
+  name: 剪切拷贝-从桌面复制2G文件和500个文件的文件夹到其他目录_
+  description: 剪切拷贝-从桌面复制2G文件和500个文件的文件夹到其他目录_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 复制_0022_s1
+  name: 剪切拷贝-复制过程中对源文件的特殊操作_
+  description: 剪切拷贝-复制过程中对源文件的特殊操作_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制_0023_s1
+  name: 剪切拷贝-复制超过剩余储存空间的进度条提示语
+  description: 剪切拷贝-复制超过剩余储存空间的进度条提示语
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制_0024_s1
+  name: 剪切拷贝-进度条按钮功能_
+  description: 剪切拷贝-进度条按钮功能_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制_0025_s1
+  name: 剪切拷贝-退出剪切状态_
+  description: 剪切拷贝-退出剪切状态_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制_0026_s1
+  name: '[043]快捷键-按住Ctrl复制'
+  description: '[043]快捷键-按住Ctrl复制'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

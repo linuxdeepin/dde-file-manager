@@ -1,0 +1,613 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 文件管理_suite
+app: dde-file-manager
+description: 文件管理模块 AT-SPI 用例
+module: 文件管理
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 文件管理_0001_s1
+  name: 组策略配置自动排序-右键菜单关闭自动排列时，检查组策略配置
+  description: 组策略配置自动排序-右键菜单关闭自动排列时，检查组策略配置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0002_s1
+  name: 组策略配置自动排序-右键菜单开启自动排列时，检查组策略配置
+  description: 组策略配置自动排序-右键菜单开启自动排列时，检查组策略配置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0003_s1
+  name: 组策略配置自动排序-修改组策略为关闭时，检查桌面图标及右键菜单
+  description: 组策略配置自动排序-修改组策略为关闭时，检查桌面图标及右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0004_s1
+  name: 组策略配置自动排序-修改组策略为开启时，检查桌面图标及右键菜单
+  description: 组策略配置自动排序-修改组策略为开启时，检查桌面图标及右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0005_s1
+  name: 组策略配置自动排序-主线默认为关闭
+  description: 组策略配置自动排序-主线默认为关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0006_s1
+  name: 桌面-文件名优化-多屏下文件跨屏幕展示不会改变
+  description: 桌面-文件名优化-多屏下文件跨屏幕展示不会改变
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0007_s1
+  name: 桌面-文件名优化-不同字体下检查文件/文件夹名称显示_
+  description: 桌面-文件名优化-不同字体下检查文件/文件夹名称显示_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0008_s1
+  name: 桌面-文件名优化-4K屏下不同分辨率检查文件/文件夹名称显示
+  description: 桌面-文件名优化-4K屏下不同分辨率检查文件/文件夹名称显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0009_s1
+  name: '[131] 添加到桌面-复制ftp内文件/文件夹到桌面'
+  description: '[131] 添加到桌面-复制ftp内文件/文件夹到桌面'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 文件管理_0010_s1
+  name: '[127]添加到桌面-拖拽sftp内文件/文件夹到桌面'
+  description: '[127]添加到桌面-拖拽sftp内文件/文件夹到桌面'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 文件管理_0011_s1
+  name: 控制中心-调节鼠标速度后快速点击移动桌面图标
+  description: 控制中心-调节鼠标速度后快速点击移动桌面图标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0012_s1
+  name: 快捷键-切换选中文件/文件夹顺序
+  description: 快捷键-切换选中文件/文件夹顺序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0013_s1
+  name: '[086]快捷键-剪切置灰状态按esc重新呈选中状态'
+  description: '[086]快捷键-剪切置灰状态按esc重新呈选中状态'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0014_s1
+  name: 快捷键-选中文件/文件夹按ctrl+i键调出属性弹窗
+  description: 快捷键-选中文件/文件夹按ctrl+i键调出属性弹窗
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0015_s1
+  name: 快捷键-敲击键盘快速定位选中文件/文件夹
+  description: 快捷键-敲击键盘快速定位选中文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0016_s1
+  name: '[056]快捷键-按ctrl+h显示隐藏文件/文件夹'
+  description: '[056]快捷键-按ctrl+h显示隐藏文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0017_s1
+  name: 选中文件-按shift/ctrl选中多个文件/文件夹
+  description: 选中文件-按shift/ctrl选中多个文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0018_s1
+  name: 未勾选自动排列-扩展模式下减少屏幕
+  description: 未勾选自动排列-扩展模式下减少屏幕
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0019_s1
+  name: 未勾选自动排列-扩展模式下新增屏幕
+  description: 未勾选自动排列-扩展模式下新增屏幕
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0020_s1
+  name: 未勾选自动排列-扩展模式下删除主屏上文件/文件夹
+  description: 未勾选自动排列-扩展模式下删除主屏上文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0021_s1
+  name: 未勾选自动排列-扩展模式下删除副屏上文件/文件夹
+  description: 未勾选自动排列-扩展模式下删除副屏上文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0022_s1
+  name: '[core]未勾选自动排列-扩展模式下添加文件/文件夹'
+  description: '[core]未勾选自动排列-扩展模式下添加文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0023_s1
+  name: '[core]未勾选自动排列-扩展模式下不同屏幕之间拖拽文件/文件夹'
+  description: '[core]未勾选自动排列-扩展模式下不同屏幕之间拖拽文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0024_s1
+  name: 勾选自动排列-桌面文件过多堆叠在最后一个图标上
+  description: 勾选自动排列-桌面文件过多堆叠在最后一个图标上
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0025_s1
+  name: 勾选自动排列-扩展模式下可在不同屏幕上粘贴
+  description: 勾选自动排列-扩展模式下可在不同屏幕上粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0026_s1
+  name: 勾选自动排列-扩展模式下再减少屏幕
+  description: 勾选自动排列-扩展模式下再减少屏幕
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0027_s1
+  name: 勾选自动排列-扩展模式下再接入新屏幕
+  description: 勾选自动排列-扩展模式下再接入新屏幕
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0028_s1
+  name: 勾选自动排列-扩展模式下删除主屏上文件/文件夹
+  description: 勾选自动排列-扩展模式下删除主屏上文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0029_s1
+  name: 勾选自动排列-扩展模式下删除副屏上文件/文件夹
+  description: 勾选自动排列-扩展模式下删除副屏上文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0030_s1
+  name: 勾选自动排列-扩展模式下添加文件/文件夹至满屏
+  description: 勾选自动排列-扩展模式下添加文件/文件夹至满屏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0031_s1
+  name: '[core]勾选自动排列-扩展模式下移动文件/文件夹'
+  description: '[core]勾选自动排列-扩展模式下移动文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0032_s1
+  name: '[061][core]勾选自动排列-移动文件/文件夹'
+  description: '[061][core]勾选自动排列-移动文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0033_s1
+  name: 勾选自动排列-切换排序方式
+  description: 勾选自动排列-切换排序方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0034_s1
+  name: 拖拽-同时框选主副屏文件拖拽
+  description: 拖拽-同时框选主副屏文件拖拽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0035_s1
+  name: 拖拽-主屏铺满时拖拽副屏文件至主屏
+  description: 拖拽-主屏铺满时拖拽副屏文件至主屏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0036_s1
+  name: 拖拽-拖拽文件到不可见区域
+  description: 拖拽-拖拽文件到不可见区域
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 文件管理_0037_s1
+  name: '[089]拖拽-拖拽文件到回收站图标'
+  description: '[089]拖拽-拖拽文件到回收站图标'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 文件管理_0038_s1
+  name: 添加到桌面-同一文件重复多次右键发送到桌面
+  description: 添加到桌面-同一文件重复多次右键发送到桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 文件管理_0039_s1
+  name: 右键菜单-切换用户后右键菜单功能正常
+  description: 右键菜单-切换用户后右键菜单功能正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0040_s1
+  name: 右键菜单-勾选自动排列右键菜单呼出正常
+  description: 右键菜单-勾选自动排列右键菜单呼出正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0041_s1
+  name: 右键菜单-快捷键唤出右键菜单
+  description: 右键菜单-快捷键唤出右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 文件管理_0042_s1
+  name: 桌面刷新优化-快捷键-按F5刷新桌面
+  description: 桌面刷新优化-快捷键-按F5刷新桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

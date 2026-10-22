@@ -1,0 +1,216 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 鼠标键盘操作_suite
+app: dde-file-manager
+description: 鼠标键盘操作模块 AT-SPI 用例
+module: 鼠标键盘操作
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 鼠标键盘操作_0001_s1
+  name: 文件操作-对/home/用户/.avfs目录操作--6.5.124文管版本已没有这个目录
+  description: 文件操作-对/home/用户/.avfs目录操作--6.5.124文管版本已没有这个目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 鼠标键盘操作_0002_s1
+  name: 快捷键-桌面选中文件，快捷键alt+m调出右键菜单
+  description: 快捷键-桌面选中文件，快捷键alt+m调出右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 鼠标键盘操作_0003_s1
+  name: 桌面，选中计算机图标，空格预览
+  description: 桌面，选中计算机图标，空格预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 鼠标键盘操作_0004_s1
+  name: 文件操作-在有缩略图的文件夹使用F5不断刷新
+  description: 文件操作-在有缩略图的文件夹使用F5不断刷新
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 鼠标键盘操作_0005_s1
+  name: 选中多个文件后，再取消选中一些
+  description: 选中多个文件后，再取消选中一些
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 鼠标键盘操作_0006_s1
+  name: 文件框选-桌面文件铺满堆叠状态下框选堆叠的文件
+  description: 文件框选-桌面文件铺满堆叠状态下框选堆叠的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 鼠标键盘操作_0007_s1
+  name: 文件框选-框选主副屏桌面上的文件
+  description: 文件框选-框选主副屏桌面上的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 鼠标键盘操作_0008_s1
+  name: 文件操作-关闭窗口特效后拖拽文件
+  description: 文件操作-关闭窗口特效后拖拽文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 鼠标键盘操作_0009_s1
+  name: 文件操作-快捷键选中文件_
+  description: 文件操作-快捷键选中文件_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 鼠标键盘操作_0010_s1
+  name: 文件操作-文件名快速定位到文件_
+  description: 文件操作-文件名快速定位到文件_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 鼠标键盘操作_0011_s1
+  name: '[052]文件操作-选中文件后底部状态栏展示'
+  description: '[052]文件操作-选中文件后底部状态栏展示'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: StatusBar
+  - action: assert_element
+    ref: BottomBar
+- id: 鼠标键盘操作_0012_s1
+  name: 文件操作-在桌面/文管切换隐藏文件显示模式_
+  description: 文件操作-在桌面/文管切换隐藏文件显示模式_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 鼠标键盘操作_0013_s1
+  name: 文件操作-打开原件已被删除的.txt文件快捷方式图标_
+  description: 文件操作-打开原件已被删除的.txt文件快捷方式图标_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+teardown:
+- action: session_stop

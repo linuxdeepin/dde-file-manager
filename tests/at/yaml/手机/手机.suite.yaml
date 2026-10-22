@@ -1,0 +1,96 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 手机_suite
+app: dde-file-manager
+description: 手机模块 AT-SPI 用例
+module: 手机
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 手机_0001_s1
+  name: 【手机】手机-文件基础操作
+  description: 【手机】手机-文件基础操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 手机_0002_s1
+  name: 【手机】-外设和网络路径删除文件，手机内部彻底删除文件
+  description: 【手机】-外设和网络路径删除文件，手机内部彻底删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 手机_0003_s1
+  name: 【手机】-外设和网络路径删除文件，手机内部delete键删除文件
+  description: 【手机】-外设和网络路径删除文件，手机内部delete键删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 手机_0004_s1
+  name: 【手机】-拷贝手机中已存在的文件到手机中替换
+  description: 【手机】-拷贝手机中已存在的文件到手机中替换
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 手机_0005_s1
+  name: 【手机】Bug189655转：手机中剪切文件到桌面/
+  description: 【手机】Bug189655转：手机中剪切文件到桌面/
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop
