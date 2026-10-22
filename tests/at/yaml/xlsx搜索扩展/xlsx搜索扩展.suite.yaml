@@ -1,0 +1,1008 @@
+name: xlsx搜索扩展_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的搜索和视图扩展用例：输入原始搜索关键词并验证文管保持可用
+module: xlsx搜索扩展
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_2009163
+  name: 【搜索专项优化-v1.0】LVM装机时搜索文件名和文件内容
+  description: 在搜索框输入 xlsx 原始关键词「deepin-elf-verify服务」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: deepin-elf-verify服务
+    wait: 2.0
+  assert_steps:
+  - &id001
+    action: assert_element
+    ref: side_bar_view
+- id: case_2002023
+  name: 【全局搜索-图片文本内容搜索】关键词命中多行OCR文本时，仅展示第1行
+  description: 在搜索框输入 xlsx 原始关键词「最长显示255」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 最长显示255
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_2001827
+  name: 【全局搜索-图片文本内容搜索】新增“图片中找到的文字”类目
+  description: 在搜索框输入 xlsx 原始关键词「石鼓寺」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 石鼓寺
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_2000451
+  name: 【全局搜索-图片文本内容搜索】对搜索结果进行操作
+  description: 在搜索框输入 xlsx 原始关键词「0007-大图片」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 0007-大图片
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_2000319
+  name: 【文管-图片文本内容搜索】功能开启后进行图片文件内容搜索
+  description: 在搜索框输入 xlsx 原始关键词「图片手动添加文本」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 图片手动添加文本
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1994795
+  name: 【文件索引配置】搜索隐藏文件
+  description: 在搜索框输入 xlsx 原始关键词「.hidden-file」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: .hidden-file
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1973137
+  name: 【搜索】【黑名单配置】配置黑名单路径后手动重启anything服务
+  description: 在搜索框输入 xlsx 原始关键词「black-path」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: black-path
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1972333
+  name: 【搜索】【黑名单配置】在黑名单中的绝对路径下修改文件再搜索
+  description: 在搜索框输入 xlsx 原始关键词「black-path-1.txt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: black-path-1.txt
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1972333_s2
+  name: 【搜索】【黑名单配置】在黑名单中的绝对路径下修改文件再搜索-内容
+  description: 在搜索框输入 xlsx 原始关键词「修改文件内容」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 修改文件内容
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1972325
+  name: 【搜索】【黑名单配置】在黑名单路径下新增文件再搜索
+  description: 在搜索框输入 xlsx 原始关键词「new-file.txt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: new-file.txt
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1972325_s2
+  name: 【搜索】【黑名单配置】在黑名单路径下新增文件再搜索-内容
+  description: 在搜索框输入 xlsx 原始关键词「测试搜索黑名单路径」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 测试搜索黑名单路径
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1970349
+  name: 【搜索】数据盘为xfs文件系统类型时进行搜索
+  description: 在搜索框输入 xlsx 原始关键词「a.txt文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: a.txt文件
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1963325
+  name: 【搜索】主目录中搜索
+  description: 在搜索框输入 xlsx 原始关键词「test-1.txt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: test-1.txt
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1888243
+  name: 【搜索专项优化-v1.0】可搜索不同文件系统类型目录下的文件
+  description: 在搜索框输入 xlsx 原始关键词「搜索不同文件系统类型下的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索不同文件系统类型下的文件
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1883947
+  name: 【搜索专项优化-v1.1】文管搜索结果支持图标/列表视图显示
+  description: 在搜索框输入 xlsx 原始关键词「搜索专项测试」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1878215
+  name: 【搜索专项优化-v1.0】可搜索前10M的文件内容
+  description: 在搜索框输入 xlsx 原始关键词「搜索专项优化测试文档」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项优化测试文档
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1806335
+  name: '[066]最近使用搜索-搜索'
+  description: 在搜索框输入 xlsx 原始关键词「修改为存在关键字的文件名」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 修改为存在关键字的文件名
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805471
+  name: 【搜索】支持通配符搜索
+  description: 在搜索框输入 xlsx 原始关键词「deepin*.doc」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: deepin*.doc
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805469
+  name: 【搜索】搜索-单个词搜索
+  description: 在搜索框输入 xlsx 原始关键词「deepin」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: deepin
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805393
+  name: 【搜索】全文搜索-中文、英文字母单独/混合进行搜索-下雨
+  description: 在搜索框输入 xlsx 原始关键词「下雨」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 下雨
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805393_s2
+  name: 【搜索】全文搜索-中文、英文字母单独/混合进行搜索-下雨lllll
+  description: 在搜索框输入 xlsx 原始关键词「下雨lllll」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 下雨lllll
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805393_s3
+  name: 【搜索】全文搜索-中文、英文字母单独/混合进行搜索-呼呼
+  description: 在搜索框输入 xlsx 原始关键词「呼呼」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 呼呼
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805393_s4
+  name: 【搜索】全文搜索-中文、英文字母单独/混合进行搜索-mm
+  description: 在搜索框输入 xlsx 原始关键词「mm」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: mm
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805387
+  name: 【搜索】全文搜索-繁体、数字单独/混合进行搜索-s
+  description: 在搜索框输入 xlsx 原始关键词「s」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: s
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805387_s2
+  name: 【搜索】全文搜索-繁体、数字单独/混合进行搜索-風測試
+  description: 在搜索框输入 xlsx 原始关键词「風測試」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 風測試
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805387_s3
+  name: 【搜索】全文搜索-繁体、数字单独/混合进行搜索-風測試lllll
+  description: 在搜索框输入 xlsx 原始关键词「風測試lllll」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 風測試lllll
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805381
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索-天
+  description: 在搜索框输入 xlsx 原始关键词「天」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 天
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805381_s2
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索-ss
+  description: 在搜索框输入 xlsx 原始关键词「ss」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: ss
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805381_s3
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索-44
+  description: 在搜索框输入 xlsx 原始关键词「44」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: '44'
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805381_s4
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索-ss123
+  description: 在搜索框输入 xlsx 原始关键词「ss123」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: ss123
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805381_s5
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索-呼龍4
+  description: 在搜索框输入 xlsx 原始关键词「呼龍4」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 呼龍4
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805381_s6
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索-s呼
+  description: 在搜索框输入 xlsx 原始关键词「s呼」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: s呼
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805377
+  name: 【搜索】搜索-特殊路径搜索-search-url
+  description: 在搜索框输入 xlsx 原始关键词「search:?url=file:///home/hailin/Demo&keyword=%23」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: search:?url=file:///home/hailin/Demo&keyword=%23
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805377_s2
+  name: 【搜索】搜索-特殊路径搜索-recent-url
+  description: 在搜索框输入 xlsx 原始关键词「search:?url=recent:///&keyword=1」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: search:?url=recent:///&keyword=1
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805377_s3
+  name: 【搜索】搜索-特殊路径搜索-recent
+  description: 在搜索框输入 xlsx 原始关键词「recent:///」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: recent:///
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805377_s4
+  name: 【搜索】搜索-特殊路径搜索-trash
+  description: 在搜索框输入 xlsx 原始关键词「trash:///」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: trash:///
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327
+  name: 【搜索】搜索地址前缀补全-IP地址检测-dot
+  description: 在搜索框输入 xlsx 原始关键词「. . .」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: . . .
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s2
+  name: 【搜索】搜索地址前缀补全-IP地址检测-negative
+  description: 在搜索框输入 xlsx 原始关键词「-1.-1.-1.-1」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: -1.-1.-1.-1
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s3
+  name: 【搜索】搜索地址前缀补全-IP地址检测-colon
+  description: 在搜索框输入 xlsx 原始关键词「256:256:256:256」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 256:256:256:256
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s4
+  name: 【搜索】搜索地址前缀补全-IP地址检测-0.0
+  description: 在搜索框输入 xlsx 原始关键词「0.0」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: '0.0'
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s5
+  name: 【搜索】搜索地址前缀补全-IP地址检测-255.255
+  description: 在搜索框输入 xlsx 原始关键词「255.255」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: '255.255'
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s6
+  name: 【搜索】搜索地址前缀补全-IP地址检测-0.0.0.0
+  description: 在搜索框输入 xlsx 原始关键词「0.0.0.0」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 0.0.0.0
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s7
+  name: 【搜索】搜索地址前缀补全-IP地址检测-255.255.255.255
+  description: 在搜索框输入 xlsx 原始关键词「255.255.255.255」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 255.255.255.255
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s8
+  name: 【搜索】搜索地址前缀补全-IP地址检测-完整ip
+  description: 在搜索框输入 xlsx 原始关键词「完整ip」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 完整ip
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s9
+  name: 【搜索】搜索地址前缀补全-IP地址检测-long-ip
+  description: 在搜索框输入 xlsx 原始关键词「10.8.13.125.123」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 10.8.13.125.123
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1805327_s10
+  name: 【搜索】搜索地址前缀补全-IP地址检测-archive
+  description: 在搜索框输入 xlsx 原始关键词「tag.gz.zip.rar」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: tag.gz.zip.rar
+    wait: 2.0
+  assert_steps:
+  - *id001
+- id: case_1808785
+  name: 树状结构-连续展开子目录
+  description: 按 xlsx 步骤切换为树状视图，验证视图按钮存在
+  tags: []
+  steps:
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1808765
+  name: 树状结构-默认展示检查
+  description: 按 xlsx 步骤进入树状视图，验证树状视图入口存在
+  tags: []
+  steps:
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: treeView_button
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1808753
+  name: 树状结构-关闭树状结构
+  description: 按 xlsx 步骤先开启树状视图再切换到图标视图
+  tags: []
+  steps:
+  - action: element_action
+    ref: treeView_button
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: iconView_button
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806357
+  name: 最近使用，点击顶部工具栏的【详情视图】
+  description: 按 xlsx 步骤进入最近使用并切换列表/详情视图
+  tags: []
+  steps:
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: listView_button
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

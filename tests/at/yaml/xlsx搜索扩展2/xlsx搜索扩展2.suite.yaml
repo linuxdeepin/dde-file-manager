@@ -1,0 +1,610 @@
+name: xlsx搜索扩展2_suite
+app: dde-file-manager
+description: 从 V25 xlsx 继续映射的搜索输入扩展用例：输入原始关键词并验证文管保持可用
+module: xlsx搜索扩展2
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_2002013
+  name: 【文管-图片文本内容搜索】对图片文件内容搜索结果进行排序
+  description: 在搜索框输入 xlsx 原始关键词「终于等到你啦」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 终于等到你啦
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2001913_q5
+  name: 【文管-图片文本内容搜索】图片文本内容增删改之后进行搜索
+  description: 在搜索框输入 xlsx 原始关键词「新增的图片内容」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 新增的图片内容
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2000559
+  name: 【全局搜索-图片文本内容搜索】多关键词搜索
+  description: 在搜索框输入 xlsx 原始关键词「测试最长 1211测试」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 测试最长 1211测试
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_2000359
+  name: 【全局搜索-图片文本内容搜索】预览搜索结果
+  description: 在搜索框输入 xlsx 原始关键词「已被磐 石系统拦截」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 已被磐 石系统拦截
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1994787
+  name: 【文件索引配置】新建后重命名立即索引
+  description: 在搜索框输入 xlsx 原始关键词「new-test.txt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: new-test.txt
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1994785
+  name: 【文件索引配置】新建文件时立马搜索
+  description: 在搜索框输入 xlsx 原始关键词「new-a.txt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: new-a.txt
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1994785_q2
+  name: 【文件索引配置】新建文件时立马搜索
+  description: 在搜索框输入 xlsx 原始关键词「dir-new」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: dir-new
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1972957_q4
+  name: 【搜索】【黑名单配置】配置黑名单路径-异常系
+  description: 在搜索框输入 xlsx 原始关键词「a-search.txt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: a-search.txt
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1972545_q3
+  name: 【搜索】【黑名单配置】删除已配置的关键词黑名单
+  description: 在搜索框输入 xlsx 原始关键词「这是新增的文件」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 这是新增的文件
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1972321_q2
+  name: 【搜索】【黑名单配置】黑名单路径默认路径检查
+  description: 在搜索框输入 xlsx 原始关键词「a.txt」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: a.txt
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1936555
+  name: 【文件列表支持分组】搜索结果界面支持分组
+  description: 在搜索框输入 xlsx 原始关键词「分组测试」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 分组测试
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1924533
+  name: 【文件粉碎】对搜索结果的文件进行粉碎
+  description: 在搜索框输入 xlsx 原始关键词「测试文件粉碎」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 测试文件粉碎
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1908461
+  name: 【搜索】重命名后立即添加内容，再搜索
+  description: 在搜索框输入 xlsx 原始关键词「今天天气很好」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 今天天气很好
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1895137
+  name: 【搜索】搜索过程中并行做其他操作
+  description: 在搜索框输入 xlsx 原始关键词「kw_500000」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: kw_500000
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1888241
+  name: 【搜索专项优化-v1.0】cpu和内存有压力情况下进行搜索
+  description: 在搜索框输入 xlsx 原始关键词「天ss123空s44下雨lllll 呼龍4s呼 123.456」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 天ss123空s44下雨lllll 呼龍4s呼 123.456
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1881375
+  name: 【搜索专项优化-v1.0】剪切十万级别大量文件后再搜索
+  description: 在搜索框输入 xlsx 原始关键词「kw200000」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: kw200000
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1881361_q2
+  name: 【搜索专项优化-v1.0】命中文件内容后重命名文件，再次搜索
+  description: 在搜索框输入 xlsx 原始关键词「再次输入:全文检索」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 再次输入:全文检索
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1881361_q2_2
+  name: 【搜索专项优化-v1.0】命中文件内容后重命名文件，再次搜索
+  description: 在搜索框输入 xlsx 原始关键词「全文检索」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 全文检索
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1879405
+  name: 【搜索专项优化-v1.0】支持十个关键词以空格分词
+  description: 在搜索框输入 xlsx 原始关键词「天 s s1 23空s44下雨 lll 呼龍 4s呼 123 .456」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 天 s s1 23空s44下雨 lll 呼龍 4s呼 123 .456
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1879389
+  name: 【搜索专项优化-v1.0】搜索结果只有文件名
+  description: 在搜索框输入 xlsx 原始关键词「测试 搜索 专项」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 测试 搜索 专项
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1879267
+  name: 【搜索专项优化-v1.0】即输即搜
+  description: 在搜索框输入 xlsx 原始关键词「搜索专项优化」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项优化
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1879267_q2
+  name: 【搜索专项优化-v1.0】即输即搜
+  description: 在搜索框输入 xlsx 原始关键词「搜索专项我是额外加的内容」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 搜索专项我是额外加的内容
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1879261
+  name: 【搜索专项优化-v1.0】搜索结果超过500条
+  description: 在搜索框输入 xlsx 原始关键词「1」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: '1'
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1878435_q2
+  name: 【搜索专项优化-v1.0】裁剪部分功能
+  description: 在搜索框输入 xlsx 原始关键词「12」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: '12'
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1878189_q2
+  name: 【搜索专项优化-v1.0】自动更新索引
+  description: 在搜索框输入 xlsx 原始关键词「this is a test file*()」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: this is a test file*()
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1816685
+  name: 搜索框-搜索结果列表切换排序方式
+  description: 在搜索框输入 xlsx 原始关键词「中」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 中
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806459_q2
+  name: 文件选择对话框，搜索输入框进行搜索
+  description: 在搜索框输入 xlsx 原始关键词「123(总共的搜索字符为a123)」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: 123(总共的搜索字符为a123)
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1805467
+  name: 【搜索】框下拉列表
+  description: 在搜索框输入 xlsx 原始关键词「/」，验证文管不崩溃
+  tags: []
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+f
+    wait: 1.0
+  - action: element_action
+    ref: SearchLineEdit
+    do: click
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+a
+    wait: 0.2
+  - action: keyboard_type
+    text: /
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop
