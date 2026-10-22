@@ -8,6 +8,7 @@
 
 #include <DOcr>
 
+#include <QCoreApplication>
 #include <QFileInfo>
 #include <QImage>
 #include <QStringList>
@@ -205,6 +206,10 @@ Dtk::Ocr::DOcr *sharedOcrEngine()
             delete engine;
             return nullptr;
         }
+
+        QObject::connect(qApp, &QCoreApplication::aboutToQuit, qApp, [engine]() {
+            delete engine;
+        });
 
         return engine;
     }();
