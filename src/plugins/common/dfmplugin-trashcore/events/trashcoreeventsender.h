@@ -45,6 +45,7 @@ private:
     void initTrashWatcher();
     void initTrashState();
     bool checkAndStartWatcher();
+    void syncTrashIconToAM(bool empty);
 
 private:
     TrashCoreStartupProbe *startupProbe { nullptr };
