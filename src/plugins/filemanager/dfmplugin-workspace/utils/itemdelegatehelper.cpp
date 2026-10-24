@@ -103,8 +103,8 @@ ElideTextLayout *ItemDelegateHelper::createTextLayout(const QString &name, QText
 
 void ItemDelegateHelper::paintIconWithFallback(QPainter *painter, const QStyleOptionViewItem &opt,
                                                const QModelIndex &index, const QRectF &iconRect,
-                                               bool isThumbnail,
-                                               dfmbase::Global::ViewMode viewMode)
+                                               bool isThumbnail, dfmbase::Global::ViewMode viewMode,
+                                               bool skipFrame)
 {
     const auto iconName = index.data(dfmbase::Global::ItemRoles::kItemFileIconNameRole).toString();
     bool isEnabled = opt.state & QStyle::State_Enabled;
@@ -115,7 +115,8 @@ void ItemDelegateHelper::paintIconWithFallback(QPainter *painter, const QStyleOp
                                     isEnabled ? QIcon::Normal : QIcon::Disabled,
                                     QIcon::Off, isThumbnail,
                                     iconName,
-                                    viewMode });
+                                    viewMode,
+                                    skipFrame });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!drawFileIcon) {
         paintIcon(painter, fileIcon,

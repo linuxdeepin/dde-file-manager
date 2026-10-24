@@ -638,7 +638,8 @@ QRectF IconItemDelegate::paintItemIcon(QPainter *painter, const QStyleOptionView
     bool isThumbnail = isThumbnailIconIndex(index);
 
     ItemDelegateHelper::paintIconWithFallback(
-            painter, opt, index, iconRect, isThumbnail);
+            painter, opt, index, iconRect, isThumbnail,
+            Global::ViewMode::kIconMode, skipThumbnailFrame(index));
 
     paintEmblems(painter, iconRect, index);
     return iconRect;

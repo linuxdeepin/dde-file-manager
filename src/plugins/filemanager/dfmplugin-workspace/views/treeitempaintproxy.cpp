@@ -30,7 +30,8 @@ void TreeItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
         ItemDelegateHelper::paintIconWithFallback(
                 painter, option, index, *rect,
                 isThumbnail,
-                dfmbase::Global::ViewMode::kTreeMode);
+                dfmbase::Global::ViewMode::kTreeMode,
+                skipThumbnailFrame(index));
     }
 
     if (index.data(kItemTreeViewCanExpandRole).toBool())

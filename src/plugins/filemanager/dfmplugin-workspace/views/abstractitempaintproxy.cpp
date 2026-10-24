@@ -83,3 +83,15 @@ bool AbstractItemPaintProxy::isThumbnailIconIndex(const QModelIndex &index) cons
 
     return IconPainterUtils::isThumbnailIcon(parent->model()->fileInfo(index));
 }
+
+bool AbstractItemPaintProxy::skipThumbnailFrame(const QModelIndex &index) const
+{
+    if (!index.isValid())
+        return false;
+
+    auto parent = dynamic_cast<FileView *>(this->parent());
+    if (!parent || !parent->model())
+        return false;
+
+    return IconPainterUtils::shouldSkipThumbnailFrame(parent->model()->fileInfo(index));
+}

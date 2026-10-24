@@ -52,7 +52,8 @@ public:
     static void paintIconWithFallback(QPainter *painter, const QStyleOptionViewItem &opt,
                                        const QModelIndex &index, const QRectF &iconRect,
                                        bool isThumbnail,
-                                       dfmbase::Global::ViewMode viewMode = dfmbase::Global::ViewMode::kIconMode);
+                                       dfmbase::Global::ViewMode viewMode = dfmbase::Global::ViewMode::kIconMode,
+                                       bool skipFrame = false);
 
 private:
     static void drawBackground(const qreal &backgroundRadius, const QRectF &rect,

@@ -42,6 +42,7 @@ public:
         bool isThumb { false };
         QString iconName;   // 用于 QPixmapCache 缓存 key，非缩略图时填入
         ViewMode viewMode { ViewMode::kNoneMode };
+        bool skipFrame { false };   // 缩略图有底板时置 false；AppImage/UAB 等完整方形图标置 true
     };
 
     IconPainterUtils() = delete;
@@ -76,12 +77,25 @@ public:
     /**
      * @brief 判断文件是否已生成缩略图
      * @param info 文件信息指针
-     * @return true 如果文件有有效缩略图（排除 AppImage / UAB）
+     * @return true 如果文件有有效缩略图
+     *
+     * @note 仅表示缩略图是否存在；是否需要绘制缩略图底板由
+     *       shouldSkipThumbnailFrame 单独判断，两者不可合并。
      *
      * @note 替换 BaseItemDelegate/CanvasItemDelegate/CollectionItemDelegate
      *       中重复的 isThumbnailIconIndex 方法
      */
     static bool isThumbnailIcon(const FileInfoPointer &info);
+
+    /**
+     * @brief 判断缩略图是否需要跳过底板绘制
+     * @param info 文件信息指针
+     * @return true 表示绘制缩略图但不铺底板（AppImage / UAB）
+     *
+     * @details AppImage / UAB 从包内提取的 .DirIcon 本身就是完整方形图标，
+     *          铺白色圆角底板会破坏观感，但图标本身仍需显示。
+     */
+    static bool shouldSkipThumbnailFrame(const FileInfoPointer &info);
 };
 
 DFMBASE_END_NAMESPACE

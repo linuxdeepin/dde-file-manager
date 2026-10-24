@@ -177,6 +177,7 @@ protected:
     QList<QRectF> getCornerGeometryList(const QRectF &baseRect, const QSizeF &cornerSize) const;
     void paintEmblems(QPainter *painter, const QRectF &iconRect, const QModelIndex &index) const;
     bool isThumbnailIconIndex(const QModelIndex &index) const;
+    bool skipThumbnailFrame(const QModelIndex &index) const;
 
     QScopedPointer<BaseItemDelegatePrivate> d;
     Q_DECLARE_PRIVATE_D(d, BaseItemDelegate)
