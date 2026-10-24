@@ -21,7 +21,8 @@ void ListItemPaintProxy::drawIcon(QPainter *painter, QRectF *rect, const QStyleO
     ItemDelegateHelper::paintIconWithFallback(
             painter, option, index, *rect,
             isThumbnailIconIndex(index),
-            dfmbase::Global::ViewMode::kListMode);
+            dfmbase::Global::ViewMode::kListMode,
+            skipThumbnailFrame(index));
 }
 
 QRectF ListItemPaintProxy::rectByType(RectOfItemType type, const QModelIndex &index)

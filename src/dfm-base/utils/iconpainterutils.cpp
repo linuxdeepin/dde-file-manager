@@ -113,7 +113,7 @@ std::optional<QRect> IconPainterUtils::paintIcon(QPainter *painter, const QIcon 
         x += (opts.rect.size().width() - w) / 2.0;
 
     // Task: 337513 — 缩略图模式下绘制带阴影背景
-    if (opts.viewMode == ViewMode::kIconMode && opts.isThumb) {
+    if (opts.viewMode == ViewMode::kIconMode && opts.isThumb && !opts.skipFrame) {
         painter->save();
         painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
 
@@ -197,16 +197,10 @@ std::optional<QRect> IconPainterUtils::paintIcon(QPainter *painter, const QIcon 
 
 /*!
  * \brief isThumbnailIcon 判断文件是否已生成缩略图
- *
- * 排除 AppImage / UAB 等不应展示缩略图底板的类型（与 v20 shouldSkipThumbnailFrame 行为一致）。
  */
 bool IconPainterUtils::isThumbnailIcon(const FileInfoPointer &info)
 {
     if (!info)
-        return false;
-
-    // appimage / uab 等类型不展示缩略图底板（与 v20 shouldSkipThumbnailFrame 行为一致）
-    if (IconUtils::shouldSkipThumbnailFrame(info->nameOf(NameInfoType::kMimeTypeName)))
         return false;
 
     const auto &attribute { info->extendAttributes(ExtInfoType::kFileThumbnail) };
@@ -214,4 +208,18 @@ bool IconPainterUtils::isThumbnailIcon(const FileInfoPointer &info)
         return true;
 
     return false;
+}
+
+/*!
+ * \brief shouldSkipThumbnailFrame 判断缩略图是否需要跳过底板绘制
+ *
+ * AppImage / UAB 的缩略图需要显示，但其 .DirIcon 是完整方形图标，
+ * 不适合再叠加白色圆角底板。
+ */
+bool IconPainterUtils::shouldSkipThumbnailFrame(const FileInfoPointer &info)
+{
+    if (!info)
+        return false;
+
+    return IconUtils::shouldSkipThumbnailFrame(info->nameOf(NameInfoType::kMimeTypeName));
 }

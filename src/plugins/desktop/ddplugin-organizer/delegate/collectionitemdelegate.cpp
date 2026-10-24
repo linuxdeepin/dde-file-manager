@@ -168,7 +168,8 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
         // draw icon and background
         const QRect rIcon = iconRect(option.rect);
         paintBackground(painter, indexOption, rIcon);
-        auto isThumbnail = IconPainterUtils::isThumbnailIcon(parent()->model()->fileInfo(index));
+        auto info = parent()->model()->fileInfo(index);
+        auto isThumbnail = IconPainterUtils::isThumbnailIcon(info);
         const auto &pIcon = IconPainterUtils::paintIcon(painter, isThumbnail
                                                       ? indexOption.icon
                                                       : index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>(),
@@ -178,7 +179,8 @@ void CollectionItemDelegate::paint(QPainter *painter, const QStyleOptionViewItem
                                                         QIcon::Off,
                                                         isThumbnail,
                                                         iconName,
-                                                        Global::ViewMode::kIconMode });   // why Enabled?
+                                                        Global::ViewMode::kIconMode,
+                                                        IconPainterUtils::shouldSkipThumbnailFrame(info) });   // why Enabled?
         // If the thumbnail drawing is empty, then redraw the file fileicon
         if (!pIcon.has_value()) {
             const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();
@@ -361,11 +363,13 @@ QSize CollectionItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptio
     painter->setRenderHints(painter->renderHints() | QPainter::Antialiasing | QPainter::SmoothPixmapTransform, true);
     // 获取 iconName 用于 QPixmapCache 缓存
     const auto iconName = index.data(Global::ItemRoles::kItemFileIconNameRole).toString();
+    auto info = parent()->model()->fileInfo(index);
 
     const auto &pIcon = IconPainterUtils::paintIcon(painter, indexOption.icon,
                                                    { indexOption.rect, Qt::AlignCenter, QIcon::Normal,
-                                                     QIcon::Off, IconPainterUtils::isThumbnailIcon(parent()->model()->fileInfo(index)), iconName,
-                                                     Global::ViewMode::kIconMode });
+                                                     QIcon::Off, IconPainterUtils::isThumbnailIcon(info), iconName,
+                                                     Global::ViewMode::kIconMode,
+                                                     IconPainterUtils::shouldSkipThumbnailFrame(info) });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!pIcon.has_value()) {
         const QIcon &fileIcon = index.data(Global::ItemRoles::kItemFileIconRole).value<QIcon>();

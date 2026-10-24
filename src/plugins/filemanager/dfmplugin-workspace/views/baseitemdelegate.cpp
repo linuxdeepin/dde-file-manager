@@ -88,6 +88,14 @@ bool BaseItemDelegate::isThumbnailIconIndex(const QModelIndex &index) const
     return IconPainterUtils::isThumbnailIcon(parent()->fileInfo(index));
 }
 
+bool BaseItemDelegate::skipThumbnailFrame(const QModelIndex &index) const
+{
+    if (!index.isValid() || !parent())
+        return false;
+
+    return IconPainterUtils::shouldSkipThumbnailFrame(parent()->fileInfo(index));
+}
+
 BaseItemDelegate::~BaseItemDelegate()
 {
 }
@@ -234,13 +242,15 @@ void BaseItemDelegate::paintDragIcon(QPainter *painter, const QStyleOptionViewIt
     const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
     painter->setRenderHint(QPainter::Antialiasing, true);
     painter->setRenderHint(QPainter::SmoothPixmapTransform, true);
+    const bool isThumbnail = isThumbnailIconIndex(index);
     auto drawFileIcon = ItemDelegateHelper::paintIcon(painter,
-                                                      isThumbnailIconIndex(index) ? opt.icon : fileIcon,
+                                                      isThumbnail ? opt.icon : fileIcon,
                                                       { iconRect, Qt::AlignCenter,
                                                         QIcon::Normal, QIcon::Off,
-                                                        isThumbnailIconIndex(index),
+                                                        isThumbnail,
                                                         iconName,
-                                                        ViewMode::kIconMode });
+                                                        ViewMode::kIconMode,
+                                                        skipThumbnailFrame(index) });
     // If the thumbnail drawing is empty, then redraw the file fileicon
     if (!drawFileIcon) {
         const QIcon &fileIcon = index.data(dfmbase::Global::ItemRoles::kItemFileIconRole).value<QIcon>();
