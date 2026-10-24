@@ -53,9 +53,11 @@ protected:
 
     void TearDown() override
     {
+        // stub 必须先于对象析构清除: 若 QWidget::parentWidget 仍被 stub,
+        // ~FileView 移交 model 时会拿到测试体里已 delete 的 mock 悬空指针
+        stub.clear();
         delete d;
         delete fileView;
-        stub.clear();
     }
 
     FileView *fileView = nullptr;
@@ -174,9 +176,10 @@ TEST_F(FileViewPrivateTest, UpdateHorizontalScrollBarPosition_DoesNotCrash)
     d->statusBar = mockStatusBar;
     
     EXPECT_NO_THROW(d->updateHorizontalScrollBarPosition());
-    
+
     delete mockScrollBar;
     delete mockParentWidget;
+    delete mockStatusBar;
 }
 
 TEST_F(FileViewPrivateTest, PureResizeEvent_DoesNotCrash)
