@@ -118,73 +118,87 @@ FileView::~FileView()
     }
 #endif
 
-    // 必须在基类(QAbstractItemView)析构前解绑 model:
-    // QAbstractItemView / delegate / selection / header 可能持有 QPersistentModelIndex,
-    // 若 model 先释放会在索引析构时访问已销毁模型。
+    // 本函数只保留四件"必须由业务决定"的事: 结束编辑、断信号、回收无障碍 cell、
+    // 移交 model 所有权。历史上这里曾有 6 个步骤分别解绑 headerView /
+    // selectionModel / SelectHelper / 无障碍接口 / view 自身 model, 每一步都是
+    // 追着一条崩溃栈加上的。它们可以全部去掉, 依据是同一条时序事实:
+    //
+    //   ~QWidget() 在 qwidget.cpp:1559 调用 deleteChildren(), 先于 d_ptr 析构;
+    //   d_ptr 里的 ~QAbstractItemViewPrivate 又先于"已移交"的 model 析构。
+    //
+    // 因此 view 的所有子对象(headerView / selectionModel / selectHelper)与私有持久
+    // 索引(root / hover / pressedIndex / enteredIndex / currentSelectionStartIndex /
+    // lastEditedIndex)析构时, model 一定还活着。这些提前解绑的共同目的都是
+    // "别在 model 死后碰它", 而该点已由对象所有权结构保证, 无需再手工排顺序。
 
-    // 1. 先结束编辑器，避免编辑器无障碍对象继续持有 model index
+    // 1. 结束编辑。编辑器是 viewport 的子对象, 若留给 deleteChildren() 处理,
+    //    其析构会触发 closeEditor -> setModelData 回写 model; 对文件视图而言
+    //    这可能真的发起重命名。必须显式结束, 不能交给析构流程。
     if (itemDelegate()) {
         itemDelegate()->commitDataAndCloseActiveEditor();
         itemDelegate()->hideAllIIndexWidget();
     }
 
-    // 2. 避免在析构阶段主动操作 headerView 的 selectionModel。
-    // 某些退出时序下，headerView 内部旧 selectionModel 可能已悬空，
-    // 调用 setSelectionModel(nullptr) 会在 Qt 内部触发崩溃。
-    // 此处仅解除 model 关联，selectionModel 交由 QObject 析构流程处理。
-    if (d && d->headerView) {
-        d->headerView->setModel(nullptr);
-    }
-
-    // 3. 断开信号连接
-    //    保存 model 指针: setModel(nullptr) 后 model() 返回 nullptr,
-    //    需在解绑前获取以便后续显式删除。
+    // 2. 断开 model 信号。~FileView() 函数体执行期间对象尚未进入 ~QObject,
+    //    FileViewModel 的文件监视 / waitTimer 仍可能在异步回调里向本 view 发信号,
+    //    命中半析构状态。基类的 disconnectAll() 要等到 ~QAbstractItemView 才执行,
+    //    覆盖不到这段窗口。
     FileViewModel *savedModel = model();
     if (savedModel) {
         disconnect(savedModel, nullptr, this, nullptr);
     }
-    if (selectionModel()) {
-        disconnect(selectionModel(), nullptr, this, nullptr);
-        selectionModel()->clear();
-        // Detach the selection model from the view model before the model is
-        // deleted (step 5). QItemSelectionModelPrivate::model is a raw pointer
-        // (Q_OBJECT_COMPAT_PROPERTY, not QPointer); if the destroyed() ->
-        // modelDestroyed() callback is dropped during the complex teardown
-        // sequence (step 4 replaces the selection model), d->model stays
-        // dangling and ~FileSelectionModel() -> setModel(nullptr) walks stale
-        // QPersistentModelIndex data, crashing in removePersistentIndexData().
-        selectionModel()->setModel(nullptr);
-    }
-    setCurrentIndex(QModelIndex());
 
-    // SelectHelper caches QItemSelection, which owns QPersistentModelIndex in Qt6.
-    // Destroy it before detaching/deleting the model to avoid helper teardown
-    // walking stale persistent indexes after the model has gone away.
+    // 3. 销毁 SelectHelper。它本身是 view 的 child, deleteChildren() 也会删;
+    //    这里提前删只是把 d->selectHelper 置空, 避免裸指针在之后悬空。
     if (d && d->selectHelper) {
-        d->selectHelper->prepareForModelTeardown();
         delete d->selectHelper;
         d->selectHelper = nullptr;
     }
 
-    // 3.5 显式清理无障碍接口缓存中的 QAccessibleTableCell 对象。
-    //     QAccessibleTableCell 持有 QPersistentModelIndex 且 object() 返回 nullptr,
-    //     不会被 objectDestroyed() 清理, 仅在 ~QAccessibleCache() (~QApplication) 时析构。
-    //     若不在模型存活时清理, 模型销毁后 ~QPersistentModelIndex 将访问悬空模型指针。
+    // 4. 回收无障碍 cell —— 唯一必须保留的解绑。
+    //    QAccessibleTableCell 持有 QPersistentModelIndex, 且 object() 返回 nullptr,
+    //    不会被 objectDestroyed() 回收, 只能留到 ~QAccessibleCache()(~QApplication)
+    //    才析构 —— 它比 model 活得更久, 是唯一不服从上面那条时序规律的持有者。
+    //    ~QAccessibleTable() 会遍历 childToId 逐个 deleteAccessibleInterface,
+    //    所以删掉 view 自身的接口即可连带回收已登记的全部 cell。
+    //    这是 model 仍可安全访问时最后一个能做此事的时机。
 #if QT_CONFIG(accessibility)
-    if (auto *iface = QAccessible::queryAccessibleInterface(this))
-        QAccessible::deleteAccessibleInterface(QAccessible::uniqueId(iface));
+    if (QAccessible::isActive()) {
+        if (auto *iface = QAccessible::queryAccessibleInterface(this))
+            QAccessible::deleteAccessibleInterface(QAccessible::uniqueId(iface));
+    }
 #endif
 
-    // 4. 解绑 model(关键步骤): 会触发 QAbstractItemView 清理持有的 QPersistentModelIndex
-    DListView::setModel(nullptr);
-
-    // 5. 显式删除 model: ~QAbstractItemModel() 会调用 invalidatePersistentIndexes(),
-    //    将所有残留 QPersistentModelIndex 的 model 指针置 null。
-    //    必须在 ~QObject() 子对象清理前执行,否则 headerView / selectionModel 等
-    //    子控件在 ~QObject() 中销毁时,其内部 QPersistentModelIndex 会访问已销毁
-    //    的 model 私有数据哈希表(removePersistentIndexData)而崩溃。
+    // 5. 移交 model 所有权 —— 本析构函数的核心。
+    //
+    //    不能在这里 delete: QObject::~QObject() 的顺序是 deleteChildren() 先于 d_ptr 析构,
+    //    而 ~QAbstractItemViewPrivate 里的 hover / root / pressedIndex 等成员是
+    //    QPersistentModelIndex。只要 model 先死, 这些索引析构时就会调用
+    //    model->d_func()->removePersistentIndexData() 而崩溃 (coredump 1165589)。
+    //
+    //    也不能靠 setModel(nullptr) 规避: 它内部只经 reset() -> setRootIndex()
+    //    清掉 root, 其余 5 个私有持久索引没有任何公开 API 能清, 仍会活到 d_ptr 析构。
+    //    而且 setModel(nullptr) 会重建 selectionModel, 旧的那个被 deleteLater 后
+    //    可能拖到 ~QApplication 才析构 —— 反而制造了一个新的越界持有者。
+    //
+    //    而 ~QAbstractItemModel() 的 invalidatePersistentIndexes() 只遍历
+    //    persistent.indexes 哈希表。Qt 6.8 的 QMultiHash::remove(key) 会连坐摘除
+    //    同 key 的其它登记, 被摘除者成为孤儿; 模型析构时遍历不到它, 其 index.model()
+    //    永远不会被置空。因此"先删 model 让残留索引自动失效"这个前提对孤儿并不成立,
+    //    提前删除只会把崩溃点从退出期搬到关 tab 时。
+    //
+    //    改挂到父控件后, 删除发生在 view 的 ~QObject 全部完成之后:
+    //    d_ptr 里的持久索引先安全析构, model 随后才死。FileViewModel 中
+    //    qobject_cast<FileView *>(parent()) 的几处调用均已判空, 此时返回 nullptr。
     if (savedModel && savedModel->QObject::parent() == this) {
-        delete savedModel;
+        if (QWidget *newParent = parentWidget()) {
+            savedModel->setParent(newParent);
+        } else {
+            // 兜底: view 没有父控件时无法借父控件延期, 交给事件循环;
+            // 此时 view 已完全析构, 延迟删除不会与私有数据析构竞争。
+            savedModel->setParent(nullptr);
+            savedModel->deleteLater();
+        }
     }
 
     // 6. 清理其他订阅
@@ -192,7 +206,7 @@ FileView::~FileView()
 
     fmDebug() << "FileView destruction completed";
 
-    // model 已在步骤 5 显式删除,不会进入 ~QObject() 子对象清理流程
+    // model 已在步骤 5 移交给父控件, 不参与本 view 的 deleteChildren()
 }
 
 QWidget *FileView::widget() const

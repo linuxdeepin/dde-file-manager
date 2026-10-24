@@ -50,15 +50,6 @@ void SelectHelper::release()
     currentPressedIndex = QModelIndex();
 }
 
-void SelectHelper::prepareForModelTeardown()
-{
-    fmDebug() << "SelectHelper preparing for model teardown - clearing model-bound selection state";
-    lastPressedIndex = QModelIndex();
-    currentPressedIndex = QModelIndex();
-    currentSelection = QItemSelection();
-    lastSelection = QItemSelection();
-}
-
 void SelectHelper::setSelection(const QItemSelection &selection)
 {
     fmDebug() << "Setting selection - size:" << selection.size();
