@@ -26,7 +26,6 @@ public:
     QModelIndex getCurrentPressedIndex() const;
     void click(const QModelIndex &index);
     void release();
-    void prepareForModelTeardown();
     void setSelection(const QItemSelection &selection);
     void selection(const QRect &rect, QItemSelectionModel::SelectionFlags flags);
     bool select(const QList<QUrl> &urls);
