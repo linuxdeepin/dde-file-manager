@@ -304,15 +304,27 @@ void CommandParser::openInUrls()
                 // 路径中包含特殊字符的全部uri编码
                 QRegularExpression regexp("[#&@\\!\\?]");
                 if (path.contains(regexp)) {
-                    QString left, right, encode;
-                    int idx = path.indexOf(regexp);
-                    while (idx != -1) {
-                        left = path.left(idx);
-                        right = path.mid(idx + 1);
-                        encode = QUrl::toPercentEncoding(path.mid(idx, 1));
-                        path = left + encode + right;
-                        idx = path.indexOf(regexp);
+                    // 对带 scheme 的 URL（如 sftp://user@host:port/path），只编码
+                    // authority 之后的部分，避免编码 authority 中的 @ 等字符而破坏 URL 结构
+                    int encodeStart = 0;
+                    int schemeIdx = path.indexOf("://");
+                    if (schemeIdx != -1) {
+                        encodeStart = path.indexOf('/', schemeIdx + 3);
+                        if (encodeStart == -1)
+                            encodeStart = path.length();
                     }
+
+                    QString toEncode = path.mid(encodeStart);
+                    QString left, right, encode;
+                    int idx = toEncode.indexOf(regexp);
+                    while (idx != -1) {
+                        left = toEncode.left(idx);
+                        right = toEncode.mid(idx + 1);
+                        encode = QUrl::toPercentEncoding(toEncode.mid(idx, 1));
+                        toEncode = left + encode + right;
+                        idx = toEncode.indexOf(regexp);
+                    }
+                    path = path.left(encodeStart) + toEncode;
                 }
             }
         }
