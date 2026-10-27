@@ -1,0 +1,37 @@
+name: xlsx严格预览补全_suite
+app: dde-file-manager
+description: 使用 dconfig 命令和 AT 树详情区域断言补全预览开关类缺口，仅保留本地运行通过的用例
+module: xlsx严格预览补全
+tags:
+- strict
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1807263
+  name: 【预览开关】多个窗口命令行关闭开启预览
+  description: 'xlsx 用例编号: 1807263；通过命令行关闭/开启预览配置，在两个文件管理器窗口中选中文件，断言关闭时无 DetailSpaceWidget，开启时两个窗口均出现 DetailSpaceWidget。'
+  tags:
+  - P1-1
+  - strict
+  vars:
+    xlsx_id: '1807263'
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807263; rm -rf "$base"; mkdir -p "$base/a" "$base/b"; printf a > "$base/a/a.txt"; printf b > "$base/b/b.txt"; dde-dconfig get -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.view -k dfm.displaypreview.visible > "$base/original_preview"; dde-dconfig set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.view -k dfm.displaypreview.visible -v false; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base/a" >/tmp/dfm_at_1807263_off_a.log 2>&1 & dde-file-manager --new-window --working-dir "$base/b" >/tmp/dfm_at_1807263_off_b.log 2>&1 & sleep 5; for wid in $(xdotool search --class dde-file-manager); do xdotool windowactivate "$wid"; xdotool key ctrl+a; done; python3 tests/at/yaml/xlsx严格预览补全/assert_preview_detailspace.py exact:0 "$base/PASS_OFF_1807263"'
+    wait: 18.0
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/case_1807263; dde-dconfig set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.view -k dfm.displaypreview.visible -v true; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base/a" >/tmp/dfm_at_1807263_on_a.log 2>&1 & dde-file-manager --new-window --working-dir "$base/b" >/tmp/dfm_at_1807263_on_b.log 2>&1 & sleep 5; for wid in $(xdotool search --class dde-file-manager); do xdotool windowactivate "$wid"; xdotool key ctrl+a; done; python3 tests/at/yaml/xlsx严格预览补全/assert_preview_detailspace.py min:2 "$base/PASS_ON_1807263"'
+    wait: 18.0
+  assert_steps:
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807263/PASS_OFF_1807263
+  - action: assert_file_exists
+    path: /tmp/dde-at-fixtures/case_1807263/PASS_ON_1807263
+teardown:
+- action: session_start
+  command: >-
+    bash -lc 'base=/tmp/dde-at-fixtures/case_1807263; if [ -f "$base/original_preview" ]; then old=$(cat "$base/original_preview"); dde-dconfig set -a org.deepin.dde.file-manager -r org.deepin.dde.file-manager.view -k dfm.displaypreview.visible -v "$old"; fi; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; rm -rf "$base"'
+  wait: 0.2
