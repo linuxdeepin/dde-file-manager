@@ -300,7 +300,10 @@ void CommandParser::openInUrls()
     for (QString path : positionalArguments()) {
         if (!isSet("raw")) {
             // 路径字符串在DUrl::fromUserInput中会处理编码，这里不处理
-            if (!QDir().exists(path) && !path.startsWith("./") && !path.startsWith("../") && !path.startsWith("/")) {
+            // 以 '~' 开头的路径由 UrlRoute::fromUserInput 直接展开到家目录，
+            // 预先编码会让 '%xx' 作为字面量被拼进家目录路径
+            if (!QDir().exists(path) && !path.startsWith("./") && !path.startsWith("../")
+                && !path.startsWith("/") && !path.startsWith("~")) {
                 // 路径中包含特殊字符的全部uri编码
                 QRegularExpression regexp("[#&@\\!\\?]");
                 if (path.contains(regexp)) {

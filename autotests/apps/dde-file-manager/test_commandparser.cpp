@@ -25,6 +25,14 @@
 //   [非 raw 且含 #&@!? → percent-encode]      → SpecialChars_EncodesPath
 //   [--show-item 且 InfoFactory 空 → continue]→ ShowItemNonexistent_SkipsFile
 //   [argumentUrls 空 → publish kOpenNewWindow]→ ShowItemNonexistent_SkipsFile
+//   [scheme URL → 只编码 authority 之后]      → SftpUrlFromBugReport_KeepsAuthorityAndPath
+//                                              / UrlArguments_KeepSchemeUserHostPort
+//   [本地特殊名字（绝对/相对/~）→ 同一路径]    → LocalSpecialNames_* / TildePath_*
+//   [不存在的相对路径 → 特殊字符留在 path]     → NonexistentRelativeSpecialChars_*
+//   [多参数混传 → 逐个按序打开]                → MultipleMixedArguments_*
+//   [-R → 不预编码且 authority 完整]           → RawFlag_UrlAuthorityIntact
+//   [空参数 → 默认窗口]                        → EmptyArgument_OpensDefaultWindow
+//   [--show-item 特殊文件 → 父目录+selectUrl]  → ShowItemSpecialCharFile_*
 // CommandParser::openWindowWithUrl
 //   [kOpenInNewTab && actWinId>0 → kOpenNewTab]→ NewTabAttribute_PublishesNewTab
 //   [else → kOpenNewWindow]                   → SpecialChars_EncodesPath
@@ -51,6 +59,7 @@
 #include <QTemporaryDir>
 #include <QTemporaryFile>
 #include <QFile>
+#include <QFileInfo>
 #include <QDir>
 #include <QUrl>
 #include <QJsonDocument>
@@ -96,6 +105,7 @@ struct GlobalEventListener : public QObject
     int openNewWindowCalls = 0;
     QUrl lastNewWindowUrl;
     bool lastNewWindowFlag = false;
+    QList<QUrl> openedNewWindowUrls;   // 按发布顺序收集，用于多参数场景
     int openNewTabCalls = 0;
     QUrl lastNewTabUrl;
     int copyCalls = 0;
@@ -114,6 +124,7 @@ struct GlobalEventListener : public QObject
         ++openNewWindowCalls;
         lastNewWindowUrl = url;
         lastNewWindowFlag = flag;
+        openedNewWindowUrls.append(url);
         return QVariant();
     }
     QVariant onOpenNewTab(quint64, const QUrl &url)
@@ -164,6 +175,105 @@ int listenerCount()
 {
     return g_listener ? g_listener->openNewWindowCalls : 0;
 }
+
+// 恢复工作目录的 RAII 守卫：相对路径用例需要临时切换 cwd
+struct CwdGuard
+{
+    explicit CwdGuard(const QString &dir)
+        : oldDir(QDir::currentPath())
+    {
+        QDir::setCurrent(dir);
+    }
+    ~CwdGuard() { QDir::setCurrent(oldDir); }
+
+    QString oldDir;
+};
+
+// 逐组件比较 URL：QUrl::operator== 还会比较编码形式，命令行场景只关心语义
+bool sameUrlComponents(const QUrl &a, const QUrl &b)
+{
+    return a.scheme() == b.scheme() && a.userName() == b.userName()
+        && a.host() == b.host() && a.port() == b.port()
+        && a.path() == b.path() && a.query() == b.query()
+        && a.fragment() == b.fragment();
+}
+
+// 本机桌面与临时目录中真实出现过（或同类）的目录名，覆盖特殊字符、连续空格、
+// 百分号序列、引号、括号、emoji、CJK、阿拉伯文、西里尔文等。
+// 不含 '/'（不是合法单层文件名），也不含以 '-' 开头的名字——后者会被
+// QCommandLineParser 当成选项，必须由调用方用 "--" 分隔，不属于本函数覆盖范围。
+QStringList specialLocalNames()
+{
+    return { "new_textindex 快捷方式",
+             "sdasd",
+             "新建文件夹2",
+             "tmp",
+             "B64123",
+             "black-path",
+             "特殊字符#$%",
+             "%,$",
+             "%$,",
+             "2 2",
+             "%25",
+             "#$%",
+             "3  3",
+             "100%完成",
+             "emoji_folder_😀🎉📁",
+             "folder!exclamation",
+             "folder\"with\"double\"quotes",
+             "folder#hash",
+             "folder%20with%20encoded",
+             "folder%with%percent",
+             "folder&ampersand",
+             "folder'with'quotes",
+             "folder(with)parentheses",
+             "folder,with,commas",
+             "folder-with-dashes",
+             "folder?question",
+             "folder@at",
+             "folder[with]brackets",
+             "folder_with_spaces",
+             "folder_with_underscores",
+             "folder{with}braces",
+             "folder~tilde",
+             "nested",
+             "normal_folder",
+             "very_long_folder_name_that_might_test_various_limits_and_edge_cases_in_argument_processing_and_path_handling_mechanisms",
+             "测试镜像~!@#$%^&()_+`1234567890-={}[];.qwe",
+             "日本語フォルダ",
+             "相对路径测试",
+             "русский_папка",
+             "العربية_مجلد",
+             "العر بي ة_مجلد（副本）",
+             "spec",
+             "1",
+             "新建文件夹",
+             "录屏_选择区域_20250717193539录屏_选择区域_20250717193539录屏_选择区域_2025!@#$$% ^&& ()_+ 选择区域_20250717193539录屏_选择区域_20250717193539录屏_选择区域_20250717193539录屏_选择区域_20250717193539录  &^选择",
+             "2025!@#$$% ^&& ()",
+             "213",
+             "ali",
+             "views",
+             "新建文件夹1",
+             "新建文件夹3",
+             "dfmplugin-burn",
+             "search",
+             "全文检索文件监控排查",
+             "12333",
+             "L",
+             "新建文件夹2223",
+             "qwe",
+             "中文文件夹",
+             // 追加的边界形态
+             " leading space",
+             "trailing space ",
+             "tab\tinside",
+             "new\nline",
+             "semi;colon:colon",
+             "percent%25literal",
+             "with 'single' \"double\" quotes",
+             "looks_like_email@example.com" };
+}
+
 }   // namespace
 
 class CommandParserTest : public testing::Test
@@ -185,6 +295,51 @@ protected:
         stub.clear();
         tempDir.reset();
         qunsetenv("XDG_ACTIVATION_TOKEN");
+    }
+
+    // DConfig / Application 走默认值，使 openWindowWithUrl 发布 kOpenNewWindow
+    void stubOpenNewWindowPublishers()
+    {
+        stub.set_lamda(&DConfigManager::value,
+                       [](DConfigManager *, const QString &, const QString &,
+                          const QVariant &defaultValue) -> QVariant {
+                           __DBG_STUB_INVOKE__
+                           return defaultValue;
+                       });
+        stub.set_lamda(&Application::appAttribute,
+                       [](Application::ApplicationAttribute &) -> QVariant {
+                           __DBG_STUB_INVOKE__
+                           return QVariant(false);
+                       });
+    }
+
+    // 执行一次 processCommand，返回本次发布的全部 kOpenNewWindow URL（按参数顺序）
+    QList<QUrl> openInUrlsWith(const QStringList &positional, const QStringList &options = {})
+    {
+        g_listener->openedNewWindowUrls.clear();
+        QStringList args { "ut-commandparser" };
+        args << options << positional;
+        parser.process(args);
+        parser.processCommand();
+        return g_listener->openedNewWindowUrls;
+    }
+
+    // 在临时目录下创建目录（名字可含任意合法文件名字符），返回绝对路径
+    QString makeLocalDir(const QString &name)
+    {
+        const QString path = tempDir->path() + "/" + name;
+        EXPECT_TRUE(QDir().mkpath(path)) << "mkpath failed: " << path.toStdString();
+        return path;
+    }
+
+    // 判断一次发布的 URL 是否指向给定本地路径，并校验字符串形态可往返
+    void expectLocalPath(const QUrl &url, const QString &expectedPath)
+    {
+        EXPECT_TRUE(url.isLocalFile()) << "not a local file url: " << url.toString().toStdString();
+        EXPECT_EQ(url.toLocalFile(), expectedPath);
+        // IPC/DBus 传参使用完整编码串，编码后必须还能还原成同一路径
+        const QUrl reparsed(url.toString(QUrl::FullyEncoded));
+        EXPECT_EQ(reparsed.toLocalFile(), expectedPath);
     }
 
     stub_ext::StubExt stub;
@@ -831,6 +986,402 @@ TEST_F(CommandParserTest, PositionalArguments_ReflectParsedPositionals)
     // Assert
     EXPECT_EQ(positional, QStringList({ "pos1", "pos2" }));
     EXPECT_TRUE(unknown.isEmpty());
+}
+
+// ============================================================================
+// 命令行路径/URL 参数回归测试（对应 commit 88216d205 "skip encoding URL authority"）
+//
+// 1. URL 参数：scheme://user@host:port/path 形式的参数，预编码只能作用于
+//    authority 之后。编码 authority 里的 '@' 会让 QUrl::fromUserInput 把整串
+//    退化成 http://scheme/...，sftp/ftp/smb 因此无法挂载（本组用例的起点）。
+// 2. 本地路径：桌面等目录里真实存在的特殊名字（特殊符号、连续空格、百分号
+//    序列、引号、括号、emoji、CJK/阿拉伯/西里尔文）必须还原成同一个本地路径，
+//    且编码串可往返（IPC/DBus 传参路径）。
+// 3. 以下既有局限不在本组用例中断言（避免把缺陷固化成期望）：
+//    - 相对路径 + 悬空符号链接：QDir::exists() 为 false，会走预编码分支，
+//      最终得到一个没有 scheme 的相对 URL；
+//    - 相对路径且文件名以 '~' 开头：UrlRoute::fromUserInput() 的 '~' 分支
+//      会把它展开成 homePath + 余下部分；
+//    - 相对路径以 '-' 开头：会被 QCommandLineParser 当成选项，需调用方用 "--" 分隔。
+// ============================================================================
+
+TEST_F(CommandParserTest, OpenInUrls_SftpUrlFromBugReport_KeepsAuthorityAndPath)
+{
+    // Arrange: 桌面快捷方式里的原始命令
+    //   dde-file-manager sftp://ut000177@127.0.0.1:13222/home/ut000177@uos
+    stubOpenNewWindowPublishers();
+    const QString arg = "sftp://ut000177@127.0.0.1:13222/home/ut000177@uos";
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith({ arg });
+
+    // Assert
+    ASSERT_EQ(opened.size(), 1);
+    const QUrl &url = opened.first();
+    EXPECT_EQ(url.scheme(), QString("sftp"));
+    EXPECT_EQ(url.userName(), QString("ut000177"));   // authority 中的 '@' 未被编码
+    EXPECT_EQ(url.host(), QString("127.0.0.1"));
+    EXPECT_EQ(url.port(), 13222);
+    EXPECT_EQ(url.path(), QString("/home/ut000177@uos"));   // 路径中的 '@' 属于路径
+
+    // 完整编码串：authority 分隔符保持原样，路径中的 '@' 才编码
+    const QString encoded = url.toString(QUrl::FullyEncoded);
+    EXPECT_TRUE(encoded.startsWith("sftp://ut000177@127.0.0.1:13222/"))
+        << encoded.toStdString();
+    EXPECT_FALSE(encoded.contains("%40127.0.0.1"))   // 旧缺陷：userinfo 的 '@' 被编码
+        << encoded.toStdString();
+    EXPECT_TRUE(encoded.endsWith("/home/ut000177%40uos")) << encoded.toStdString();
+}
+
+TEST_F(CommandParserTest, OpenInUrls_UrlArguments_KeepSchemeUserHostPort)
+{
+    // Arrange: 形状各异的远端 URL，含无路径、尾斜杠、IPv6、大写 scheme、
+    // authority 内已编码的 '@'，以及路径中的 # ? & ! @ 与多语言文件名。
+    stubOpenNewWindowPublishers();
+    struct Case
+    {
+        const char *arg;
+        const char *scheme;
+        const char *user;
+        const char *host;
+        int port;
+        const char *path;
+    };
+    const Case cases[] = {
+        { "sftp://ut000177@127.0.0.1:13222/home/ut000177@uos", "sftp", "ut000177", "127.0.0.1", 13222, "/home/ut000177@uos" },
+        { "sftp://user@host", "sftp", "user", "host", -1, "" },
+        { "sftp://user@host/", "sftp", "user", "host", -1, "/" },
+        { "ftp://ut000177@127.0.0.1:13222/pub", "ftp", "ut000177", "127.0.0.1", 13222, "/pub" },
+        { "smb://user@server/share", "smb", "user", "server", -1, "/share" },
+        { "smb://user%40dom@server/share", "smb", "user@dom", "server", -1, "/share" },
+        { "SFTP://user@host/home/x@y", "sftp", "user", "host", -1, "/home/x@y" },
+        { "sftp://user@host/home/deep#dir", "sftp", "user", "host", -1, "/home/deep#dir" },
+        { "sftp://user@host/home/a?b=1&c=2", "sftp", "user", "host", -1, "/home/a?b=1&c=2" },
+        { "sftp://user@host/home/a!b", "sftp", "user", "host", -1, "/home/a!b" },
+        { "sftp://user@host/home/a&b", "sftp", "user", "host", -1, "/home/a&b" },
+        { "sftp://user@[::1]:22/home/x@y", "sftp", "user", "::1", 22, "/home/x@y" },
+        { "sftp://user@host/home/100%完成", "sftp", "user", "host", -1, "/home/100%完成" },
+        { "sftp://user@host/home/emoji_😀🎉📁", "sftp", "user", "host", -1, "/home/emoji_😀🎉📁" },
+        { "sftp://user@host/home/with space", "sftp", "user", "host", -1, "/home/with space" },
+    };
+
+    for (const auto &c : cases) {
+        SCOPED_TRACE(c.arg);
+        const QList<QUrl> opened = openInUrlsWith({ QString::fromUtf8(c.arg) });
+        if (opened.size() != 1) {
+            ADD_FAILURE() << "expected exactly one opened url, got " << opened.size();
+            continue;
+        }
+        const QUrl &url = opened.first();
+        EXPECT_EQ(url.scheme(), QString::fromUtf8(c.scheme));
+        EXPECT_EQ(url.userName(), QString::fromUtf8(c.user));
+        EXPECT_EQ(url.host(), QString::fromUtf8(c.host));
+        EXPECT_EQ(url.port(), c.port);
+        EXPECT_EQ(url.path(), QString::fromUtf8(c.path));
+        // 编码串可往返：重解析后组件不变
+        EXPECT_TRUE(sameUrlComponents(QUrl(url.toString(QUrl::FullyEncoded)), url))
+            << url.toString(QUrl::FullyEncoded).toStdString();
+    }
+}
+
+TEST_F(CommandParserTest, OpenInUrls_UrlWithoutSpecialChars_Untouched)
+{
+    // Arrange: 不带 #&@!? 的参数不进入预编码分支，原样交给 UrlRoute::fromUserInput
+    stubOpenNewWindowPublishers();
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith({ "network://host/share/dir", "sftp://host/pub" });
+
+    // Assert
+    ASSERT_EQ(opened.size(), 2);
+    EXPECT_EQ(opened.at(0).scheme(), QString("network"));
+    EXPECT_EQ(opened.at(0).host(), QString("host"));
+    EXPECT_EQ(opened.at(0).path(), QString("/share/dir"));
+    EXPECT_EQ(opened.at(1).scheme(), QString("sftp"));
+    EXPECT_EQ(opened.at(1).path(), QString("/pub"));
+}
+
+TEST_F(CommandParserTest, OpenInUrls_MultipleMixedArguments_EachResolvedInOrder)
+{
+    // Arrange: 一次启动混传本地目录 + 两个远端 URL，包括热启动转发的场景
+    stubOpenNewWindowPublishers();
+    const QString localDir = makeLocalDir("special#$% dir");
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith({ localDir,
+                                                "sftp://ut000177@127.0.0.1:13222/home/ut000177@uos",
+                                                "smb://user@server/share#frag" });
+
+    // Assert: 顺序与参数一致，互不影响
+    ASSERT_EQ(opened.size(), 3);
+    expectLocalPath(opened.at(0), localDir);
+    EXPECT_EQ(opened.at(1).host(), QString("127.0.0.1"));
+    EXPECT_EQ(opened.at(1).port(), 13222);
+    EXPECT_EQ(opened.at(1).path(), QString("/home/ut000177@uos"));
+    EXPECT_EQ(opened.at(2).host(), QString("server"));
+    EXPECT_EQ(opened.at(2).path(), QString("/share#frag"));
+}
+
+TEST_F(CommandParserTest, OpenInUrls_RawFlag_UrlAuthorityIntact)
+{
+    // Arrange: -R 跳过预编码，authority 同样不能被 QUrl 解析破坏
+    stubOpenNewWindowPublishers();
+    const QString arg = "sftp://ut000177@127.0.0.1:13222/home/ut000177@uos";
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith({ arg }, { "-R" });
+
+    // Assert
+    ASSERT_EQ(opened.size(), 1);
+    EXPECT_EQ(opened.first().scheme(), QString("sftp"));
+    EXPECT_EQ(opened.first().userName(), QString("ut000177"));
+    EXPECT_EQ(opened.first().host(), QString("127.0.0.1"));
+    EXPECT_EQ(opened.first().port(), 13222);
+    EXPECT_EQ(opened.first().path(), QString("/home/ut000177@uos"));
+}
+
+TEST_F(CommandParserTest, OpenInUrls_LocalSpecialNames_AbsoluteArgumentsRoundTrip)
+{
+    // Arrange: 桌面等目录中的真实特殊名字，以绝对路径一次性传入
+    stubOpenNewWindowPublishers();
+    const QStringList names = specialLocalNames();
+    QStringList args;
+    QStringList expected;
+    for (const QString &name : names) {
+        const QString path = makeLocalDir(name);
+        if (path.isEmpty())
+            continue;
+        args << path;
+        expected << path;
+    }
+    ASSERT_FALSE(args.isEmpty());
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith(args);
+
+    // Assert
+    ASSERT_EQ(opened.size(), expected.size());
+    for (int i = 0; i < expected.size(); ++i) {
+        SCOPED_TRACE(expected.at(i).toStdString());
+        expectLocalPath(opened.at(i), expected.at(i));
+    }
+}
+
+TEST_F(CommandParserTest, OpenInUrls_LocalSpecialNames_RelativeArgumentsResolveAgainstCwd)
+{
+    // Arrange: 在目标目录内用相对名字启动（等价于 dde-file-manager "新建文件夹2"）
+    stubOpenNewWindowPublishers();
+    const QStringList names = specialLocalNames();
+    QStringList created;
+    QStringList expected;
+    for (const QString &name : names) {
+        const QString path = makeLocalDir(name);
+        if (path.isEmpty())
+            continue;
+        created << name;
+        expected << path;
+    }
+    ASSERT_FALSE(expected.isEmpty());
+
+    // Act
+    QList<QUrl> opened;
+    {
+        CwdGuard guard(tempDir->path());
+        opened = openInUrlsWith(created);
+    }
+
+    // Assert
+    ASSERT_EQ(opened.size(), expected.size());
+    for (int i = 0; i < expected.size(); ++i) {
+        SCOPED_TRACE(expected.at(i).toStdString());
+        expectLocalPath(opened.at(i), expected.at(i));
+    }
+}
+
+TEST_F(CommandParserTest, OpenInUrls_LocalNameContainingSchemeSeparator_StaysLocal)
+{
+    // Arrange: 目录名本身含 ':'，构成形如 "a:/b" 的路径；已存在路径不能被
+    // 误判成 URL（QDir().exists() 短路在这里起作用）
+    stubOpenNewWindowPublishers();
+    const QString dir = makeLocalDir("a:");
+    const QString child = dir + "/b";
+    ASSERT_TRUE(QDir().mkpath(child));
+
+    // Act: 绝对路径
+    const QList<QUrl> absolute = openInUrlsWith({ child });
+
+    // Assert
+    ASSERT_EQ(absolute.size(), 1);
+    expectLocalPath(absolute.first(), child);
+
+    // Act: 相对路径
+    QList<QUrl> relative;
+    {
+        CwdGuard guard(tempDir->path());
+        relative = openInUrlsWith({ "a:/b" });
+    }
+
+    // Assert
+    ASSERT_EQ(relative.size(), 1);
+    expectLocalPath(relative.first(), child);
+}
+
+TEST_F(CommandParserTest, OpenInUrls_TildePathWithSpecialChars_ExpandsToHome)
+{
+    // Arrange: '~' 路径由 UrlRoute::fromUserInput 展开，预编码会让 %xx 变成
+    // 文件名字面量（旧行为会打开 /home/xxx/sub%231 这种不存在的路径）
+    stubOpenNewWindowPublishers();
+    const QString home = tempDir->path();
+    stub.set_lamda(&QDir::homePath, [home]() -> QString {
+        __DBG_STUB_INVOKE__
+        return home;
+    });
+    const QStringList names { "sub#1&2", "100%完成", "a b?c" };
+    for (const QString &name : names)
+        ASSERT_FALSE(makeLocalDir(name).isEmpty());
+
+    // Act
+    QStringList args;
+    for (const QString &name : names)
+        args << ("~/" + name);
+    const QList<QUrl> opened = openInUrlsWith(args);
+
+    // Assert
+    ASSERT_EQ(opened.size(), names.size());
+    for (int i = 0; i < names.size(); ++i) {
+        SCOPED_TRACE(names.at(i).toStdString());
+        expectLocalPath(opened.at(i), home + "/" + names.at(i));
+    }
+}
+
+TEST_F(CommandParserTest, OpenInUrls_NonexistentRelativeSpecialChars_StayInPathWithoutFragment)
+{
+    // Arrange: bug-10151 的原始场景——路径尚不存在时，特殊字符必须留在 path 里，
+    // 不能被 QUrl 吃成 fragment/query
+    stubOpenNewWindowPublishers();
+    const QStringList args { "name#1&2", "photo#1.jpg", "a?b", "a!b", "a@b",
+                             "with space # and & and ?" };
+    // 固定到空临时目录，保证这些名字确实不存在
+    CwdGuard guard(tempDir->path());
+
+    for (const QString &arg : args) {
+        SCOPED_TRACE(arg.toStdString());
+
+        // Act
+        const QList<QUrl> opened = openInUrlsWith({ arg });
+
+        // Assert
+        if (opened.size() != 1) {
+            ADD_FAILURE() << "expected exactly one opened url, got " << opened.size();
+            continue;
+        }
+        EXPECT_FALSE(opened.first().hasFragment());
+        EXPECT_TRUE(opened.first().query().isEmpty());
+        EXPECT_EQ(opened.first().path(), arg);
+    }
+}
+
+TEST_F(CommandParserTest, OpenInUrls_EmptyArgument_OpensDefaultWindow)
+{
+    // Arrange: 空字符串参数不应崩溃，最终落到默认窗口（URL 为空）
+    stubOpenNewWindowPublishers();
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith({ "" });
+
+    // Assert
+    ASSERT_EQ(opened.size(), 1);
+    EXPECT_TRUE(opened.first().isEmpty());
+}
+
+TEST_F(CommandParserTest, OpenInUrls_ShowItemSpecialCharFile_SelectsChildInParent)
+{
+    // Arrange: --show-item 指向含特殊字符的真实文件
+    stubOpenNewWindowPublishers();
+    const QString dir = makeLocalDir("dir#1&2");
+    const QString file = dir + "/photo#1 & 2.jpg";
+    {
+        QFile f(file);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    }
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith({ "--show-item", file });
+
+    // Assert: 打开父目录，并通过 selectUrl 携带完整编码的子项 URL
+    ASSERT_EQ(opened.size(), 1);
+    expectLocalPath(opened.first(), dir);
+    ASSERT_TRUE(opened.first().hasQuery());
+    const QString decodedQuery = opened.first().query(QUrl::FullyDecoded);
+    EXPECT_TRUE(decodedQuery.contains("selectUrl=")) << decodedQuery.toStdString();
+    EXPECT_TRUE(decodedQuery.contains("photo#1 & 2.jpg")) << decodedQuery.toStdString();
+}
+
+TEST_F(CommandParserTest, ProcessCommand_PropertyDialog_SpecialCharPath_KeepsLiteralPath)
+{
+    // Arrange: -p 走的是 QUrl::fromUserInput 直连分支（不经过 openInUrls 预编码）
+    bool pushed = false;
+    QList<QUrl> captured;
+    typedef QVariant (EventChannelManager::*PushFunc)(const QString &, const QString &,
+                                                      QList<QUrl>, QVariantHash &&);
+    stub.set_lamda(static_cast<PushFunc>(&EventChannelManager::push),
+                   [&pushed, &captured](EventChannelManager *, const QString &space,
+                                        const QString &topic, QList<QUrl> urls, QVariantHash) -> QVariant {
+                       __DBG_STUB_INVOKE__
+                       if (space == "dfmplugin_propertydialog" && topic == "slot_PropertyDialog_Show") {
+                           pushed = true;
+                           captured = urls;
+                       }
+                       return QVariant();
+                   });
+    const QString file = tempDir->path() + "/prop#1 & 2 %25.txt";
+    {
+        QFile f(file);
+        ASSERT_TRUE(f.open(QIODevice::WriteOnly));
+    }
+    parser.process({ "ut-commandparser", "-p", file });
+
+    // Act
+    parser.processCommand();
+
+    // Assert
+    ASSERT_TRUE(pushed);
+    ASSERT_EQ(captured.size(), 1);
+    expectLocalPath(captured.first(), file);
+}
+
+TEST_F(CommandParserTest, OpenInUrls_RealDesktopEntries_RoundTrip)
+{
+    // Arrange: 用本机桌面上的真实条目做一次全量扫描（无桌面环境的机器上跳过）
+    const QString desktop = QDir::homePath() + "/Desktop";
+    if (!QFileInfo(desktop).isDir())
+        GTEST_SKIP() << "no ~/Desktop on this machine";
+    stubOpenNewWindowPublishers();
+
+    QStringList args;
+    QStringList expected;
+    const QFileInfoList entries = QDir(desktop).entryInfoList(
+            QDir::AllEntries | QDir::Hidden | QDir::System | QDir::NoDotAndDotDot);
+    for (const QFileInfo &fi : entries) {
+        if (!fi.exists())   // 悬空符号链接：走另一条既有路径，见文件头说明
+            continue;
+        if (fi.fileName().startsWith("~"))   // '~' 展开属于 UrlRoute 的既有局限
+            continue;
+        args << fi.absoluteFilePath();
+        expected << fi.absoluteFilePath();
+    }
+    if (args.isEmpty())
+        GTEST_SKIP() << "nothing to scan under ~/Desktop";
+
+    // Act
+    const QList<QUrl> opened = openInUrlsWith(args);
+
+    // Assert
+    ASSERT_EQ(opened.size(), expected.size());
+    for (int i = 0; i < expected.size(); ++i) {
+        SCOPED_TRACE(expected.at(i).toStdString());
+        expectLocalPath(opened.at(i), expected.at(i));
+    }
 }
 
 class SessionBusinessTest : public testing::Test
