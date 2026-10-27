@@ -1,0 +1,721 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 计算机界面_suite
+app: dde-file-manager
+description: 计算机界面模块 AT-SPI 用例
+module: 计算机界面
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_smoke_计算机界面_001
+  name: 侧边栏显示项目设置取消勾选标签分组下所有设置项目
+  description: '来源用例编号: 1972205'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_002
+  name: 【水印】[smoke]专业版状态-系统不激活/试用期激活/激活水印检查
+  description: '来源用例编号: 1816339'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_003
+  name: 全盘加密密码修改 - 修改磁盘密码弹窗-保存
+  description: '来源用例编号: 1810327'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Escape
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_004
+  name: 全盘加密密码修改 - 修改磁盘密码弹窗-磁盘密码校验
+  description: '来源用例编号: 1810325'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_005
+  name: 全盘加密密码修改 - 全盘加密显示修改磁盘密码入口
+  description: '来源用例编号: 1810323'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_006
+  name: 【菜单】全盘加密密码修改 - 非全盘加密不显示修改磁盘密码入口
+  description: '来源用例编号: 1810321'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_007
+  name: 全盘加密密码修改 - 入口显示控制
+  description: '来源用例编号: 1810315'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_008
+  name: '[core]系统盘-选中计算机页面系统盘右键'
+  description: '来源用例编号: 1809281'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 系统盘
+- id: case_smoke_计算机界面_009
+  name: 盘符名称修改-重命名输入框唤起及保存-重命名
+  description: '来源用例编号: 1809261'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_010
+  name: 盘符名称修改-重命名输入框唤起及保存-侧边栏重命名
+  description: '来源用例编号: 1809259'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_011
+  name: '[068~072][core]设置--“隐藏文件”'
+  description: '来源用例编号: 1809173'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_012
+  name: 【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏第三方项
+  description: '来源用例编号: 1808629'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: case_smoke_计算机界面_013
+  name: 【工作区视图插件显示隐藏】文管设置，工作区视图-计算机视图显示项目-计算机工作区隐藏我的目录
+  description: '来源用例编号: 1808623'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: case_smoke_计算机界面_014
+  name: '[smoke]计算机图标右键菜单'
+  description: '来源用例编号: 1808273'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: dtk_context_menu
+    selector:
+      name: 计算机
+    items:
+    - 属性
+    wait: 2.0
+  - action: dtk_context_menu
+    selector:
+      name: 计算机
+    items:
+    - 打开
+    wait: 2.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 计算机
+- id: case_smoke_计算机界面_015
+  name: 查看计算机属性窗口展示信息
+  description: '来源用例编号: 1807339'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 计算机
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_016
+  name: 【拖拽】聚合拖拽-多窗口互相拖拽_
+  description: '来源用例编号: 1806987'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: case_smoke_计算机界面_017
+  name: '[042]计算机页面和侧边栏系统盘、数据盘右键_'
+  description: '来源用例编号: 1806039'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_018
+  name: 同时隐藏侧边栏和计算机视图中系统盘、数据盘
+  description: '来源用例编号: 1806023'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 计算机
+- id: case_smoke_计算机界面_019
+  name: 计算机属性显示变更-属性界面显示
+  description: '来源用例编号: 1806013'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: dtk_context_menu
+    selector:
+      name: 计算机
+    items:
+    - 属性
+    wait: 2.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_020
+  name: '[022 023][core]系统盘-选中侧边栏系统盘右键'
+  description: '来源用例编号: 1805977'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: right_click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: right_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 系统盘
+- id: case_smoke_计算机界面_021
+  name: 【计算机】系统盘-单击侧边栏系统盘
+  description: '来源用例编号: 1805975'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: case_smoke_计算机界面_022
+  name: 【计算机】系统盘-双击计算机页面系统盘
+  description: '来源用例编号: 1805973'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: case_smoke_计算机界面_023
+  name: 【计算机】我的目录-双击打开目录
+  description: '来源用例编号: 1805955'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: double_click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: double_click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 下载
+- id: case_smoke_计算机界面_024
+  name: '[core]计算机属性-其他信息检查'
+  description: '来源用例编号: 1805943'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_025
+  name: 文件和文件夹混合排序-未设置“文件和文件夹混合”，勾选后功能后，文管内混合排序立即生效
+  description: '来源用例编号: 1805131'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_026
+  name: 不勾选【显示隐藏文件】-在文管普通目录内以“.”开头批量重命名文件-弹窗提示-点击【隐藏】
+  description: '来源用例编号: 1804897'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_027
+  name: 侧边栏显示项目设置取消勾选快捷访问分组下所有设置项目
+  description: '来源用例编号: 1804891'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: 快捷访问
+- id: case_smoke_计算机界面_028
+  name: 侧边栏显示项目设置取消勾选分区分组下所有设置项目
+  description: '来源用例编号: 1804889'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_029
+  name: 侧边栏显示项目设置取消勾选网络分组下所有设置项目
+  description: '来源用例编号: 1804887'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+- id: case_smoke_计算机界面_030
+  name: 设置--“隐藏文件”
+  description: '来源用例编号: 1804871'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+h
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 最近使用
+- id: case_smoke_计算机界面_031
+  name: 设置页面开启普通删除提示选项检查
+  description: '来源用例编号: 1804839'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 显示预览
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: Escape
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_032
+  name: '[179]扩展名隐藏-取消勾选“显示文件扩展名”后，检查多扩展名文件是否正确隐藏扩展名'
+  description: '来源用例编号: 1804811'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_计算机界面_033
+  name: 勾选【显示隐藏文件】-在桌面以“.”开头新建/重命名文件-不弹窗提示
+  description: '来源用例编号: 1804805'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

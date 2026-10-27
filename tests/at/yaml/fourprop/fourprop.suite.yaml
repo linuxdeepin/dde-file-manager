@@ -1,0 +1,77 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 四性_suite
+app: dde-file-manager
+description: 四性模块 AT-SPI 用例
+module: 四性
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_fourprop_四性_001
+  name: 文件管理器翻译验证-其他语言
+  description: '来源用例编号: 1931887'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: case_fourprop_四性_002
+  name: 文件管理器菜单翻译率验证-老挝语
+  description: '来源用例编号: 1931885'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_fourprop_四性_003
+  name: 文件管理器菜单翻译率验证-主要语言
+  description: '来源用例编号: 1931883'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_fourprop_四性_004
+  name: 【文管安全性】界面静置场景内存泄漏监测
+  description: '来源用例编号: 1919811'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop
