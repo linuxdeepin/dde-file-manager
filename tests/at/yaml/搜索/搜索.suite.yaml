@@ -1,0 +1,1365 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 搜索_suite
+app: dde-file-manager
+description: 搜索模块 AT-SPI 用例
+module: 搜索
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 搜索_0001_s1
+  name: 【搜索】开启长文件名后高级搜索-创建时间_
+  description: 【搜索】开启长文件名后高级搜索-创建时间_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0002_s1
+  name: 【搜索专项优化-v1.1】文管搜索结果高亮显示关键词，召回内容最多显示200个字符
+  description: 【搜索专项优化-v1.1】文管搜索结果高亮显示关键词，召回内容最多显示200个字符
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0003_s1
+  name: 【搜索】【黑名单配置】在黑名单路径下修改文件内容再搜索
+  description: 【搜索】【黑名单配置】在黑名单路径下修改文件内容再搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: black-path
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0004_s1
+  name: 【搜索】【黑名单配置】home目录外的其他目录加入黑名单路径
+  description: 【搜索】【黑名单配置】home目录外的其他目录加入黑名单路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0005_s1
+  name: 【搜索】【黑名单配置】配置黑名单路径-异常系
+  description: 【搜索】【黑名单配置】配置黑名单路径-异常系
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: a-search.txt
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0006_s1
+  name: 【搜索】【黑名单配置】修改已配置的关键词
+  description: 【搜索】【黑名单配置】修改已配置的关键词
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0007_s1
+  name: 【搜索】【黑名单配置】在黑名单中的绝对路径下修改文件再搜索
+  description: 【搜索】【黑名单配置】在黑名单中的绝对路径下修改文件再搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 修改文件内容
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0008_s1
+  name: 【搜索】【黑名单配置】在黑名单路径下新增文件再搜索
+  description: 【搜索】【黑名单配置】在黑名单路径下新增文件再搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 测试搜索黑名单路径
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0009_s1
+  name: 【搜索】【黑名单配置】黑名单路径默认路径检查
+  description: 【搜索】【黑名单配置】黑名单路径默认路径检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0010_s1
+  name: 【搜索】数据盘为xfs文件系统类型时进行搜索
+  description: 【搜索】数据盘为xfs文件系统类型时进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: a.txt文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0011_s1
+  name: 【搜索】数据盘为btrfs文件系统类型时进行搜索
+  description: 【搜索】数据盘为btrfs文件系统类型时进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: a.txt文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0012_s1
+  name: 【搜索】已创建索引时搜索性能测试
+  description: 【搜索】已创建索引时搜索性能测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0013_s1
+  name: 【搜索】主目录中搜索
+  description: 【搜索】主目录中搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: test-1.txt
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0014_s1
+  name: 【搜索】未创建索引时搜索性能测试
+  description: 【搜索】未创建索引时搜索性能测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0015_s1
+  name: 【搜索】重命名后立即添加内容，再搜索
+  description: 【搜索】重命名后立即添加内容，再搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天天气很好
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0016_s1
+  name: 【搜索】搜索过程中并行做其他操作
+  description: 【搜索】搜索过程中并行做其他操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: kw_500000
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: TabBar
+- id: 搜索_0017_s1
+  name: 【搜索专项优化-v1.1】文管搜索结果高亮显示关键词
+  description: 【搜索专项优化-v1.1】文管搜索结果高亮显示关键词
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 文档
+- id: 搜索_0018_s1
+  name: 【搜索专项优化-v1.0】支持空格分词搜索
+  description: 【搜索专项优化-v1.0】支持空格分词搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 截图 区域 a
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 桌面
+- id: 搜索_0019_s1
+  name: 【搜索专项优化-v1.0】完整镜像全文检索开关默认开启
+  description: 【搜索专项优化-v1.0】完整镜像全文检索开关默认开启
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索_0020_s1
+  name: 【搜索】文管全文搜索-索引更新失败
+  description: 【搜索】文管全文搜索-索引更新失败
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0021_s1
+  name: 搜索框-快捷键激活并搜索
+  description: 搜索框-快捷键激活并搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0022_s1
+  name: 【搜索】升级后开启、关闭全文搜索-事件上报
+  description: 【搜索】升级后开启、关闭全文搜索-事件上报
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0023_s1
+  name: 【搜索】长文件名功能 - 搜索结果，文件右键打开文件所在位置
+  description: 【搜索】长文件名功能 - 搜索结果，文件右键打开文件所在位置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0024_s1
+  name: 【搜索】长文件名功能 - 搜索结果，文件右键新窗口打开
+  description: 【搜索】长文件名功能 - 搜索结果，文件右键新窗口打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0025_s1
+  name: 【搜索】长文件名功能 - 搜索结果，文件右键剪切粘贴
+  description: 【搜索】长文件名功能 - 搜索结果，文件右键剪切粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0026_s1
+  name: 【搜索】长文件名功能  - 搜索结果，批量重命名，替换文本
+  description: 【搜索】长文件名功能  - 搜索结果，批量重命名，替换文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0027_s1
+  name: 【搜索】长文件名功能 - 搜索结果，文件右键快捷访问
+  description: 【搜索】长文件名功能 - 搜索结果，文件右键快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 搜索_0028_s1
+  name: 【搜索】长文件名功能 - 搜索结果，文件右键在终端中打开
+  description: 【搜索】长文件名功能 - 搜索结果，文件右键在终端中打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0029_s1
+  name: 【搜索】长文件名功能 - 全局搜索，搜索成功
+  description: 【搜索】长文件名功能 - 全局搜索，搜索成功
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0030_s1
+  name: '[118][core]保险箱-搜索保险箱中'
+  description: '[118][core]保险箱-搜索保险箱中'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 保险箱
+- id: 搜索_0031_s1
+  name: 计算机页面，检查搜索结果后的右键菜单功能
+  description: 计算机页面，检查搜索结果后的右键菜单功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 搜索_0032_s1
+  name: '[129][core]回收站内搜索内容'
+  description: '[129][core]回收站内搜索内容'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0033_s1
+  name: 【搜索】搜索打开.sh文件后，打开文件所在位置不会导致文管闪退
+  description: 【搜索】搜索打开.sh文件后，打开文件所在位置不会导致文管闪退
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0034_s1
+  name: 【搜索】全文搜索后，拖动侧边栏滚动条/鼠标滚轮滚动查看结果
+  description: 【搜索】全文搜索后，拖动侧边栏滚动条/鼠标滚轮滚动查看结果
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 搜索_0035_s1
+  name: 【搜索】文件重命名、新建后，进行搜索
+  description: 【搜索】文件重命名、新建后，进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0036_s1
+  name: 【搜索】【支持筛选搜索】文管单击"搜索"按钮后，输入关键字进行搜索
+  description: 【搜索】【支持筛选搜索】文管单击"搜索"按钮后，输入关键字进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0037_s1
+  name: 【搜索】【支持筛选搜索】文管单击“搜索”按钮后，筛选过滤条件，直接进行筛选
+  description: 【搜索】【支持筛选搜索】文管单击“搜索”按钮后，筛选过滤条件，直接进行筛选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 搜索_0038_s1
+  name: 【搜索】对搜索结果文件操作
+  description: 【搜索】对搜索结果文件操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0039_s1
+  name: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，输入关键字和筛选过滤条件，进行搜索
+  description: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，输入关键字和筛选过滤条件，进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0040_s1
+  name: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，筛选过滤条件，直接进行筛选
+  description: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，筛选过滤条件，直接进行筛选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0041_s1
+  name: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，输入关键字进行搜索
+  description: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，输入关键字进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0042_s1
+  name: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，单击&amp;amp;quot;筛选&amp;amp;quot;按钮
+  description: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，单击&amp;amp;quot;筛选&amp;amp;quot;按钮
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0043_s1
+  name: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，&amp;amp;quot;筛选&amp;amp;quot;按钮显示
+  description: 【搜索】【支持筛选搜索】文管单击&amp;amp;quot;搜索&amp;amp;quot;按钮后，&amp;amp;quot;筛选&amp;amp;quot;按钮显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0044_s1
+  name: 【搜索】Bug200133转：全文搜索后，拖动侧边栏滚动条
+  description: 【搜索】Bug200133转：全文搜索后，拖动侧边栏滚动条
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 搜索_0045_s1
+  name: 【搜索】Bug211957转：搜索打开.sh文件后，打开文件所在位置不会导致文管闪退
+  description: 【搜索】Bug211957转：搜索打开.sh文件后，打开文件所在位置不会导致文管闪退
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0046_s1
+  name: 【搜索】搜索结果-打开文件所在位置，复制面包屑路径_
+  description: 【搜索】搜索结果-打开文件所在位置，复制面包屑路径_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0047_s1
+  name: 【搜索】支持通配符搜索
+  description: 【搜索】支持通配符搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0048_s1
+  name: 【搜索】搜索-单个词搜索
+  description: 【搜索】搜索-单个词搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: deepin
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0049_s1
+  name: 【搜索】框下拉列表
+  description: 【搜索】框下拉列表
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0050_s1
+  name: 【搜索】搜索-快捷键检查
+  description: 【搜索】搜索-快捷键检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0051_s1
+  name: 【搜索】全文搜索-搜索隐藏
+  description: 【搜索】全文搜索-搜索隐藏
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0052_s1
+  name: 【搜索】全文搜索-混合语言搜索多个文件（仅文件内容包含关键词）
+  description: 【搜索】全文搜索-混合语言搜索多个文件（仅文件内容包含关键词）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0053_s1
+  name: 【搜索】搜索-关键词搜索（文件名和内容均包含关键词）
+  description: 【搜索】搜索-关键词搜索（文件名和内容均包含关键词）
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0054_s1
+  name: '[t][core]全文搜索-勾选全文搜索配置项'
+  description: '[t][core]全文搜索-勾选全文搜索配置项'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+- id: 搜索_0055_s1
+  name: 【搜索】搜索-全文搜索默认勾选
+  description: 【搜索】搜索-全文搜索默认勾选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0056_s1
+  name: 【搜索】搜索-多次搜索
+  description: 【搜索】搜索-多次搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: 搜索_0057_s1
+  name: 【搜索】全文搜索-中文、英文字母单独/混合进行搜索
+  description: 【搜索】全文搜索-中文、英文字母单独/混合进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0058_s1
+  name: 【搜索】全文搜索-繁体、数字单独/混合进行搜索
+  description: 【搜索】全文搜索-繁体、数字单独/混合进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0059_s1
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索
+  description: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0060_s1
+  name: 【搜索】全文搜索-特殊符号进行搜索
+  description: 【搜索】全文搜索-特殊符号进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0061_s1
+  name: 【搜索】搜索-特殊路径搜索
+  description: 【搜索】搜索-特殊路径搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: trash:///
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 最近使用
+- id: 搜索_0062_s1
+  name: 【搜索】全文搜索md-输入混合语言匹配单个md
+  description: 【搜索】全文搜索md-输入混合语言匹配单个md
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0063_s1
+  name: 【搜索】全文搜索-搜索md加密文件
+  description: 【搜索】全文搜索-搜索md加密文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0064_s1
+  name: 搜索-anything进程合并
+  description: 搜索-anything进程合并
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0065_s1
+  name: 【搜索】高级搜索-创建时间_
+  description: 【搜索】高级搜索-创建时间_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0066_s1
+  name: 【搜索】高级搜索-访问时间_
+  description: 【搜索】高级搜索-访问时间_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0067_s1
+  name: 【搜索】搜索地址前缀补全-IP地址检测
+  description: 【搜索】搜索地址前缀补全-IP地址检测
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0068_s1
+  name: 【搜索】搜索地址前缀补全-最近访问标签7*24小时时效检查
+  description: 【搜索】搜索地址前缀补全-最近访问标签7*24小时时效检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0069_s1
+  name: 【搜索】搜索地址前缀补全-最近访问标签用户隔离
+  description: 【搜索】搜索地址前缀补全-最近访问标签用户隔离
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0070_s1
+  name: 【搜索】搜索结果空白处右键菜单
+  description: 【搜索】搜索结果空白处右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0071_s1
+  name: 【搜索】高级搜索-重置搜索
+  description: 【搜索】高级搜索-重置搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0072_s1
+  name: 【搜索】高级搜索--多标签搜索
+  description: 【搜索】高级搜索--多标签搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索_0073_s1
+  name: 【搜索】高级搜索-随机组合筛选
+  description: 【搜索】高级搜索-随机组合筛选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 搜索_0074_s1
+  name: 【搜索】高级搜索-文件类型
+  description: 【搜索】高级搜索-文件类型
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 图片
+- id: 搜索_0075_s1
+  name: 【搜索】高级搜索-文件大小
+  description: 【搜索】高级搜索-文件大小
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0076_s1
+  name: 【搜索】高级搜索-选择范围
+  description: 【搜索】高级搜索-选择范围
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: sh
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0077_s1
+  name: 【搜索】高级搜索-修改时间
+  description: 【搜索】高级搜索-修改时间
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0078_s1
+  name: 【搜索】高级搜索-默认选项
+  description: 【搜索】高级搜索-默认选项
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0079_s1
+  name: 【搜索】高级搜索-打开/关闭
+  description: 【搜索】高级搜索-打开/关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索_0080_s1
+  name: 【搜索】索引-关闭自动索引内置磁盘
+  description: 【搜索】索引-关闭自动索引内置磁盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0081_s1
+  name: 【搜索】搜索隐藏和加密文件
+  description: 【搜索】搜索隐藏和加密文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索_0082_s1
+  name: 【搜索】绝对路径、相对路径搜索
+  description: 【搜索】绝对路径、相对路径搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 计算机
+- id: 搜索_0083_s1
+  name: 长文件名功能 - 搜索
+  description: 长文件名功能 - 搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+teardown:
+- action: session_stop

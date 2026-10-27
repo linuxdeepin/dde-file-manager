@@ -1,0 +1,262 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 复制文件地址_suite
+app: dde-file-manager
+description: 复制文件地址模块 AT-SPI 用例
+module: 复制文件地址
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 复制文件地址_0001_s1
+  name: 【复制文件地址】复制大量文件的文件地址
+  description: 【复制文件地址】复制大量文件的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 文档
+- id: 复制文件地址_0002_s1
+  name: 【复制文件地址】复制多层级超长路径文件的地址
+  description: 【复制文件地址】复制多层级超长路径文件的地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制文件地址_0003_s1
+  name: 【复制文件地址】文管快捷键面板新增复制文件地址快捷键
+  description: 【复制文件地址】文管快捷键面板新增复制文件地址快捷键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 复制文件地址_0004_s1
+  name: 【复制文件地址】复制软硬连接的文件地址
+  description: 【复制文件地址】复制软硬连接的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 复制文件地址_0005_s1
+  name: 【复制文件地址】复制光驱/移动硬盘/手机里的文件地址
+  description: 【复制文件地址】复制光驱/移动硬盘/手机里的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 文档
+- id: 复制文件地址_0006_s1
+  name: 【复制文件地址】复制ftp/sftp/dav/davs/nfs上的文件地址
+  description: 【复制文件地址】复制ftp/sftp/dav/davs/nfs上的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 文档
+- id: 复制文件地址_0007_s1
+  name: 【复制文件地址】复制隐藏文件地址
+  description: 【复制文件地址】复制隐藏文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: AddressBar
+- id: 复制文件地址_0008_s1
+  name: 【复制文件地址】复制系统盘&数据盘文件地址
+  description: 【复制文件地址】复制系统盘&数据盘文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: AddressBar
+- id: 复制文件地址_0009_s1
+  name: 【复制文件地址】复制最近使用目录中的文件地址
+  description: 【复制文件地址】复制最近使用目录中的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: AddressBar
+- id: 复制文件地址_0010_s1
+  name: 【复制文件地址】树形视图下复制文件地址
+  description: 【复制文件地址】树形视图下复制文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 复制文件地址_0011_s1
+  name: 【复制文件地址】ctrl + 单击属性中的链接打开软链指向的源文件
+  description: 【复制文件地址】ctrl + 单击属性中的链接打开软链指向的源文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 复制文件地址_0012_s1
+  name: 【复制文件地址】复制smb上文件名有特殊字符的文件地址
+  description: 【复制文件地址】复制smb上文件名有特殊字符的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 复制文件地址_0013_s1
+  name: 【复制文件地址】复制回收站的文件地址
+  description: 【复制文件地址】复制回收站的文件地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 文档
+teardown:
+- action: session_stop

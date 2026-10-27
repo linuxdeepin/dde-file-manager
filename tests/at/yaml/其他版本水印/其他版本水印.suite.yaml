@@ -1,0 +1,156 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 其他版本水印_suite
+app: dde-file-manager
+description: 其他版本水印模块 AT-SPI 用例
+module: 其他版本水印
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 其他版本水印_0001_s1
+  name: 军用版授权-装备授权英文环境检查
+  description: 军用版授权-装备授权英文环境检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 其他版本水印_0002_s1
+  name: 军用版授权-业务系统授权英文环境检查
+  description: 军用版授权-业务系统授权英文环境检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 其他版本水印_0003_s1
+  name: 军用版授权-办公专用授权英文环境检查
+  description: 军用版授权-办公专用授权英文环境检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 其他版本水印_0004_s1
+  name: 军用版授权-装备授权检查
+  description: 军用版授权-装备授权检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 其他版本水印_0005_s1
+  name: 军用版授权-业务系统授权检查
+  description: 军用版授权-业务系统授权检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 其他版本水印_0006_s1
+  name: 军用版授权-办公专用授权检查
+  description: 军用版授权-办公专用授权检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 其他版本水印_0007_s1
+  name: 个人版状态-试用期检查水印显示
+  description: 个人版状态-试用期检查水印显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

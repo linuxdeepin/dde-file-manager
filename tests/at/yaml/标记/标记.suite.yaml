@@ -1,0 +1,252 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 标记_suite
+app: dde-file-manager
+description: 标记模块 AT-SPI 用例
+module: 标记
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 标记_0001_s1
+  name: 长文件名功能 - 标记信息，文件属性中添加标记
+  description: 长文件名功能 - 标记信息，文件属性中添加标记
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 标记_0002_s1
+  name: 长文件名功能 - 标记信息，文件title信息栏添加标记
+  description: 长文件名功能 - 标记信息，文件title信息栏添加标记
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 标记_0003_s1
+  name: 长文件名功能 - 标记信息，侧边栏右键颜色更换
+  description: 长文件名功能 - 标记信息，侧边栏右键颜色更换
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 标记_0004_s1
+  name: 角标设置-桌面文件/文件夹反复设置角标，桌面/文管不崩溃_
+  description: 角标设置-桌面文件/文件夹反复设置角标，桌面/文管不崩溃_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 标记_0005_s1
+  name: 标记-标记输入框输入特殊字符
+  description: 标记-标记输入框输入特殊字符
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标记_0006_s1
+  name: '[core]三方应用自定义角标-支持路径'
+  description: '[core]三方应用自定义角标-支持路径'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标记_0007_s1
+  name: '[core]三方应用自定义角标-支持图片格式'
+  description: '[core]三方应用自定义角标-支持图片格式'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 标记_0008_s1
+  name: 角标设置-FTP/SMB目录设置角标
+  description: 角标设置-FTP/SMB目录设置角标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标记_0009_s1
+  name: 角标设置-管理员目录设置角标
+  description: 角标设置-管理员目录设置角标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标记_0010_s1
+  name: 角标设置-保险箱目录内设置角标
+  description: 角标设置-保险箱目录内设置角标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: 标记_0011_s1
+  name: 角标设置-更改状态或改变路径情况下，角标显示
+  description: 角标设置-更改状态或改变路径情况下，角标显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 标记_0012_s1
+  name: 角标设置-使用不同格式图片设置角标
+  description: 角标设置-使用不同格式图片设置角标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 标记_0013_s1
+  name: 角标设置-设置不支持格式/大小的图片
+  description: 角标设置-设置不支持格式/大小的图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 标记_0014_s1
+  name: 角标设置-系统角标与设置角标不同位置
+  description: 角标设置-系统角标与设置角标不同位置
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标记_0015_s1
+  name: 角标设置-文件复制/替换
+  description: 角标设置-文件复制/替换
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标记_0016_s1
+  name: 角标设置-设置超长名称文件/图片
+  description: 角标设置-设置超长名称文件/图片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 标记_0017_s1
+  name: 角标-设置损坏图片_
+  description: 角标-设置损坏图片_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+teardown:
+- action: session_stop

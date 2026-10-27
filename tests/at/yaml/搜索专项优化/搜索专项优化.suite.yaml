@@ -1,0 +1,814 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 搜索专项优化_suite
+app: dde-file-manager
+description: 搜索专项优化模块 AT-SPI 用例
+module: 搜索专项优化
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 搜索专项优化_0001_s1
+  name: 【搜索专项优化-v1.0】LVM装机时搜索文件名和文件内容
+  description: 【搜索专项优化-v1.0】LVM装机时搜索文件名和文件内容
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0002_s1
+  name: 【搜索专项优化-v1.1】搜索长文件名
+  description: 【搜索专项优化-v1.1】搜索长文件名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0003_s1
+  name: 【搜索专项优化-v1.0】按退格键删除关键词时，检查搜索结果
+  description: 【搜索专项优化-v1.0】按退格键删除关键词时，检查搜索结果
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0004_s1
+  name: 【搜索专项优化-v1.0】可搜索不同文件系统类型目录下的文件
+  description: 【搜索专项优化-v1.0】可搜索不同文件系统类型目录下的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 主目录
+- id: 搜索专项优化_0005_s1
+  name: 【搜索专项优化-v1.0】cpu和内存有压力情况下进行搜索
+  description: 【搜索专项优化-v1.0】cpu和内存有压力情况下进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 主目录
+- id: 搜索专项优化_0006_s1
+  name: 【搜索专项优化-v1.1】dconfig配置全文检索路径-异常系
+  description: 【搜索专项优化-v1.1】dconfig配置全文检索路径-异常系
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 搜索专项优化_0007_s1
+  name: 【搜索专项优化-v1.1】dconfig配置全文检索路径
+  description: 【搜索专项优化-v1.1】dconfig配置全文检索路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: 保险箱
+- id: 搜索专项优化_0008_s1
+  name: 【搜索专项优化-v1.1】dconfig配置自动更新索引时间间隔
+  description: 【搜索专项优化-v1.1】dconfig配置自动更新索引时间间隔
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0009_s1
+  name: 【搜索专项优化-v1.1】dconfig配置全文检索开关
+  description: 【搜索专项优化-v1.1】dconfig配置全文检索开关
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0010_s1
+  name: 【搜索专项优化-v1.1】增加索引状态提示
+  description: 【搜索专项优化-v1.1】增加索引状态提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索专项优化_0011_s1
+  name: 【搜索专项优化-v1.1】搜索结果中文件内容超出部分显示
+  description: 【搜索专项优化-v1.1】搜索结果中文件内容超出部分显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0012_s1
+  name: 【搜索专项优化-v1.1】文管搜索结果支持图标/列表视图显示
+  description: 【搜索专项优化-v1.1】文管搜索结果支持图标/列表视图显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0013_s1
+  name: 【搜索专项优化-v1.0】搜索出结果后切换视图，再搜索
+  description: 【搜索专项优化-v1.0】搜索出结果后切换视图，再搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索专项优化_0014_s1
+  name: 【搜索专项优化-v1.0】不同视图下都能高亮显示命中的搜索内容
+  description: 【搜索专项优化-v1.0】不同视图下都能高亮显示命中的搜索内容
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索专项优化_0015_s1
+  name: 【搜索专项优化-v1.0】剪切十万级别大量文件后再搜索
+  description: 【搜索专项优化-v1.0】剪切十万级别大量文件后再搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: kw200000
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 搜索专项优化_0016_s1
+  name: 【搜索专项优化-v1.0】命中文件内容后重命名文件，再次搜索
+  description: 【搜索专项优化-v1.0】命中文件内容后重命名文件，再次搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 全文检索
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 主目录
+- id: 搜索专项优化_0017_s1
+  name: 【搜索专项优化-v1.0】支持十个关键词以空格分词
+  description: 【搜索专项优化-v1.0】支持十个关键词以空格分词
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 主目录
+- id: 搜索专项优化_0018_s1
+  name: 【搜索专项优化-v1.0】搜索结果只有文件内容
+  description: 【搜索专项优化-v1.0】搜索结果只有文件内容
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 主目录
+- id: 搜索专项优化_0019_s1
+  name: 【搜索专项优化-v1.0】搜索结果只有文件名
+  description: 【搜索专项优化-v1.0】搜索结果只有文件名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0020_s1
+  name: 【搜索专项优化-v1.0】搜索结果整合显示
+  description: 【搜索专项优化-v1.0】搜索结果整合显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0021_s1
+  name: 【搜索专项优化-v1.0】即输即搜
+  description: 【搜索专项优化-v1.0】即输即搜
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0022_s1
+  name: 【搜索专项优化-v1.0】能搜索GBK编码格式的文件
+  description: 【搜索专项优化-v1.0】能搜索GBK编码格式的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0023_s1
+  name: 【搜索专项优化-v1.0】搜索结果超过500条
+  description: 【搜索专项优化-v1.0】搜索结果超过500条
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0024_s1
+  name: 【搜索专项优化-v1.0】搜索支持的文件格式
+  description: 【搜索专项优化-v1.0】搜索支持的文件格式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0025_s1
+  name: 【搜索专项优化-v1.0】裁剪部分功能
+  description: 【搜索专项优化-v1.0】裁剪部分功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: '1'
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0026_s1
+  name: 【搜索专项优化-v1.0】可搜索前10M的文件内容
+  description: 【搜索专项优化-v1.0】可搜索前10M的文件内容
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0027_s1
+  name: 【搜索专项优化-v1.0】文件内容搜索范围为主目录，文件名搜索范围为任意路径
+  description: 【搜索专项优化-v1.0】文件内容搜索范围为主目录，文件名搜索范围为任意路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项优化测试文档
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0028_s1
+  name: 【搜索专项优化-v1.0】开启长文件名搜索
+  description: 【搜索专项优化-v1.0】开启长文件名搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0029_s1
+  name: 【搜索专项优化-v1.0】搜索出文件后，删除文件，再次搜索
+  description: 【搜索专项优化-v1.0】搜索出文件后，删除文件，再次搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0030_s1
+  name: 【搜索专项优化-v1.0】搜索隐藏文件
+  description: 【搜索专项优化-v1.0】搜索隐藏文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: AddressBar
+- id: 搜索专项优化_0031_s1
+  name: 【搜索专项优化-v1.0】成功更新索引时，会保留已经编制的索引
+  description: 【搜索专项优化-v1.0】成功更新索引时，会保留已经编制的索引
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 搜索专项优化_0032_s1
+  name: 【搜索专项优化-v1.0】更新文件内容，自动更新索引成功后才能搜到
+  description: 【搜索专项优化-v1.0】更新文件内容，自动更新索引成功后才能搜到
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0033_s1
+  name: 【搜索专项优化-v1.0】更新文件名，立刻能搜索到
+  description: 【搜索专项优化-v1.0】更新文件名，立刻能搜索到
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0034_s1
+  name: 【搜索专项优化-v1.0】未自动更新索引时关闭全文检索
+  description: 【搜索专项优化-v1.0】未自动更新索引时关闭全文检索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 搜索专项优化_0035_s1
+  name: 【搜索专项优化-v1.0】更新索引过程中关闭全文检索
+  description: 【搜索专项优化-v1.0】更新索引过程中关闭全文检索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 搜索专项优化_0036_s1
+  name: 【搜索专项优化-v1.0】自动更新索引
+  description: 【搜索专项优化-v1.0】自动更新索引
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: this is a test file*()
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+teardown:
+- action: session_stop

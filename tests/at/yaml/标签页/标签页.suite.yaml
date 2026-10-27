@@ -1,0 +1,238 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 标签页_suite
+app: dde-file-manager
+description: 标签页模块 AT-SPI 用例
+module: 标签页
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 标签页_0001_s1
+  name: 检查文管-列表模式-留白处右键菜单功能遍历正常
+  description: 检查文管-列表模式-留白处右键菜单功能遍历正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: 主目录
+- id: 标签页_0002_s1
+  name: 标签页-调整标签页顺序
+  description: 标签页-调整标签页顺序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 标签页_0003_s1
+  name: 标签页-多个标签页状态显示
+  description: 标签页-多个标签页状态显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 标签页_0004_s1
+  name: 标签页-新建标签页
+  description: 标签页-新建标签页
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddBtn
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddBtn
+  - action: assert_element
+    ref: TabBar
+- id: 标签页_0005_s1
+  name: 视图选项-在设置中拖动图标大小，滑动正常
+  description: 视图选项-在设置中拖动图标大小，滑动正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 标签页_0006_s1
+  name: 视图选项-调整图标大小
+  description: 视图选项-调整图标大小
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+- id: 标签页_0007_s1
+  name: 地址栏-选中输入地址右键操作
+  description: 地址栏-选中输入地址右键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 标签页_0008_s1
+  name: 地址栏-激活状态显示
+  description: 地址栏-激活状态显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 标签页_0009_s1
+  name: 地址栏-悬停状态显示
+  description: 地址栏-悬停状态显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 标签页_0010_s1
+  name: 地址栏-默认状态显示
+  description: 地址栏-默认状态显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 标签页_0011_s1
+  name: 检查文管-列表模式-留白处右键菜单
+  description: 检查文管-列表模式-留白处右键菜单
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 桌面
+- id: 标签页_0012_s1
+  name: 文管顶部区域，点击图标视图
+  description: 文管顶部区域，点击图标视图
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+- id: 标签页_0013_s1
+  name: 文件和文件夹混合排序-列表视图，勾选“文件和文件夹混合排序”，修改排序方式，检查文件/文件夹排序规则
+  description: 文件和文件夹混合排序-列表视图，勾选“文件和文件夹混合排序”，修改排序方式，检查文件/文件夹排序规则
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

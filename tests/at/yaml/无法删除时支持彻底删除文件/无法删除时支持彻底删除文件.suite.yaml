@@ -1,0 +1,209 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 无法删除时支持彻底删除文件_suite
+app: dde-file-manager
+description: 无法删除时支持彻底删除文件模块 AT-SPI 用例
+module: 无法删除时支持彻底删除文件
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 无法删除时支持彻底删除文件_0001_s1
+  name: 【无法删除时彻底删除文件】 磁盘空间足够时删除单个或多个文件
+  description: 【无法删除时彻底删除文件】 磁盘空间足够时删除单个或多个文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+  - action: assert_element
+    ref: 回收站
+- id: 无法删除时支持彻底删除文件_0002_s1
+  name: 【无法删除时彻底删除文件】 空间不足删除文件流程验证
+  description: 【无法删除时彻底删除文件】 空间不足删除文件流程验证
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 无法删除时支持彻底删除文件_0003_s1
+  name: 【无法删除时彻底删除文件】系统盘空间不足时删除文件
+  description: 【无法删除时彻底删除文件】系统盘空间不足时删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: 无法删除时支持彻底删除文件_0004_s1
+  name: 【无法删除时彻底删除文件】数据盘空间不足时删除共享目录中的文件
+  description: 【无法删除时彻底删除文件】数据盘空间不足时删除共享目录中的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 回收站
+- id: 无法删除时支持彻底删除文件_0005_s1
+  name: 【无法删除时彻底删除文件】 数据盘空间不足时按delete+shift彻底删除文件
+  description: 【无法删除时彻底删除文件】 数据盘空间不足时按delete+shift彻底删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 无法删除时支持彻底删除文件_0006_s1
+  name: 【无法删除时彻底删除文件】 数据盘空间不足时删除大文件
+  description: 【无法删除时彻底删除文件】 数据盘空间不足时删除大文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 无法删除时支持彻底删除文件_0007_s1
+  name: 【无法删除时彻底删除文件】 数据盘空间不足时删除50万个小文件
+  description: 【无法删除时彻底删除文件】 数据盘空间不足时删除50万个小文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: CollectionView
+- id: 无法删除时支持彻底删除文件_0008_s1
+  name: 【无法删除时彻底删除文件】 数据盘空间不足时删除只读文件夹
+  description: 【无法删除时彻底删除文件】 数据盘空间不足时删除只读文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 无法删除时支持彻底删除文件_0009_s1
+  name: 【无法删除时彻底删除文件】 数据盘空间不足时有多个删除窗口
+  description: 【无法删除时彻底删除文件】 数据盘空间不足时有多个删除窗口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 无法删除时支持彻底删除文件_0010_s1
+  name: 【无法删除时彻底删除文件】装机时仅有/分区时彻底删除文件
+  description: 【无法删除时彻底删除文件】装机时仅有/分区时彻底删除文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+teardown:
+- action: session_stop

@@ -1,0 +1,48 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 稳定性_suite
+app: dde-file-manager
+description: 稳定性模块 AT-SPI 用例
+module: 稳定性
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 稳定性_0001_s1
+  name: 【稳定性】延迟限制下的大文件拷贝
+  description: 【稳定性】延迟限制下的大文件拷贝
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 稳定性_0002_s1
+  name: 运行长时间测试
+  description: 运行长时间测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 稳定性_0003_s1
+  name: 检查 Samba 错误处理能力
+  description: 检查 Samba 错误处理能力
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

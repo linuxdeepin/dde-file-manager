@@ -1,0 +1,24 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+elements:
+  TabBar:
+    name: TabBar
+    role: page tab
+  设置:
+    name: 设置
+    role: menu item
+  保险箱:
+    name: 保险箱
+  最近使用:
+    name: 最近使用
+  StatusBar:
+    name: StatusBar
+    role: status bar
+  BottomBar:
+    name: BottomBar
+    role: page tab
+  桌面:
+    name: 桌面
+    role: table cell

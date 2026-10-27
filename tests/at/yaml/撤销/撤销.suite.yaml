@@ -1,0 +1,425 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 撤销_suite
+app: dde-file-manager
+description: 撤销模块 AT-SPI 用例
+module: 撤销
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 撤销_0001_s1
+  name: 【撤销交互】【应用交互】撤销与恢复撤销操作次数上限为100次
+  description: 【撤销交互】【应用交互】撤销与恢复撤销操作次数上限为100次
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 撤销_0002_s1
+  name: 【撤销交互】【应用交互】浏览器网页文件提交功能适配文件删除操作的撤销与还原
+  description: 【撤销交互】【应用交互】浏览器网页文件提交功能适配文件删除操作的撤销与还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 撤销_0003_s1
+  name: 【撤销交互】【应用交互】应用打开文件功能适配文件剪切粘贴操作的撤销与还原
+  description: 【撤销交互】【应用交互】应用打开文件功能适配文件剪切粘贴操作的撤销与还原
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 撤销_0004_s1
+  name: 【撤销交互】【文件管理器】多个文件重命名操作的撤销与恢复
+  description: 【撤销交互】【文件管理器】多个文件重命名操作的撤销与恢复
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0005_s1
+  name: 【撤销交互】【文件管理器】Samba远程路径将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】Samba远程路径将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0006_s1
+  name: 【撤销交互】【文件管理器】将多个文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】将多个文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 下载
+- id: 撤销_0007_s1
+  name: 【撤销交互】【文件管理器】将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 下载
+- id: 撤销_0008_s1
+  name: 【撤销交互】【桌面】将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【桌面】将文件进行剪切并且粘贴到其他文件夹后，Ctrl+Z撤销粘贴文件，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 桌面
+- id: 撤销_0009_s1
+  name: 【撤销交互】【文件管理器】将多个文件移动后Ctrl+Z撤销移动操作，再利用Ctrl+Y恢复
+  description: 【撤销交互】【文件管理器】将多个文件移动后Ctrl+Z撤销移动操作，再利用Ctrl+Y恢复
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 下载
+- id: 撤销_0010_s1
+  name: 【撤销交互】【桌面】将文件移动后Ctrl+Z撤销移动操作，再利用Ctrl+Y恢复
+  description: 【撤销交互】【桌面】将文件移动后Ctrl+Z撤销移动操作，再利用Ctrl+Y恢复
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 桌面
+- id: 撤销_0011_s1
+  name: 【撤销交互】快捷键面板包含撤销和恢复快捷键
+  description: 【撤销交互】快捷键面板包含撤销和恢复快捷键
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 撤销_0012_s1
+  name: 【撤销交互】多次进行撤销操作与恢复操作
+  description: 【撤销交互】多次进行撤销操作与恢复操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 回收站
+- id: 撤销_0013_s1
+  name: 【撤销交互】新建文件后，对文件内容进行编辑，Ctrl+Z执行撤销后，不支持Ctrl+Y恢复撤销
+  description: 【撤销交互】新建文件后，对文件内容进行编辑，Ctrl+Z执行撤销后，不支持Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0014_s1
+  name: 【撤销交互】将回收站中文件彻底删除后Ctrl+Z撤销，不能撤销删除操作
+  description: 【撤销交互】将回收站中文件彻底删除后Ctrl+Z撤销，不能撤销删除操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0015_s1
+  name: 【撤销交互】将回收站中文件还原后Ctrl+Z撤销还原文件，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】将回收站中文件还原后Ctrl+Z撤销还原文件，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0016_s1
+  name: 【撤销交互】【文件管理器】Samba远程路径文件重命名后Ctrl+Z撤销重命名操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】Samba远程路径文件重命名后Ctrl+Z撤销重命名操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0017_s1
+  name: 【撤销交互】【桌面】文件重命名后Ctrl+Z撤销重命名操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【桌面】文件重命名后Ctrl+Z撤销重命名操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0018_s1
+  name: 【撤销交互】【文件管理器】删除多个文件后Ctrl+Z撤销删除操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】删除多个文件后Ctrl+Z撤销删除操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0019_s1
+  name: 【撤销交互】【桌面】删除文件后Ctrl+Z撤销删除操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【桌面】删除文件后Ctrl+Z撤销删除操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0020_s1
+  name: 【撤销交互】【文件管理器】sftp远程路径新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】sftp远程路径新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0021_s1
+  name: 【撤销交互】【文件管理器】ftp远程路径新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】ftp远程路径新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0022_s1
+  name: 【撤销交互】【文件管理器】samba远程路径新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【文件管理器】samba远程路径新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 撤销_0023_s1
+  name: 【撤销交互】【保险箱】新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  description: 【撤销交互】【保险箱】新建文件后Ctrl+Z撤销新建操作，再利用Ctrl+Y恢复撤销
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 保险箱
+- id: 撤销_0024_s1
+  name: 【Ctrl+Z撤销】跨分区拖拽文件后，Ctrl+Z撤销弹出彻底删除提示
+  description: 【Ctrl+Z撤销】跨分区拖拽文件后，Ctrl+Z撤销弹出彻底删除提示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

@@ -1,0 +1,1593 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 智能语义搜索_suite
+app: dde-file-manager
+description: 智能语义搜索模块 AT-SPI 用例
+module: 智能语义搜索
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 智能语义搜索_0001_s1
+  name: 【智能语义搜索】中文数字转换
+  description: 【智能语义搜索】中文数字转换
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 二五年12月创建的表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0002_s1
+  name: 【智能语义搜索】时间槽-两种时间叠加搜索
+  description: 【智能语义搜索】时间槽-两种时间叠加搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 去年12月创建的表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0003_s1
+  name: 【智能语义搜索】隐藏文件扩展名进行搜索
+  description: 【智能语义搜索】隐藏文件扩展名进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0004_s1
+  name: 【智能语义搜索】类型槽-压缩包泛化库：归档, 源码包, 打包文件, zip, rar
+  description: 【智能语义搜索】类型槽-压缩包泛化库：归档, 源码包, 打包文件, zip, rar
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0005_s1
+  name: 【智能语义搜索】类型槽-压缩包
+  description: 【智能语义搜索】类型槽-压缩包
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0006_s1
+  name: 【智能语义搜索】类型槽-音频泛化库：音频, 音乐, 录音, 歌, 语音
+  description: 【智能语义搜索】类型槽-音频泛化库：音频, 音乐, 录音, 歌, 语音
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 音乐目录里的语音
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0007_s1
+  name: 【智能语义搜索】类型槽-音频-音乐目录里的歌
+  description: 【智能语义搜索】类型槽-音频-音乐目录里的歌
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0008_s1
+  name: 【智能语义搜索】类型槽-音频
+  description: 【智能语义搜索】类型槽-音频
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0009_s1
+  name: 【智能语义搜索】类型槽-视频泛化库：录像, 电影, 动画, 短片, 片子
+  description: 【智能语义搜索】类型槽-视频泛化库：录像, 电影, 动画, 短片, 片子
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0010_s1
+  name: 【智能语义搜索】类型槽-视频-wmv视频
+  description: 【智能语义搜索】类型槽-视频-wmv视频
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 视频
+- id: 智能语义搜索_0011_s1
+  name: 【智能语义搜索】类型槽-视频
+  description: 【智能语义搜索】类型槽-视频
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 视频
+- id: 智能语义搜索_0012_s1
+  name: 【智能语义搜索】类型槽-照片-指定gif格式
+  description: 【智能语义搜索】类型槽-照片-指定gif格式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 智能语义搜索_0013_s1
+  name: 【智能语义搜索】类型槽-照片
+  description: 【智能语义搜索】类型槽-照片
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0014_s1
+  name: 【智能语义搜索】时间槽-精确时间-错误的日期格式
+  description: 【智能语义搜索】时间槽-精确时间-错误的日期格式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 1月33日创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0015_s1
+  name: 【智能语义搜索】时间槽-精确时间-本年精确日期
+  description: 【智能语义搜索】时间槽-精确时间-本年精确日期
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 12月5日创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0016_s1
+  name: 【智能语义搜索】时间槽-精确时间-本年精确月份
+  description: 【智能语义搜索】时间槽-精确时间-本年精确月份
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 5月份创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0017_s1
+  name: 【智能语义搜索】时间槽-精确时间-精确年份
+  description: 【智能语义搜索】时间槽-精确时间-精确年份
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 25年创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0018_s1
+  name: 【智能语义搜索】时间槽-精确时间-绝对日期
+  description: 【智能语义搜索】时间槽-精确时间-绝对日期
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 26.05.01创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0019_s1
+  name: 【智能语义搜索】时间槽-去年
+  description: 【智能语义搜索】时间槽-去年
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 去年创建的表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0020_s1
+  name: 【智能语义搜索】时间槽-今年泛化库：本年/这年
+  description: 【智能语义搜索】时间槽-今年泛化库：本年/这年
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 这年创建的表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0021_s1
+  name: 【智能语义搜索】时间槽-今年
+  description: 【智能语义搜索】时间槽-今年
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今年创建的表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0022_s1
+  name: 【智能语义搜索】时间槽-本月泛化库：这个月/ 当月
+  description: 【智能语义搜索】时间槽-本月泛化库：这个月/ 当月
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 当月创建的excel表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0023_s1
+  name: 【智能语义搜索】时间槽-本月
+  description: 【智能语义搜索】时间槽-本月
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 本月创建的excel表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0024_s1
+  name: 【智能语义搜索】时间槽-上周泛化库：上个星期/上星期
+  description: 【智能语义搜索】时间槽-上周泛化库：上个星期/上星期
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 上星期创建的pdf
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0025_s1
+  name: 【智能语义搜索】时间槽-上周
+  description: 【智能语义搜索】时间槽-上周
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 上周创建的pdf
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0026_s1
+  name: 【智能语义搜索】时间槽-本周泛化库：这周/这个星期
+  description: 【智能语义搜索】时间槽-本周泛化库：这周/这个星期
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 这个星期创建的Word文档
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0027_s1
+  name: 【智能语义搜索】时间槽-本周
+  description: 【智能语义搜索】时间槽-本周
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 本周创建的Word文档
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0028_s1
+  name: 【智能语义搜索】位置槽-微信接受泛化库：微信, vx, 微信里, 微信群, 微信发我的
+  description: 【智能语义搜索】位置槽-微信接受泛化库：微信, vx, 微信里, 微信群, 微信发我的
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天微信发我的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0029_s1
+  name: 【智能语义搜索】位置槽-微信接受
+  description: 【智能语义搜索】位置槽-微信接受
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天微信接受的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0030_s1
+  name: 【智能语义搜索】类型槽-设计源文件，搜索指定后缀文件
+  description: 【智能语义搜索】类型槽-设计源文件，搜索指定后缀文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 文档目录里的sketch文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 智能语义搜索_0031_s1
+  name: 【智能语义搜索】手动关闭开启提示语之后通过dconfig配置显示提示语
+  description: 【智能语义搜索】手动关闭开启提示语之后通过dconfig配置显示提示语
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0032_s1
+  name: 【智能语义搜索】智能搜索默认值检查及恢复默认值
+  description: 【智能语义搜索】智能搜索默认值检查及恢复默认值
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 智能语义搜索_0033_s1
+  name: 【智能语义搜索】位置槽-图片目录泛化库：相册里, 图片库
+  description: 【智能语义搜索】位置槽-图片目录泛化库：相册里, 图片库
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 图片库的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0034_s1
+  name: 【智能语义搜索】位置槽-图片目录
+  description: 【智能语义搜索】位置槽-图片目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 图片目录的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0035_s1
+  name: 【智能语义搜索】位置槽-文档目录泛化库：文档里, 文档库
+  description: 【智能语义搜索】位置槽-文档目录泛化库：文档里, 文档库
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 文档库的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 智能语义搜索_0036_s1
+  name: 【智能语义搜索】位置槽-文档目录
+  description: 【智能语义搜索】位置槽-文档目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 我的文档里的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: 智能语义搜索_0037_s1
+  name: 【智能语义搜索】位置槽-下载目录泛化库：下载的, 下载目录, 下下来的, 浏览器下载
+  description: 【智能语义搜索】位置槽-下载目录泛化库：下载的, 下载目录, 下下来的, 浏览器下载
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 浏览器下载的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 下载
+- id: 智能语义搜索_0038_s1
+  name: 【智能语义搜索】位置槽-下载目录
+  description: 【智能语义搜索】位置槽-下载目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天下载文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 下载
+- id: 智能语义搜索_0039_s1
+  name: 【智能语义搜索】搜索框中输入：关键词+位置槽
+  description: 【智能语义搜索】搜索框中输入：关键词+位置槽
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 显示桌面上的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0040_s1
+  name: 【智能语义搜索】属性槽-动态精准大小泛化词：超过1G、100MB以内、大于500MB
+  description: 【智能语义搜索】属性槽-动态精准大小泛化词：超过1G、100MB以内、大于500MB
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天创建的大于500MB的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0041_s1
+  name: 【智能语义搜索】属性槽-动态精准大小大于500M
+  description: 【智能语义搜索】属性槽-动态精准大小大于500M
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 大于500M的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0042_s1
+  name: 【智能语义搜索】关键词包含泛化词及文件后缀
+  description: 【智能语义搜索】关键词包含泛化词及文件后缀
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天创建的psd源文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0043_s1
+  name: 【智能语义搜索】类型槽-设计源文件泛化库：设计稿, psd, 矢量图, 工程文件
+  description: 【智能语义搜索】类型槽-设计源文件泛化库：设计稿, psd, 矢量图, 工程文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天创建的工程文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0044_s1
+  name: 【智能语义搜索】类型槽-设计源文件：源文件
+  description: 【智能语义搜索】类型槽-设计源文件：源文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天创建的源文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0045_s1
+  name: 【智能语义搜索】类型槽-应用程序泛化库：软件, 应用, 脚本, 程序, 包
+  description: 【智能语义搜索】类型槽-应用程序泛化库：软件, 应用, 脚本, 程序, 包
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天创建的包
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0046_s1
+  name: 【智能语义搜索】类型槽-应用程序：安装包
+  description: 【智能语义搜索】类型槽-应用程序：安装包
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天创建的安装包
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0047_s1
+  name: 【智能语义搜索】类型槽-视频-搜索特性类型视频
+  description: 【智能语义搜索】类型槽-视频-搜索特性类型视频
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 音乐目录下wmv的录像
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0048_s1
+  name: 【智能语义搜索】类型槽-表格泛化库：统计表, 报表, 名单, 数据表, 数据, 明细
+  description: 【智能语义搜索】类型槽-表格泛化库：统计表, 报表, 名单, 数据表, 数据, 明细
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天的明细
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0049_s1
+  name: 【智能语义搜索】类型槽-表格
+  description: 【智能语义搜索】类型槽-表格
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 昨天的表格
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0050_s1
+  name: 【智能语义搜索】关闭智能搜索索引授权提醒
+  description: 【智能语义搜索】关闭智能搜索索引授权提醒
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 500M
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0051_s1
+  name: 【智能语义搜索】一键授权开启智能搜索
+  description: 【智能语义搜索】一键授权开启智能搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 500M
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 计算机
+- id: 智能语义搜索_0052_s1
+  name: 【智能语义搜索】时间槽-精确时间-完整精确日期
+  description: 【智能语义搜索】时间槽-精确时间-完整精确日期
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 2025/3/16创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0053_s1
+  name: 【智能语义搜索】时间槽-精确时间-精确年月
+  description: 【智能语义搜索】时间槽-精确时间-精确年月
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 25.03创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0054_s1
+  name: 【智能语义搜索】时间槽-精确时间-精确月份
+  description: 【智能语义搜索】时间槽-精确时间-精确月份
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 25年3月份创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0055_s1
+  name: 【智能语义搜索】时间槽-精准时间-绝对月份
+  description: 【智能语义搜索】时间槽-精准时间-绝对月份
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 七月点开过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0056_s1
+  name: 【智能语义搜索】关键词中含有某个槽位部分关键词
+  description: 【智能语义搜索】关键词中含有某个槽位部分关键词
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 上点开过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: 最近使用
+- id: 智能语义搜索_0057_s1
+  name: 【智能语义搜索】时间槽-上个月及泛化词：上月
+  description: 【智能语义搜索】时间槽-上个月及泛化词：上月
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 上月点开过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 音乐
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0058_s1
+  name: 【智能语义搜索】时间槽-去年泛化词：上一年/去年一整年
+  description: 【智能语义搜索】时间槽-去年泛化词：上一年/去年一整年
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 去年一整年浏览过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0059_s1
+  name: 【智能语义搜索】时间槽-去年
+  description: 【智能语义搜索】时间槽-去年
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 去年浏览过的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0060_s1
+  name: 【智能语义搜索】关键词有空格
+  description: 【智能语义搜索】关键词有空格
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天新建的ppt
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0061_s1
+  name: 【智能语义搜索】对搜索结果进行高级筛选
+  description: 【智能语义搜索】对搜索结果进行高级筛选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 今天创建的文件
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: AddressBar
+- id: 智能语义搜索_0062_s1
+  name: 【智能语义搜索】搜索结果显示
+  description: 【智能语义搜索】搜索结果显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 智能语义搜索_0063_s1
+  name: 【智能语义搜索】分组展开/折叠按钮检查
+  description: 【智能语义搜索】分组展开/折叠按钮检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 智能语义搜索_0064_s1
+  name: 【智能语义搜索】分组标题检查
+  description: 【智能语义搜索】分组标题检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

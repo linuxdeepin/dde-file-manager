@@ -1,0 +1,148 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 外部交互_suite
+app: dde-file-manager
+description: 外部交互模块 AT-SPI 用例
+module: 外部交互
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 外部交互_0001_s1
+  name: 长文件名功能 - 第三方适配，归档
+  description: 长文件名功能 - 第三方适配，归档
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外部交互_0002_s1
+  name: 长文件名功能 - 第三方适配，打印预览
+  description: 长文件名功能 - 第三方适配，打印预览
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 外部交互_0003_s1
+  name: 长文件名功能 - 第三方适配，蓝牙
+  description: 长文件名功能 - 第三方适配，蓝牙
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外部交互_0004_s1
+  name: 长文件名功能 - 第三方适配，发送到我的手机
+  description: 长文件名功能 - 第三方适配，发送到我的手机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外部交互_0005_s1
+  name: 长文件名功能 - 第三方应用，百度网盘
+  description: 长文件名功能 - 第三方应用，百度网盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 外部交互_0006_s1
+  name: 商店安装【福昕高级PDF编辑器网页版】后，检查桌面图标和功能
+  description: 商店安装【福昕高级PDF编辑器网页版】后，检查桌面图标和功能
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 外部交互_0007_s1
+  name: 日志适配规范-文管日志配置文件查看
+  description: 日志适配规范-文管日志配置文件查看
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外部交互_0008_s1
+  name: 日志适配规范-桌面不存在历史记录方式的本地日志
+  description: 日志适配规范-桌面不存在历史记录方式的本地日志
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外部交互_0009_s1
+  name: 日志适配规范-文件管理器日志配置文件查看
+  description: 日志适配规范-文件管理器日志配置文件查看
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外部交互_0010_s1
+  name: 日志适配规范-日志收集工具查看文管应用日志
+  description: 日志适配规范-日志收集工具查看文管应用日志
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 外部交互_0011_s1
+  name: 日志适配规范-文管不存在历史记录方式的本地日志
+  description: 日志适配规范-文管不存在历史记录方式的本地日志
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

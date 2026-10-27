@@ -1,0 +1,872 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: SMB_suite
+app: dde-file-manager
+description: SMB模块 AT-SPI 用例
+module: SMB
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: SMB_0001_s1
+  name: 【smb】smb多页签切换
+  description: 【smb】smb多页签切换
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0002_s1
+  name: '[core]连接服务器-连接到服务器窗口，选择“协议”增加dav/davs/nfs'
+  description: '[core]连接服务器-连接到服务器窗口，选择“协议”增加dav/davs/nfs'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0003_s1
+  name: 【SMB】密码含特殊字符时访问smb
+  description: 【SMB】密码含特殊字符时访问smb
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0004_s1
+  name: 取消共享-取消共享文件到smb
+  description: 取消共享-取消共享文件到smb
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0005_s1
+  name: 缩略图预览，网络协议(SMB)显示
+  description: 缩略图预览，网络协议(SMB)显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: SMB_0006_s1
+  name: 网络邻居-存在大量共享计算机时网络邻居页面展示
+  description: 网络邻居-存在大量共享计算机时网络邻居页面展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0007_s1
+  name: 网络邻居-展示局域网内所有共享计算机
+  description: 网络邻居-展示局域网内所有共享计算机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0008_s1
+  name: Bug186433转：桌面创建smb快捷方式，断网后桌面不会卡死
+  description: Bug186433转：桌面创建smb快捷方式，断网后桌面不会卡死
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 网络
+- id: SMB_0009_s1
+  name: Bug211337转：拷贝SMB内的多层次目录到本地
+  description: Bug211337转：拷贝SMB内的多层次目录到本地
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: SMB_0010_s1
+  name: '[087][core]右键菜单-侧边栏smb目录右键-退出登录并卸载'
+  description: '[087][core]右键菜单-侧边栏smb目录右键-退出登录并卸载'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0011_s1
+  name: '[067]右键菜单-侧边栏smb目录右键-属性'
+  description: '[067]右键菜单-侧边栏smb目录右键-属性'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0012_s1
+  name: 从smb外目录添加多层级文件夹到smb目录
+  description: 从smb外目录添加多层级文件夹到smb目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: SMB_0013_s1
+  name: 拖拽smb目录下文件/文件夹到压缩文件中
+  description: 拖拽smb目录下文件/文件夹到压缩文件中
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 最近使用
+- id: SMB_0014_s1
+  name: 不同系统互相操作-Windows上共享smb，UOS访问并操作
+  description: 不同系统互相操作-Windows上共享smb，UOS访问并操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: SMB_0015_s1
+  name: 不同系统互相操作-UOS上共享smb，其他系统访问并操作
+  description: 不同系统互相操作-UOS上共享smb，其他系统访问并操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: SMB_0016_s1
+  name: 切换用户-SMB多用户访问、操作
+  description: 切换用户-SMB多用户访问、操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0017_s1
+  name: smb-防火关闭/开启SMB端口
+  description: smb-防火关闭/开启SMB端口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0018_s1
+  name: 控制中心个性化设置，SMB正常显示
+  description: 控制中心个性化设置，SMB正常显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0019_s1
+  name: smb-停掉smb服务
+  description: smb-停掉smb服务
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0020_s1
+  name: 连接到服务器，清除最近使用的服务器
+  description: 连接到服务器，清除最近使用的服务器
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+- id: SMB_0021_s1
+  name: 【SMB】多IP时共享文件夹
+  description: 【SMB】多IP时共享文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0022_s1
+  name: smb引导打开-smb关闭状态，授权提示框操作
+  description: smb引导打开-smb关闭状态，授权提示框操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0023_s1
+  name: 【SMB】[044]无法共享场景
+  description: 【SMB】[044]无法共享场景
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: SMB_0024_s1
+  name: '[045]右键共享-选中多个文件夹不支持右键共享到smb'
+  description: '[045]右键共享-选中多个文件夹不支持右键共享到smb'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: SMB_0025_s1
+  name: '[046]右键共享-回收站内文件夹不支持共享到smb'
+  description: '[046]右键共享-回收站内文件夹不支持共享到smb'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: SMB_0026_s1
+  name: '[047]右键共享-文件夹右键共享到smb'
+  description: '[047]右键共享-文件夹右键共享到smb'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: SMB_0027_s1
+  name: 【SMB】非法设置共享名
+  description: 【SMB】非法设置共享名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: SMB_0028_s1
+  name: 【SMB】共享不同权限文件夹
+  description: 【SMB】共享不同权限文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0029_s1
+  name: 共享-更改文件所有者为其他成员或属组成员不能共享文件夹
+  description: 共享-更改文件所有者为其他成员或属组成员不能共享文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0030_s1
+  name: '[027][core]取消共享-取消共享文件到smb'
+  description: '[027][core]取消共享-取消共享文件到smb'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0031_s1
+  name: '[053]我的共享-空白处右键菜单'
+  description: '[053]我的共享-空白处右键菜单'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0032_s1
+  name: '[054]我的共享-选中单个文件夹右键菜单'
+  description: '[054]我的共享-选中单个文件夹右键菜单'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0033_s1
+  name: '[055]我的共享-选中多个文件夹右键菜单'
+  description: '[055]我的共享-选中多个文件夹右键菜单'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0034_s1
+  name: '[056]我的共享根目录下-快捷键操作'
+  description: '[056]我的共享根目录下-快捷键操作'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 桌面
+- id: SMB_0035_s1
+  name: '[057][core]添加到我的共享根目录-从桌面拖拽文件/文件夹添加'
+  description: '[057][core]添加到我的共享根目录-从桌面拖拽文件/文件夹添加'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: SMB_0036_s1
+  name: 添加到我的共享根目录-从保险箱拖拽文件/文件夹添加
+  description: 添加到我的共享根目录-从保险箱拖拽文件/文件夹添加
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: SMB_0037_s1
+  name: '[015][smoke]共享密码-设置共享密码'
+  description: '[015][smoke]共享密码-设置共享密码'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 设置
+- id: SMB_0038_s1
+  name: 卸载smb-断网后卸载smb
+  description: 卸载smb-断网后卸载smb
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0039_s1
+  name: '[063]卸载smb-多窗口操作SMB卸载'
+  description: '[063]卸载smb-多窗口操作SMB卸载'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0040_s1
+  name: '[064][core]右键菜单-侧边栏smb目录右键呼出正常'
+  description: '[064][core]右键菜单-侧边栏smb目录右键呼出正常'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0041_s1
+  name: '[core]远程共享端优化-桌面已共享的文件夹，属性界面检查'
+  description: '[core]远程共享端优化-桌面已共享的文件夹，属性界面检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 网络
+- id: SMB_0042_s1
+  name: '[core]远程访问端优化-以匿名方式一次鉴权，访问共享端所有共享'
+  description: '[core]远程访问端优化-以匿名方式一次鉴权，访问共享端所有共享'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0043_s1
+  name: '[core]远程访问端优化-以注册用户方式一次鉴权，访问共享端所有共享'
+  description: '[core]远程访问端优化-以注册用户方式一次鉴权，访问共享端所有共享'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SMB_0044_s1
+  name: '[core]连接服务器-“连接到服务器”连接地址显示'
+  description: '[core]连接服务器-“连接到服务器”连接地址显示'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0045_s1
+  name: '[core]连接服务器-连接到服务器窗口，选择“协议”下拉窗检查'
+  description: '[core]连接服务器-连接到服务器窗口，选择“协议”下拉窗检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0046_s1
+  name: '[core]连接服务器-连接到服务器窗口，选择“地址栏”下拉窗检查'
+  description: '[core]连接服务器-连接到服务器窗口，选择“地址栏”下拉窗检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0047_s1
+  name: 连接服务器-地址栏默认显示上次连接过的ip地址
+  description: 连接服务器-地址栏默认显示上次连接过的ip地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0048_s1
+  name: 连接服务器-【我收藏的服务器】显示检查
+  description: 连接服务器-【我收藏的服务器】显示检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SMB_0049_s1
+  name: '[core]连接服务器-通过【收藏】按键添加收藏信息到【我收藏的服务器】检查'
+  description: '[core]连接服务器-通过【收藏】按键添加收藏信息到【我收藏的服务器】检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0050_s1
+  name: 连接服务器-通过【取消收藏】按键减少【我收藏的服务器】的收藏信息检查
+  description: 连接服务器-通过【取消收藏】按键减少【我收藏的服务器】的收藏信息检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0051_s1
+  name: 连接服务器-通过【x】按键减少【我收藏的服务器】的收藏信息检查
+  description: 连接服务器-通过【x】按键减少【我收藏的服务器】的收藏信息检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0052_s1
+  name: smb连接服务器地址优化 - 允许输入其他各种字符
+  description: smb连接服务器地址优化 - 允许输入其他各种字符
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0053_s1
+  name: smb连接服务器地址优化 - 允许输入域名
+  description: smb连接服务器地址优化 - 允许输入域名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0054_s1
+  name: smb连接服务器地址优化 - 允许输入IP/共享目录
+  description: smb连接服务器地址优化 - 允许输入IP/共享目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SMB_0055_s1
+  name: smb连接服务器地址优化 - 允许输入IP:端口
+  description: smb连接服务器地址优化 - 允许输入IP:端口
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+teardown:
+- action: session_stop

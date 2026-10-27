@@ -1,0 +1,192 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 本地文件操作_suite
+app: dde-file-manager
+description: 本地文件操作模块 AT-SPI 用例
+module: 本地文件操作
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 本地文件操作_0001_s1
+  name: 文件操作-文件全选、反选
+  description: 文件操作-文件全选、反选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0002_s1
+  name: 文件操作-本地存储文件重命名
+  description: 文件操作-本地存储文件重命名
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0003_s1
+  name: 文件操作-本地存储文件剪切
+  description: 文件操作-本地存储文件剪切
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0004_s1
+  name: 文件操作-本地存储文件复制
+  description: 文件操作-本地存储文件复制
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0005_s1
+  name: 文件操作-本地存储文件粘贴
+  description: 文件操作-本地存储文件粘贴
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0006_s1
+  name: 文件操作-本地存储文件新建
+  description: 文件操作-本地存储文件新建
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 文档
+- id: 本地文件操作_0007_s1
+  name: 文件操作-本地存储文件选择、打开
+  description: 文件操作-本地存储文件选择、打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0008_s1
+  name: 文件管理操作-非本地存储文件
+  description: 文件管理操作-非本地存储文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0009_s1
+  name: 文件管理操作-本地存储文件属性
+  description: 文件管理操作-本地存储文件属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 设置
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+  - action: assert_element
+    ref: 设置
+- id: 本地文件操作_0010_s1
+  name: 文件属性显示-本地存储文件
+  description: 文件属性显示-本地存储文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: 本地文件操作_0011_s1
+  name: 文件属性显示-非本地存储文件
+  description: 文件属性显示-非本地存储文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

@@ -1,0 +1,384 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: FTP_suite
+app: dde-file-manager
+description: FTP模块 AT-SPI 用例
+module: FTP
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: FTP_0001_s1
+  name: 【SMB】共享管理-修改共享名_
+  description: 【SMB】共享管理-修改共享名_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: FTP_0002_s1
+  name: '[smoke]dock栏卸载smb'
+  description: '[smoke]dock栏卸载smb'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: FTP_0003_s1
+  name: 【SMB】共享管理-共享此文件夹
+  description: 【SMB】共享管理-共享此文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: FTP_0004_s1
+  name: 共享管理-权限
+  description: 共享管理-权限
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: FTP_0005_s1
+  name: 【SMB】匿名访问
+  description: 【SMB】匿名访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: FTP_0006_s1
+  name: 【SMB】文管卸载smb
+  description: 【SMB】文管卸载smb
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: FTP_0007_s1
+  name: 缩略图预览，网络协议(FTP)显示
+  description: 缩略图预览，网络协议(FTP)显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: FTP_0008_s1
+  name: 【FTP】拖拽ftp目录下文件/文件夹到压缩文件中
+  description: 【FTP】拖拽ftp目录下文件/文件夹到压缩文件中
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 最近使用
+- id: FTP_0009_s1
+  name: 【FTP】【Bug188977转】ftp服务端设置local_root后，客户端访问的ftp地址为local_root目录
+  description: 【FTP】【Bug188977转】ftp服务端设置local_root后，客户端访问的ftp地址为local_root目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: FTP_0010_s1
+  name: Bug196425转：FTP使用参数charset=GBK，鉴权正常生效
+  description: Bug196425转：FTP使用参数charset=GBK，鉴权正常生效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: FTP_0011_s1
+  name: 不同系统互相操作-UOS上共享ftp，其他系统访问并操作
+  description: 不同系统互相操作-UOS上共享ftp，其他系统访问并操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: FTP_0012_s1
+  name: 不同系统互相操作-Windows上共享ftp，UOS访问并操作
+  description: 不同系统互相操作-Windows上共享ftp，UOS访问并操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: FTP_0013_s1
+  name: 从ftp外目录添加多层级文件夹到ftp目录
+  description: 从ftp外目录添加多层级文件夹到ftp目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: FTP_0014_s1
+  name: 切换用户-ftp多用户访问、操作
+  description: 切换用户-ftp多用户访问、操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: FTP_0015_s1
+  name: 停掉ftp服务
+  description: 停掉ftp服务
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: FTP_0016_s1
+  name: 网络异常-发送ftp快捷方式到其他目录后断开网络
+  description: 网络异常-发送ftp快捷方式到其他目录后断开网络
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 网络
+- id: FTP_0017_s1
+  name: 卸载ftp-断网后卸载ftp
+  description: 卸载ftp-断网后卸载ftp
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: FTP_0018_s1
+  name: 卸载ftp-多窗口操作ftp卸载
+  description: 卸载ftp-多窗口操作ftp卸载
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: FTP_0019_s1
+  name: 右键菜单-侧边栏ftp目录右键-属性
+  description: 右键菜单-侧边栏ftp目录右键-属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: FTP_0020_s1
+  name: 右键菜单-计算机页面ftp目录右键呼出正常
+  description: 右键菜单-计算机页面ftp目录右键呼出正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: FTP_0021_s1
+  name: 右键菜单--计算机页面ftp目录右键-属性
+  description: 右键菜单--计算机页面ftp目录右键-属性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: FTP_0022_s1
+  name: '[117]添加数据到回收站-ftp目录下快捷键delete删除文件/文件夹'
+  description: '[117]添加数据到回收站-ftp目录下快捷键delete删除文件/文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: FTP_0023_s1
+  name: 【回收站】添加数据到回收站-从smb目录下拖拽文件/文件夹到桌面回收站图标上
+  description: 【回收站】添加数据到回收站-从smb目录下拖拽文件/文件夹到桌面回收站图标上
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+teardown:
+- action: session_stop

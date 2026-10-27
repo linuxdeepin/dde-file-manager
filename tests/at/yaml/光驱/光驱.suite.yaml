@@ -1,0 +1,339 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 光驱_suite
+app: dde-file-manager
+description: 光驱模块 AT-SPI 用例
+module: 光驱
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 光驱_0001_s1
+  name: 【光驱】刻录过程中文件校验失败
+  description: 【光驱】刻录过程中文件校验失败
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0002_s1
+  name: 【光驱】刻录过程中对文件进行校验
+  description: 【光驱】刻录过程中对文件进行校验
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0003_s1
+  name: 【光驱】刻录重复文件
+  description: 【光驱】刻录重复文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0004_s1
+  name: 【光驱】当有其他进程占用光驱时存为镜像文件/刻录
+  description: 【光驱】当有其他进程占用光驱时存为镜像文件/刻录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0005_s1
+  name: 【光驱】 joliet 文件系统刻录路径长度为801个字符的文件
+  description: 【光驱】 joliet 文件系统刻录路径长度为801个字符的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 光驱_0006_s1
+  name: 【光驱】 joliet 文件系统刻录路径长度为800的文件
+  description: 【光驱】 joliet 文件系统刻录路径长度为800的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 视频
+- id: 光驱_0007_s1
+  name: 【光驱】 joliet 文件系统刻录长度为103字符（含扩展名）小于等于255字节的文件
+  description: 【光驱】 joliet 文件系统刻录长度为103字符（含扩展名）小于等于255字节的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 光驱_0008_s1
+  name: 【光驱】 joliet 文件系统支持刻录103字符（含扩展名）的文件-异常系
+  description: 【光驱】 joliet 文件系统支持刻录103字符（含扩展名）的文件-异常系
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 光驱_0009_s1
+  name: 【光驱】 joliet 文件系统支持刻录文件名称（含扩展名）长度为103字符（英文字母+英文符号+数字）的文件
+  description: 【光驱】 joliet 文件系统支持刻录文件名称（含扩展名）长度为103字符（英文字母+英文符号+数字）的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 光驱_0010_s1
+  name: 【光驱】存储只读模式下，光驱擦除操作
+  description: 【光驱】存储只读模式下，光驱擦除操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0011_s1
+  name: 【光驱】 joliet 文件系统刻录长度小于103字符（含扩展名）且小于等于255字节的文件
+  description: 【光驱】 joliet 文件系统刻录长度小于103字符（含扩展名）且小于等于255字节的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 视频
+- id: 光驱_0012_s1
+  name: 【光驱】 joliet 文件系统刻录长度为103字符（含扩展名）大于255字节的文件
+  description: 【光驱】 joliet 文件系统刻录长度为103字符（含扩展名）大于255字节的文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 光驱_0013_s1
+  name: 【光驱】镜像文件直接刻录镜像
+  description: 【光驱】镜像文件直接刻录镜像
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0014_s1
+  name: 【光驱】拖拽文件/文件夹到光盘
+  description: 【光驱】拖拽文件/文件夹到光盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: 光驱_0015_s1
+  name: 【光驱】空白处右键菜单功能正常
+  description: 【光驱】空白处右键菜单功能正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 光驱_0016_s1
+  name: 【光驱】光驱-刻录不同长度名称的文件/文件夹
+  description: 【光驱】光驱-刻录不同长度名称的文件/文件夹
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0017_s1
+  name: 【光驱】刻录弹窗-高级设置各选项测试
+  description: 【光驱】刻录弹窗-高级设置各选项测试
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0018_s1
+  name: UDF刻录-保存为镜像文件
+  description: UDF刻录-保存为镜像文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 光驱_0019_s1
+  name: 【光驱】UDF刻录-添加大小接近或等于光盘剩余容量的文件/文件夹选择UDF刻录
+  description: 【光驱】UDF刻录-添加大小接近或等于光盘剩余容量的文件/文件夹选择UDF刻录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0020_s1
+  name: 【光驱】UDF刻录-格式为UDF且UDF为1.02版本的DVD-R/DVD+R/CD-R/CD-RW光盘支持UDF刻录
+  description: 【光驱】UDF刻录-格式为UDF且UDF为1.02版本的DVD-R/DVD+R/CD-R/CD-RW光盘支持UDF刻录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 光驱_0021_s1
+  name: 【UDF格式】格式光盘-保存为镜像文件-镜像保存成功
+  description: 【UDF格式】格式光盘-保存为镜像文件-镜像保存成功
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+- id: 光驱_0022_s1
+  name: 【光驱】设置光驱只读
+  description: 【光驱】设置光驱只读
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+teardown:
+- action: session_stop

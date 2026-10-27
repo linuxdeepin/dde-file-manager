@@ -1,0 +1,299 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: SFTP_suite
+app: dde-file-manager
+description: SFTP模块 AT-SPI 用例
+module: SFTP
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: SFTP_0001_s1
+  name: sftp-不勾选记住密码
+  description: sftp-不勾选记住密码
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: side_bar_view
+- id: SFTP_0002_s1
+  name: sftp-sftp目录下搜索结果页断网
+  description: sftp-sftp目录下搜索结果页断网
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 网络
+- id: SFTP_0003_s1
+  name: 缩略图预览，网络协议(SFTP)显示
+  description: 缩略图预览，网络协议(SFTP)显示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 图片
+- id: SFTP_0004_s1
+  name: sftp目录内文件夹添加书签_
+  description: sftp目录内文件夹添加书签_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: SFTP_0005_s1
+  name: '[core]sftp-首次访问sftp地址'
+  description: '[core]sftp-首次访问sftp地址'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: SFTP_0006_s1
+  name: 不同系统互相操作-Windows上共享sftp，UOS访问并操作
+  description: 不同系统互相操作-Windows上共享sftp，UOS访问并操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 保险箱
+- id: SFTP_0007_s1
+  name: sftp-多用户访问操作同一sftp
+  description: sftp-多用户访问操作同一sftp
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SFTP_0008_s1
+  name: sftp-与不同目录进行基本操作
+  description: sftp-与不同目录进行基本操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: SFTP_0009_s1
+  name: sftp-添加多层级文件夹到sftp外目录
+  description: sftp-添加多层级文件夹到sftp外目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: SFTP_0010_s1
+  name: sftp-添加快捷方式到sftp目录
+  description: sftp-添加快捷方式到sftp目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: side_bar_view
+- id: SFTP_0011_s1
+  name: sftp-右键菜单右键病毒查杀
+  description: sftp-右键菜单右键病毒查杀
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SFTP_0012_s1
+  name: sftp-右键菜单发送到外设
+  description: sftp-右键菜单发送到外设
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SFTP_0013_s1
+  name: sftp-右键菜单发送到桌面
+  description: sftp-右键菜单发送到桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: SFTP_0014_s1
+  name: sftp-右键菜单创建链接
+  description: sftp-右键菜单创建链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: SFTP_0015_s1
+  name: sftp-多窗口卸载
+  description: sftp-多窗口卸载
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: side_bar_view
+- id: SFTP_0016_s1
+  name: sftp-勾选记住密码
+  description: sftp-勾选记住密码
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

@@ -1,0 +1,77 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: home目录支持长文件名_suite
+app: dde-file-manager
+description: home目录支持长文件名模块 AT-SPI 用例
+module: home目录支持长文件名
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: home目录支持长文件名_0001_s1
+  name: 【home目录支持长文件名】删除长文件名文件到回收站
+  description: 【home目录支持长文件名】删除长文件名文件到回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+- id: home目录支持长文件名_0002_s1
+  name: 【home目录支持长文件名】在保险箱中创建并打开长文件名文件
+  description: 【home目录支持长文件名】在保险箱中创建并打开长文件名文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+- id: home目录支持长文件名_0003_s1
+  name: 【home目录支持长文件名】长文件名文件创建链接
+  description: 【home目录支持长文件名】长文件名文件创建链接
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: home目录支持长文件名_0004_s1
+  name: 【home目录支持长文件名】从windows环境上复制长文件名文件到本地
+  description: 【home目录支持长文件名】从windows环境上复制长文件名文件到本地
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

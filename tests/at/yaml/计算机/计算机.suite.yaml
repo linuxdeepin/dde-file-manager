@@ -1,0 +1,263 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 计算机_suite
+app: dde-file-manager
+description: 计算机模块 AT-SPI 用例
+module: 计算机
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 计算机_0001_s1
+  name: 【UI验收】【文件管理器】检查UI和动效
+  description: 【UI验收】【文件管理器】检查UI和动效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 计算机_0002_s1
+  name: 升级版本，原有书签显示、功能正常
+  description: 升级版本，原有书签显示、功能正常
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 计算机_0003_s1
+  name: 【计算机】书签组策略和配置文件信息检查
+  description: 【计算机】书签组策略和配置文件信息检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 计算机_0004_s1
+  name: 已存在快捷访问A，通过直接修改配置文件方式，只删除~/.config/deepin/dde-file-manager.json快捷访问配置，文管侧边栏显示快捷访问A
+  description: 已存在快捷访问A，通过直接修改配置文件方式，只删除~/.config/deepin/dde-file-manager.json快捷访问配置，文管侧边栏显示快捷访问A
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 计算机_0005_s1
+  name: 已存在快捷访问A，在文管侧边栏将快捷访问A重命名为快捷访问B
+  description: 已存在快捷访问A，在文管侧边栏将快捷访问A重命名为快捷访问B
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 计算机_0006_s1
+  name: 未配置隐藏系统盘和数据盘，打开多个文管窗口，调用dbus接口隐藏数据盘和系统盘，配置实时生效
+  description: 未配置隐藏系统盘和数据盘，打开多个文管窗口，调用dbus接口隐藏数据盘和系统盘，配置实时生效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: 系统盘
+- id: 计算机_0007_s1
+  name: 【显示第三方程序入口】添加第三方文件到计算机界面
+  description: 【显示第三方程序入口】添加第三方文件到计算机界面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+  - action: assert_element
+    ref: side_bar_view
+- id: 计算机_0008_s1
+  name: 系统盘-拖拽系统盘文件夹至桌面
+  description: 系统盘-拖拽系统盘文件夹至桌面
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 系统盘
+- id: 计算机_0009_s1
+  name: 系统盘-拖拽桌面文件至系统盘
+  description: 系统盘-拖拽桌面文件至系统盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 系统盘
+- id: 计算机_0010_s1
+  name: '[039]系统盘-空白处右键在终端中打开'
+  description: '[039]系统盘-空白处右键在终端中打开'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 计算机_0011_s1
+  name: '[038]系统盘-空白处右键已管理员身份打开'
+  description: '[038]系统盘-空白处右键已管理员身份打开'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 计算机_0012_s1
+  name: '[035]系统盘-空白处右键检查新建文件选项'
+  description: '[035]系统盘-空白处右键检查新建文件选项'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 计算机_0013_s1
+  name: '[034]系统盘-空白处右键单击属性选项检查属性信息'
+  description: '[034]系统盘-空白处右键单击属性选项检查属性信息'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 系统盘
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 系统盘
+- id: 计算机_0014_s1
+  name: 我的目录-快捷键操作
+  description: 我的目录-快捷键操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 计算机_0015_s1
+  name: '[037]我的目录-权限'
+  description: '[037]我的目录-权限'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 计算机_0016_s1
+  name: '[032]我的目录-属性页面勾选隐藏此文件夹'
+  description: '[032]我的目录-属性页面勾选隐藏此文件夹'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

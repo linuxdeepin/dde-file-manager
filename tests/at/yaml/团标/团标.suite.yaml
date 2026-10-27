@@ -1,0 +1,641 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 团标_suite
+app: dde-file-manager
+description: 团标模块 AT-SPI 用例
+module: 团标
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 团标_0001_s1
+  name: 访问光驱
+  description: 访问光驱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 团标_0002_s1
+  name: 共享文件夹-不可匿名访问-读写
+  description: 共享文件夹-不可匿名访问-读写
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 网络
+- id: 团标_0003_s1
+  name: 支持检查光盘的数据完整性
+  description: 支持检查光盘的数据完整性
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0004_s1
+  name: 支持ISO9660格式光盘追加刻录
+  description: 支持ISO9660格式光盘追加刻录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0005_s1
+  name: 支持将光盘镜像文件刻录到光盘
+  description: 支持将光盘镜像文件刻录到光盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0006_s1
+  name: 支持将光盘复制为镜像文件保存到另一张光盘
+  description: 支持将光盘复制为镜像文件保存到另一张光盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0007_s1
+  name: 支持CD-R.CD-RW.DVD-R.DVD-RW.DVD+R.DVD+RW格式的光盘
+  description: 支持CD-R.CD-RW.DVD-R.DVD-RW.DVD+R.DVD+RW格式的光盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0008_s1
+  name: 桌面名称排序、修改时间排序、大小排序、类型排序
+  description: 桌面名称排序、修改时间排序、大小排序、类型排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 团标_0009_s1
+  name: 支持右键选单创建文件夹、新建纯文本
+  description: 支持右键选单创建文件夹、新建纯文本
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 团标_0010_s1
+  name: 支持桌面图标按照网格式排列
+  description: 支持桌面图标按照网格式排列
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 团标_0011_s1
+  name: 显示文件夹、文本文档、压缩文件图标
+  description: 显示文件夹、文本文档、压缩文件图标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 团标_0012_s1
+  name: 桌面显示应用程序图标
+  description: 桌面显示应用程序图标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: StatusBar
+- id: 团标_0013_s1
+  name: 支持文件图标的拖拽摆放以及名称修改
+  description: 支持文件图标的拖拽摆放以及名称修改
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 团标_0014_s1
+  name: 支持右键选单进行复制、剪切和粘贴文件
+  description: 支持右键选单进行复制、剪切和粘贴文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 团标_0015_s1
+  name: 支持应用程序快捷方式与文件共存
+  description: 支持应用程序快捷方式与文件共存
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: StatusBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: BottomBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: StatusBar
+- id: 团标_0016_s1
+  name: 回收站清空、回收站删除
+  description: 回收站清空、回收站删除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 团标_0017_s1
+  name: 密钥找回口令
+  description: 密钥找回口令
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: 团标_0018_s1
+  name: 手动上锁文件保险箱、自动上锁文件保险箱
+  description: 手动上锁文件保险箱、自动上锁文件保险箱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: 团标_0019_s1
+  name: 透明加解密保险箱
+  description: 透明加解密保险箱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: 团标_0020_s1
+  name: 独立口令和密钥保护的文件保险箱
+  description: 独立口令和密钥保护的文件保险箱
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: side_bar_view
+- id: 团标_0021_s1
+  name: 文件内容搜索、纯文本文件搜索
+  description: 文件内容搜索、纯文本文件搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 团标_0022_s1
+  name: 文件名最大长度不小于255字节
+  description: 文件名最大长度不小于255字节
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: CollectionView
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: CollectionView
+- id: 团标_0023_s1
+  name: 按文件名、修改时间段、文件大小搜索
+  description: 按文件名、修改时间段、文件大小搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 团标_0024_s1
+  name: 文件不同程序打开方式
+  description: 文件不同程序打开方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0025_s1
+  name: 文件右键-复制粘贴、剪切粘贴、删除、重命名、压缩
+  description: 文件右键-复制粘贴、剪切粘贴、删除、重命名、压缩
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 回收站
+- id: 团标_0026_s1
+  name: 右键选中、鼠标拖动选中、ctrl键选中、shift键选中、快捷键多选
+  description: 右键选中、鼠标拖动选中、ctrl键选中、shift键选中、快捷键多选
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0027_s1
+  name: 文本、图片、视频、音乐快速访问
+  description: 文本、图片、视频、音乐快速访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 视频
+- id: 团标_0028_s1
+  name: 新建文档、新建文件夹、创建快捷方式
+  description: 新建文档、新建文件夹、创建快捷方式
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 桌面
+- id: 团标_0029_s1
+  name: 图标展示、列表展示
+  description: 图标展示、列表展示
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0030_s1
+  name: 绝对路径的搜索
+  description: 绝对路径的搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 回收站
+- id: 团标_0031_s1
+  name: 访问FTP
+  description: 访问FTP
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0032_s1
+  name: 访问SMB
+  description: 访问SMB
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 团标_0033_s1
+  name: 访问闪存盘
+  description: 访问闪存盘
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 计算机
+- id: 团标_0034_s1
+  name: 主目录、桌面、文档、下载、回收站
+  description: 主目录、桌面、文档、下载、回收站
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: side_bar_view
+- id: 团标_0035_s1
+  name: 文本文件缩略图、图片缩略图、视频首帧缩略图
+  description: 文本文件缩略图、图片缩略图、视频首帧缩略图
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 视频
+- id: 团标_0036_s1
+  name: 文件名称、文件类型、文件修改时间、文件大小排序
+  description: 文件名称、文件类型、文件修改时间、文件大小排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

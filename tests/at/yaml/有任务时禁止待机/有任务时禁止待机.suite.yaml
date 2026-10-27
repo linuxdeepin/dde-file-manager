@@ -1,0 +1,129 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 有任务时禁止待机_suite
+app: dde-file-manager
+description: 有任务时禁止待机模块 AT-SPI 用例
+module: 有任务时禁止待机
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 有任务时禁止待机_0001_s1
+  name: 【有任务时禁止待机】设置按电源键时待机后，手动点击待机
+  description: 【有任务时禁止待机】设置按电源键时待机后，手动点击待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 有任务时禁止待机_0002_s1
+  name: 【有任务时禁止待机】命令拷贝可自动待机
+  description: 【有任务时禁止待机】命令拷贝可自动待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 有任务时禁止待机_0003_s1
+  name: 【有任务时禁止待机】多任务窗口时，所有任务都执行完后才能自动待机
+  description: 【有任务时禁止待机】多任务窗口时，所有任务都执行完后才能自动待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 有任务时禁止待机_0004_s1
+  name: 【有任务时禁止待机】多用户，有任务窗口时，不能自动待机
+  description: 【有任务时禁止待机】多用户，有任务窗口时，不能自动待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 有任务时禁止待机_0005_s1
+  name: 【有任务时禁止待机】有刻录/存为镜像文件/删除时，不能自动待机
+  description: 【有任务时禁止待机】有刻录/存为镜像文件/删除时，不能自动待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 有任务时禁止待机_0006_s1
+  name: 【有任务时禁止待机】手动中断拷贝任务时或拷贝失败后可自动待机
+  description: 【有任务时禁止待机】手动中断拷贝任务时或拷贝失败后可自动待机
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 网络
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 网络
+teardown:
+- action: session_stop

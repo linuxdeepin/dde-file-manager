@@ -1,0 +1,361 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 书签_suite
+app: dde-file-manager
+description: 书签模块 AT-SPI 用例
+module: 书签
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 书签_0001_s1
+  name: 快捷访问-版本升级不会影响快捷访问_
+  description: 快捷访问-版本升级不会影响快捷访问_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0002_s1
+  name: 快捷访问-仅对当前用户生效
+  description: 快捷访问-仅对当前用户生效
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0003_s1
+  name: 快捷访问-保存文件到快捷访问_
+  description: 快捷访问-保存文件到快捷访问_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0004_s1
+  name: 快捷访问-从快捷访问添加文件到其他目录
+  description: 快捷访问-从快捷访问添加文件到其他目录
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0005_s1
+  name: 【书签】快捷访问-拖拽文件到快捷访问
+  description: 【书签】快捷访问-拖拽文件到快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0006_s1
+  name: 快捷访问-原文件夹名称修改不影响快捷访问_
+  description: 快捷访问-原文件夹名称修改不影响快捷访问_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0007_s1
+  name: 快捷访问-切换顺序
+  description: 快捷访问-切换顺序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0008_s1
+  name: 快捷访问-弹窗移除
+  description: 快捷访问-弹窗移除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 书签_0009_s1
+  name: 快捷访问-删除快捷访问文件
+  description: 快捷访问-删除快捷访问文件
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0010_s1
+  name: 快捷访问-源文件夹右键移除
+  description: 快捷访问-源文件夹右键移除
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 视频
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 视频
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0011_s1
+  name: '[058]快捷访问-右键重命名'
+  description: '[058]快捷访问-右键重命名'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 书签_0012_s1
+  name: '[061]快捷访问-右键菜单检查'
+  description: '[061]快捷访问-右键菜单检查'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 书签_0013_s1
+  name: '[044]快捷访问-smb目录下文件夹添加'
+  description: '[044]快捷访问-smb目录下文件夹添加'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 书签_0014_s1
+  name: 快捷访问-手机内文件夹添加
+  description: 快捷访问-手机内文件夹添加
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 书签_0015_s1
+  name: 快捷访问-移动设备内文件夹添加
+  description: 快捷访问-移动设备内文件夹添加
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 快捷访问
+  - action: assert_element
+    ref: side_bar_view
+- id: 书签_0016_s1
+  name: 快捷访问-保险箱内文件夹右键无添加快捷访问
+  description: 快捷访问-保险箱内文件夹右键无添加快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 保险箱
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 保险箱
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0017_s1
+  name: 快捷访问-回收站内文件夹右键无添加快捷访问
+  description: 快捷访问-回收站内文件夹右键无添加快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 回收站
+  - action: assert_element
+    ref: 快捷访问
+- id: 书签_0018_s1
+  name: 快捷访问-选中多个文件夹右键添加快捷访问
+  description: 快捷访问-选中多个文件夹右键添加快捷访问
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 快捷访问
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 主目录
+  - action: assert_element
+    ref: 快捷访问
+teardown:
+- action: session_stop

@@ -1,0 +1,546 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 图片文本内容搜索_suite
+app: dde-file-manager
+description: 图片文本内容搜索模块 AT-SPI 用例
+module: 图片文本内容搜索
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 图片文本内容搜索_0001_s1
+  name: 【图片文本内容搜索】仅图片文本内容搜索索引进行更新
+  description: 【图片文本内容搜索】仅图片文本内容搜索索引进行更新
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0002_s1
+  name: 【图片文本内容搜索】索引更新过程中进行图片文件内容搜索
+  description: 【图片文本内容搜索】索引更新过程中进行图片文件内容搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 石鼓寺
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 图片文本内容搜索_0003_s1
+  name: 【全局搜索-图片文本内容搜索】关键词命中多行OCR文本时，仅展示第1行
+  description: 【全局搜索-图片文本内容搜索】关键词命中多行OCR文本时，仅展示第1行
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 最长显示255
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: AddressBar
+- id: 图片文本内容搜索_0004_s1
+  name: 【全局搜索-图片文本内容搜索】文件内容摘要超出1行展示不下时
+  description: 【全局搜索-图片文本内容搜索】文件内容摘要超出1行展示不下时
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 最长显示255
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: AddressBar
+- id: 图片文本内容搜索_0005_s1
+  name: 【文管-图片文本内容搜索】关键词命中多行OCR文本时，仅展示第1行
+  description: 【文管-图片文本内容搜索】关键词命中多行OCR文本时，仅展示第1行
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 最长显示255
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 计算机
+- id: 图片文本内容搜索_0006_s1
+  name: 【文管-图片文本内容搜索】文件内容摘要超出1行展示不下时
+  description: 【文管-图片文本内容搜索】文件内容摘要超出1行展示不下时
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 最长显示255
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 计算机
+- id: 图片文本内容搜索_0007_s1
+  name: 【文管-图片文本内容搜索】对图片文件内容搜索结果进行排序
+  description: 【文管-图片文本内容搜索】对图片文件内容搜索结果进行排序
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 终于等到你啦
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0008_s1
+  name: 【图片文本内容搜索】索引更新失败UI检查
+  description: 【图片文本内容搜索】索引更新失败UI检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 音乐
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 文档
+  - action: assert_element
+    ref: 下载
+- id: 图片文本内容搜索_0009_s1
+  name: 【图片文本内容搜索】索引各个状态UI检查
+  description: 【图片文本内容搜索】索引各个状态UI检查
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: 下载
+- id: 图片文本内容搜索_0010_s1
+  name: 【文管-图片文本内容搜索】图片文本内容增删改之后进行搜索
+  description: 【文管-图片文本内容搜索】图片文本内容增删改之后进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 新增的图片内容
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 图片文本内容搜索_0011_s1
+  name: 【全局搜索-图片文本内容搜索】图片文本内容增删改之后进行搜索
+  description: 【全局搜索-图片文本内容搜索】图片文本内容增删改之后进行搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 新增的图片内容
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 图片文本内容搜索_0012_s1
+  name: 【图片文本内容搜索】有图片更新时自动触发主目录全量索引更新
+  description: 【图片文本内容搜索】有图片更新时自动触发主目录全量索引更新
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 下载
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0013_s1
+  name: 【全局搜索-图片文本内容搜索】新增“图片中找到的文字”类目
+  description: 【全局搜索-图片文本内容搜索】新增“图片中找到的文字”类目
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 石鼓寺
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 图片文本内容搜索_0014_s1
+  name: 【全局搜索-图片文本内容搜索】多关键词搜索
+  description: 【全局搜索-图片文本内容搜索】多关键词搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 文档
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 下载
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 测试最长 1211测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 文档
+- id: 图片文本内容搜索_0015_s1
+  name: 【全局搜索-图片文本内容搜索】对搜索结果进行操作
+  description: 【全局搜索-图片文本内容搜索】对搜索结果进行操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0016_s1
+  name: 【文管-图片文本内容搜索】对搜索结果进行操作
+  description: 【文管-图片文本内容搜索】对搜索结果进行操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 0007-大图片
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0017_s1
+  name: 【图片文本内容搜索】支持搜索文本内容的图片类型
+  description: 【图片文本内容搜索】支持搜索文本内容的图片类型
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: side_bar_view
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0018_s1
+  name: 【全局搜索-图片文本内容搜索】预览搜索结果
+  description: 【全局搜索-图片文本内容搜索】预览搜索结果
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 已被磐 石系统拦截
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+  - action: assert_element
+    ref: AddressBar
+- id: 图片文本内容搜索_0019_s1
+  name: 【全局搜索-图片文本内容搜索】全局搜索进行图片文件内容搜索
+  description: 【全局搜索-图片文本内容搜索】全局搜索进行图片文件内容搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 石鼓寺
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0020_s1
+  name: 【文管-图片文本内容搜索】功能开启后进行图片文件内容搜索
+  description: 【文管-图片文本内容搜索】功能开启后进行图片文件内容搜索
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: 图片手动添加文本
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 图片
+- id: 图片文本内容搜索_0021_s1
+  name: 【图片文本内容搜索】功能默认关闭
+  description: 【图片文本内容搜索】功能默认关闭
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 图片
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 图片
+teardown:
+- action: session_stop

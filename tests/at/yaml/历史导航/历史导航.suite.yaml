@@ -1,0 +1,268 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+
+name: 历史导航_suite
+app: dde-file-manager
+description: 历史导航模块 AT-SPI 用例
+module: 历史导航
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: 历史导航_0001_s1
+  name: 长文件名功能 - 地址栏和面包屑，复制路径
+  description: 长文件名功能 - 地址栏和面包屑，复制路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 历史导航_0002_s1
+  name: 长文件名功能 - 地址栏和面包屑，新窗口打开
+  description: 长文件名功能 - 地址栏和面包屑，新窗口打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 历史导航_0003_s1
+  name: 长文件名功能 - 地址栏和面包屑，新标签中打开
+  description: 长文件名功能 - 地址栏和面包屑，新标签中打开
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: TabBar
+- id: 历史导航_0004_s1
+  name: 长文件名功能 - 地址栏和面包屑，编辑地址
+  description: 长文件名功能 - 地址栏和面包屑，编辑地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 历史导航_0005_s1
+  name: 长文件名功能 - 地址栏和面包屑，单击面包屑切换路径
+  description: 长文件名功能 - 地址栏和面包屑，单击面包屑切换路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 历史导航_0006_s1
+  name: 长文件名功能 - 地址栏和面包屑，前进、后退
+  description: 长文件名功能 - 地址栏和面包屑，前进、后退
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 历史导航_0007_s1
+  name: 长文件名功能 - 地址栏和面包屑，根图标
+  description: 长文件名功能 - 地址栏和面包屑，根图标
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+- id: 历史导航_0008_s1
+  name: 长文件名功能(关闭) - 地址栏和面包屑相关操作
+  description: 长文件名功能(关闭) - 地址栏和面包屑相关操作
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: AddressBar
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: AddressBar
+  - action: assert_element
+    ref: TabBar
+- id: 历史导航_0009_s1
+  name: 【复制远程路径】地址栏上鼠标右键编辑smb路径
+  description: 【复制远程路径】地址栏上鼠标右键编辑smb路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 历史导航_0010_s1
+  name: 【复制远程路径】地址栏上鼠标右键复制smb路径
+  description: 【复制远程路径】地址栏上鼠标右键复制smb路径
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 历史导航_0011_s1
+  name: 【复制远程路径】smb服务器使用非默认端口，复制粘贴smb远程路径，检查smb路径地址
+  description: 【复制远程路径】smb服务器使用非默认端口，复制粘贴smb远程路径，检查smb路径地址
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 历史导航_0012_s1
+  name: 文管历史导航，检查多层级目录路径_
+  description: 文管历史导航，检查多层级目录路径_
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+- id: 历史导航_0013_s1
+  name: '[t]历史导航-调整窗口面包屑变化'
+  description: '[t]历史导航-调整窗口面包屑变化'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 历史导航_0014_s1
+  name: '[t]历史导航-长面包屑的操作'
+  description: '[t]历史导航-长面包屑的操作'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 历史导航_0015_s1
+  name: '[t]历史导航-面包屑切换浏览目录'
+  description: '[t]历史导航-面包屑切换浏览目录'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: 历史导航_0016_s1
+  name: '[t]历史导航-面包屑新标签/窗口中打开'
+  description: '[t]历史导航-面包屑新标签/窗口中打开'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: TabBar
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: TabBar
+- id: 历史导航_0017_s1
+  name: '[t]历史导航-浏览记录多个窗口不影响'
+  description: '[t]历史导航-浏览记录多个窗口不影响'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 主目录
+teardown:
+- action: session_stop
