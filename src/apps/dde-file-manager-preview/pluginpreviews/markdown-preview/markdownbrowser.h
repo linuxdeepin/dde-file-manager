@@ -18,6 +18,15 @@ public:
     virtual ~MarkdownBrowser() override;
 
     void setMarkdownContent(const QString &markdown, const QString &basePath);
+
+private Q_SLOTS:
+    void onThemeTypeChanged();
+
+private:
+    void renderContent(bool resetScrollPosition);
+
+    QString m_markdown;
+    QString m_basePath;
 };
 }
 #endif   // MARKDOWNBROWSER_H

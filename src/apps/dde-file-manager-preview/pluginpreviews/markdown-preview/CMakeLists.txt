@@ -13,6 +13,11 @@ FILE(GLOB_RECURSE MARKDOWNPREVIEW_FILES CONFIGURE_DEPENDS
 set(BIN_NAME ${PROJECT_NAME})
 
 find_package(Qt6 COMPONENTS Core REQUIRED)
+find_package(KF6SyntaxHighlighting REQUIRED)
+find_package(PkgConfig REQUIRED)
+# md4c is the markdown parser Qt uses internally; it provides the CommonMark +
+# GFM dialect and the fence info string that Qt's own reader discards.
+pkg_check_modules(MD4C REQUIRED IMPORTED_TARGET md4c)
 
 add_library(${BIN_NAME}
     SHARED
@@ -24,6 +29,8 @@ set_target_properties(${BIN_NAME} PROPERTIES LIBRARY_OUTPUT_DIRECTORY ${DFM_BUIL
 target_link_libraries(${BIN_NAME}
     DFM6::base
     DFM6::framework
+    KF6::SyntaxHighlighting
+    PkgConfig::MD4C
 )
 
 #install library file
