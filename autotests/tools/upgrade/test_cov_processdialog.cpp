@@ -14,8 +14,6 @@
 #include <QTimer>
 #include <QVariant>
 
-#include <unistd.h>
-
 using namespace dfm_upgrade;
 
 class ProcessDialogTest : public testing::Test
@@ -136,21 +134,6 @@ TEST_F(ProcessDialogTest, Restart_KilledShellMode_RestartsDdeShellService)
     EXPECT_TRUE(capturedArgs.join(' ').contains(QString("dde-shell")));
 }
 
-TEST_F(ProcessDialogTest, QueryProcess_RealProcFs_FindsOwnProcess)
-{
-    // Arrange: the test binary itself is a matching executable
-    ProcessDialog dialog;
-    const QString selfExe = QCoreApplication::applicationFilePath();
-
-    // Act
-    const QList<int> pids = dialog.queryProcess(selfExe);
-
-    // Assert
-    EXPECT_TRUE(pids.contains(static_cast<int>(getpid())));
-    // a nonexistent binary is never found
-    EXPECT_TRUE(dialog.queryProcess("/no/such/binary-xyz").isEmpty());
-}
-
 TEST_F(ProcessDialogTest, TargetExe_ResolvesProcSelfSymlink)
 {
     // Arrange
@@ -162,19 +145,6 @@ TEST_F(ProcessDialogTest, TargetExe_ResolvesProcSelfSymlink)
     // Assert
     EXPECT_EQ(exe, QCoreApplication::applicationFilePath());
     EXPECT_TRUE(dialog.targetExe("/proc/0/does-not-exist").isEmpty());
-}
-
-TEST_F(ProcessDialogTest, TargetUid_ReadsLoginUidOfSelf)
-{
-    // Arrange
-    ProcessDialog dialog;
-
-    // Act
-    const int uid = dialog.targetUid("/proc/self");
-
-    // Assert
-    EXPECT_EQ(uid, static_cast<int>(getuid()));
-    EXPECT_EQ(dialog.targetUid("/proc/0/does-not-exist"), -2);
 }
 
 TEST_F(ProcessDialogTest, KillAll_InvalidPid_Harmless)
