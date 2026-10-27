@@ -1,0 +1,229 @@
+name: xlsx窗口视图扩展2_suite
+app: dde-file-manager
+description: 从 V25 xlsx 映射的窗口操作、视图缩放、刷新和搜索筛选用例
+module: xlsx窗口视图扩展2
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager --open-home >/tmp/dfm_at_search_normal.log
+    2>&1 & sleep 4; xdotool search --class dde-file-manager windowactivate %@ windowsize %@ 1200 700 >/tmp/dfm_at_search_normal_resize.log
+    2>&1 || true'
+  wait: 1.0
+- action: assert_process_running
+  app: dde-file-manager
+  wait: 6
+- action: keyboard_hot_key
+  key: ctrl+f
+  wait: 1.0
+suites:
+- id: case_1806191
+  name: 主目录图标 - 窗口操作
+  description: 'xlsx 用例编号: 1806191
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 桌面选中主目录图标，双击
+
+    2. 文管主目录窗口，最大化
+
+    3. 文管主目录窗口，最小化
+
+    4. 文管主目录窗口，关闭
+
+    预期结果:
+
+    1. 打开文管并进入主目录页面
+
+    2. 窗口最大化
+
+    3. 窗口最小化
+
+    4. 窗口被关闭
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806191'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMaxButton
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: DTitlebarDWindowMinButton
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806945
+  name: 文件操作-在有缩略图的文件夹使用F5不断刷新
+  description: 'xlsx 用例编号: 1806945
+
+    前置条件: 文管已启动，目录中有大量有缩略图的文件
+
+    测试步骤:
+
+    1. 在图标模式下一直按住f5
+
+    2. 切换为列表模式下一直按住f5
+
+    预期结果:
+
+    1. 一直刷新，文管不会崩溃
+
+    2. 一直刷新，文管不会崩溃
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806945'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: iconView_button
+    do: click
+    wait: 0.5
+  - action: keyboard_press
+    key: F5
+    wait: 0.3
+  - action: keyboard_press
+    key: F5
+    wait: 0.3
+  - action: keyboard_press
+    key: F5
+    wait: 0.3
+  - action: element_action
+    ref: listView_button
+    do: click
+    wait: 0.5
+  - action: keyboard_press
+    key: F5
+    wait: 0.3
+  - action: keyboard_press
+    key: F5
+    wait: 0.3
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1809563
+  name: 【桌面自动整理】快捷键缩放图标大小
+  description: 'xlsx 用例编号: 1809563
+
+    前置条件: 已开启桌面整理
+
+    测试步骤:
+
+    1. 快捷键Ctrl+"+/-"进行缩放桌面图标大小
+
+    预期结果:
+
+    1. 快捷键生效
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1809563'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_hot_key
+    key: ctrl+plus
+    wait: 0.5
+  - action: keyboard_hot_key
+    key: ctrl+minus
+    wait: 0.5
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1808419
+  name: 选中文件-按shift/ctrl选中多个文件/文件夹
+  description: 'xlsx 用例编号: 1808419
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 进入桌面-按住ctrl/shift-点击多个文件/文件夹
+
+    预期结果:
+
+    1. 多个文件/文件夹均处于选中状态
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1808419'
+    case_type: 功能测试
+  steps:
+  - action: keyboard_press
+    key: right
+    wait: 0.3
+  - action: keyboard_hot_key
+    key: shift+down
+    wait: 0.3
+  - action: keyboard_hot_key
+    key: ctrl+down
+    wait: 0.3
+  assert_steps:
+  - action: assert_element
+    ref: side_bar_view
+- id: case_1806255
+  name: 【最近使用】最近使用添加数据-新增不同
+  description: 'xlsx 用例编号: 1806255
+
+    前置条件: 无
+
+    测试步骤:
+
+    1. 打开文管-进入桌面目录--打开图片文件
+
+    2. 打开文管-进入桌面目录--打开文本文件
+
+    3. 打开文管-进入桌面目录--打开视频文件
+
+    4. 打开文管-进入桌面目录--打开音乐文件
+
+    预期结果:
+
+    1. 最近使用添加一个图片文件
+
+    2. 最近使用添加一个文本文件
+
+    3. 最近使用添加一个视频文件
+
+    4. 最近使用添加一个音乐文件
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806255'
+    case_type: 功能测试
+  steps:
+  - action: element_action
+    ref: 桌面
+    do: click
+    wait: 1.0
+  - action: element_action
+    ref: 最近使用
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_element
+    ref: 最近使用
+  - action: assert_element
+    ref: side_bar_view
+teardown:
+- action: session_stop

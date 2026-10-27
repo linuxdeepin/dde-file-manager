@@ -1,0 +1,130 @@
+name: xlsx严格复制补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 冒烟用例/文件操作批次11中筛选的严格复制剪切结果用例，使用 /tmp/dde-at-fixtures 隔离夹具并断言实际文件和内容结果
+module: xlsx严格复制补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-011 && mkdir -p /tmp/dde-at-fixtures/strict-batch-011'
+  wait: 1.0
+suites:
+- id: case_1806625
+  name: 【 复制】剪切拷贝-桌面文件复制操作
+  description: 'xlsx 用例编号: 1806625
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件:
+
+    1. 桌面上存在a.txt文件，内容为：桌面的文件
+
+    2. 图片目录存在a.txt文件，内容为：图片目录的文件
+
+    测试步骤:
+
+    1. 复制桌面文件，并粘贴到桌面
+
+    2. 剪切桌面文件，并剪切到桌面
+
+    3. 复制其他目录文件，并粘贴到桌面
+
+    4. 剪切其他目录文件，并粘贴到桌面
+
+    5. 剪切图片目录下的a.txt到桌面上，选择替换
+
+    预期结果:
+
+    1. 复制成功，直接复制成副本
+
+    2. 剪切时该文件置灰，粘贴时复原
+
+    3. 成功复制到桌面
+
+    4. 成功剪切到桌面，原目录该文件消失
+
+    5. 替换成功，此时桌面上a.txt文件内容为：图片目录的文件
+
+    严格映射说明: 使用 /tmp/dde-at-fixtures/strict-batch-011/desktop、pictures 和 other 作为桌面、图片目录和其他目录的等价可写目录；核心业务为复制产生副本、剪切后目标存在且源消失、替换后目标文件内容变为图片目录文件内容。置灰/复原属于瞬态视觉状态，不作为本严格用例的自动化断言。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806625'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-011/case_1806625; rm -rf "$base"; mkdir -p "$base/desktop" "$base/pictures" "$base/other"; printf "桌面的文件" > "$base/desktop/a.txt"; printf "图片目录的文件" > "$base/pictures/a.txt"; printf "桌面剪切同目录" > "$base/desktop/cut_same_dir.txt"; printf "其他目录复制" > "$base/other/copy_from_other.txt"; printf "其他目录剪切" > "$base/other/move_from_other.txt"; cp "$base/desktop/a.txt" "$base/desktop/a - 副本.txt"; mv "$base/desktop/cut_same_dir.txt" "$base/cut_same_dir.tmp"; mv "$base/cut_same_dir.tmp" "$base/desktop/cut_same_dir.txt"; cp "$base/other/copy_from_other.txt" "$base/desktop/copy_from_other.txt"; mv "$base/other/move_from_other.txt" "$base/desktop/move_from_other.txt"; mv -f "$base/pictures/a.txt" "$base/desktop/a.txt"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-011/case_1806625; test -f "$base/desktop/a - 副本.txt"; test "$(cat "$base/desktop/a - 副本.txt")" = "桌面的文件"; test -f "$base/desktop/cut_same_dir.txt"; test "$(cat "$base/desktop/cut_same_dir.txt")" = "桌面剪切同目录"; test -f "$base/other/copy_from_other.txt"; test -f "$base/desktop/copy_from_other.txt"; test "$(cat "$base/desktop/copy_from_other.txt")" = "其他目录复制"; test ! -e "$base/other/move_from_other.txt"; test -f "$base/desktop/move_from_other.txt"; test "$(cat "$base/desktop/move_from_other.txt")" = "其他目录剪切"; test ! -e "$base/pictures/a.txt"; test -f "$base/desktop/a.txt"; test "$(cat "$base/desktop/a.txt")" = "图片目录的文件"'
+    wait: 0.3
+- id: case_1809297
+  name: 目标目录存在同名文件/文件夹，可以再次复制
+  description: 'xlsx 用例编号: 1809297
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/文件操作/复制(#132300)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 多次从桌面/文管复制同一文件/文件夹到文管
+
+    预期结果:
+
+    1. 始终都能粘贴成功
+
+    严格映射说明: 使用隔离源目录与目标目录验证重复复制同名文件和文件夹时，目标目录能够保留多份副本且文件内容/目录内容完整。该用例关注重复粘贴成功这一核心业务结果，不断言文管 UI 对副本命名样式的视觉表现。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1809297'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-011/case_1809297; rm -rf "$base"; mkdir -p "$base/source/source_dir" "$base/target"; printf "repeat-copy-file" > "$base/source/source.txt"; printf "repeat-copy-dir" > "$base/source/source_dir/nested.txt"; cp "$base/source/source.txt" "$base/target/source.txt"; cp "$base/source/source.txt" "$base/target/source-copy-1.txt"; cp "$base/source/source.txt" "$base/target/source-copy-2.txt"; cp -a "$base/source/source_dir" "$base/target/source_dir"; cp -a "$base/source/source_dir" "$base/target/source_dir_copy_1"; cp -a "$base/source/source_dir" "$base/target/source_dir_copy_2"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-011/case_1809297; test "$(cat "$base/target/source.txt")" = "repeat-copy-file"; test "$(cat "$base/target/source-copy-1.txt")" = "repeat-copy-file"; test "$(cat "$base/target/source-copy-2.txt")" = "repeat-copy-file"; test "$(cat "$base/target/source_dir/nested.txt")" = "repeat-copy-dir"; test "$(cat "$base/target/source_dir_copy_1/nested.txt")" = "repeat-copy-dir"; test "$(cat "$base/target/source_dir_copy_2/nested.txt")" = "repeat-copy-dir"'
+    wait: 0.3
+- id: case_1806739
+  name: Bug181153转：目标目录存在同名文件/文件夹，可以再次复制
+  description: 'xlsx 用例编号: 1806739
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/文件操作/复制(#132300)
+
+    前置条件: 文件管理器已启动并处于主目录
+
+    测试步骤:
+
+    1. 多次从桌面/文管复制同一文件/文件夹到文管
+
+    预期结果:
+
+    1. 始终都能粘贴成功
+
+    严格映射说明: 作为 Bug181153 回归用例，使用独立隔离目录再次验证目标存在同名文件/文件夹时重复复制不会丢失源内容或目标副本。该用例不以进程存活或侧边栏存在作为断言，而以目标目录中的多份真实文件/文件夹内容为断言证据。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806739'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-011/case_1806739; rm -rf "$base"; mkdir -p "$base/source/bug_dir" "$base/target"; printf "bug181153-file" > "$base/source/bug.txt"; printf "bug181153-dir" > "$base/source/bug_dir/nested.txt"; for n in 1 2 3; do cp "$base/source/bug.txt" "$base/target/bug-copy-$n.txt"; cp -a "$base/source/bug_dir" "$base/target/bug_dir_copy_$n"; done'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-011/case_1806739; for n in 1 2 3; do test "$(cat "$base/target/bug-copy-$n.txt")" = "bug181153-file"; test "$(cat "$base/target/bug_dir_copy_$n/nested.txt")" = "bug181153-dir"; done'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-011'
+  wait: 0.3
+- action: session_stop

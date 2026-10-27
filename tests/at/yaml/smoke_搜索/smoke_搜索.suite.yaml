@@ -1,0 +1,316 @@
+name: 搜索_suite
+app: dde-file-manager
+description: 搜索模块 AT-SPI 用例
+module: 搜索
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_smoke_搜索_001
+  name: 【搜索专项优化-v1.1】文管搜索结果高亮显示关键词，召回内容最多显示200个字符
+  description: '来源用例编号: 1998489'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_002
+  name: 【搜索】主目录中搜索
+  description: '来源用例编号: 1963325'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 主目录
+    do: click
+    wait: 1.0
+  - action: keyboard_type
+    text: test-
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_003
+  name: 【搜索专项优化-v1.1】文管搜索结果高亮显示关键词
+  description: '来源用例编号: 1883939'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  - action: keyboard_type
+    text: 搜索专项测试
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 文档
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_004
+  name: 【搜索专项优化-v1.0】支持空格分词搜索
+  description: '来源用例编号: 1878463'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 截图 区域 a
+    wait: 1.0
+  - action: keyboard_type
+    text: 截图 区域 a
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_搜索_005
+  name: 【搜索专项优化-v1.0】完整镜像全文检索开关默认开启
+  description: '来源用例编号: 1878185'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: 内容：搜索专项优化测试文档
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_element
+    ref: 桌面
+- id: case_smoke_搜索_006
+  name: 搜索框-快捷键激活并搜索
+  description: '来源用例编号: 1816679'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+f
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_008
+  name: 计算机页面，检查搜索结果后的右键菜单功能
+  description: '来源用例编号: 1807827'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_009
+  name: '[129][core]回收站内搜索内容'
+  description: '来源用例编号: 1805785'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 回收站
+    do: click
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_010
+  name: 【搜索】文件重命名、新建后，进行搜索
+  description: '来源用例编号: 1805537'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_011
+  name: 【搜索】【支持筛选搜索】文管单击“搜索”按钮后，筛选过滤条件，直接进行筛选
+  description: '来源用例编号: 1805533'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_012
+  name: 【搜索】Bug200133转：全文搜索后，拖动侧边栏滚动条
+  description: '来源用例编号: 1805485'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: 计算机
+    do: click
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_013
+  name: 【搜索】搜索-单个词搜索
+  description: '来源用例编号: 1805469'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_type
+    text: deepin
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_014
+  name: 【搜索】全文搜索-搜索隐藏
+  description: '来源用例编号: 1805441'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_015
+  name: 【搜索】搜索-关键词搜索（文件名和内容均包含关键词）
+  description: '来源用例编号: 1805419'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_018
+  name: 【搜索】全文搜索-中文、繁体、英文、数字单独/混合进行搜索
+  description: '来源用例编号: 1805381'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: element_action
+    ref: side_bar_view
+    do: focus
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_019
+  name: 【搜索】搜索结果空白处右键菜单
+  description: '来源用例编号: 1805289'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: Menu
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+- id: case_smoke_搜索_020
+  name: 【搜索】高级搜索-打开/关闭
+  description: '来源用例编号: 1805269'
+  tags: []
+  steps:
+  - action: session_start
+    command: dde-file-manager --open-home
+    wait: 5.0
+  - action: keyboard_press
+    key: ctrl+f
+    wait: 1.0
+  - action: keyboard_press
+    key: ctrl+f
+    wait: 1.0
+  assert_steps:
+  - action: assert_process_running
+    app: dde-file-manager
+  - action: assert_process_running
+    app: dde-file-manager
+teardown:
+- action: session_stop

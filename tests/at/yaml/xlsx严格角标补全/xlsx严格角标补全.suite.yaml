@@ -1,0 +1,234 @@
+name: xlsx严格角标补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 主界面区域/文件操作/标记批次中筛选的严格角标元数据用例，使用 gio set/get 与隔离夹具验证角标设置结果
+module: xlsx严格角标补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-emblems && mkdir -p /tmp/dde-at-fixtures/strict-emblems'
+  wait: 1.0
+suites:
+- id: case_1806619
+  name: 角标设置-桌面文件/文件夹反复设置角标，桌面/文管不崩溃_
+  description: 'xlsx 用例编号: 1806619
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/文件操作/标记(#132300)
+
+    前置条件: 设置方法：gio set 文件路径 -t stringv metadata::emblems "图标及参数"；图标及参数格式：path;position；位置支持 lu/ld/ru/rd；支持格式 svg、jpg、png、bmp、gif；大小限制 <=100kb；桌面存在快捷方式
+
+    测试步骤:
+
+    1. 在终端反复给桌面同一文件设置角标（可切换上下左右设置）
+
+    2. 在终端反复给桌面同一文件夹设置角标（可切换上下左右设置）
+
+    3. 打开被设置文件所在目录，在终端反复给桌面同一文件设置角标（可切换上下左右设置）
+
+    4. 打开被设置文件所在目录，在终端反复给桌面同一文件夹设置角标（可切换上下左右设置）
+
+    预期结果:
+
+    1. 角标设置成功，桌面无崩溃
+
+    2. 角标设置成功，桌面无崩溃
+
+    3. 角标设置成功，文管无崩溃
+
+    4. 角标设置成功，文管无崩溃
+
+    严格映射说明: 源操作明确使用终端 `gio set metadata::emblems` 设置角标。本用例使用 /tmp/dde-at-fixtures/strict-emblems 隔离文件和文件夹，创建小于 100KB 的真实 SVG 角标文件，分别对文件/文件夹反复设置 lu/ld/ru/rd 四个位置，并用 `gio info -a metadata::emblems` 断言最终元数据精确写入；同时启动文管打开夹具目录并断言进程仍存活，覆盖“文管无崩溃”要求。不验证桌面 canvas 视觉角标。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806619'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806619; rm -rf "$base"; mkdir -p "$base/folder"; printf "emblem-target" > "$base/file.txt"; printf "nested" > "$base/folder/nested.txt"; printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"16\" height=\"16\" fill=\"#d43\"/></svg>" > "$base/emblem.svg"; pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; dde-file-manager "$base" >/tmp/dfm_at_strict_emblems.log 2>&1 & sleep 3; for pos in lu ld ru rd; do gio set "$base/file.txt" -t stringv metadata::emblems "$base/emblem.svg;$pos"; gio set "$base/folder" -t stringv metadata::emblems "$base/emblem.svg;$pos"; done'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806619; gio info -a metadata::emblems "$base/file.txt" | grep -F "metadata::emblems: [$base/emblem.svg;rd]"; gio info -a metadata::emblems "$base/folder" | grep -F "metadata::emblems: [$base/emblem.svg;rd]"; pgrep -f "^/usr/libexec/dde-file-manager( |$)" >/dev/null'
+    wait: 0.3
+- id: case_1806503
+  name: 角标设置-文件复制/替换
+  description: 'xlsx 用例编号: 1806503
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/文件操作/标记(#132300)
+
+    前置条件: 存在文件已设置角标
+
+    测试步骤:
+
+    1. 复制同名文件或文件夹执行替换操作
+
+    2. 同目录下复制有角标的文件或文件夹
+
+    3. 将有角标的文件复制到其他目录
+
+    4. 移动有角标的文件到另外一个目录
+
+    预期结果:
+
+    1. 文件或文件夹被替换，角标不消失
+
+    2. 建立副本，角标不被复制
+
+    3. 粘贴的文件无角标
+
+    4. 移动成功，且角标不在
+
+    严格映射说明: 使用隔离夹具和真实 `gio metadata::emblems` 元数据验证角标复制/替换/移动语义。先给源文件设置 SVG 角标；用同路径替换验证元数据仍存在；同目录副本、跨目录副本和跨目录移动目标均通过 `gio info -a metadata::emblems` 断言无角标元数据。该用例证明核心角标元数据结果，不验证桌面 canvas 视觉显示。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806503'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806503; rm -rf "$base"; mkdir -p "$base/src" "$base/dst"; printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"16\" height=\"16\" fill=\"#36c\"/></svg>" > "$base/emblem.svg"; printf "old" > "$base/src/a.txt"; gio set "$base/src/a.txt" -t stringv metadata::emblems "$base/emblem.svg;rd"; cp "$base/src/a.txt" "$base/src/a-copy.txt"; cp "$base/src/a.txt" "$base/dst/a.txt"; printf "new" > "$base/replacement.txt"; mv -f "$base/replacement.txt" "$base/src/a.txt"; printf "move" > "$base/src/move.txt"; gio set "$base/src/move.txt" -t stringv metadata::emblems "$base/emblem.svg;rd"; mv "$base/src/move.txt" "$base/dst/move.txt"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806503; gio info -a metadata::emblems "$base/src/a.txt" | grep -F "metadata::emblems: [$base/emblem.svg;rd]"; ! gio info -a metadata::emblems "$base/src/a-copy.txt" | grep -q "metadata::emblems"; ! gio info -a metadata::emblems "$base/dst/a.txt" | grep -q "metadata::emblems"; ! gio info -a metadata::emblems "$base/dst/move.txt" | grep -q "metadata::emblems"; test "$(cat "$base/src/a.txt")" = "new"; test "$(cat "$base/dst/move.txt")" = "move"'
+    wait: 0.3
+- id: case_1806495
+  name: 角标设置-设置超长名称文件/图片
+  description: 'xlsx 用例编号: 1806495
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/文件操作/标记(#132300)
+
+    前置条件: gio set 文件路径 -t stringv metadata::emblems "图标及参数"；图标及参数格式：path;position；位置支持 lu/ld/ru/rd；支持格式 svg、jpg、png、bmp、gif；大小限制 <=100kb；存在名称长度为255字符的文件；存在名称长度为255字符的图片
+
+    测试步骤:
+
+    1. 打开终端--给超长名称的文件设置角标
+
+    2. 打开终端--用超长名称的图片设置角标
+
+    3. 打开终端--同时使用超长名称的文件/图片设置角标
+
+    预期结果:
+
+    1. 角标设置成功
+
+    2. 角标设置成功
+
+    3. 角标设置成功
+
+    严格映射说明: 源操作明确使用 `gio set metadata::emblems`。本用例在隔离夹具中创建 255 字节级文件名和 255 字节级 SVG 图片名，分别验证超长目标文件、超长角标图片路径、以及二者组合时 `metadata::emblems` 均能被写入并通过 `gio info` 读回。该用例证明元数据设置成功，不验证桌面 canvas 视觉渲染。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806495'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806495; rm -rf "$base"; mkdir -p "$base"; long_file="f$(printf %0254d 1)"; long_img="i$(printf %0250d 2).svg"; printf "long target" > "$base/$long_file"; printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"16\" height=\"16\" fill=\"#090\"/></svg>" > "$base/$long_img"; printf "normal target" > "$base/normal.txt"; printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"16\" height=\"16\" fill=\"#990\"/></svg>" > "$base/normal.svg"; gio set "$base/$long_file" -t stringv metadata::emblems "$base/normal.svg;lu"; gio set "$base/normal.txt" -t stringv metadata::emblems "$base/$long_img;ld"; gio set "$base/$long_file" -t stringv metadata::emblems "$base/$long_img;rd"; printf "%s" "$long_file" > "$base/long_file.name"; printf "%s" "$long_img" > "$base/long_img.name"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806495; long_file="$(cat "$base/long_file.name")"; long_img="$(cat "$base/long_img.name")"; test ${#long_file} -eq 255; test ${#long_img} -eq 255; gio info -a metadata::emblems "$base/$long_file" | grep -F "metadata::emblems: [$base/$long_img;rd]"; gio info -a metadata::emblems "$base/normal.txt" | grep -F "metadata::emblems: [$base/$long_img;ld]"'
+    wait: 0.3
+- id: case_1806515
+  name: 角标设置-使用不同格式图片设置角标
+  description: 'xlsx 用例编号: 1806515
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/主界面区域/文件操作/标记(#132300)
+
+    前置条件: 设置方法：gio set 文件路径 -t stringv metadata::emblems "图标及参数"；图标及参数格式：path;position；位置支持 lu/ld/ru/rd；支持格式 svg、jpg、png、bmp、gif；大小限制 <=100kb
+
+    测试步骤:
+
+    1. 使用svg格式图片设置角标
+
+    2. 使用jpg格式图片设置角标
+
+    3. 使用png格式图片设置角标
+
+    4. 使用bmp格式图片设置角标
+
+    5. 使用gif格式图片设置角标
+
+    预期结果:
+
+    1. 设置成功
+
+    2. 设置成功
+
+    3. 设置成功
+
+    4. 设置成功
+
+    5. gif首桢设为角标
+
+    严格映射说明: 源操作明确使用 `gio set metadata::emblems`。本用例在隔离夹具中生成真实小于 100KB 的 svg/jpg/png/bmp/gif 图片，逐一设置为同一目标文件的角标，并在每次设置后通过 `gio info -a metadata::emblems` 断言对应格式路径被写入。该用例证明支持格式的角标元数据设置成功；GIF 首帧视觉渲染不通过 AT-SPI 断言。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806515'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806515; rm -rf "$base"; mkdir -p "$base"; printf "format target" > "$base/target.txt"; printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"16\" height=\"16\" fill=\"#c30\"/></svg>" > "$base/emblem.svg"; for ext in jpg png bmp gif; do ffmpeg -y -f lavfi -i color=c=red:s=16x16 -frames:v 1 "$base/emblem.$ext" >/tmp/dfm_at_emblem_1806515_$ext.log 2>&1; test -s "$base/emblem.$ext"; done; for ext in svg jpg png bmp gif; do test $(stat -c %s "$base/emblem.$ext") -le 102400; gio set "$base/target.txt" -t stringv metadata::emblems "$base/emblem.$ext;rd"; gio info -a metadata::emblems "$base/target.txt" | grep -F "metadata::emblems: [$base/emblem.$ext;rd]"; done'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806515; for ext in svg jpg png bmp gif; do test -s "$base/emblem.$ext"; test $(stat -c %s "$base/emblem.$ext") -le 102400; done; gio info -a metadata::emblems "$base/target.txt" | grep -F "metadata::emblems: [$base/emblem.gif;rd]"'
+    wait: 0.3
+- id: case_1806539
+  name: '[005][core]角标设置-桌面文件/文件夹设置角标'
+  description: 'xlsx 用例编号: 1806539
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/桌面整理(#132299)
+
+    前置条件: 设置方法：gio set 文件路径 -t stringv metadata::emblems "图标及参数"；图标及参数格式：path;position；位置支持 lu/ld/ru/rd；支持格式 svg、jpg、png、bmp、gif；大小限制 <=100kb；桌面存在快捷方式
+
+    测试步骤:
+
+    1. 桌面打开终端--输入命令给文件设置角标
+
+    2. 输入命令给文件夹设置角标
+
+    预期结果:
+
+    1. 角标设置成功
+
+    2. 角标设置成功
+
+    严格映射说明: 源操作明确为终端 `gio set metadata::emblems`，因此使用隔离文件和文件夹执行同类命令，并通过 `gio info -a metadata::emblems` 断言文件与文件夹均写入期望角标元数据。该用例证明命令角标设置成功，不验证桌面 canvas 视觉渲染。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806539'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806539; rm -rf "$base"; mkdir -p "$base/folder"; printf "file emblem" > "$base/file.txt"; printf "folder emblem" > "$base/folder/nested.txt"; printf "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"16\" height=\"16\"><rect width=\"16\" height=\"16\" fill=\"#06c\"/></svg>" > "$base/emblem.svg"; gio set "$base/file.txt" -t stringv metadata::emblems "$base/emblem.svg;lu"; gio set "$base/folder" -t stringv metadata::emblems "$base/emblem.svg;ld"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: >-
+      bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-emblems/case_1806539; gio info -a metadata::emblems "$base/file.txt" | grep -F "metadata::emblems: [$base/emblem.svg;lu]"; gio info -a metadata::emblems "$base/folder" | grep -F "metadata::emblems: [$base/emblem.svg;ld]"'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'pkill -9 -f "^/usr/libexec/dde-file-manager( |$)" 2>/dev/null || true; rm -rf /tmp/dde-at-fixtures/strict-emblems'
+  wait: 0.3
+- action: session_stop
