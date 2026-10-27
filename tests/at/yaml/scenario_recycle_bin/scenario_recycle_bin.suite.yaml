@@ -1,0 +1,132 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: scenario_recycle_bin_suite
+app: dde-file-manager
+module: scenario_recycle_bin
+setup:
+- action: session_start
+  command: dde-file-manager trash:///
+  wait: 3.0
+suites:
+- id: suite_scenario_recycle_bin_001_s1
+  name: 回收站页面检查与表头操作
+  description: '覆盖批次9：回收站表头右键勾选/取消勾选列显示（xlsx ID: 1805669）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 显示列
+    - 原始路径
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 显示列
+    - 原始路径
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_recycle_bin_002_s1
+  name: 回收站排序与还原操作
+  description: '覆盖批次19：回收站按名称/删除时间排序、文件还原（xlsx ID: 1805669）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 排序方式
+    - 删除时间
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 排序方式
+    - 名称
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 还原
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_recycle_bin_003_s1
+  name: 回收站清空与删除确认
+  description: '覆盖批次10/18：回收站清空操作、文件粉碎验证（xlsx ID: 1805909）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 删除
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: BtnDelete
+      role: push button
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: BtnDelete
+      role: push button
+teardown:
+- action: session_stop

@@ -1,0 +1,160 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: scenario_file_ops_suite
+app: dde-file-manager
+module: scenario_file_ops
+setup:
+- action: session_start
+  command: dde-file-manager --open-home
+  wait: 3.0
+suites:
+- id: suite_scenario_file_ops_001_s1
+  name: 复制文件地址与文件操作
+  description: '覆盖批次6：树形视图切换、Ctrl+A全选、Ctrl+Shift+C复制文件地址（xlsx ID: 1939833）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 显示方式
+    - 树状视图
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+a
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: ctrl+shift+c
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_file_ops_002_s1
+  name: 书签快捷访问与侧边栏操作
+  description: '覆盖批次14：侧边栏书签导航、快捷访问项目点击（xlsx ID: 1806855）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: SideBarView
+      role: list
+    items:
+    - 添加书签
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SideBarView
+      role: list
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: SideBarView
+      role: list
+    items:
+    - 移除书签
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SideBarView
+      role: list
+- id: suite_scenario_file_ops_003_s1
+  name: 预览开关切换
+  description: '覆盖批次17/20/29：预览面板开关、视图选项切换预览（xlsx ID: 1816707）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: F3
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: F3
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+- id: suite_scenario_file_ops_004_s1
+  name: 文件右键菜单操作
+  description: '覆盖批次15/16：文件右键打开方式、属性查看（xlsx ID: 1806491, 1806855）'
+  steps:
+  - step_type: action
+    action: element_action
+    selector:
+      name: CollectionView
+      role: list
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: dtk_context_menu
+    selector:
+      name: CollectionView
+      role: list
+    items:
+    - 属性
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll bar
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: keyboard_press
+    key: Escape
+    wait: 0.5
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CollectionView
+      role: list
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: PropertyDialog-QScrollArea
+      role: scroll bar
+teardown:
+- action: session_stop

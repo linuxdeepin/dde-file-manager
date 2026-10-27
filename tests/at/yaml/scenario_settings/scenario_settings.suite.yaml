@@ -1,0 +1,257 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: scenario_settings_suite
+app: dde-file-manager
+module: scenario_settings
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_scenario_settings_001_s1
+  name: 文管设置-基础设置开关验证
+  description: '覆盖批次1：基础设置-打开行为/文件和文件夹混合排序/显示扩展名/显示隐藏文件（xlsx ID: 1808589, 1808601, 1808599, 1808597）'
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+      role: scroll bar
+    do: focus
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+      role: toggle
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ScrollArea
+      role: scroll bar
+- id: suite_scenario_settings_002_s1
+  name: 文管设置-侧边栏显示项目配置
+  description: '覆盖批次2：侧边栏显示项目-分区/快捷访问/网络分组勾选与取消勾选（xlsx ID: 1808605, 1808603, 1808615）'
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ScrollArea
+      role: scroll bar
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+- id: suite_scenario_settings_003_s1
+  name: 文管设置-工作区视图与高级设置
+  description: '覆盖批次3-4：工作区视图显示项目/高级设置滑块与开关（xlsx ID: 1808623, 1808617）'
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: CheckBox
+      role: check box
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: Slider
+      role: slider
+    do: point
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: SwitchBtn
+      role: toggle
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: CheckBox
+      role: check box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: Slider
+      role: slider
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: SwitchBtn
+      role: toggle
+- id: suite_scenario_settings_004_s1
+  name: 文管设置-自定义标签页管理
+  description: '覆盖批次53自定义标签页设置：添加/删除自定义标签项（xlsx ID: 1808623）'
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 设置
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: AddItemBtn
+      role: push button
+    do: click
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: DeleteButton
+      role: push button
+    do: focus
+    wait: 1.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: DeleteButton
+      role: push button
+    do: click
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: AddItemBtn
+      role: push button
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: DeleteButton
+      role: push button
+teardown:
+- action: session_stop
