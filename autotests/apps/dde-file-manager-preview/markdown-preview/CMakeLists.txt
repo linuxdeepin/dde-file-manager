@@ -4,20 +4,23 @@ cmake_minimum_required(VERSION 3.10)
 # so stub-ext can access private members (see autotests/README.md).
 set(_preview_dir "${DFM_PREVIEW_PLUGIN_DIR}/markdown-preview")
 
-file(GLOB_RECURSE _ut_files
+file(GLOB_RECURSE _ut_files CONFIGURE_DEPENDS
     "${CMAKE_CURRENT_SOURCE_DIR}/*.cpp"
     "${CMAKE_CURRENT_SOURCE_DIR}/*.h")
 
-file(GLOB_RECURSE _plugin_files
+file(GLOB_RECURSE _plugin_files CONFIGURE_DEPENDS
     "${_preview_dir}/*.cpp"
     "${_preview_dir}/*.h")
 
 find_package(Qt6 COMPONENTS Widgets REQUIRED)
+find_package(KF6SyntaxHighlighting REQUIRED)
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(MD4C REQUIRED IMPORTED_TARGET md4c)
 
 
 dfm_create_test_executable(ut-markdown-preview
     SOURCES ${_ut_files} ${_plugin_files}
-    LINK_LIBRARIES DFM6::base DFM6::framework Qt6::Widgets 
+    LINK_LIBRARIES DFM6::base DFM6::framework Qt6::Widgets KF6::SyntaxHighlighting PkgConfig::MD4C
 )
 
 target_include_directories(ut-markdown-preview PRIVATE
