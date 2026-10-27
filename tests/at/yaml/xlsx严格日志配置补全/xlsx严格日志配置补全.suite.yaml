@@ -1,0 +1,79 @@
+name: xlsx严格日志配置补全_suite
+app: dde-file-manager
+description: 从 V25 xlsx 交互场景/升级批次中筛选的严格日志配置命令型用例，读取系统日志配置 JSON 并断言关键字段
+module: xlsx严格日志配置补全
+tags: []
+fast_fail: false
+env_check: []
+setup: []
+suites:
+- id: case_1806369
+  name: 日志适配规范-文管日志配置文件查看
+  description: 'xlsx 用例编号: 1806369
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/交互场景/升级(#132300)
+
+    前置条件: 配置文件：/usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json，默认状态，未被修改过
+
+    测试步骤:
+
+    1. 终端执行命令：
+
+    2. cat /usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json
+
+    预期结果:
+
+    1. 存在文件管理器日志配置文件，内容为json日志配置文件，包含“name”、“exec”、“logType”、“logPath”、“visible”、“version”，其中logType默认为“journal”，visible默认为“true”
+
+    严格映射说明: 源操作是终端查看固定日志配置 JSON。本用例只读 `/usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json`，用 Python JSON 解析断言顶层 `name/visible/version`、至少一个 submodule 的 `exec/logType/logPath`，且全部 submodule 的 `logType` 为 `journal`，`visible` 为 true。不修改系统文件。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806369'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'python3 -c "import json; p=\"/usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json\"; data=json.load(open(p, encoding=\"utf-8\")); subs=data.get(\"submodules\") or []; assert data.get(\"name\") == \"dde-file-manager\", data; assert data.get(\"visible\") is True, data; assert data.get(\"version\"), data; assert subs, data; assert all((\"name\" in i and \"exec\" in i and \"logType\" in i and \"logPath\" in i and i[\"logType\"] == \"journal\") for i in subs), subs; assert any(i.get(\"name\") == \"dde-file-manager\" for i in subs), subs"'
+    wait: 0.3
+  assert_steps:
+  - action: session_start
+    command: test -f /usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json
+    wait: 0.3
+- id: case_1806363
+  name: 日志适配规范-文件管理器日志配置文件查看
+  description: 'xlsx 用例编号: 1806363
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/交互场景/升级(#132300)
+
+    前置条件: 配置文件：/usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json，默认状态，未被修改过
+
+    测试步骤:
+
+    1. 终端执行命令：
+
+    2. cat /usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json
+
+    预期结果:
+
+    1. 存在文件管理器日志配置文件，内容为json日志配置文件，包含“name”、“exec”、“logType”、“logPath”、“visible”、“version”，其中logType默认为“journal”，visible默认为“true”
+
+    严格映射说明: 与 1806369 来源步骤相同，独立保留原始 xlsx ID。通过 JSON 解析而不是纯文本 grep 验证日志配置字段与默认值，避免字段位置变化导致误判。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1806363'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: >-
+      bash -lc 'python3 -c "import json; p=\"/usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json\"; data=json.load(open(p, encoding=\"utf-8\")); subs=data.get(\"submodules\") or []; assert data.get(\"name\") == \"dde-file-manager\", data; assert data.get(\"visible\") is True, data; assert data.get(\"version\"), data; assert subs, data; assert all((\"exec\" in i and \"logType\" in i and \"logPath\" in i and i[\"logType\"] == \"journal\") for i in subs), subs; assert any(i.get(\"name\") == \"dde-file-manager\" for i in subs), subs"'
+    wait: 0.3
+  assert_steps:
+  - action: session_start
+    command: test -f /usr/share/deepin-log-viewer/deepin-log.conf.d/dde-file-manager.json
+    wait: 0.3
+teardown:
+- action: session_stop

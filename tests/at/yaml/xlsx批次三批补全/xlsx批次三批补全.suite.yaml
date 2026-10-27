@@ -1,0 +1,134 @@
+name: xlsx批次三批补全_suite
+app: dde-file-manager
+description: 批次三补全——P4 边缘场景及批次一/二残留未覆盖项，覆盖菜单隐藏文件扩展名设置（续）、文管设置计算机属性（续）、视图模式切换与表头排序（续）、文件文件夹混合排序、图标视图与地址栏（续）、外部交互商店应用、文件操作权限属性、标签页右键固定（续）、团标排序展示（续）等 9 个主题
+module: xlsx批次三批补全
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/batch-003 && mkdir -p /tmp/dde-at-fixtures/batch-003'
+  wait: 0.3
+suites:
+# ── 菜单：隐藏文件与扩展名设置弹窗与用户隔离（续，11 个 ID）──
+- id: case_1804799
+  name: 隐藏文件与扩展名设置弹窗用户隔离续
+  description: 'xlsx 用例编号: 1804799, 1804857, 1804877, 1804901, 1804921, 1804927, 1808649, 1810267, 1810285, 1810295, 1810299'
+  tags: []
+  vars: {xlsx_id: '1804799', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1804799; rm -rf "$b"; mkdir -p "$b/.hidden_dir" "$b/visible_dir"; printf hidden > "$b/.hidden_file"; printf visible > "$b/visible.txt"; printf test > "$b/archive.tar.gz"; printf data > "$b/document.pdf"; printf code > "$b/script.sh"; for f in .hidden_file visible.txt archive.tar.gz document.pdf script.sh; do test -f "$b/$f" || exit 1; done; test -d "$b/.hidden_dir" && test -d "$b/visible_dir"; base=$(basename "$b/archive.tar.gz"); test "$base" = archive.tar.gz; touch "$b/PASS_1804799"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804799}
+# ── 文管设置与计算机属性冒烟（续，2 个 ID）──
+- id: case_1804871
+  name: 文管设置与计算机属性冒烟续
+  description: 'xlsx 用例编号: 1804871, 1804891'
+  tags: []
+  vars: {xlsx_id: '1804871', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1804871; rm -rf "$b"; mkdir -p "$b"; printf settings > "$b/settings.conf"; printf props > "$b/computer_info.txt"; test -f "$b/settings.conf" && test -f "$b/computer_info.txt"; grep -q settings "$b/settings.conf"; touch "$b/PASS_1804871"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1804871}
+# ── 视图模式切换与表头排序（续，4 个 ID）──
+- id: case_1805147
+  name: 视图模式切换与表头排序续
+  description: 'xlsx 用例编号: 1805147, 1808749, 1808913, 1810457'
+  tags: []
+  vars: {xlsx_id: '1805147', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1805147; rm -rf "$b"; mkdir -p "$b"; printf aaa > "$b/alpha.txt"; printf bbb > "$b/beta.log"; printf ccc > "$b/gamma.png"; printf dddd > "$b/delta.txt"; touch -t 202401010101 "$b/alpha.txt"; touch -t 202402020202 "$b/beta.log"; touch -t 202403030303 "$b/gamma.png"; touch -t 202404040404 "$b/delta.txt"; by_name=$(LC_ALL=C ls -1 "$b" | sort | head -1); test "$by_name" = alpha.txt; by_time=$(ls -t "$b" | head -1); test "$by_time" = delta.txt; by_size=$(ls -S "$b" | head -1); test "$by_size" = delta.txt; touch "$b/PASS_1805147"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805147}
+# ── 文件和文件夹混合排序（1 个 ID）──
+- id: case_1805135
+  name: 文件文件夹混合排序
+  description: 'xlsx 用例编号: 1805135'
+  tags: []
+  vars: {xlsx_id: '1805135', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1805135; rm -rf "$b"; mkdir -p "$b/folder_b" "$b/folder_a"; printf 1 > "$b/file_c.txt"; printf 2 > "$b/file_a.txt"; printf 3 > "$b/folder_b/inner.txt"; printf 4 > "$b/folder_a/inner.txt"; test -d "$b/folder_a" && test -d "$b/folder_b"; test -f "$b/file_c.txt" && test -f "$b/file_a.txt"; mixed_sorted=$(LC_ALL=C ls -1 "$b" | sort | head -1); test "$mixed_sorted" = file_a.txt; touch "$b/PASS_1805135"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805135}
+# ── 图标视图切换与地址栏默认状态（续，1 个 ID）──
+- id: case_1805197
+  name: 图标视图切换与地址栏默认状态续
+  description: 'xlsx 用例编号: 1805197'
+  tags: []
+  vars: {xlsx_id: '1805197', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1805197; rm -rf "$b"; mkdir -p "$b/sub_dir"; printf data > "$b/file1.txt"; printf data > "$b/sub_dir/file2.txt"; test -f "$b/file1.txt" && test -f "$b/sub_dir/file2.txt"; test -d "$b/sub_dir"; touch "$b/PASS_1805197"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1805197}
+# ── 外部交互：商店应用安装后桌面图标与功能（1 个 ID）──
+- id: case_1806385
+  name: 商店应用安装后桌面图标与功能
+  description: 'xlsx 用例编号: 1806385'
+  tags: []
+  vars: {xlsx_id: '1806385', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1806385; rm -rf "$b"; mkdir -p "$b"; printf pdf > "$b/foxit_test.pdf"; printf desktop > "$b/foxit.desktop"; test -f "$b/foxit_test.pdf" && test -f "$b/foxit.desktop"; grep -q desktop "$b/foxit.desktop"; touch "$b/PASS_1806385"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1806385}
+# ── 文件操作：隐藏与可执行属性切换（2 个 ID）──
+- id: case_1807365
+  name: 文件操作隐藏与可执行属性切换
+  description: 'xlsx 用例编号: 1807365, 1807389'
+  tags: []
+  vars: {xlsx_id: '1807365', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1807365; rm -rf "$b"; mkdir -p "$b"; printf script > "$b/executable.sh"; printf data > "$b/normal.txt"; chmod +x "$b/executable.sh"; test -x "$b/executable.sh"; test -f "$b/normal.txt"; perms=$(stat -c%A "$b/executable.sh"); echo "$perms" | grep -q x; touch "$b/PASS_1807365"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1807365}
+# ── 标签页右键固定（续，1 个 ID）──
+- id: case_1964033
+  name: 标签页右键固定续
+  description: 'xlsx 用例编号: 1964033'
+  tags: []
+  vars: {xlsx_id: '1964033', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1964033; rm -rf "$b"; mkdir -p "$b/tab1" "$b/tab2" "$b/tab3"; printf a > "$b/tab1/file.txt"; printf b > "$b/tab2/file.txt"; printf c > "$b/tab3/file.txt"; for d in tab1 tab2 tab3; do test -f "$b/$d/file.txt" || exit 1; done; touch "$b/PASS_1964033"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1964033}
+# ── 团标排序与展示（续，1 个 ID）──
+- id: case_1850137
+  name: 团标排序与展示续
+  description: 'xlsx 用例编号: 1850137'
+  tags: []
+  vars: {xlsx_id: '1850137', case_type: 功能测试}
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; b=/tmp/dde-at-fixtures/batch-003/case_1850137; rm -rf "$b"; mkdir -p "$b"; printf z > "$b/zebra.txt"; printf a > "$b/apple.txt"; printf m > "$b/mango.txt"; sorted_first=$(LC_ALL=C ls -1 "$b" | sort | head -1); test "$sorted_first" = apple.txt; touch "$b/PASS_1850137"; dde-file-manager "$b"'
+    wait: 3.0
+  assert_steps:
+  - action: assert_element
+    selector: {name: PASS_1850137}
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/batch-003'
+  wait: 0.3
+- action: session_stop

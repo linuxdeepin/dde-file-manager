@@ -1,0 +1,66 @@
+name: xlsx严格文件操作软链接_suite
+app: dde-file-manager
+description: 从 V25 xlsx 冒烟用例/文件操作批次7中筛选的严格软链接文件系统结果用例，使用 /tmp/dde-at-fixtures 隔离夹具并断言实际软链接结果
+module: xlsx严格文件操作软链接
+tags: []
+fast_fail: false
+env_check: []
+setup:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-007 && mkdir -p /tmp/dde-at-fixtures/strict-batch-007'
+  wait: 1.0
+suites:
+- id: case_1853733
+  name: 【文件操作】文件夹创建软链接
+  description: 'xlsx 用例编号: 1853733
+
+    所属模块: /V25_2500（测试部专用）/A类核心模块/文件管理器/冒烟用例/文件操作(#132299)
+
+    前置条件:
+
+    1. 在/home/uos目录中创建一个文件夹：test-cc，文件夹中放任意一张图片
+
+    测试步骤:
+
+    1. 通过文管进入/home/uos（数据盘），在空白处右键，选择：在终端中打开
+
+    2. 给test-cc创建软链接：ln -s /home/uos/test-cc /home/uos/Desktop/test-cc-link
+
+    3. 到桌面上双击test-cc-link软链接，检查是否打开test-cc文件夹
+
+    4. 再次给test-cc创建软链接，软链接名称和源文件名一样：ln -s /home/uos/test-cc /home/uos/Desktop/
+
+    5. 到桌面上双击test-cc-软链接，检查是否打开test-cc文件夹
+
+    预期结果:
+
+    1.
+
+    2. 创建成功
+
+    3. 打开test-cc文件夹，且正常访问文件夹中的图片
+
+    4. 创建成功
+
+    5. 打开test-cc文件夹，且正常访问文件夹中的图片
+
+    严格映射说明: 使用 /tmp/dde-at-fixtures/strict-batch-007/home 和 desktop 作为 /home/uos 与 Desktop 的等价可写目录；核心业务为文件夹软链接创建成功、链接目标正确，并且可经软链接访问源文件夹中的图片文件。
+
+    '
+  tags: []
+  vars:
+    xlsx_id: '1853733'
+    case_type: 功能测试
+  steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-007/case_1853733; rm -rf "$base"; mkdir -p "$base/home/test-cc" "$base/desktop"; printf "strict-batch-007-image" > "$base/home/test-cc/source-image.png"; ln -s "$base/home/test-cc" "$base/desktop/test-cc-link"; ln -s "$base/home/test-cc" "$base/desktop/"'
+    wait: 1.0
+  assert_steps:
+  - action: session_start
+    command: bash -lc 'set -e; base=/tmp/dde-at-fixtures/strict-batch-007/case_1853733; test -d "$base/home/test-cc"; test -f "$base/home/test-cc/source-image.png"; test -L "$base/desktop/test-cc-link"; test "$(readlink "$base/desktop/test-cc-link")" = "$base/home/test-cc"; test -f "$base/desktop/test-cc-link/source-image.png"; test -L "$base/desktop/test-cc"; test "$(readlink "$base/desktop/test-cc")" = "$base/home/test-cc"; test -f "$base/desktop/test-cc/source-image.png"'
+    wait: 0.3
+teardown:
+- action: session_start
+  command: bash -lc 'rm -rf /tmp/dde-at-fixtures/strict-batch-007'
+  wait: 0.3
+- action: session_stop
