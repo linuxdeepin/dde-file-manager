@@ -238,12 +238,13 @@ QIcon solidColorIcon(const QColor &color, int side = 48)
 }
 
 // 统计画布上与目标颜色匹配的不透明像素（容忍缩放引入的边缘混合）
+// 用 pixelColor() 而非 QColor(QRgb)：后者会丢弃 alpha，透明像素会被当成不透明黑。
 int countColorPixels(const QImage &canvas, const QColor &target)
 {
     int count = 0;
     for (int y = 0; y < canvas.height(); ++y) {
         for (int x = 0; x < canvas.width(); ++x) {
-            const QColor c(canvas.pixel(x, y));
+            const QColor c = canvas.pixelColor(x, y);
             if (c.alpha() < 200)
                 continue;
             if (std::abs(c.red() - target.red()) > 30

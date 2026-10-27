@@ -108,9 +108,17 @@ TEST_F(UT_DeviceProxyManagerCov, MountLifecycle_ProtocolDevice_UpdatesMatching)
 TEST_F(UT_DeviceProxyManagerCov, MountLifecycle_OpticalBlockDevice_UpdatesMatching)
 {
     // Arrange — optical drive id: block prefix + "sr<n>".
-    const QString opticalId = QStringLiteral("/org/freedesktop/UDisks2/block_devices/sr0");
+    // Must NOT be a device that really exists on the test machine: when the
+    // device manager daemon is running, queryBlockInfo() is answered over DBus
+    // and a real, removable /dev/sr0 makes isExternalBlock() true — which would
+    // make this test fail depending on the host's hardware.
+    const QString opticalId = QStringLiteral("/org/freedesktop/UDisks2/block_devices/sr9999");
     QTemporaryDir tmp;
     ASSERT_TRUE(tmp.isValid());
+    // Precondition of this case: UDisks2 knows nothing about the id, so
+    // isExternalBlock(empty info) == false.
+    ASSERT_TRUE(m->queryBlockInfo(opticalId).isEmpty())
+            << "sr9999 unexpectedly present in the host's device tree; pick another fake id";
 
     // Act — block device without DBus info: only allMounts is filled.
     d->addMounts(opticalId, tmp.path());
