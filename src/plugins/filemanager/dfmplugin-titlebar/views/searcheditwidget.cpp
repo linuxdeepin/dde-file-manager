@@ -349,6 +349,13 @@ void SearchEditWidget::initUI()
     // searchEdit->setFocusPolicy(Qt::StrongFocus);
     searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
 
+    // Fix BUG-315557: DSearchEdit hardcodes its internal icon button size to 20x20;
+    // override to kToolButtonIconSize (16x16) for visual consistency with other toolbar icons.
+    const QList<DIconButton *> searchIconBtns = searchEdit->findChildren<DIconButton *>();
+    for (DIconButton *btn : searchIconBtns) {
+        btn->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
+    }
+
     searchEditOpacityEffect = new QGraphicsOpacityEffect(searchEdit);
     searchEditOpacityEffect->setOpacity(1.0);
     searchEdit->setGraphicsEffect(searchEditOpacityEffect);
