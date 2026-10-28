@@ -236,7 +236,7 @@ void InfoCache::removeCaches(const QList<QUrl> urls)
         for (const auto &url : urls) {
             auto info = d->mainCache.take(url);
             if (info)
-                infos.insert(url, d->mainCache.take(url));
+                infos.insert(url, info);
         }
     }
     if (d->cacheWorkerStoped)
