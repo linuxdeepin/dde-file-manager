@@ -100,6 +100,7 @@ QString resolveEntryBlockDevPath(const QString &device);
 
 namespace dialog_utils {
 int showDialog(const QString &title, const QString &msg);
+int showDialog(const QString &title, const QString &msg, const QString &iconName);
 int showConfirmEncryptionDialog(const QString &device, bool needReboot);
 int showConfirmDecryptionDialog(const QString &device, bool needReboot);
 void showTPMError(const QString &title, tpm_passphrase_utils::TPMError err);

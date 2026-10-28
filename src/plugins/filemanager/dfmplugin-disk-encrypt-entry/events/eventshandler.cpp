@@ -659,7 +659,10 @@ void EventsHandler::showChgPwdError(const QString &dev, const QString &devName, 
         break;
     }
 
-    dialog_utils::showDialog(title, msg);
+    if (-code == kSuccess)
+        dialog_utils::showDialog(title, msg, QStringLiteral("dialog-ok"));
+    else
+        dialog_utils::showDialog(title, msg, QStringLiteral("dialog-error"));
 }
 
 void EventsHandler::requestReboot()

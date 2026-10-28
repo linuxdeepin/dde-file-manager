@@ -809,13 +809,17 @@ QString device_utils::resolveEntryBlockDevPath(const QString &device)
 
 int dialog_utils::showDialog(const QString &title, const QString &msg)
 {
-    QString icon;
+    return showDialog(title, msg, QStringLiteral("dde-file-manager"));
+}
+
+int dialog_utils::showDialog(const QString &title, const QString &msg, const QString &iconName)
+{
     Dtk::Widget::DDialog d;
     if (isWayland())
         d.setWindowFlag(Qt::WindowStaysOnTopHint);
     d.setTitle(title);
     d.setMessage(msg);
-    d.setIcon(QIcon::fromTheme("dde-file-manager"));
+    d.setIcon(QIcon::fromTheme(iconName));
     d.addButton(qApp->translate("dfmplugin_diskenc::ChgPassphraseDialog", "Confirm"));
     return d.exec();
 }
