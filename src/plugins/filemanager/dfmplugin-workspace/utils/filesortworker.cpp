@@ -494,7 +494,8 @@ void FileSortWorker::handleWatcherAddChildren(const QList<SortInfoPointer> &chil
             return;
         }
 
-        if (this->children.value(makeParentUrl(sortInfo->fileUrl())).contains(sortInfo->fileUrl())) {
+        auto childIt = this->children.constFind(makeParentUrl(sortInfo->fileUrl()));
+        if (childIt != this->children.constEnd() && childIt.value().contains(sortInfo->fileUrl())) {
             auto data = childData(sortInfo->fileUrl());
             if (data && data->fileInfo())
                 data->fileInfo()->updateAttributes();
@@ -577,8 +578,13 @@ bool FileSortWorker::handleWatcherUpdateFile(const SortInfoPointer child)
     if (!child)
         return false;
 
-    if (!child->fileUrl().isValid() || !this->children.value(makeParentUrl(child->fileUrl())).contains(child->fileUrl()))
+    if (!child->fileUrl().isValid())
         return false;
+    {
+        auto childIt = this->children.constFind(makeParentUrl(child->fileUrl()));
+        if (childIt == this->children.constEnd() || !childIt.value().contains(child->fileUrl()))
+            return false;
+    }
 
     FileInfoPointer info;
 
@@ -615,22 +621,25 @@ void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
         return;
     auto hidlist = DFMUtils::hideListFromUrl(QUrl::fromLocalFile(hiddenFileInfo->pathOf(PathInfoType::kFilePath)));
     auto parentUrl = makeParentUrl(hidUrl);
-    for (const auto &child : children.value(parentUrl)) {
-        if (isCanceled)
-            return;
+    auto childIt = children.constFind(parentUrl);
+    if (childIt != children.constEnd()) {
+        for (const auto &child : childIt.value()) {
+            if (isCanceled)
+                return;
 
-        auto item = childData(child->fileUrl());
+            auto item = childData(child->fileUrl());
 
-        auto fileName = child->fileUrl().fileName();
-        if (fileName.startsWith(".")) {
-            child->setHide(true);
-        } else {
-            child->setHide(hidlist.contains(fileName));
+            auto fileName = child->fileUrl().fileName();
+            if (fileName.startsWith(".")) {
+                child->setHide(true);
+            } else {
+                child->setHide(hidlist.contains(fileName));
+            }
+            auto info = item->fileInfo();
+            if (!info)
+                continue;
+            info->setExtendedAttributes(ExtInfoType::kFileIsHid, child->isHide());
         }
-        auto info = item->fileInfo();
-        if (!info)
-            continue;
-        info->setExtendedAttributes(ExtInfoType::kFileIsHid, child->isHide());
     }
 
     filterAndSortFiles(parentUrl, true, false);
@@ -863,7 +872,13 @@ bool FileSortWorker::handleUpdateFile(const QUrl &url)
     if (!url.isValid())
         return false;
 
-    SortInfoPointer sortInfo = children.value(makeParentUrl(url)).value(url);
+    auto parentIt = children.constFind(makeParentUrl(url));
+    SortInfoPointer sortInfo;
+    if (parentIt != children.constEnd()) {
+        auto innerIt = parentIt.value().constFind(url);
+        if (innerIt != parentIt.value().constEnd())
+            sortInfo = innerIt.value();
+    }
     if (!sortInfo)
         return false;
 
@@ -1006,8 +1021,11 @@ void FileSortWorker::handleClearThumbnail()
 void FileSortWorker::handleFileInfoUpdated(const QUrl &url, const QString &infoPtr, const bool isLinkOrg)
 {
     Q_UNUSED(isLinkOrg);
-    if (!children.value(makeParentUrl(url)).contains(url))
-        return;
+    {
+        auto it = children.constFind(makeParentUrl(url));
+        if (it == children.constEnd() || !it.value().contains(url))
+            return;
+    }
 
     auto itemdata = childData(url);
     if (!itemdata)
@@ -1374,7 +1392,13 @@ QList<QUrl> FileSortWorker::filterFilesByParent(const QUrl &dir, const bool byIn
                 return {};
             if (!UniversalUtils::urlEquals(parent, current) && !UniversalUtils::isParentUrl(parent, dir))
                 continue;
-            auto sortInfo = children.value(makeParentUrl(parent)).value(parent);
+            auto parentIt = children.constFind(makeParentUrl(parent));
+            SortInfoPointer sortInfo;
+            if (parentIt != children.constEnd()) {
+                auto innerIt = parentIt.value().constFind(parent);
+                if (innerIt != parentIt.value().constEnd())
+                    sortInfo = innerIt.value();
+            }
             if (sortInfo && sortInfo->needsCompletion())
                 doCompleteFileInfo(sortInfo);
             if (!UniversalUtils::urlEquals(parent, current) && !checkFilters(sortInfo, byInfo)) {
@@ -1397,15 +1421,18 @@ void FileSortWorker::filterTreeDirFiles(const QUrl &parent, const bool byInfo)
         return;
 
     QList<QUrl> filterUrls {};
-    for (const auto &sortInfo : children.value(parent)) {
-        if (isCanceled)
-            return;
+    auto childIt = children.constFind(parent);
+    if (childIt != children.constEnd()) {
+        for (const auto &sortInfo : childIt.value()) {
+            if (isCanceled)
+                return;
 
-        if (sortInfo && sortInfo->needsCompletion())
-            doCompleteFileInfo(sortInfo);
+            if (sortInfo && sortInfo->needsCompletion())
+                doCompleteFileInfo(sortInfo);
 
-        if (checkFilters(sortInfo, byInfo))
-            filterUrls.append(sortInfo->fileUrl());
+            if (checkFilters(sortInfo, byInfo))
+                filterUrls.append(sortInfo->fileUrl());
+        }
     }
 
     visibleTreeChildren.remove(parent);
@@ -1435,8 +1462,11 @@ bool FileSortWorker::addChild(const SortInfoPointer &sortInfo,
     if (depth < 0)
         return false;
 
-    if (children.value(parentUrl).contains(sortInfo->fileUrl()))
-        return false;
+    {
+        auto it = children.constFind(parentUrl);
+        if (it != children.constEnd() && it.value().contains(sortInfo->fileUrl()))
+            return false;
+    }
 
     auto childList = children.take(parentUrl);
     childList.insert(sortInfo->fileUrl(), sortInfo);
@@ -1512,10 +1542,19 @@ bool FileSortWorker::sortInfoUpdateByFileInfo(const FileInfoPointer fileInfo)
 
     auto url = fileInfo->fileUrl();
     auto parentUrl = makeParentUrl(url);
-    if (!children.value(parentUrl).contains(url))
-        return false;
+    {
+        auto it = children.constFind(parentUrl);
+        if (it == children.constEnd() || !it.value().contains(url))
+            return false;
+    }
 
-    SortInfoPointer sortInfo = children.value(parentUrl).value(url);
+    auto parentIt = children.constFind(parentUrl);
+    SortInfoPointer sortInfo;
+    if (parentIt != children.constEnd()) {
+        auto innerIt = parentIt.value().constFind(url);
+        if (innerIt != parentIt.value().constEnd())
+            sortInfo = innerIt.value();
+    }
     if (!sortInfo)
         return false;
 
@@ -1549,7 +1588,7 @@ void FileSortWorker::switchTreeView()
 void FileSortWorker::switchListView()
 {
     // 移除depthMap和visibleTreeChildren
-    auto allShowList = visibleTreeChildren.value(current);
+    auto allShowList = visibleTreeChildren.take(current);
     // 保持选中
     Q_EMIT aboutToSwitchToListView(allShowList);
 
@@ -1568,12 +1607,16 @@ void FileSortWorker::switchListView()
     // 更新显示项
     insertVisibleChildren(0, allShowList, InsertOpt::kInsertOptForce);
     // 移除children
-    auto allShowChildren = children.value(current);
+    auto allShowChildren = children.take(current);
     QList<QUrl> removeChildren;
     for (const auto &url : children.keys()) {
         if (UniversalUtils::urlEquals(url, current))
             continue;
-        removeChildren.append(children.value(url).keys());
+        {
+            auto it = children.constFind(url);
+            if (it != children.constEnd())
+                removeChildren.append(it.value().keys());
+        }
     }
     children.clear();
     children.insert(current, allShowChildren);
@@ -1608,7 +1651,13 @@ QList<QUrl> FileSortWorker::sortAllTreeFilesByParent(const QUrl &dir, const bool
             if (visibleTreeChildren.isEmpty() && UniversalUtils::urlEquals(parent, current)) {
                 sortList = sortTreeFiles(visibleChildren, reverse);
             } else {
-                sortList = bSort ? sortTreeFiles(visibleTreeChildren.take(parent), reverse) : visibleTreeChildren.value(parent);
+                if (bSort) {
+                    sortList = sortTreeFiles(visibleTreeChildren.take(parent), reverse);
+                } else {
+                    auto it = visibleTreeChildren.constFind(parent);
+                    if (it != visibleTreeChildren.constEnd())
+                        sortList = it.value();
+                }
             }
 
             if (sortList.isEmpty())
@@ -1677,8 +1726,11 @@ QList<QUrl> FileSortWorker::removeChildrenByParents(const QList<QUrl> &dirs)
 {
     QList<QUrl> urls;
     for (const auto &dir : dirs) {
-        for (const auto &sortInfo : children.value(dir))
-            urls << sortInfo->fileUrl();
+        auto childIt = children.constFind(dir);
+        if (childIt != children.constEnd()) {
+            for (const auto &sortInfo : childIt.value())
+                urls << sortInfo->fileUrl();
+        }
         children.remove(dir);
         auto item = childData(dir);
         if (item)
@@ -1751,14 +1803,18 @@ int FileSortWorker::findEndPos(const QUrl &dir)
         return childrenCountInternal();
 
     const auto &parentUrl = makeParentUrl(dir);
-    auto index = visibleTreeChildren.value(parentUrl).indexOf(dir);
+    auto it = visibleTreeChildren.constFind(parentUrl);
+    if (it == visibleTreeChildren.constEnd())
+        return -1;
+
+    auto index = it.value().indexOf(dir);
     if (index < 0)
         return -1;
 
-    if (index == visibleTreeChildren.value(parentUrl).length() - 1)
+    if (index == it.value().length() - 1)
         return findEndPos(makeParentUrl(dir));
 
-    return getChildShowIndexInternal(visibleTreeChildren.value(parentUrl).at(index + 1));
+    return getChildShowIndexInternal(it.value().at(index + 1));
 }
 
 int FileSortWorker::findStartPos(const QUrl &parent)
@@ -1979,7 +2035,12 @@ int FileSortWorker::findRealShowIndex(const QUrl &preItemUrl)
     if (!preItemPtr || !preItemPtr->data(Global::ItemRoles::kItemTreeViewExpandedRole).toBool())
         return indexOfVisibleChild(preItemUrl) + 1;
 
-    QList<QUrl> preSubItemList = visibleTreeChildren.value(preItemUrl, {});
+    QList<QUrl> preSubItemList;
+    {
+        auto it = visibleTreeChildren.constFind(preItemUrl);
+        if (it != visibleTreeChildren.constEnd())
+            preSubItemList = it.value();
+    }
     if (preSubItemList.isEmpty())
         return indexOfVisibleChild(preItemUrl) + 1;
 
