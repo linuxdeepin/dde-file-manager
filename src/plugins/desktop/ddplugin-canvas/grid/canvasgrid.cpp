@@ -8,6 +8,7 @@
 #include <QApplication>
 #include <QUrl>
 #include <QDebug>
+#include <QSet>
 
 using namespace ddplugin_canvas;
 
@@ -405,6 +406,9 @@ void CanvasGridPrivate::restore(QStringList currentItems)
     // the item's pos in record is invalid to current grid.
     QStringList invalidPos;
 
+    // use QSet for O(1) lookup instead of O(n) linear search on QStringList
+    QSet<QString> currentSet(currentItems.begin(), currentItems.end());
+
     // restore each surface.
     for (int idx : idxs) {
         const QHash<QString, QPoint> &oldPos = profile.value(idx);
@@ -418,7 +422,7 @@ void CanvasGridPrivate::restore(QStringList currentItems)
             // using covertFileUrlToDesktop(itor.key()).toString() to cover it to file://
             QString item = itor.key();
 
-            if (!currentItems.contains(item))
+            if (!currentSet.contains(item))
                 continue; // item was removed.
 
             const QPoint &pos = itor.value();
@@ -429,14 +433,21 @@ void CanvasGridPrivate::restore(QStringList currentItems)
                 invalidPos.append(item);
 
             // remove item restored
-            currentItems.removeOne(item);
+            currentSet.remove(item);
         }
+    }
+
+    // rebuild remaining items list preserving original order
+    QStringList remainingItems;
+    for (const QString &item : currentItems) {
+        if (currentSet.contains(item))
+            remainingItems << item;
     }
 
     // append invalid-pos and rest items to empty pos
     {
         QStringList overloadItems;
-        overloadItems << invalidPos << currentItems;
+        overloadItems << invalidPos << remainingItems;
         if (!overloadItems.isEmpty())
             q->append(overloadItems);
     }
@@ -565,5 +576,4 @@ QStringList CanvasGridSpecialist::sortItemInGrid(const QHash<QString, QPoint> &i
 //    }
 //    return ret;
 //}
-
 
