@@ -51,10 +51,16 @@ void FileClassifier::reset(const QList<QUrl> &urls)
         }
 
         auto it = collections.find(type);
-        if (it != collections.end())
+        if (it != collections.end()) {
             it.value()->items.append(url);
-        else
-            Q_ASSERT_X(it == collections.end(), "TypeClassifier", QString("unrecognized type %0").arg(type).toStdString().c_str());
+        } else {
+            fmWarning() << "create fallback collection for unrecognized type" << type << "url:" << url;
+            CollectionBaseDataPtr dp(new CollectionBaseData);
+            dp->name = className(type);
+            dp->key = type;
+            collections.insert(type, dp);
+            dp->items.append(url);
+        }
     }
 }
 

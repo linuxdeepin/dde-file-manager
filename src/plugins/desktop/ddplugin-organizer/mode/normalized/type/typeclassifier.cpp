@@ -145,16 +145,16 @@ QString TypeClassifier::classify(const QUrl &url) const
 
     QString key;
     // Classify whether it is a symlink according to the symlink's target
-    int depth = 3;
+    int depth = 40;   // align with Linux kernel symlink resolution limit
     while (depth--) {
-        if (itemInfo->isAttributes(OptInfoType::kIsSymLink)) {
-            QUrl fileUrl = itemInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
-            itemInfo = InfoFactory::create<FileInfo>(fileUrl);
-            if (!itemInfo)
-                return kTypeKeyOth;
-            if (itemInfo->isAttributes(OptInfoType::kIsSymLink))
-                continue;
-        }
+        if (!itemInfo->isAttributes(OptInfoType::kIsSymLink))
+            break;
+        QUrl fileUrl = itemInfo->urlOf(UrlInfoType::kRedirectedFileUrl);
+        itemInfo = InfoFactory::create<FileInfo>(fileUrl);
+        if (!itemInfo)
+            return kTypeKeyOth;
+        if (!itemInfo->isAttributes(OptInfoType::kIsSymLink))
+            break;
     }
 
     if (itemInfo->isAttributes(OptInfoType::kIsDir)) {
