@@ -1660,7 +1660,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
         if (isEmptyArea) {
             if (selectionMode() != QAbstractItemView::SingleSelection)
                 d->selectHelper->setSelection(selectionModel()->selection());
-            if (!WindowUtils::keyCtrlIsPressed()) {
+            if (!(event->modifiers() & Qt::ControlModifier)) {
                 if (itemDelegate())
                     itemDelegate()->hideNotEditingIndexWidget();
                 if (qApp->keyboardModifiers() == Qt::NoModifier)
@@ -1669,7 +1669,7 @@ void FileView::mousePressEvent(QMouseEvent *event)
                     setDragDropMode(DropOnly);
                 }
             }
-        } else if (WindowUtils::keyCtrlIsPressed() && selectionModel()->isSelected(index)) {
+        } else if ((event->modifiers() & Qt::ControlModifier) && selectionModel()->isSelected(index)) {
             d->selectHelper->setSelection(selectionModel()->selection());
             d->lastMousePressedIndex = index;
             DListView::mousePressEvent(event);
@@ -1750,7 +1750,7 @@ void FileView::mouseReleaseEvent(QMouseEvent *event)
     if (!QScroller::hasScroller(this))
         return DListView::mouseReleaseEvent(event);
 
-    if (WindowUtils::keyCtrlIsPressed()
+    if ((event->modifiers() & Qt::ControlModifier)
         && d->lastMousePressedIndex.isValid()
         && d->lastMousePressedIndex == indexAt(event->pos())) {
         selectionModel()->select(d->lastMousePressedIndex, QItemSelectionModel::Deselect);
