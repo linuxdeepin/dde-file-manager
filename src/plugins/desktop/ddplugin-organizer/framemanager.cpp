@@ -183,6 +183,17 @@ void FrameManagerPrivate::refeshCanvas()
         canvas->canvasModel()->refresh(0, false);
 }
 
+void FrameManagerPrivate::relayoutSurfaces()
+{
+    QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
+    for (auto win : root) {
+        QString screen = win->property(DesktopFrameProperty::kPropScreenName).toString();
+        auto surface = surfaceWidgets.value(screen);
+        if (surface)
+            layoutSurface(win, surface);
+    }
+}
+
 void FrameManagerPrivate::onHideAllKeyPressed()
 {
     const auto &surfaces { organizer->getSurfaces() };
@@ -457,7 +468,7 @@ void FrameManager::turnOn(bool build)
     CanvasCoreSubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
     CanvasCoreSubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
     CanvasCoreSubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
-    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
+    CanvasCoreSubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onScreenGeometryChanged);
     CanvasCoreSubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
 
     d->canvas = new CanvasInterface(this);
@@ -488,7 +499,7 @@ void FrameManager::turnOff()
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowAboutToBeBuilded, &FrameManager::onDetachWindows);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowBuilded, &FrameManager::onBuild);
     CanvasCoreUnsubscribe(signal_DesktopFrame_WindowShowed, &FrameManager::onWindowShowed);
-    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onGeometryChanged);
+    CanvasCoreUnsubscribe(signal_DesktopFrame_GeometryChanged, &FrameManager::onScreenGeometryChanged);
     CanvasCoreUnsubscribe(signal_DesktopFrame_AvailableGeometryChanged, &FrameManager::onGeometryChanged);
 
     delete d->organizer;
@@ -548,14 +559,45 @@ void FrameManager::onDetachWindows()
 
 void FrameManager::onGeometryChanged()
 {
+    d->relayoutSurfaces();
+
+    // layout collection widgets and refresh their cached item metrics
+    layout();
+}
+
+void FrameManager::onScreenGeometryChanged()
+{
+    // Screen geometry changes (e.g., scale/resolution change after re-login)
+    // require hiding surfaces during relayout to prevent visible geometry transitions.
     QList<QWidget *> root = ddplugin_desktop_util::desktopFrameRootWindows();
+
+    // Save current visibility of all surfaces
+    QMap<QString, bool> savedVisibility;
     for (auto win : root) {
         QString screen = win->property(DesktopFrameProperty::kPropScreenName).toString();
         auto surface = d->surfaceWidgets.value(screen);
         if (surface)
-            d->layoutSurface(win, surface);
+            savedVisibility.insert(screen, surface->isVisible());
     }
+
+    // Hide all surfaces before relayout
+    for (auto win : root) {
+        QString screen = win->property(DesktopFrameProperty::kPropScreenName).toString();
+        auto surface = d->surfaceWidgets.value(screen);
+        if (surface)
+            surface->setVisible(false);
+    }
+
+    d->relayoutSurfaces();
 
     // layout collection widgets and refresh their cached item metrics
     layout();
+
+    // Restore original visibility
+    for (auto win : root) {
+        QString screen = win->property(DesktopFrameProperty::kPropScreenName).toString();
+        auto surface = d->surfaceWidgets.value(screen);
+        if (surface && savedVisibility.value(screen, false))
+            surface->setVisible(true);
+    }
 }

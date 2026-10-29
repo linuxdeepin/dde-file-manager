@@ -35,6 +35,7 @@ public slots:
     void onWindowShowed();
     void onDetachWindows();
     void onGeometryChanged();
+    void onScreenGeometryChanged();
 
 protected:
     void switchMode(OrganizerMode mode);

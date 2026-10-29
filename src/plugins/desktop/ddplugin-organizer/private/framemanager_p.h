@@ -31,6 +31,7 @@ public:
     void layoutSurface(QWidget *root, SurfacePointer surface, bool hidden = false);
     void refreshCollectionViews();
     void buildOrganizer();
+    void relayoutSurfaces();
     QList<SurfacePointer> surfaces() const;
 
 public slots:
