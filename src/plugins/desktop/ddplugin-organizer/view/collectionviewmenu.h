@@ -23,6 +23,7 @@ signals:
 
 public slots:
 protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
     QWidget *getCanvasView();
 private:
     CollectionView *view = nullptr;

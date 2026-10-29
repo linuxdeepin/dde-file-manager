@@ -26,10 +26,12 @@ add_library(${BIN_NAME}
 )
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui)
+find_package(Dtk6 COMPONENTS Gui REQUIRED)
 target_link_libraries(${BIN_NAME} 
     PUBLIC
     Qt6::Core
     Qt6::Gui
+    Dtk6::Gui
 )
 if(Qt6_VERSION VERSION_GREATER_EQUAL 6.10)
     find_package(Qt6 REQUIRED COMPONENTS GuiPrivate)

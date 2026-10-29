@@ -25,6 +25,9 @@ public:
 public slots:
     void changeIconLevel(bool increase);
 
+protected:
+    bool eventFilter(QObject *watched, QEvent *event) override;
+
 private:
     CanvasView *view { nullptr };
     DTK_WIDGET_NAMESPACE::DMenu *menuPtr { nullptr };

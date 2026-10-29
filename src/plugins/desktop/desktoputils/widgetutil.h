@@ -14,6 +14,10 @@
 #include <QWindow>
 #include <QDebug>
 
+#include <DPlatformHandle>
+#include <DWindowManagerHelper>
+#include <QMenu>
+
 #if (QT_VERSION < QT_VERSION_CHECK(6, 0, 0))
 #    include <QtPlatformHeaders/QXcbWindowFunctions>
 #else
@@ -133,6 +137,29 @@ static inline void setPrviewWindow(QWidget *w)
         window->setProperty("_d_dwayland_window-type", "wallpaper");
     }
 }
+
+static inline void applyMenuEffect(QMenu *menu)
+{
+    if (!menu)
+        return;
+
+    if (!DTK_GUI_NAMESPACE::DWindowManagerHelper::instance()->hasComposite())
+        return;
+
+    QWindow *window = menu->windowHandle();
+    if (!window)
+        return;
+
+    if (!DTK_GUI_NAMESPACE::DPlatformHandle::isDXcbPlatform())
+        return;
+
+    DTK_GUI_NAMESPACE::DPlatformHandle handle(window);
+    handle.setEnableBlurWindow(true);
+    handle.setWindowRadius(18);
+    handle.setShadowRadius(10);
+    handle.setTranslucentBackground(true);
+}
+
 }
 
 #endif   // WIDGETUTIL_H

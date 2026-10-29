@@ -24,6 +24,9 @@
 #include <dfm-base/dfm_menu_defines.h>
 
 #include <QtDebug>
+#include <QEvent>
+#include <QMenu>
+#include "desktoputils/widgetutil.h"
 
 DWIDGET_USE_NAMESPACE
 DFMGLOBAL_USE_NAMESPACE
@@ -39,6 +42,17 @@ CanvasViewMenuProxy::CanvasViewMenuProxy(CanvasView *parent)
 
 CanvasViewMenuProxy::~CanvasViewMenuProxy()
 {
+}
+
+bool CanvasViewMenuProxy::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::Show) {
+        if (auto *menu = qobject_cast<QMenu *>(watched)) {
+            ddplugin_desktop_util::applyMenuEffect(menu);
+            menu->removeEventFilter(this);
+        }
+    }
+    return false;
 }
 
 bool CanvasViewMenuProxy::disableMenu()
@@ -84,14 +98,16 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
         return;
     }
 
-    if (menuPtr) {
+    DMenu *oldMenu = menuPtr;
+    menuPtr = new DMenu(view);
+    if (oldMenu) {
         fmDebug() << "Deleting existing menu pointer";
-        delete menuPtr;
+        delete oldMenu;
     }
 
-    menuPtr = new DMenu(view);
     menuPtr->setObjectName("MenuPtr");
     menuPtr->setAccessibleName("MenuPtr");
+    menuPtr->installEventFilter(this);
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
     if (QAction *act = menuPtr->exec(QCursor::pos())) {
@@ -148,12 +164,14 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
         return;
     }
 
-    if (menuPtr) {
+    DMenu *oldMenu = menuPtr;
+    menuPtr = new DMenu(view);
+    if (oldMenu) {
         fmDebug() << "Deleting existing menu pointer";
-        delete menuPtr;
+        delete oldMenu;
     }
 
-    menuPtr = new DMenu(view);
+    menuPtr->installEventFilter(this);
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
 

@@ -19,6 +19,9 @@
 #include <dfm-base/base/application/settings.h>
 
 #include <QItemSelectionModel>
+#include <QEvent>
+#include <QMenu>
+#include "desktoputils/widgetutil.h"
 
 DFMGLOBAL_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -31,6 +34,17 @@ CollectionViewMenu::CollectionViewMenu(CollectionView *parent)
 {
     view->setObjectName("CollectionView");
     view->setAccessibleName("CollectionView");
+}
+
+bool CollectionViewMenu::eventFilter(QObject *watched, QEvent *event)
+{
+    if (event->type() == QEvent::Show) {
+        if (auto *menu = qobject_cast<QMenu *>(watched)) {
+            ddplugin_desktop_util::applyMenuEffect(menu);
+            menu->removeEventFilter(this);
+        }
+    }
+    return false;
 }
 
 bool CollectionViewMenu::disableMenu()
@@ -75,12 +89,14 @@ void CollectionViewMenu::emptyAreaMenu()
         return;
     }
 
-    if (menuPtr)
-        delete menuPtr;
-
+    DMenu *oldMenu = menuPtr;
     menuPtr = new DMenu(view);
+    if (oldMenu)
+        delete oldMenu;
+
     menuPtr->setObjectName("MenuPtr");
     menuPtr->setAccessibleName("MenuPtr");
+    menuPtr->installEventFilter(this);
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
 
@@ -141,10 +157,12 @@ void CollectionViewMenu::normalMenu(const QModelIndex &index, const Qt::ItemFlag
         return;
     }
 
-    if (menuPtr)
-        delete menuPtr;
-
+    DMenu *oldMenu = menuPtr;
     menuPtr = new DMenu(view);
+    if (oldMenu)
+        delete oldMenu;
+
+    menuPtr->installEventFilter(this);
     canvasScene->create(menuPtr);
     canvasScene->updateState(menuPtr);
 
