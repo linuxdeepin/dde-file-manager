@@ -217,7 +217,9 @@ QString ThumbnailHelper::saveThumbnail(const QUrl &url, const QImage &img, Thumb
     }
 
     const QString &fileUrl = url.toString(QUrl::FullyEncoded);
-    const QString &thumbnailName = ThumbnailHelper::dataToMd5Hex(fileUrl.toLocal8Bit()) + kFormat;
+    const QString &filePath = info->pathOf(PathInfoType::kFilePath);
+    const QString &cacheKey = filePath.isEmpty() ? fileUrl : QUrl::fromLocalFile(filePath).toString(QUrl::FullyEncoded);
+    const QString &thumbnailName = ThumbnailHelper::dataToMd5Hex(cacheKey.toLocal8Bit()) + kFormat;
     const QString &thumbnailPath = ThumbnailHelper::sizeToFilePath(size);
     const QString &thumbnailFilePath = DFMIO::DFMUtils::buildFilePath(thumbnailPath.toStdString().c_str(), thumbnailName.toStdString().c_str(), nullptr);
     const qint64 fileModify = info->timeOf(TimeInfoType::kLastModifiedSecond).toLongLong();
