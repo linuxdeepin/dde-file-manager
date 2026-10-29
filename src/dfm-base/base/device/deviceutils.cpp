@@ -351,6 +351,23 @@ QMap<QString, QString> DeviceUtils::fstabBindInfo()
 
     return *table;
 }
+
+static int countSameTypeDataDisks(bool isHomeType)
+{
+    QStringList allIds = DevProxyMng->getAllBlockIds();
+    int count = 0;
+    const QString prefix = isHomeType ? "_dde_home" : "_dde_data";
+    for (const auto &id : allIds) {
+        QVariantMap info = DevProxyMng->queryBlockInfo(id);
+        if (DeviceUtils::isDataDisk(info)) {
+            QString otherLabel = info.value(kIdLabel).toString();
+            if (otherLabel.startsWith(prefix))
+                count++;
+        }
+    }
+    return count;
+}
+
 QString DeviceUtils::nameOfBuiltInDisk(const QVariantMap &datas)
 {
     QVariantMap clearInfo = datas.value(BlockAdditionalProperty::kClearBlockProperty).toMap();
@@ -364,8 +381,15 @@ QString DeviceUtils::nameOfBuiltInDisk(const QVariantMap &datas)
     if (DeviceUtils::isSystemDisk(clearInfo.isEmpty() ? datas : clearInfo))
         return QObject::tr("System Disk");
 
-    if (DeviceUtils::isDataDisk(clearInfo.isEmpty() ? datas : clearInfo))
-        return QObject::tr("Data Disk");
+    if (DeviceUtils::isDataDisk(clearInfo.isEmpty() ? datas : clearInfo)) {
+        bool isHomeDisk = label.startsWith("_dde_home");
+        QString baseName = isHomeDisk ? QObject::tr("Home Disk") : QObject::tr("Data Disk");
+
+        if (!mountPoint.isEmpty() && countSameTypeDataDisks(isHomeDisk) > 1)
+            return QObject::tr("%1 (%2)").arg(baseName).arg(mountPoint);
+
+        return baseName;
+    }
 
     if (!canPowerOff && !mountPoint.isEmpty()) {
         if (label.startsWith("_dde_"))
