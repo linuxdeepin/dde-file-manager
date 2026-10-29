@@ -563,7 +563,7 @@ bool LocalFileHandler::deleteFile(const QUrl &url)
 
     // Fast path: For local files, try unlink directly to avoid DOperator overhead
     if (url.isLocalFile()) {
-        const QByteArray localPath = url.toLocalFile().toUtf8();
+        const QByteArray localPath = FileUtils::localPathFromUrl(url);
         const char *path = localPath.constData();
 
         if (::unlink(path) == 0) {
@@ -615,7 +615,7 @@ bool LocalFileHandler::deleteFileRecursive(const QUrl &url)
         return false;
     }
 
-    if (SystemPathUtil::instance()->isSystemPath(url.toLocalFile())) {
+    if (SystemPathUtil::instance()->isSystemPath(QString::fromLatin1(FileUtils::localPathFromUrl(url)))) {
         qCCritical(logDFMBase) << "LocalFileHandler::deleteFileRecursive: CRITICAL - Attempted to delete system path:"
                                << url << "Operation aborted for safety";
         abort();

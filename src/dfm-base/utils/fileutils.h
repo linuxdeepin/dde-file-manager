@@ -101,6 +101,10 @@ public:
     static QString resolveSymlink(const QUrl &url);
     static bool isDefaultHiddenFile(const QUrl &url);
 
+    // Extract local file path bytes from a URL, respecting the originPath::
+    // userInfo encoding marker used for filenames with invalid UTF-8 bytes.
+    static QByteArray localPathFromUrl(const QUrl &url);
+
 #if QT_VERSION >= QT_VERSION_CHECK(6, 0, 0)
     static QImage convertToSRgbColorSpace(const QImage &image);
 #endif

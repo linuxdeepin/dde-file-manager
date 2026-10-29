@@ -1418,6 +1418,20 @@ QString FileUtils::findIconFromXdg(const QString &iconName)
     }
 }
 
+QByteArray FileUtils::localPathFromUrl(const QUrl &url)
+{
+    // When a filename contains invalid UTF-8 bytes (e.g. GBK-encoded names on
+    // a UTF-8 system), DEnumerator stores the original raw bytes in the URL
+    // userInfo field with the "originPath::" prefix, because QUrl's path
+    // component cannot preserve invalid UTF-8 (bytes are replaced by U+FFFD).
+    // This function extracts the correct local path bytes, checking userInfo
+    // first and falling back to toLocalFile() for normal URLs.
+    const QString info = url.userInfo();
+    if (info.contains("originPath::"))
+        return info.replace("originPath::", "").toLatin1();
+    return url.toLocalFile().toUtf8();
+}
+
 bool FileUtils::isDefaultHiddenFile(const QUrl &fileUrl)
 {
     static DThreadList<QUrl> defaultHiddenUrls;

@@ -96,7 +96,7 @@ bool DoDeleteFilesWorker::deleteFilesByFts()
             fmWarning() << "deleteFilesByFts: skip non-local path:" << url;
             continue;
         }
-        pathData.append(url.toLocalFile().toUtf8());
+        pathData.append(FileUtils::localPathFromUrl(url));
     }
     if (pathData.isEmpty())
         return false;
