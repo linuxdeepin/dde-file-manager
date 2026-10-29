@@ -182,7 +182,7 @@ void VaultActiveFinishedView::encryptFinished(bool success, const QString &msg)
     if (success) {   // 创建保险箱成功
         fmDebug() << "Vault: Vault creation completed successfully";
         waterProgress->setValue(100);
-        encryptFinishedImageLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-ok"), QSize(100, 100), this));
+        encryptFinishedImageLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dfm_success"), QSize(100, 100), this));
         tipsThree->setText(tr("The setup is complete"));
         finishedBtn->setText(tr("OK"));
         VaultHelper::recordTime(kjsonGroupName, kjsonKeyCreateTime);
