@@ -301,6 +301,8 @@ QUrl BlockEntryFileEntity::mountPoint() const
             const QString &homeBindPath = FileUtils::bindPathTransform(userHome, true);
             if (userHome != homeBindPath && homeBindPath.startsWith(mpt))
                 return QUrl::fromLocalFile(homeBindPath);
+            if (userHome.startsWith(mpt + "/"))
+                return QUrl::fromLocalFile(userHome);
         }
     }
 
