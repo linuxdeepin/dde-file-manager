@@ -1698,5 +1698,10 @@ void TabBar::resizeEvent(QResizeEvent *e)
     // consumers of tabRect() outside the paint cycle always read up-to-date
     // rects (replaces the former setIconSize() dirty-flag hack, which forced a
     // redundant full relayout on every resize).
+    // Invalidate the cached sizeHint of the inner QTabBar so that
+    // layout()->activate() in ensureLayoutUpdated() recomputes its geometry
+    // with the new width instead of reapplying the stale cached rect.
+    if (d->tabBar)
+        d->tabBar->updateGeometry();
     ensureLayoutUpdated();
 }
