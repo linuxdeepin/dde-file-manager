@@ -52,7 +52,7 @@ void DiskPluginItem::updateIcon()
         iconName.append(PLUGIN_MIN_ICON_NAME);
 #endif
 
-    static const int kWidth = PLUGIN_BACKGROUND_MIN_SIZE;
+    int kWidth = qMax(PLUGIN_BACKGROUND_MIN_SIZE, qMin(width(), height()));
     icon = QIcon::fromTheme(iconName, QIcon(QString(":/icons/resources/%1.svg").arg(iconName))).pixmap(kWidth, kWidth);
     icon.setDevicePixelRatio(qApp->devicePixelRatio());
     update();
@@ -68,9 +68,13 @@ void DiskPluginItem::paintEvent(QPaintEvent *e)
     QWidget::paintEvent(e);
 
     QPainter painter(this);
+    painter.setRenderHint(QPainter::SmoothPixmapTransform);
     QRectF &&rf = QRectF(rect());
     QRectF &&rfp = QRectF(icon.rect());
-    painter.drawPixmap(rf.center() - rfp.center() / qApp->devicePixelRatio(), icon);
+    QSizeF targetSize = rfp.size().scaled(rf.size(), Qt::KeepAspectRatio);
+    QRectF targetRect(QPointF(rf.center().x() - targetSize.width() / 2,
+                              rf.center().y() - targetSize.height() / 2), targetSize);
+    painter.drawPixmap(targetRect, icon, rfp);
 }
 
 void DiskPluginItem::resizeEvent(QResizeEvent *e)
