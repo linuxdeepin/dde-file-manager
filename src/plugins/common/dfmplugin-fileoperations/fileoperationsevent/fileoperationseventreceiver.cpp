@@ -1574,7 +1574,7 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
 
     // Handle force deletion of existing target
     if (force) {
-        FileInfoPointer toInfo = InfoFactory::create<FileInfo>(targetUrl);
+        FileInfoPointer toInfo = InfoFactory::create<FileInfo>(targetUrl, Global::CreateFileInfoType::kCreateFileInfoSync);
         if (toInfo && toInfo->exists()) {
             DFMBASE_NAMESPACE::LocalFileHandler fileHandlerDelete;
             fileHandlerDelete.deleteFile(targetUrl);
