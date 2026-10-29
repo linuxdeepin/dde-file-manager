@@ -52,6 +52,10 @@ void DockItemDataManager::onBlockMounted(const QString &id)
     QVariantMap data = devMng->QueryBlockDeviceInfo(id, true);
     if (blockDeviceFilter(data)) {
         auto item = buildBlockItem(data);
+        if (blocks.contains(id)) {
+            blocks[id] = item;
+            return;
+        }
         blocks.insert(id, item);
         Q_EMIT mountAdded(item);
         updateDockVisible();
@@ -109,6 +113,9 @@ void DockItemDataManager::onProtocolUnmounted(const QString &id)
 
 bool DockItemDataManager::blockDeviceFilter(const QVariantMap &data)
 {
+    if (data.value(GlobalServerDefines::DeviceProperty::kIdLabel).toString().isEmpty()
+        && data.value(GlobalServerDefines::DeviceProperty::kSizeTotal).toLongLong() == 0)
+        return kIgnore;
     if (data.value(GlobalServerDefines::DeviceProperty::kHintIgnore).toBool())
         return kIgnore;
     if (data.value(GlobalServerDefines::DeviceProperty::kMountPoint).toString().isEmpty())

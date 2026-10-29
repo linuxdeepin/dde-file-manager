@@ -398,11 +398,10 @@ bool DeviceHelper::askForStopScanning(const QUrl &mpt)
     DDialog *dlg = DialogManagerInstance->showQueryScanningDialog(QObject::tr("Scanning the device, stop it?"));
     dlg->setAttribute(Qt::WA_DeleteOnClose);
     if (dlg->exec() == QDialog::Accepted) {
-        if (DefenderController::instance().stopScanning(mpt))
-            return true;
-
-        qCWarning(logDFMBase) << "stop scanning device failed: " << mpt;
-        DialogManagerInstance->showErrorDialog(QObject::tr("Unmount failed"), QObject::tr("Cannot stop scanning device"));
+        DefenderController::instance().stopScanning(mpt);
+        return true;
+    } else {
+        qCWarning(logDFMBase) << "user rejected to stop scanning: " << mpt;
     }
     return false;
 }

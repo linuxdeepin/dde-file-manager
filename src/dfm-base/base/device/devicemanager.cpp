@@ -27,6 +27,9 @@
 #include <QDBusConnectionInterface>
 #include <QDBusMessage>
 #include <QApplication>
+#include <QTimer>
+#include <functional>
+#include <memory>
 
 #include <dfm-mount/dmount.h>
 #include <mutex>
@@ -249,10 +252,8 @@ bool DeviceManager::unmountBlockDev(const QString &id, const QVariantMap &opts)
     }
 
     auto mpt = dev->mountPoint();
-    if (!mpt.isEmpty() && !DeviceHelper::askForStopScanning(QUrl::fromLocalFile(mpt))) {
-        qCWarning(logDFMBase) << "Cannot unmount device, scanning operation in progress:" << id << "mount point:" << mpt;
-        return false;
-    }
+    if (!mpt.isEmpty() && !DeviceHelper::askForStopScanning(QUrl::fromLocalFile(mpt)))
+        qCWarning(logDFMBase) << "user rejected stop scanning, continue unmounting:" << mpt;
 
     if (dev->isEncrypted()) {
         bool noLock = opts.value(OperateParamField::kUnmountWithoutLock, false).toBool();
@@ -305,9 +306,7 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
     }
 
     if (!mpt.isEmpty() && !DeviceHelper::askForStopScanning(QUrl::fromLocalFile(mpt))) {
-        if (cb)
-            cb(false, Utils::genOperateErrorInfo(DeviceError::kUDisksErrorDeviceBusy));
-        return;
+        qCWarning(logDFMBase) << "user rejected stop scanning, continue unmounting:" << mpt;
     }
 
     if (dev->isEncrypted()) {
@@ -333,13 +332,31 @@ void DeviceManager::unmountBlockDevAsync(const QString &id, const QVariantMap &o
         });
     } else {
         DeviceManagerPrivate::unmountStackedMount(mpt);
-        dev->unmountAsync(opts, [cb, this, id](bool ok, const OperationErrorInfo &err) {
+
+        // Retry on DeviceBusy with 2s delay, up to 3 attempts.
+        // unmountStackedMount is NOT re-called on retry (already done above).
+        const int maxRetries = 3;
+        auto retryCount = QSharedPointer<int>::create(0);
+        auto retryCb = std::make_shared<std::function<void(bool, const OperationErrorInfo &)>>();
+
+        *retryCb = [cb, this, id, retryCount, maxRetries, dev, opts, retryCb](bool ok, const OperationErrorInfo &err) {
             qCInfo(logDFMBase) << "unmount device finished: " << id << ok << err.code << err.message;
+            if (!ok && err.code == DeviceError::kUDisksErrorDeviceBusy && *retryCount < maxRetries) {
+                (*retryCount)++;
+                qCInfo(logDFMBase) << "device busy, retrying unmount (" << *retryCount << "/" << maxRetries << "):" << id;
+                QTimer::singleShot(2000, [retryCb, dev, opts]() {
+                    dev->unmountAsync(opts, *retryCb);
+                });
+                return;
+            }
             if (cb)
                 cb(ok, err);
             if (!ok)
                 emit blockDevUnmountAsyncFailed(id, err.code);
-        });
+            *retryCb = nullptr;
+        };
+
+        dev->unmountAsync(opts, *retryCb);
     }
 }
 
