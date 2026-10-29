@@ -7,17 +7,14 @@
 #include <dfm-base/dfm_base_global.h>
 
 #include <QDebug>
-#include <QThread>
 #include <QDateTime>
 #include <QDBusPendingCall>
-#include <QApplication>
-#include <QElapsedTimer>
+#include <QDBusPendingCallWatcher>
+#include <QDBusPendingReply>
+#include <QEventLoop>
+#include <QTimer>
 
 #include <algorithm>
-
-// Need to consider stopping multiple directory scans at the same time,
-// and extend the timeout period appropriately
-static const int kMaxDBusTimeout = 25 * 1000;
 
 static const char *const kDefenderServiceName = "com.deepin.defender.daemonservice";
 static const char *const kDefenderServicePath = "/com/deepin/defender/daemonservice";
@@ -61,25 +58,25 @@ bool DefenderController::isScanning(const QList<QUrl> &urls)
     return false;
 }
 
-bool DefenderController::stopScanning(const QUrl &url)
+void DefenderController::stopScanning(const QUrl &url)
 {
     if (!url.isValid()) {
         qCWarning(logDFMBase) << "DefenderController::stopScanning: Invalid URL provided:" << url;
-        return false;
+        return;
     }
 
     qCInfo(logDFMBase) << "DefenderController::stopScanning: Stopping scan for single URL:" << url.toString();
-    
+
     QList<QUrl> urls;
     urls << url;
-    return stopScanning(urls);
+    stopScanning(urls);
 }
 
-bool DefenderController::stopScanning(const QList<QUrl> &urls)
+void DefenderController::stopScanning(const QList<QUrl> &urls)
 {
     if (urls.isEmpty()) {
         qCWarning(logDFMBase) << "DefenderController::stopScanning: Empty URL list provided";
-        return false;
+        return;
     }
 
     qCInfo(logDFMBase) << "DefenderController::stopScanning: Stopping scan for URLs:" << urls;
@@ -99,39 +96,50 @@ bool DefenderController::stopScanning(const QList<QUrl> &urls)
 
     if (paths.empty()) {
         qCInfo(logDFMBase) << "DefenderController::stopScanning: No matching scanning paths found, operation completed";
-        return true;
+        return;
     }
 
     qCInfo(logDFMBase) << "DefenderController::stopScanning: Found" << paths.size() << "paths to stop scanning";
 
     foreach (const QUrl &path, paths) {
         qCInfo(logDFMBase) << "DefenderController::stopScanning: Sending RequestStopUsbScannig for path:" << path.toString();
-        
+
         if (!interface) {
             qCCritical(logDFMBase) << "DefenderController::stopScanning: DBus interface is null, cannot send stop request";
-            return false;
+            continue;
         }
-        
-        interface->asyncCall("RequestStopUsbScannig", path.toLocalFile());
+
+        QDBusPendingCall call = interface->asyncCall("RequestStopUsbScannig", path.toLocalFile());
+        QDBusPendingCallWatcher *watcher = new QDBusPendingCallWatcher(call, this);
+
+        // Wait for the DBus reply using a local event loop so the stop
+        // request is actually processed before we proceed to unmount.
+        // A 10s timeout guards against a hung defender service.
+        QEventLoop loop;
+        QTimer::singleShot(10000, &loop, &QEventLoop::quit);
+        connect(watcher, &QDBusPendingCallWatcher::finished, this, [path](QDBusPendingCallWatcher *w) {
+            w->deleteLater();
+            QDBusPendingReply<> reply = *w;
+            if (reply.isError())
+                qCWarning(logDFMBase) << "DefenderController::stopScanning: RequestStopUsbScannig failed:" << path << reply.error().message();
+            else
+                qCInfo(logDFMBase) << "DefenderController::stopScanning: RequestStopUsbScannig succeeded:" << path;
+        });
+        connect(watcher, &QDBusPendingCallWatcher::finished, &loop, &QEventLoop::quit);
+        loop.exec();
+
+        if (!watcher->isFinished()) {
+            qCWarning(logDFMBase) << "DefenderController::stopScanning: RequestStopUsbScannig timed out (10s):" << path;
+            watcher->deleteLater();
+        }
     }
 
-    // Wait for the scan directory change signal until it times out
-    qCDebug(logDFMBase) << "DefenderController::stopScanning: Waiting for scan stop confirmation, timeout:" << kMaxDBusTimeout << "ms";
-    
-    QElapsedTimer t;
-    t.start();
-    while (t.elapsed() < kMaxDBusTimeout) {
-        qApp->processEvents();
-        if (!isScanning(urls)) {
-            qCInfo(logDFMBase) << "DefenderController::stopScanning: Scan stopped successfully after" << t.elapsed() << "ms";
-            return true;
-        }
-        QThread::msleep(10);
-    }
-    
-    qCWarning(logDFMBase) << "DefenderController::stopScanning: Timeout waiting for scan stop confirmation after" 
-                          << t.elapsed() << "ms, operation may have failed";
-    return false;
+    // Check scanning status once after stop requests complete.
+    // Do NOT abort unmount regardless of the result.
+    if (isScanning(urls))
+        qCWarning(logDFMBase) << "DefenderController::stopScanning: defender still scanning after stop request, unmount continues";
+    else
+        qCInfo(logDFMBase) << "DefenderController::stopScanning: defender stopped scanning, proceeding with unmount";
 }
 
 QList<QUrl> DefenderController::getScanningPaths(const QUrl &url)

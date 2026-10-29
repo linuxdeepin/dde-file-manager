@@ -386,9 +386,7 @@ void DeviceWatcher::onBlkDevFsAdded(const QString &id)
     emit DevMngIns->blockDevPropertyChanged(id, DeviceProperty::kHasFileSystem, true);
 
     auto mpt = data.value(DeviceProperty::kMountPoint).toString();
-    if (!mpt.isEmpty())
-        emit DevMngIns->blockDevMounted(id, mpt);
-    else
+    if (mpt.isEmpty())
         DevMngIns->doAutoMount(id, DeviceType::kBlockDevice);
 }
 

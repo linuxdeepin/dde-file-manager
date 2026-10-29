@@ -40,16 +40,16 @@ TEST(DefenderControllerTest, IsScanningEmptyListReturnsFalse)
     EXPECT_FALSE(DefenderController::instance().isScanning(empty));
 }
 
-TEST(DefenderControllerTest, StopScanningInvalidUrlReturnsFalse)
+TEST(DefenderControllerTest, StopScanningInvalidUrlReturnsEarly)
 {
     QUrl invalid;
-    EXPECT_FALSE(DefenderController::instance().stopScanning(invalid));
+    EXPECT_NO_FATAL_FAILURE({ DefenderController::instance().stopScanning(invalid); });
 }
 
-TEST(DefenderControllerTest, StopScanningEmptyListReturnsFalse)
+TEST(DefenderControllerTest, StopScanningEmptyListReturnsEarly)
 {
     QList<QUrl> empty;
-    EXPECT_FALSE(DefenderController::instance().stopScanning(empty));
+    EXPECT_NO_FATAL_FAILURE({ DefenderController::instance().stopScanning(empty); });
 }
 
 TEST(DefenderControllerTest, GetScanningPathsInvalidUrlReturnsEmpty)
