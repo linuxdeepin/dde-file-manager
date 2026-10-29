@@ -1,3 +1,12 @@
+dde-file-manager (6.5.179) unstable; urgency=medium
+
+  * docs(file-manager): add Portuguese help manual
+  * fix: resolve duplicate QMap::take causing watcher refcount leak
+  * fix: check dfm.menu.hidden config for desktop
+  * fix: delete DOcr engine on exit to prevent SIGSEGV
+
+ -- re2zero <yangwu@uniontech.com>  Thu, 29 Oct 2026 20:46:00 +0800
+
 dde-file-manager (6.5.178) unstable; urgency=medium
 
   * fix: resolve icon jitter when resizing desktop collection
