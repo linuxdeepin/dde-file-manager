@@ -15,6 +15,9 @@
 
 DWIDGET_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
+
+class QResizeEvent;
+
 namespace dfmplugin_workspace {
 
 class FileViewStatusBar : public BasicStatusBar
@@ -32,6 +35,7 @@ public:
     
 protected:
     void clearLayoutAndAnchors() override;
+    void resizeEvent(QResizeEvent *event) override;
     DTipLabel *findTipLabel() const;
 
 private:

@@ -13,6 +13,7 @@
 #include <QComboBox>
 #include <QHBoxLayout>
 #include <QLabel>
+#include <QResizeEvent>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
@@ -206,6 +207,36 @@ void FileViewStatusBar::setCustomLayout()
     fmDebug() << "Created and inserted stretch widget (width: 0-120, height: 30)";
 
     addWidget(scaleSlider, 0, Qt::AlignRight);
+}
+
+void FileViewStatusBar::resizeEvent(QResizeEvent *event)
+{
+    BasicStatusBar::resizeEvent(event);
+
+    if (!centerContainer)
+        return;
+
+    // When the scale slider is hidden (non-preview mode), always show the center container.
+    if (!scaleSlider || !scaleSlider->isVisible()) {
+        if (!centerContainer->isVisible())
+            centerContainer->show();
+        return;
+    }
+
+    // In preview mode the slider (120px) plus the stretch widget compete for space.
+    // Hide the center container (tip label) when there is not enough room,
+    // and restore it when the window is wide enough again.
+    constexpr int kMinCenterWidth = 100;
+    const int reservedWidth = scaleSlider->width() + layout()->spacing() * 2;
+    const int availableForCenter = width() - reservedWidth;
+
+    if (availableForCenter < kMinCenterWidth) {
+        if (centerContainer->isVisible())
+            centerContainer->hide();
+    } else {
+        if (!centerContainer->isVisible())
+            centerContainer->show();
+    }
 }
 
 void FileViewStatusBar::clearLayoutAndAnchors()
