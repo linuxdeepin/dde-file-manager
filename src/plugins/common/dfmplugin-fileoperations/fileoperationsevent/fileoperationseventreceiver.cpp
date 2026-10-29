@@ -1544,6 +1544,13 @@ bool FileOperationsEventReceiver::handleOperationLinkFile(const quint64 windowId
                                          windowId, QList<QUrl>() << url << link, true, error);
             return true;
         }
+        // Hook failed: reject symlink creation for non-local URLs to prevent
+        // their path components from being treated as local paths.
+        error = tr("Creating shortcuts for network files is not supported");
+        fmWarning() << "Rejected symlink creation for non-local URL:" << url << "error:" << error;
+        dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCreateSymlinkResult,
+                                     windowId, QList<QUrl>() << url << link, false, error);
+        return false;
     }
 
     // Transform source URL to local if needed
