@@ -23,6 +23,7 @@
 #include <QMimeType>
 #include <QMutex>
 #include <QMutexLocker>
+#include <QReadWriteLock>
 
 namespace dfmbase {
 class AsyncFileInfoPrivate
@@ -49,6 +50,7 @@ public:
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer updateFileCountFuture { nullptr };
     QMap<FileInfo::FileInfoAttributeID, QVariant> cacheAsyncAttributes;
+    mutable QReadWriteLock asyncAttributesLock;
     mutable QMutex notifyLock;
     QMultiMap<QUrl, QString> notifyUrls;
     quint64 tokenKey { 0 };

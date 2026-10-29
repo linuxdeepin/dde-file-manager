@@ -93,7 +93,7 @@ void AsyncFileInfo::refresh()
 
 void AsyncFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
 {
-    QMutexLocker locker(&d->lock);
+    QWriteLocker locker(&d->asyncAttributesLock);
     d->cacheAsyncAttributes.insert(static_cast<FileInfo::FileInfoAttributeID>(id), value);
 }
 
@@ -527,8 +527,10 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
         typeAll.append(FileInfoAttributeID::kStandardIcon);
 
         typeAll.append(FileInfoAttributeID::kStandardSize);
-        QMutexLocker rlk(&d->lock);
-        d->needUpdateMediaInfo = !d->attributesExtend.isEmpty();
+        if (d->lock.tryLock()) {
+            d->needUpdateMediaInfo = !d->attributesExtend.isEmpty();
+            d->lock.unlock();
+        }
     }
     // 更新缩略图
     if (typeAll.contains(FileInfoAttributeID::kThumbnailIcon)) {
@@ -539,14 +541,19 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
     // 更新filecount
     if (typeAll.contains(FileInfoAttributeID::kFileCount)) {
         typeAll.removeOne(FileInfoAttributeID::kFileCount);
-        QMutexLocker locker(&d->lock);
-        if (d->fileCountFuture
-            && d->fileCountFuture->finish
-            && (!d->updateFileCountFuture || d->updateFileCountFuture->finish)) {
-            locker.unlock();
-            auto future = FileInfoHelper::instance().fileCountAsync(const_cast<AsyncFileInfo *>(this)->url);
-            locker.relock();
-            d->updateFileCountFuture = future;
+        if (d->lock.tryLock()) {
+            if (d->fileCountFuture
+                && d->fileCountFuture->finish
+                && (!d->updateFileCountFuture || d->updateFileCountFuture->finish)) {
+                d->lock.unlock();
+                auto future = FileInfoHelper::instance().fileCountAsync(const_cast<AsyncFileInfo *>(this)->url);
+                if (d->lock.tryLock()) {
+                    d->updateFileCountFuture = future;
+                    d->lock.unlock();
+                }
+            } else {
+                d->lock.unlock();
+            }
         }
     }
 
@@ -558,9 +565,11 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
             DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
             QList<DFileInfo::AttributeExtendID> extendIDs;
             {
-                QMutexLocker lk(&d->lock);
-                mediaType = d->mediaType;
-                extendIDs = d->extendIDs;
+                if (d->lock.tryLock()) {
+                    mediaType = d->mediaType;
+                    extendIDs = d->extendIDs;
+                    d->lock.unlock();
+                }
             }
             if (!extendIDs.isEmpty())
                 d->updateMediaInfo(mediaType, extendIDs);
@@ -1035,7 +1044,7 @@ QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) c
 
 QVariant AsyncFileInfoPrivate::asyncAttribute(FileInfo::FileInfoAttributeID key) const
 {
-    QMutexLocker lk(&const_cast<AsyncFileInfoPrivate *>(this)->lock);
+    QReadLocker lk(&asyncAttributesLock);
     return cacheAsyncAttributes.value(key);
 }
 
@@ -1241,7 +1250,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
 
 bool AsyncFileInfoPrivate::insertAsyncAttribute(const FileInfo::FileInfoAttributeID id, const QVariant &value)
 {
-    QMutexLocker lk(&lock);
+    QWriteLocker lk(&asyncAttributesLock);
     if (cacheAsyncAttributes.value(id) == value || !value.isValid())
         return false;
     cacheAsyncAttributes.insert(id, value);
@@ -1305,7 +1314,7 @@ void AsyncFileInfoPrivate::updateMediaInfo(const DFileInfo::MediaType type, cons
 
 bool AsyncFileInfoPrivate::hasAsyncAttribute(FileInfo::FileInfoAttributeID key)
 {
-    QMutexLocker lk(&lock);
+    QReadLocker lk(&asyncAttributesLock);
     return cacheAsyncAttributes.contains(key);
 }
 
