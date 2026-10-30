@@ -28,10 +28,8 @@ CustomDToolButton::CustomDToolButton(QWidget *parent)
 void CustomDToolButton::initStyleOption(QStyleOptionToolButton *option) const
 {
     DToolButton::initStyleOption(option);
-    if (isEnabled()) {
+    if (isEnabled() && !isChecked()) {
         bool isDarkTheme = DGuiApplicationHelper::instance()->themeType() == DGuiApplicationHelper::DarkType;
-        DStyleHelper dstyle(style());
-        const int radius = dstyle.pixelMetric(DStyle::PM_FrameRadius);
 
         QColor bgColor;
         if (isDown()) {
@@ -43,7 +41,9 @@ void CustomDToolButton::initStyleOption(QStyleOptionToolButton *option) const
             bgColor = isDarkTheme ? QColor(255, 255, 255, 26)
                                   : QColor(0, 0, 0, 26);
         }
-        option->palette.setColor(QPalette::Button, bgColor);
+        if (bgColor.isValid()) {
+            option->palette.setColor(QPalette::Button, bgColor);
+        }
     }
 }
 
