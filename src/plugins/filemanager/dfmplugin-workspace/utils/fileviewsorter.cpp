@@ -481,12 +481,15 @@ QVariant FileViewSorter::getSortData(const QUrl &url)
     case SortRole::FileName:
         return getFileDisplayName(url, itemData);
 
-    case SortRole::Size:
+    case SortRole::Size: {
+        if (sortInfo && sortInfo->fileSize() > 0)
+            return sortInfo->fileSize();
         if (fileInfo)
             return fileInfo->size();
         if (sortInfo)
             return sortInfo->fileSize();
         return 0;
+    }
 
     case SortRole::LastModified: {
         QString time = getDateTimeFromSortInfo(sortInfo, sortInfo ? sortInfo->lastModifiedTime() : 0);
