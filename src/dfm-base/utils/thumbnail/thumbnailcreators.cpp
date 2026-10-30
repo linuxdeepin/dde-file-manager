@@ -8,6 +8,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/rofd/rofdrenderer.h>
 
 #include <dfm-io/dfmio_utils.h>
 
@@ -564,6 +565,32 @@ QImage ThumbnailCreators::pdfThumbnailCreator(const QString &filePath, Thumbnail
         qCDebug(logDFMBase) << "thumbnail: PDF thumbnail created successfully for:" << filePath;
     }
 
+    return img;
+}
+
+QImage ThumbnailCreators::ofdThumbnailCreator(const QString &filePath, ThumbnailSize size)
+{
+    qCDebug(logDFMBase) << "thumbnail: creating OFD thumbnail for:" << filePath << "size:" << size;
+
+    RofdRenderer renderer;
+    if (!renderer.openDocument(filePath)) {
+        qCWarning(logDFMBase) << "thumbnail: cannot read OFD file:" << filePath;
+        return QImage();
+    }
+
+    if (renderer.pageCount() < 1) {
+        qCWarning(logDFMBase) << "thumbnail: OFD file has no pages:" << filePath;
+        return QImage();
+    }
+
+    QImage img = renderer.renderPage(0, static_cast<int>(size));
+    if (img.isNull()) {
+        qCWarning(logDFMBase) << "thumbnail: OFD page rendering failed:" << filePath;
+        return img;
+    }
+
+    img = img.scaled(QSize(size, size), Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    qCDebug(logDFMBase) << "thumbnail: OFD thumbnail created successfully for:" << filePath;
     return img;
 }
 
