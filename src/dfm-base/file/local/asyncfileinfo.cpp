@@ -93,7 +93,7 @@ void AsyncFileInfo::refresh()
 
 void AsyncFileInfo::cacheAttribute(DFileInfo::AttributeID id, const QVariant &value)
 {
-    QMutexLocker locker(&d->lock);
+    QWriteLocker locker(&d->asyncAttributesLock);
     d->cacheAsyncAttributes.insert(static_cast<FileInfo::FileInfoAttributeID>(id), value);
 }
 
@@ -461,9 +461,13 @@ QVariant AsyncFileInfo::customAttribute(const char *key, const DFileInfo::DFileA
 {
     if (d->queringAttribute || d->cacheingAttributes)
         return QVariant();
-    QMutexLocker lk(&d->lock);
-    if (d->dfmFileInfo && d->dfmFileInfo->queryAttributeFinished())
-        return d->dfmFileInfo->customAttribute(key, type);
+    QSharedPointer<DFileInfo> tmpDfmFileInfo;
+    {
+        QMutexLocker lk(&d->lock);
+        tmpDfmFileInfo = d->dfmFileInfo;
+    }
+    if (tmpDfmFileInfo && tmpDfmFileInfo->queryAttributeFinished())
+        return tmpDfmFileInfo->customAttribute(key, type);
 
     return QVariant();
 }
@@ -527,8 +531,12 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
         typeAll.append(FileInfoAttributeID::kStandardIcon);
 
         typeAll.append(FileInfoAttributeID::kStandardSize);
-        QMutexLocker rlk(&d->lock);
-        d->needUpdateMediaInfo = !d->attributesExtend.isEmpty();
+        if (d->lock.tryLock()) {
+            d->needUpdateMediaInfo = !d->attributesExtend.isEmpty();
+            d->lock.unlock();
+        } else {
+            qCDebug(logDFMBase) << "updateAttributes: tryLock failed for needUpdateMediaInfo," << url;
+        }
     }
     // 更新缩略图
     if (typeAll.contains(FileInfoAttributeID::kThumbnailIcon)) {
@@ -539,14 +547,16 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
     // 更新filecount
     if (typeAll.contains(FileInfoAttributeID::kFileCount)) {
         typeAll.removeOne(FileInfoAttributeID::kFileCount);
-        QMutexLocker locker(&d->lock);
-        if (d->fileCountFuture
-            && d->fileCountFuture->finish
-            && (!d->updateFileCountFuture || d->updateFileCountFuture->finish)) {
-            locker.unlock();
-            auto future = FileInfoHelper::instance().fileCountAsync(const_cast<AsyncFileInfo *>(this)->url);
-            locker.relock();
-            d->updateFileCountFuture = future;
+        if (d->lock.tryLock()) {
+            if (d->fileCountFuture
+                && d->fileCountFuture->finish
+                && (!d->updateFileCountFuture || d->updateFileCountFuture->finish)) {
+                auto future = FileInfoHelper::instance().fileCountAsync(const_cast<AsyncFileInfo *>(this)->url);
+                d->updateFileCountFuture = future;
+            }
+            d->lock.unlock();
+        } else {
+            qCDebug(logDFMBase) << "updateAttributes: tryLock failed for fileCount," << url;
         }
     }
 
@@ -558,9 +568,13 @@ void AsyncFileInfo::updateAttributes(const QList<FileInfo::FileInfoAttributeID> 
             DFileInfo::MediaType mediaType { DFileInfo::MediaType::kGeneral };
             QList<DFileInfo::AttributeExtendID> extendIDs;
             {
-                QMutexLocker lk(&d->lock);
-                mediaType = d->mediaType;
-                extendIDs = d->extendIDs;
+                if (d->lock.tryLock()) {
+                    mediaType = d->mediaType;
+                    extendIDs = d->extendIDs;
+                    d->lock.unlock();
+                } else {
+                    qCDebug(logDFMBase) << "updateAttributes: tryLock failed for mediaInfo," << url;
+                }
             }
             if (!extendIDs.isEmpty())
                 d->updateMediaInfo(mediaType, extendIDs);
@@ -1022,10 +1036,14 @@ QString AsyncFileInfoPrivate::sizeFormat() const
 
 QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) const
 {
-    QMutexLocker lk(&lock);
-    if (dfmFileInfo && dfmFileInfo->queryAttributeFinished()) {
+    QSharedPointer<DFileInfo> tmpDfmFileInfo;
+    {
+        QMutexLocker lk(&lock);
+        tmpDfmFileInfo = dfmFileInfo;
+    }
+    if (tmpDfmFileInfo && tmpDfmFileInfo->queryAttributeFinished()) {
         bool getOk { false };
-        auto value = dfmFileInfo->attribute(key, &getOk);
+        auto value = tmpDfmFileInfo->attribute(key, &getOk);
         if (ok)
             *ok = getOk;
         return value;
@@ -1035,7 +1053,7 @@ QVariant AsyncFileInfoPrivate::attribute(DFileInfo::AttributeID key, bool *ok) c
 
 QVariant AsyncFileInfoPrivate::asyncAttribute(FileInfo::FileInfoAttributeID key) const
 {
-    QMutexLocker lk(&const_cast<AsyncFileInfoPrivate *>(this)->lock);
+    QReadLocker lk(&const_cast<AsyncFileInfoPrivate *>(this)->asyncAttributesLock);
     return cacheAsyncAttributes.value(key);
 }
 
@@ -1241,7 +1259,7 @@ int AsyncFileInfoPrivate::cacheAllAttributes(const QString &attributes)
 
 bool AsyncFileInfoPrivate::insertAsyncAttribute(const FileInfo::FileInfoAttributeID id, const QVariant &value)
 {
-    QMutexLocker lk(&lock);
+    QWriteLocker lk(&asyncAttributesLock);
     if (cacheAsyncAttributes.value(id) == value || !value.isValid())
         return false;
     cacheAsyncAttributes.insert(id, value);
@@ -1291,21 +1309,26 @@ void AsyncFileInfoPrivate::updateMediaInfo(const DFileInfo::MediaType type, cons
 {
     if (queringAttribute)
         return;
-    QMutexLocker rlk(&lock);
-    if (!dfmFileInfo || !dfmFileInfo->queryAttributeFinished())
+    if (!lock.tryLock()) {
+        qCDebug(logDFMBase) << "updateMediaInfo: tryLock failed";
         return;
-
+    }
+    if (!dfmFileInfo || !dfmFileInfo->queryAttributeFinished()) {
+        lock.unlock();
+        return;
+    }
     if (!ids.isEmpty() && !mediaFuture) {
         mediaFuture.reset(new InfoDataFuture(dfmFileInfo->attributeExtend(type, ids, 0)));
     } else if (mediaFuture && mediaFuture->isFinished()) {
         attributesExtend = mediaFuture->mediaInfo();
         mediaFuture.reset(nullptr);
     }
+    lock.unlock();
 }
 
 bool AsyncFileInfoPrivate::hasAsyncAttribute(FileInfo::FileInfoAttributeID key)
 {
-    QMutexLocker lk(&lock);
+    QReadLocker lk(&asyncAttributesLock);
     return cacheAsyncAttributes.contains(key);
 }
 

@@ -49,6 +49,7 @@ public:
     InfoHelperUeserDataPointer fileCountFuture { nullptr };
     InfoHelperUeserDataPointer updateFileCountFuture { nullptr };
     QMap<FileInfo::FileInfoAttributeID, QVariant> cacheAsyncAttributes;
+    QReadWriteLock asyncAttributesLock;
     mutable QMutex notifyLock;
     QMultiMap<QUrl, QString> notifyUrls;
     quint64 tokenKey { 0 };
