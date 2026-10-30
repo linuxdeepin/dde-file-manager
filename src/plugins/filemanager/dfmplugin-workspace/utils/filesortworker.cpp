@@ -604,6 +604,8 @@ void FileSortWorker::handleWatcherUpdateFiles(const QList<SortInfoPointer> &chil
             return;
         handleWatcherUpdateFile(sort);
     }
+
+    resortCurrent(false);
 }
 
 void FileSortWorker::handleWatcherUpdateHideFile(const QUrl &hidUrl)
