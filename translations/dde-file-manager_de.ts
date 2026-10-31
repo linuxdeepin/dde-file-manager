@@ -1746,18 +1746,17 @@ Benutzer und Passwort eingeben für %1</translation>
         <source>The file vault encryption scheme has been upgraded.
 You need to upgrade this vault to continue using it.</source>
         <translation>Die Dateitresor-Verschlüsselung wurde verstärkt.
-Sie müssen den Tresor deswegen angleichen, um ihn benutzen zu können.
-</translation>
+Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="493"/>
         <source>Later</source>
-        <translation type="unfinished"/>
+        <translation>Später</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="494"/>
         <source>Upgrade now</source>
-        <translation type="unfinished"/>
+        <translation>Jetzt anpassen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="12"/>
@@ -1867,7 +1866,7 @@ Sie müssen den Tresor deswegen angleichen, um ihn benutzen zu können.
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="54"/>
         <source>Backup couldn&apos;t be created</source>
-        <translation type="unfinished"/>
+        <translation>Dateisicherung konnte nicht erstellt werden</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="56"/>
@@ -1877,22 +1876,22 @@ Sie müssen den Tresor deswegen angleichen, um ihn benutzen zu können.
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="60"/>
         <source>Operation would be recursive</source>
-        <translation type="unfinished"/>
+        <translation>Ausführung wäre rekursiv</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="64"/>
         <source>Operation would block</source>
-        <translation type="unfinished"/>
+        <translation>Ausführung würde blockieren</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="66"/>
         <source>Host couldn&apos;t be found (remote operations)</source>
-        <translation type="unfinished"/>
+        <translation>Server konnte nicht gefunden werden (nicht-lokale Ausführung)</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="68"/>
         <source>Operation would merge files</source>
-        <translation type="unfinished"/>
+        <translation>Ausführung würde Dateien zusammenfügen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="70"/>
@@ -1902,7 +1901,7 @@ Sie müssen den Tresor deswegen angleichen, um ihn benutzen zu können.
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="72"/>
         <source>The object has not been initialized</source>
-        <translation type="unfinished"/>
+        <translation>Das Objekt wurde noch nicht inizialisiert</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="74"/>
