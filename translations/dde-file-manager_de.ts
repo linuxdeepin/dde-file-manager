@@ -230,7 +230,8 @@ Flash memory may be failing. Please back up data immediately.</source>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1011"/>
         <source>Authentication Required
 Enter user and password for %1</source>
-        <translation type="unfinished"/>
+        <translation>Authentifizierung erforderlich
+Benutzer und Passwort eingeben für %1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="1074"/>
@@ -419,24 +420,24 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="397"/>
         <source>Specify directory</source>
-        <translation type="unfinished"/>
+        <translation>Verzeichnis bestimmen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="407"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="428"/>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="478"/>
         <source>Specify directory %1</source>
-        <translation type="unfinished"/>
+        <translation>Verzeichnis %1 bestimmen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="473"/>
         <source>Invalid Directory</source>
-        <translation type="unfinished"/>
+        <translation>Ungültiges Verzeichnis</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/settingsdialog/settingdialog.cpp" line="474"/>
         <source>This directory does not support pinning</source>
-        <translation type="unfinished"/>
+        <translation>Dieses Verzeichnis unterstützt kein Anheften</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/dialogs/taskdialog/taskdialog.cpp" line="155"/>
@@ -465,7 +466,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="447"/>
         <location filename="../src/dfm-base/file/local/syncfileinfo.cpp" line="503"/>
         <source>File or directory not found</source>
-        <translation type="unfinished"/>
+        <translation>Datei oder Verzeichnis nicht gefunden</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/file/local/asyncfileinfo.cpp" line="450"/>
@@ -738,7 +739,7 @@ Enter user and password for %1</source>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-pro-trans.cpp" line="51"/>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-trans.cpp" line="52"/>
         <source>Default icon size:</source>
-        <translation type="unfinished"/>
+        <translation>Standard-Icongröße:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-fedora-trans.cpp" line="44"/>
@@ -996,12 +997,12 @@ Enter user and password for %1</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="583"/>
         <source>View details</source>
-        <translation type="unfinished"/>
+        <translation>Details anzeigen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="583"/>
         <source>Hide details</source>
-        <translation type="unfinished"/>
+        <translation>Details ausblenden</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="585"/>
