@@ -124,18 +124,18 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="517"/>
         <source>Hardware Failure Warning</source>
-        <translation type="unfinished"/>
+        <translation>Hardwareausfall-Warnung</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="518"/>
         <source>%1 is in hardware write-protected mode.
 Flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>%1 ist hardwareseitig schreibgeschützt. Flash-Speicher kann ausfallen. Bitte umgehend Daten sichern.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="524"/>
         <source>Device Damaged, Cannot Auto Repair</source>
-        <translation type="unfinished"/>
+        <translation>Gerät beschädigt, kann nicht automatisch repariert werden</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="525"/>
@@ -145,7 +145,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="735"/>
         <source>Repair operation failed</source>
-        <translation type="unfinished"/>
+        <translation>Repahlagenraturversuch fehlgesc</translation>
     </message>
 </context>
 <context>
