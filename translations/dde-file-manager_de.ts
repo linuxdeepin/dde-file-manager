@@ -2325,17 +2325,17 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="51"/>
         <source>Icon view</source>
-        <translation type="unfinished"/>
+        <translation>Symbolansicht</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="55"/>
         <source>List view</source>
-        <translation type="unfinished"/>
+        <translation>Listenansicht</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/viewswitchbutton.cpp" line="59"/>
         <source>Tree view</source>
-        <translation type="unfinished"/>
+        <translation>Baumansicht</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
@@ -2368,7 +2368,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="132"/>
         <source>Cancel</source>
-        <translation type="unfinished"/>
+        <translation>Abbrechen</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="133"/>
@@ -2399,7 +2399,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="191"/>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="244"/>
         <source>Close</source>
-        <translation type="unfinished"/>
+        <translation>Schließen</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
