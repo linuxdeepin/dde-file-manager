@@ -161,7 +161,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="735"/>
         <source>Cannot copy source directory: permission denied</source>
-        <translation type="unfinished"/>
+        <translation>Quellverzeichnis kann nicht gelesen werden, Zugriff verweigert</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="756"/>
@@ -174,7 +174,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
         <source>Decrypting </source>
-        <translation type="unfinished"/>
+        <translation>Entschlüsseln</translation>
     </message>
 </context>
 <context>
@@ -182,7 +182,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>Verschlüsselung initialisieren</translation>
     </message>
 </context>
 <context>
@@ -198,7 +198,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/normaldecryptworker.cpp" line="24"/>
         <source>Decrypting </source>
-        <translation type="unfinished"/>
+        <translation>Entschlüsseln</translation>
     </message>
 </context>
 <context>
@@ -206,7 +206,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/services/diskencrypt/workers/normalinitencryptworker.cpp" line="27"/>
         <source>Initialize encryption </source>
-        <translation type="unfinished"/>
+        <translation>Verschlüsselung initialisieren</translation>
     </message>
 </context>
 <context>
