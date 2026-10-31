@@ -1007,7 +1007,7 @@ Benutzer und Passwort eingeben für %1</translation>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="585"/>
         <source>Failed to operate on %1 files, %2</source>
-        <translation type="unfinished"/>
+        <translation> Fehlschlag mit %1 -Dateien, %2</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/filenameutils.cpp" line="207"/>
@@ -1222,7 +1222,8 @@ Benutzer und Passwort eingeben für %1</translation>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="212"/>
         <source>Finalize disc after burning 
 (no additional data can be appended)</source>
-        <translation type="unfinished"/>
+        <translation>Nach dem Brennen der Disc abschließen
+(keine weiteren Daten können angehängt werden)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="224"/>
@@ -1232,7 +1233,7 @@ Benutzer und Passwort eingeben für %1</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="230"/>
         <source>Verify files (checksum)</source>
-        <translation type="unfinished"/>
+        <translation>Dateien verifizieren (Checksum)</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/dialogs/burnoptdialog.cpp" line="236"/>
@@ -1698,7 +1699,7 @@ Benutzer und Passwort eingeben für %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="272"/>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="340"/>
         <source>Reset Password</source>
-        <translation type="unfinished"/>
+        <translation>Passwort zurücksetzen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="290"/>
@@ -1738,13 +1739,15 @@ Benutzer und Passwort eingeben für %1</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="469"/>
         <source>Upgrade File Vault</source>
-        <translation type="unfinished"/>
+        <translation>Dateitresor verstärken</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="484"/>
         <source>The file vault encryption scheme has been upgraded.
 You need to upgrade this vault to continue using it.</source>
-        <translation type="unfinished"/>
+        <translation>Die Dateitresor-Verschlüsselung wurde verstärkt.
+Sie müssen den Tresor deswegen angleichen, um ihn benutzen zu können.
+</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/vaulthelper.cpp" line="493"/>
