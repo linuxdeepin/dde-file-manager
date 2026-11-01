@@ -2404,22 +2404,22 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="192"/>
         <source>Open Device</source>
-        <translation type="unfinished"/>
+        <translation>Gerät öffnen</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="201"/>
         <source>Repair Failed</source>
-        <translation type="unfinished"/>
+        <translation>Reparatur fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>Die Datenstruktur ist stark geschädigt und kann vom System weder erkannt noch repariert werden.Falls wichtige Dateien sich darin befinden, sollten Sie nicht weiter damit arbeiten, sondern professionelle Datenwiederherstellungssoftware benutzen oder professionelle Hilfe suchen.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="220"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Fehler-Code: %1</translation>
     </message>
 </context>
 <context>
@@ -2427,7 +2427,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/services/diskencrypt/workers/resumeencryptworker.cpp" line="67"/>
         <source>Encrypting </source>
-        <translation type="unfinished"/>
+        <translation>Am Entschlüsseln</translation>
     </message>
 </context>
 <context>
