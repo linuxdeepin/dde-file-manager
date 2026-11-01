@@ -2436,13 +2436,13 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="158"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="446"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>Dateisystemtyp kann nicht erkannt werden. Das Gerät scheint stark beschädigt oder mit einem nicht unterstützten Dateisystem formatiert zu sein. Eine Datenwiederherstellung bedarf wohl professioneller Werkzeuge.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="173"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="461"/>
         <source>Device is hardware write-protected, flash memory may be failing. Please back up data immediately.</source>
-        <translation type="unfinished"/>
+        <translation>Das Gerät ist hardwareseitig schreibgeschützt, der Flash-Speicher kann ausfallen, bitte schnellstens Daten sichern.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="190"/>
