@@ -325,6 +325,15 @@ bool SideBarViewPrivate::isCursorInsideIndex(const QModelIndex &index, const QPo
         return false;
 
     const QRect itemRect = q->visualRect(index);
+
+    // Prefer the event-supplied position (fallbackPos) as it is reliable on
+    // all platforms, including Wayland where QCursor::pos() is unavailable
+    // during drag-and-drop operations.
+    if (itemRect.contains(fallbackPos))
+        return true;
+
+    // Fall back to the global cursor position for non-DnD callers or
+    // platforms where the global lookup is still valid (e.g. X11).
     const QPoint globalPos = QCursor::pos();
     if (QWidget *windowWidget = q->window()) {
         const QPoint windowPos = windowWidget->mapFromGlobal(globalPos);
@@ -337,9 +346,8 @@ bool SideBarViewPrivate::isCursorInsideIndex(const QModelIndex &index, const QPo
         }
     }
 
-    // Fallback for compositor paths where childAt/global lookup is unavailable
-    // but the sidebar viewport still owns the active pointer hover state.
-    return q->viewport()->underMouse() && itemRect.contains(fallbackPos);
+    // Last resort: the sidebar viewport still owns the active pointer hover state.
+    return q->viewport()->underMouse();
 }
 
 void SideBarViewPrivate::notifyOrderChanged()
