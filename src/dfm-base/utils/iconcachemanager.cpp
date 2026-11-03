@@ -109,7 +109,7 @@ QPixmap IconCacheManager::getPixmap(const QString &iconName,
     if (icon.isNull())
         return QPixmap();
 
-    px = icon.pixmap(size * devicePixelRatio, mode, state);
+    px = icon.pixmap(size, devicePixelRatio, mode, state);
     if (!px.isNull()) {
         px.setDevicePixelRatio(devicePixelRatio);
         QPixmapCache::insert(key, px);

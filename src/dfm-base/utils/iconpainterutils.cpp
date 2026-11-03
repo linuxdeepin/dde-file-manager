@@ -55,7 +55,7 @@ QPixmap IconPainterUtils::getIconPixmap(const QIcon &icon, const QSize &size,
     if (size.width() <= 0 || size.height() <= 0)
         return QPixmap();
 
-    auto px = icon.pixmap(size * pixelRatio, mode, state);
+    auto px = icon.pixmap(size, pixelRatio, mode, state);
     if (px.isNull() || px.size().isEmpty())
         return QPixmap();
 
