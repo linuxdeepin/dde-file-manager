@@ -25,6 +25,7 @@
 #include <QCommandLineOption>
 #include <QRegularExpression>
 #include <QDebug>
+#include <QTimer>
 
 Q_DECLARE_LOGGING_CATEGORY(logAppFileManager)
 
@@ -388,9 +389,12 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
     auto actWinId = FMWindowsIns.lastActivedWindowId();
     if (Application::appAttribute(Application::kOpenInNewTab).toBool() && actWinId > 0) {
         auto activeWindow = [](FileManagerWindow *w) {
-            if (w->isMinimized())
+            if (w->isMinimized()) {
                 w->setWindowState(w->windowState() & ~Qt::WindowMinimized);
-            w->activateWindow();
+                QTimer::singleShot(0, w, [w]() { w->activateWindow(); });
+            } else {
+                w->activateWindow();
+            }
         };
 
         if (flag) {
