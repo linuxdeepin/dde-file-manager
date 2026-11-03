@@ -153,6 +153,7 @@ inline constexpr char kTypeCdImage[] { "application/x-cd-image" };
 inline constexpr char kTypeISO9660Image[] { "application/x-iso9660-image" };
 inline constexpr char kTypeAppXml[] { "application/xml" };
 inline constexpr char kTypeAppPdf[] { "application/pdf" };
+inline constexpr char kTypeAppOfd[] { "application/ofd" };
 inline constexpr char kTypeAppPptx[] { "application/vnd.openxmlformats-officedocument.presentationml.presentation" };
 inline constexpr char kTypeAppMxf[] { "application/mxf" };
 inline constexpr char kTypeAppVMAsf[] { "application/vnd.ms-asf" };

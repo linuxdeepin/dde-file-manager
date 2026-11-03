@@ -31,6 +31,7 @@ ThumbnailFactory::ThumbnailFactory(QObject *parent)
     registerThumbnailCreator(Mime::kTypeImageVDMultipage, ThumbnailCreators::djvuThumbnailCreator);
     registerThumbnailCreator(Mime::kTypeTextPlain, ThumbnailCreators::textThumbnailCreator);
     registerThumbnailCreator(Mime::kTypeAppPdf, ThumbnailCreators::pdfThumbnailCreator);
+    registerThumbnailCreator(Mime::kTypeAppOfd, ThumbnailCreators::ofdThumbnailCreator);
     registerThumbnailCreator(Mime::kTypeAppVRRMedia, ThumbnailCreators::videoThumbnailCreatorFfmpeg);
     registerThumbnailCreator("image/*", ThumbnailCreators::imageThumbnailCreator);
     registerThumbnailCreator("audio/*", ThumbnailCreators::audioThumbnailCreator);

@@ -22,6 +22,14 @@ function(dfm_configure_base_library target_name)
     pkg_check_modules(LIBHEIF REQUIRED libheif)
     pkg_search_module(X11 REQUIRED x11 IMPORTED_TARGET)
     pkg_check_modules(MINIZIP REQUIRED minizip IMPORTED_TARGET)
+    pkg_check_modules(CAIRO REQUIRED cairo IMPORTED_TARGET)
+
+    # rofd C ABI: OFD (GB/T 33190) thumbnail/preview rendering (rofdrenderer.cpp)
+    find_path(ROFD_INCLUDE_DIR rofd.h)
+    find_library(ROFD_FFI_LIBRARY NAMES rofd_ffi)
+    if(NOT ROFD_INCLUDE_DIR OR NOT ROFD_FFI_LIBRARY)
+        message(FATAL_ERROR "rofd not found: librofd-ffi-dev (>= 0.4.0) is required")
+    endif()
     
     # Qt version specific dependencies
     if(${QT_VERSION_MAJOR} EQUAL "6")
@@ -83,10 +91,12 @@ function(dfm_configure_base_library target_name)
             ${LIBHEIF_LIBRARIES}
             libappimage
             PkgConfig::MINIZIP
+            PkgConfig::CAIRO
+            ${ROFD_FFI_LIBRARY}
     )
-    
+
     # Include directories
-    target_include_directories(${target_name} 
+    target_include_directories(${target_name}
         PUBLIC
             "$<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>"
             "$<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/..>"
@@ -94,6 +104,8 @@ function(dfm_configure_base_library target_name)
             ${DFM_IO_HEADERS}
             ${DFM_MOUNT_HEADERS}
             ${DFM_BURN_HEADERS}
+        PRIVATE
+            ${ROFD_INCLUDE_DIR}
     )
     
     # Compile definitions
