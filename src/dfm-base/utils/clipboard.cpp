@@ -45,14 +45,14 @@ void onClipboardDataChanged()
     if (!canReadClipboard)
         return;
 
-    QMutexLocker lk(&clipboardFileUrlsMutex);
-    clipboardFileUrls.clear();
-
     const QMimeData *mimeData = qApp->clipboard()->mimeData();
     if (!mimeData || mimeData->formats().isEmpty()) {
         qCWarning(logDFMBase) << "get null mimeData from QClipBoard or remote formats is null!";
         return;
     }
+
+    QMutexLocker lk(&clipboardFileUrlsMutex);
+    clipboardFileUrls.clear();
     if (mimeData->hasFormat(kRemoteCopyKey)) {
         qCWarning(logDFMBase) << "clipboard use other !";
         clipboardAction = ClipBoard::kRemoteAction;
