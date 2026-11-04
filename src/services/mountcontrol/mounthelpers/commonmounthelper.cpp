@@ -5,8 +5,12 @@
 #include "commonmounthelper.h"
 
 #include <QDebug>
+#include <QFileInfo>
+#include <QRegularExpression>
 
 #include <libmount/libmount.h>
+#include <pwd.h>
+#include <unistd.h>
 
 SERVICEMOUNTCONTROL_USE_NAMESPACE
 
@@ -76,4 +80,49 @@ QVariantMap CommonMountHelper::unmount(const QString &path, const QVariantMap &o
 
     return { { MountReturnField::kResult, true },
              { MountReturnField::kErrorCode, 0 } };
+}
+
+// Check whether the caller is authorized to mount/unmount at `path`.
+//
+// Unmount access control:
+//   The user-requested `path` must be canonical — no ".." segments or symlinks —
+//   otherwise `path` cannot match any existing mount entry in the system.
+//
+// 1. path canonical check (pre-filter):
+//      canonicalFilePath() must equal the input `path`. If they differ (or the
+//      path does not exist) the bypass is rejected immediately (return false),
+//      preventing a caller from spoofing /media/<other-user>/... via symlinks.
+//
+// 2. path form check:
+//      `path` must be of the form /media/<user>/<dir>. The captured <user> is
+//      resolved via getpwnam_r and its uid compared against callerID; only the
+//      mount-point owner gets the polkit bypass.
+bool CommonMountHelper::checkAuthentication(const QString &appName, const uint callerID, const bool doMount, const QString &path)
+{
+    // For unmount operations only, bypass polkit if the caller owns the mount point.
+    if (!doMount && !path.isEmpty()) {
+        // (1) Canonical pre-filter: reject paths that contain ".." or symlinks so
+        //     that `path` can reliably match existing mount entries downstream.
+        const QString &canonical = QFileInfo(path).canonicalFilePath();
+        if (canonical.isEmpty() || canonical != path) {
+            fmWarning() << "checkAuthentication: path is not canonical, reject:" << path << "->" << canonical;
+            return false;
+        }
+
+        // (2) Form check: /media/<user>/<dir>, and the caller must be <user>.
+        static const QRegularExpression re("^/media/([^/]+)/.+");
+        QRegularExpressionMatch match = re.match(path);
+        if (match.hasMatch()) {
+            const QString &userName = match.captured(1);
+            // getpwnam_r is reentrant/thread-safe; getpwnam is not.
+            struct passwd pwd;
+            struct passwd *result = nullptr;
+            char buf[8192];
+            int rc = getpwnam_r(userName.toLocal8Bit().constData(), &pwd, buf, sizeof(buf), &result);
+            if (rc == 0 && result && pwd.pw_uid == callerID)
+                return true;
+        }
+    }
+
+    return AbstractMountHelper::checkAuthentication(appName, callerID, doMount, path);
 }

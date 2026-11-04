@@ -9,6 +9,9 @@
 #include "service_mountcontrol_global.h"
 
 #include <QFile>
+#include <QDBusReply>
+#include <QDBusConnectionInterface>
+#include <climits>
 
 #include <DConfig>
 
@@ -58,7 +61,23 @@ QVariantMap MountControlDBus::Mount(const QString &path, const QVariantMap &opts
 
     auto helper = d->mountHelpers.value(fs, nullptr);
     if (helper) {
-        if (!helper->checkAuthentication(message().service())) {
+        uint callerID = UINT_MAX;
+        QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus,
+                                                             "org.freedesktop.DBus");
+        if (conn.isConnected()) {
+            QDBusReply<uint> reply = conn.interface()->serviceUid(message().service());
+            if (reply.isValid())
+                callerID = reply.value();
+        }
+
+        if (callerID == UINT_MAX) {
+            fmWarning() << "Mount: failed to get caller UID for service:" << message().service();
+            return { { kResult, false },
+                    { kErrorCode, -kAuthenticationFailed },
+                    { kErrorMessage, "Authentication failed: cannot resolve caller UID" } };
+        }
+
+        if (!helper->checkAuthentication(message().service(), callerID, true, path)) {
             fmWarning() << "Mount: Authentication failed for path:" << path;
             return { { kResult, false },
                     { kErrorCode, -kAuthenticationFailed },
@@ -86,7 +105,23 @@ QVariantMap MountControlDBus::Unmount(const QString &path, const QVariantMap &op
 
     auto helper = d->mountHelpers.value(fs, nullptr);
     if (helper) {
-        if (!helper->checkAuthentication(message().service())) {
+        uint callerID = UINT_MAX;
+        QDBusConnection conn = QDBusConnection::connectToBus(QDBusConnection::SystemBus,
+                                                             "org.freedesktop.DBus");
+        if (conn.isConnected()) {
+            QDBusReply<uint> reply = conn.interface()->serviceUid(message().service());
+            if (reply.isValid())
+                callerID = reply.value();
+        }
+
+        if (callerID == UINT_MAX) {
+            fmWarning() << "Unmount: failed to get caller UID for service:" << message().service();
+            return { { kResult, false },
+                    { kErrorCode, -kAuthenticationFailed },
+                    { kErrorMessage, "Authentication failed: cannot resolve caller UID" } };
+        }
+
+        if (!helper->checkAuthentication(message().service(), callerID, false, path)) {
             fmWarning() << "Unmount: Authentication failed for path:" << path;
             return { { kResult, false },
                     { kErrorCode, -kAuthenticationFailed },

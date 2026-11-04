@@ -22,8 +22,11 @@ public:
     virtual ~AbstractMountHelper() { }
     virtual QVariantMap mount(const QString &path, const QVariantMap &opts) = 0;
     virtual QVariantMap unmount(const QString &path, const QVariantMap &opts) = 0;
-    virtual bool checkAuthentication(const QString &appName)
+    virtual bool checkAuthentication(const QString &appName, const uint callerID, const bool doMount, const QString &path)
     {
+        Q_UNUSED(callerID)
+        Q_UNUSED(doMount)
+        Q_UNUSED(path)
         return ServiceCommon::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionIdDefault, appName);
     }
 
