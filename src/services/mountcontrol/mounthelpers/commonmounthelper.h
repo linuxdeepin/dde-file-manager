@@ -17,6 +17,7 @@ public:
 
     QVariantMap mount(const QString &path, const QVariantMap &opts);
     QVariantMap unmount(const QString &path, const QVariantMap &opts);
+    bool checkAuthentication(const QString &appName, const uint callerID, const bool doMount, const QString &path) override;
 };
 
 SERVICEMOUNTCONTROL_END_NAMESPACE
