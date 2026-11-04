@@ -98,7 +98,7 @@ static inline void setDesktopWindow(QWidget *w, QScreen *screen = nullptr)
         layerShellWindow->setRightMargin(0);
         layerShellWindow->setTopMargin(0);
         layerShellWindow->setBottomMargin(0);
-        layerShellWindow->setExclusiveZone(0);
+        layerShellWindow->setExclusiveZone(-1);
         layerShellWindow->setLayer(DLayerShellWindow::LayerBackground);
         layerShellWindow->setKeyboardInteractivity(DLayerShellWindow::KeyboardInteractivityOnDemand);
         layerShellWindow->setScreenConfiguration(DLayerShellWindow::ScreenFromQWindow);
