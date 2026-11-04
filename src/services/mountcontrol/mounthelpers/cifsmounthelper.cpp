@@ -212,8 +212,11 @@ QVariantMap CifsMountHelper::unmount(const QString &path, const QVariantMap &opt
     return { { kResult, ret == 0 }, { kErrorCode, err }, { kErrorMessage, errMsg } };
 }
 
-bool CifsMountHelper::checkAuthentication(const QString &appName)
+bool CifsMountHelper::checkAuthentication(const QString &appName, const uint callerID, const bool doMount, const QString &path)
 {
+    Q_UNUSED(callerID)
+    Q_UNUSED(doMount)
+    Q_UNUSED(path)
     return ServiceCommon::PolicyKitHelper::instance()->checkAuthorization(kPolicyKitActionIdCIFS, appName);
 }
 
