@@ -75,6 +75,7 @@ public:
     void clearCompleterModel();
     void updateCompletionState(const QString &text);
     void doComplete();
+    void ensureCompleterPopupParent();
     void requestCompleteByUrl(const QUrl &url);
 
     void completeIpAddress(const QString &text);
