@@ -2412,12 +2412,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të riparohet pajisja. Kjo mund të vijë nga gabime serioze formatimit, ose nga dëmtim fizik. Që të mbrohen të dhënat tuaja, rekomandohet të ndalet shkrim kartelash të reja dhe të provohet përdorim software-i profesional rimarrjesh të dhënash, ose të kërkohet asistencë dorazi.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="220"/>
         <source>Error Code: %1</source>
-        <translation type="unfinished"/>
+        <translation>Kod Gabimi: %1</translation>
     </message>
 </context>
 <context>
@@ -2434,7 +2434,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="158"/>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="446"/>
         <source>Filesystem type cannot be detected. The device may be severely damaged or formatted with an unsupported filesystem. Data recovery may require professional tools.</source>
-        <translation type="unfinished"/>
+        <translation>S’pikaset dot lloj sistemi kartelash. Pajisja mund të jetë dëmtuar rëndë, ose të jetë formatuar me një sistem kartelash që s’mbulohet. Rimarrja e të dhënave mund të lypë mjete profesionale.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="173"/>
