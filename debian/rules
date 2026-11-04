@@ -22,9 +22,22 @@ endef
 # 调用版本检测
 $(eval $(call detect_edition))
 
+# The folder-content plugin needs the dde-shell 2.0.61 dock API
+# (dock/foldercontent.h, libdde-shell-dock). On older dde-shell the CMake
+# side skips the plugin, so drop its package stanza from the generated
+# control to avoid shipping an empty package.
+DDE_SHELL_MIN_VERSION = 2.0.61
+DDE_SHELL_VERSION = $(shell dpkg-query -W -f='$${Version}' libdde-shell-dev 2>/dev/null)
+ifeq ($(shell dpkg --compare-versions '$(DDE_SHELL_VERSION)' ge '$(DDE_SHELL_MIN_VERSION)' 2>/dev/null && echo yes),yes)
+FOLDER_CONTENT_FILTER =
+else
+FOLDER_CONTENT_FILTER = -e '/^Package: dde-file-manager-dock-plugin$$/,/^$$/d'
+endif
+
 # 生成 control 文件（需要处理换行符）
 $(shell sed -e 's|@PROFESSIONAL_DEPS@|$(PROFESSIONAL_DEPS)|g' \
             -e 's|@PROFESSIONAL_DEPS2@|$(PROFESSIONAL_DEPS2)|g' \
+            $(FOLDER_CONTENT_FILTER) \
             debian/control.in | sed 's|\\n|\n|g' > debian/control)
 
 %:
