@@ -172,6 +172,19 @@ Flash memory may be failing. Please back up data immediately.</source>
     </message>
 </context>
 <context>
+    <name>FolderView</name>
+    <message>
+        <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="73"/>
+        <source>Back</source>
+        <translation type="unfinished"></translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="187"/>
+        <source>Open in file manager</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
     <name>FstabDecryptWorker</name>
     <message>
         <location filename="../src/services/diskencrypt/workers/fstabdecryptworker.cpp" line="28"/>
@@ -1035,21 +1048,21 @@ Enter user and password for %1</source>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="66"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="89"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="120"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="67"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="90"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="121"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>ຕົວຈັດການເອກະສານ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="195"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="554"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="196"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="555"/>
         <source>Files are being processed</source>
         <translation>ཡົດທືນກັນກຳນຳໃຊ້ງານ</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="228"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="229"/>
         <source>Bit</source>
         <translation>ບີດ</translation>
     </message>

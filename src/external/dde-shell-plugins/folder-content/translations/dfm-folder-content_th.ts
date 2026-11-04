@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!DOCTYPE TS>
+<TS version="2.1" language="th">
+<context>
+    <name>FolderView</name>
+    <message>
+        <location filename="../../package/FolderView.qml" line="82"/>
+        <source>Back</source>
+        <translation>ย้อนกลับ</translation>
+    </message>
+    <message>
+        <location filename="../../package/FolderView.qml" line="268"/>
+        <source>Open in file manager</source>
+        <translation>เปิดในโปรแกรมจัดการไฟล์</translation>
+    </message>
+    <message>
+        <source>Network is unreachable</source>
+        <translation>เครือข่ายไม่สามารถเข้าถึงได้</translation>
+    </message>
+</context>
+</TS>
