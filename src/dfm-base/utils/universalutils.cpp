@@ -20,6 +20,7 @@
 #    include <QX11Info>
 #endif
 #include <QFile>
+#include <QFileInfo>
 #include <QProcess>
 #include <QDBusConnectionInterface>
 #include <QRegularExpression>
@@ -620,23 +621,32 @@ bool UniversalUtils::checkDbusService(const QString &service, bool isSystemDbus)
 
 /**
  * @brief FileUtils::setDockDnDMimeData
- * Writes dock drag-and-drop metadata into \a mimeData for a single .desktop file.
+ * Writes dock drag-and-drop metadata for a single desktop file or local directory.
  *
  * Sets "text/x-dde-dock-dnd-appid" to the application ID derived from \a url,
  * and "text/x-dde-dock-dnd-source" to \a source.
- * Does nothing if \a url does not refer to a .desktop file or the app ID cannot
- * be determined.
+ * Local directories carry an opaque file-manager folder reference under
+ * "text/x-dde-dock-dnd-folder"; their original URL drag data is preserved.
  *
  * @param mimeData  The QMimeData object to populate. Must not be null.
- * @param url       A local file URL pointing to a .desktop file.
+ * @param url       A local URL pointing to a directory or .desktop file.
  * @param source    The drag source identifier (e.g. "dde-desktop").
  */
 void UniversalUtils::setDockDnDMimeData(QMimeData *mimeData, const QUrl &url, const QString &source)
 {
     Q_ASSERT(mimeData);
 
-    if (!FileUtils::isDesktopFile(url))
+    const QFileInfo info(url.toLocalFile());
+    if (url.isLocalFile() && url.host().isEmpty() && info.isDir() && info.isReadable()) {
+        const auto path = info.canonicalFilePath();
+        if (path.isEmpty()) return;
+        const auto directory = QUrl::fromLocalFile(path).toString(QUrl::FullyEncoded);
+        const auto reference = QByteArray("folder/filemanager/") + directory.toUtf8().toBase64(
+            QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals);
+        mimeData->setData(QStringLiteral("text/x-dde-dock-dnd-folder"), reference);
+        mimeData->setData(QStringLiteral("text/x-dde-dock-dnd-source"), source.toUtf8());
         return;
+    }
 
     if (auto info = InfoFactory::create<FileInfo>(url)) {
         const auto &appId = info->nameOf(NameInfoType::kCompleteBaseName);

@@ -1,0 +1,7 @@
+<RCC>
+    <qresource prefix="/dfm-folder-content">
+        <file alias="FolderIcon.qml">package/FolderIcon.qml</file>
+        <file alias="FolderView.qml">package/FolderView.qml</file>
+        <file alias="ThumbnailItem.qml">package/ThumbnailItem.qml</file>
+    </qresource>
+</RCC>
