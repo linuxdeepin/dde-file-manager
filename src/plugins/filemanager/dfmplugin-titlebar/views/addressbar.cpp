@@ -25,6 +25,7 @@
 
 #include <QCompleter>
 #include <QFontMetrics>
+#include <QWindow>
 #include "addressbar.h"
 
 using namespace dfmplugin_titlebar;
@@ -185,6 +186,31 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
 }
 
 /*!
+ * \brief Attach the completer popup to the top-level window.
+ *
+ * QCompleter does not give its popup a transient parent on Qt 6.8
+ * (QTBUG-130474, fixed only in Qt 6.8.4/6.9.3), so on Wayland the popup has no
+ * parent surface. xdg-shell cannot position a popup without one: the shell
+ * integration either dereferences the null parent or falls back to an
+ * unpositioned toplevel, which makes the completion list appear offset from
+ * the address bar. Setting the parent explicitly keeps the popup on the
+ * xdg_popup path, where the compositor positions it against its anchor.
+ */
+void AddressBarPrivate::ensureCompleterPopupParent()
+{
+    QWindow *parentWindow = q->window() ? q->window()->windowHandle() : nullptr;
+    if (!parentWindow)
+        return;
+
+    if (!completerView->windowHandle())
+        completerView->winId();
+
+    QWindow *popupWindow = completerView->windowHandle();
+    if (popupWindow && popupWindow->transientParent() != parentWindow)
+        popupWindow->setTransientParent(parentWindow);
+}
+
+/*!
  * \brief Do complete by calling QCompleter::complete()
  *
  * Fake inline completion means auto select the only matched completion when
@@ -193,6 +219,7 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
 void AddressBarPrivate::doComplete()
 {
     if (completerView->isHidden()) {
+        ensureCompleterPopupParent();
         urlCompleter->complete(q->rect().adjusted(0, 5, 0, 5));
     } else {
         urlCompleter->metaObject()->invokeMethod(urlCompleter, "_q_autoResizePopup");
