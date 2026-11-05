@@ -4,3 +4,4 @@
 
 # Unit tests for src/external plugin sources (e.g. dde-dock-plugins).
 add_subdirectory(disk-mount)
+add_subdirectory(folder-content)
