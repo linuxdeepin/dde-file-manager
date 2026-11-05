@@ -84,6 +84,23 @@ function(dfm_configure_base_library target_name)
             libappimage
             PkgConfig::MINIZIP
     )
+
+    # Minimized window restore on Wayland: xdg-shell has no un-minimize request,
+    # so the client has to ask the compositor through
+    # treeland_foreign_toplevel_manager_v2. Its definition ships in
+    # treeland-protocols, the same package dde-shell uses. Both parts are
+    # optional - without them the library still builds complete and the fallback
+    # is a plain xdg-activation request.
+    find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS WaylandClient)
+    find_package(TreelandProtocols QUIET)
+    if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClient AND TREELAND_PROTOCOLS_DATA_DIR)
+        qt6_generate_wayland_protocol_client_sources(${target_name}
+            FILES ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-foreign-toplevel-manager-unstable-v2.xml)
+        target_link_libraries(${target_name} PRIVATE Qt${QT_VERSION_MAJOR}::WaylandClient)
+        target_compile_definitions(${target_name} PRIVATE DFM_WITH_TREELAND_TOPLEVEL)
+    else()
+        message(STATUS "DFM: Treeland protocol unavailable, minimized window restore on Treeland is disabled")
+    endif()
     
     # Include directories
     target_include_directories(${target_name} 

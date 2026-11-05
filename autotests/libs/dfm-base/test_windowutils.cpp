@@ -20,6 +20,7 @@
 #include <QGuiApplication>
 #include <QScreen>
 #include <QTest>
+#include <QWidget>
 
 using namespace dfmbase;
 
@@ -84,4 +85,55 @@ TEST(WindowUtilsTest, CursorScreenReturnsNonNullScreen)
     // falls back to the primary screen when no screen contains the cursor.
     QScreen *screen = WindowUtils::cursorScreen();
     EXPECT_NE(screen, nullptr);
+}
+
+TEST(WindowUtilsTest, SetActivationTokenExportsEnvironmentVariable)
+{
+    qunsetenv("XDG_ACTIVATION_TOKEN");
+
+    WindowUtils::setActivationToken(QStringLiteral("token-1"));
+
+    EXPECT_EQ(qgetenv("XDG_ACTIVATION_TOKEN"), QByteArray("token-1"));
+    qunsetenv("XDG_ACTIVATION_TOKEN");
+}
+
+TEST(WindowUtilsTest, SetEmptyActivationTokenLeavesEnvironmentUntouched)
+{
+    qputenv("XDG_ACTIVATION_TOKEN", "token-1");
+
+    WindowUtils::setActivationToken(QString());
+
+    EXPECT_EQ(qgetenv("XDG_ACTIVATION_TOKEN"), QByteArray("token-1"));
+    qunsetenv("XDG_ACTIVATION_TOKEN");
+}
+
+TEST(WindowUtilsTest, ActivateWindowIgnoresNullWidget)
+{
+    // Must not crash; nothing else to observe without a window.
+    WindowUtils::activateWindow(nullptr);
+}
+
+TEST(WindowUtilsTest, ActivateWindowClearsMinimizedStateOffWayland)
+{
+    // isWayLand() is false once neither the platform nor the environment
+    // claims Wayland, so the minimized state is expected to be cleared locally
+    // - the only branch the client can handle on its own.
+    const QByteArray waylandDisplay = qgetenv("WAYLAND_DISPLAY");
+    const QByteArray sessionType = qgetenv("XDG_SESSION_TYPE");
+    qunsetenv("WAYLAND_DISPLAY");
+    qunsetenv("XDG_SESSION_TYPE");
+
+    QWidget widget;
+    widget.setWindowState(Qt::WindowMinimized);
+    const bool offWayland = !WindowUtils::isWayLand();
+
+    WindowUtils::activateWindow(&widget);
+
+    if (offWayland)
+        EXPECT_FALSE(widget.windowState() & Qt::WindowMinimized);
+
+    if (!waylandDisplay.isEmpty())
+        qputenv("WAYLAND_DISPLAY", waylandDisplay);
+    if (!sessionType.isEmpty())
+        qputenv("XDG_SESSION_TYPE", sessionType);
 }
