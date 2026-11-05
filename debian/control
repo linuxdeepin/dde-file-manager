@@ -26,6 +26,8 @@ Build-Depends:
  libcryptsetup-dev,
  libpcre2-dev,
  libdde-shell-dev (>= 0.0.10),
+ treeland-protocols,
+ qt6-wayland-dev,
  qt6-base-dev,
  qt6-base-private-dev,
  qt6-svg-dev,

@@ -12,6 +12,8 @@
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/shortcut/shortcut.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/windowutils.h>
+#include <dfm-base/utils/private/windowactivator_p.h>
 
 #include <QDebug>
 #include <QEvent>
@@ -61,9 +63,7 @@ FileManagerWindow *FileManagerWindowsManagerPrivate::activeExistsWindowByUrl(con
             || UniversalUtils::urlEquals(url, FileUtils::bindUrlTransform(cur))
             || UniversalUtils::urlEquals(cur, FileUtils::bindUrlTransform(url))) {
             qCInfo(logDFMBase) << "Find url: " << url << " window: " << window;
-            if (window->isMinimized())
-                window->setWindowState(window->windowState() & ~Qt::WindowMinimized);
-            window->activateWindow();
+            WindowUtils::activateWindow(window);
             return window;
         }
     }
@@ -164,6 +164,10 @@ void FileManagerWindowsManager::setCustomWindowCreator(FileManagerWindowsManager
 FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(const QUrl &url, bool isNewWindow, QString *errorString)
 {
     Q_ASSERT_X(thread() == qApp->thread(), "FileManagerWindowsManager", "Show window must in main thread!");
+    // The compositor has to be asked for its toplevels before any of our
+    // windows exists, so start listening when the first one is created.
+    windowactivator::bindToplevelManager();
+
     QString error;
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });
 

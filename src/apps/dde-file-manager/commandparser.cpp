@@ -14,6 +14,7 @@
 #include <dfm-base/interfaces/abstractjobhandler.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/application/application.h>
 
@@ -99,7 +100,7 @@ void CommandParser::processCommand()
     if (isSet("activation-token")) {
         const QString &token = value("activation-token");
         if (!token.isEmpty()) {
-            qputenv("XDG_ACTIVATION_TOKEN", token.toUtf8());
+            DFMBASE_USE_NAMESPACE WindowUtils::setActivationToken(token);
             qCInfo(logAppFileManager) << "Set XDG_ACTIVATION_TOKEN for Wayland activation:" << token;
         }
     }
@@ -384,9 +385,7 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
     auto actWinId = FMWindowsIns.lastActivedWindowId();
     if (Application::appAttribute(Application::kOpenInNewTab).toBool() && actWinId > 0) {
         auto activeWindow = [](FileManagerWindow *w) {
-            if (w->isMinimized())
-                w->setWindowState(w->windowState() & ~Qt::WindowMinimized);
-            w->activateWindow();
+            DFMBASE_USE_NAMESPACE WindowUtils::activateWindow(w);
         };
 
         if (flag) {
