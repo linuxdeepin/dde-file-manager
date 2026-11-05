@@ -5,8 +5,6 @@
 #include "corehelper.h"
 
 #include <dfm-base/base/schemefactory.h>
-#include <dfm-base/utils/universalutils.h>
-#include <dfm-base/utils/fileutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -14,8 +12,6 @@
 
 #include <QDir>
 #include <QProcess>
-
-Q_DECLARE_METATYPE(QList<QUrl> *)
 
 DPCORE_USE_NAMESPACE
 DFMBASE_USE_NAMESPACE
@@ -39,21 +35,8 @@ void CoreHelper::cd(quint64 windowId, const QUrl &url)
     fmInfo() << "cd to " << url;
     window->cd(url);
 
-    if (UniversalUtils::urlEquals(url, FileUtils::trashRootUrl())) {
-        window->setWindowTitle(QCoreApplication::translate("PathManager", "Trash"));
-        return;
-    }
-
-    QUrl titleUrl { url };
-    QList<QUrl> urls {};
-    bool ok = UniversalUtils::urlsTransformToLocal({ titleUrl }, &urls);
-
-    if (ok && !urls.isEmpty())
-        titleUrl = urls.first();
-
-    auto fileInfo = InfoFactory::create<FileInfo>(titleUrl);
+    auto fileInfo = InfoFactory::create<FileInfo>(url);
     if (fileInfo) {
-        QUrl url { fileInfo->urlOf(UrlInfoType::kUrl) };
         window->setWindowTitle(fileInfo->displayOf(DisPlayInfoType::kFileDisplayName));
     } else {
         window->setWindowTitle({});
