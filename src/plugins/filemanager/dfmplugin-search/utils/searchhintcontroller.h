@@ -13,6 +13,7 @@
 #include <QPointer>
 #include <QSet>
 #include <QString>
+#include <QTimer>
 #include <QVariantMap>
 
 namespace dfmplugin_search {
@@ -60,8 +61,8 @@ private:
     void onOcrStatusChanged(const QString &state, const QString &grade);
 
     void evaluateAndShowAllWindows();
-    void evaluateAndShow(quint64 winId);
-    HintType evaluateHint(quint64 winId) const;
+    void scheduleReevaluate();
+    void evaluateAndShow(quint64 winId);    HintType evaluateHint(quint64 winId) const;
     QVariantMap buildHintContent(quint64 winId, HintType type) const;
     QString updatingHintText() const;
     void showHintToWindow(quint64 winId, HintType type, const QVariantMap &content);
@@ -88,6 +89,8 @@ private:
     bool m_textStatusValid { false };
     bool m_ocrStatusValid { false };
     bool m_listening { false };
+
+    QTimer m_debounceTimer;
 };
 
 }
