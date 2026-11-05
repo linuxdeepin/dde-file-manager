@@ -36,6 +36,15 @@ void ShareWatcher::shareRemoved(const QString &path)
     Q_EMIT fileDeleted(ShareUtils::makeShareUrl(path));
 }
 
+void ShareWatcher::shareChanged(const QString &path)
+{
+    auto &&url = ShareUtils::makeShareUrl(path);
+    auto info = InfoFactory::create<FileInfo>(url);
+    if (info)
+        info->refresh();
+    Q_EMIT fileAttributeChanged(url);
+}
+
 ShareWatcherPrivate::ShareWatcherPrivate(const QUrl &fileUrl, ShareWatcher *qq)
     : DFMBASE_NAMESPACE::AbstractFileWatcherPrivate(fileUrl, qq)
 {
@@ -47,6 +56,7 @@ bool ShareWatcherPrivate::start()
     auto ret = true;
     ret &= dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", qp, &ShareWatcher::shareAdded);
     ret &= dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", qp, &ShareWatcher::shareRemoved);
+    ret &= dpfSignalDispatcher->subscribe("dfmplugin_dirshare", "signal_Share_ShareChanged", qp, &ShareWatcher::shareChanged);
     return ret;
 }
 
@@ -56,5 +66,6 @@ bool ShareWatcherPrivate::stop()
     auto ret = true;
     ret &= dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_ShareAdded", qp, &ShareWatcher::shareAdded);
     ret &= dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_ShareRemoved", qp, &ShareWatcher::shareRemoved);
+    ret &= dpfSignalDispatcher->unsubscribe("dfmplugin_dirshare", "signal_Share_ShareChanged", qp, &ShareWatcher::shareChanged);
     return ret;
 }
