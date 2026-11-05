@@ -34,6 +34,7 @@ class DirShare : public DPF_NAMESPACE::Plugin
     DPF_EVENT_REG_SIGNAL(signal_Share_ShareCountChanged)
     DPF_EVENT_REG_SIGNAL(signal_Share_ShareAdded)
     DPF_EVENT_REG_SIGNAL(signal_Share_ShareRemoved)
+    DPF_EVENT_REG_SIGNAL(signal_Share_ShareChanged)
     DPF_EVENT_REG_SIGNAL(signal_Share_RemoveShareFailed)
     // *******************end Share*******************
 

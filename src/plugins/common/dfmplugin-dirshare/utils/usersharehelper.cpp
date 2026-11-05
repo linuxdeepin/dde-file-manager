@@ -470,6 +470,7 @@ void UserShareHelper::initConnect()
     connect(watcherManager, &ShareWatcherManager::fileMoved, this, &UserShareHelper::onShareMoved);
     connect(watcherManager, &ShareWatcherManager::fileDeleted, this, &UserShareHelper::onShareFileDeleted);
     connect(watcherManager, &ShareWatcherManager::subfileCreated, this, &UserShareHelper::onShareChanged);
+    connect(watcherManager, &ShareWatcherManager::fileAttributeChanged, this, &UserShareHelper::emitShareChanged);
 }
 
 void UserShareHelper::initMonitorPath()
@@ -676,6 +677,11 @@ void UserShareHelper::emitShareRemoved(const QString &path)
 {
     Q_EMIT shareRemoved(path);
     dpfSignalDispatcher->publish(kEventSpace, "signal_Share_ShareRemoved", path);
+}
+
+void UserShareHelper::emitShareChanged(const QString &path)
+{
+    dpfSignalDispatcher->publish(kEventSpace, "signal_Share_ShareChanged", path);
 }
 
 void UserShareHelper::emitShareRemoveFailed(const QString &path)
