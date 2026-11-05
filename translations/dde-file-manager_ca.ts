@@ -175,12 +175,12 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="73"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Enrere</translation>
     </message>
     <message>
         <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="187"/>
         <source>Open in file manager</source>
-        <translation type="unfinished"/>
+        <translation>Obre al gestor de fitxers</translation>
     </message>
 </context>
 <context>
