@@ -89,6 +89,7 @@ private:
     void emitShareCountChanged(int count);
     void emitShareAdded(const QString &path);
     void emitShareRemoved(const QString &path);
+    void emitShareChanged(const QString &path);
     void emitShareRemoveFailed(const QString &path);
 
     // Lazy initialization for D-Bus interface to avoid unnecessary service activation
