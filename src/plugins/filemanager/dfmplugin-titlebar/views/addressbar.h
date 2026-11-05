@@ -40,6 +40,9 @@ Q_SIGNALS:
     void escKeyPressed();
     void clearButtonPressed();
     void urlChanged();
+
+public slots:
+    void paste();   // hide QLineEdit::paste() to handle file URL pasting
 };
 
 }

@@ -1541,7 +1541,7 @@ void FileViewModel::connectFilterSortWorkSignals()
     connect(
             filterSortWorker.data(), &FileSortWorker::requestFetchMore, this, [this]() {
         canFetchFiles = true;
-        fetchingUrl = rootUrl();
+        fetchingUrl = this->rootUrl();
         RootInfo *root = FileDataManager::instance()->fetchRoot(dirRootUrl, currentKey);
         connectRootAndFilterSortWork(root, true);
         fetchMore(rootIndex()); }, Qt::QueuedConnection);

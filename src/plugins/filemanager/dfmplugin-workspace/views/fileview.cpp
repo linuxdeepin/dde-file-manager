@@ -56,6 +56,7 @@
 #include <QApplication>
 #include <QUrlQuery>
 #include <QMimeData>
+#include <QPointer>
 #include <QLayout>
 #include <QAccessible>
 #include <algorithm>
@@ -413,12 +414,18 @@ QList<QUrl> FileView::selectedUrlList() const
 void FileView::refresh()
 {
     fmDebug() << "FileView: refresh requested for URL" << rootUrl().toString();
-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
-        fmWarning() << "FileView: cannot refresh - FTP or SMB is busy for URL" << rootUrl().toString();
-        DialogManager::instance()->showUnableToVistDir(rootUrl().path());
-        return;
-    }
-    model()->refresh();
+    auto url = rootUrl();
+    QPointer<FileView> guard(this);
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [guard, url](bool busy) {
+        if (!guard)
+            return;
+        if (busy) {
+            fmWarning() << "FileView: cannot refresh - FTP or SMB is busy for URL" << url.toString();
+            DialogManager::instance()->showUnableToVistDir(url.path());
+            return;
+        }
+        guard->model()->refresh();
+    });
 }
 
 void FileView::doItemsLayout()
@@ -1943,7 +1950,7 @@ void FileView::updateGeometries()
 
 void FileView::startDrag(Qt::DropActions supportedActions)
 {
-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
+    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl(), 200)) {
         DialogManager::instance()->showUnableToVistDir(rootUrl().path());
         return;
     }
@@ -2037,26 +2044,44 @@ void FileView::contextMenuEvent(QContextMenuEvent *event)
     // maximize. Resetting here mirrors what mouseReleaseEvent would do.
     setState(QAbstractItemView::NoState);
 
-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(rootUrl())) {
-        fmWarning() << "Cannot show context menu: FTP or SMB is busy for URL:" << rootUrl().toString();
-        DialogManager::instance()->showUnableToVistDir(rootUrl().path());
+    auto url = rootUrl();
+    auto pos = event->pos();
+
+    // local device paths skip async network check to avoid menu delay
+    if (ProtocolUtils::isLocalFile(url)) {
+        showContextMenu(pos);
         return;
     }
 
+    QPointer<FileView> guard(this);
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [guard, url, pos](bool busy) {
+        if (!guard)
+            return;
+        if (busy) {
+            fmWarning() << "Cannot show context menu: FTP or SMB is busy for URL:" << url.toString();
+            DialogManager::instance()->showUnableToVistDir(url.path());
+            return;
+        }
+        guard->showContextMenu(pos);
+    });
+}
+
+void FileView::showContextMenu(const QPoint &pos)
+{
     if (FileViewMenuHelper::disableMenu()) {
         fmDebug() << "Context menu disabled by helper";
         return;
     }
 
     d->viewMenuHelper->setWaitCursor();
-    const QModelIndex &index = indexAt(event->pos());
+    const QModelIndex &index = indexAt(pos);
     BaseItemDelegate *delegate = itemDelegate();
     if (delegate && delegate->editingIndex().isValid() && delegate->editingIndex() == index) {
         fmDebug() << "Setting focus due to editing index";
         setFocus(Qt::FocusReason::OtherFocusReason);
     }
 
-    if (d->fileViewHelper->isEmptyArea(event->pos())) {
+    if (d->fileViewHelper->isEmptyArea(pos)) {
         fmDebug() << "Showing context menu for empty area";
         BaseItemDelegate *de = itemDelegate();
         if (de)
@@ -2857,13 +2882,18 @@ void FileView::openIndex(const QModelIndex &index)
             checkUrl = QUrl::fromLocalFile(target);
     }
 
-    if (NetworkUtils::instance()->checkFtpOrSmbBusy(checkUrl)) {
-        fmWarning() << "Cannot open file: FTP or SMB is busy for URL:" << checkUrl;
-        DialogManager::instance()->showUnableToVistDir(checkUrl.path());
-        return;
-    }
-
-    FileOperatorHelperIns->openFiles(this, { info->urlOf(UrlInfoType::kUrl) });
+    auto url = checkUrl;
+    QPointer<FileView> guard(this);
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [guard, url, fileUrl](bool busy) {
+        if (!guard)
+            return;
+        if (busy) {
+            fmWarning() << "Cannot open file: FTP or SMB is busy for URL:" << url;
+            DialogManager::instance()->showUnableToVistDir(url.path());
+            return;
+        }
+        FileOperatorHelperIns->openFiles(guard.data(), { fileUrl });
+    });
 }
 
 void FileView::setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value)

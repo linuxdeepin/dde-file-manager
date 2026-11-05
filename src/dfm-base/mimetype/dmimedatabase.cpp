@@ -103,10 +103,10 @@ QMimeType DMimeDatabase::mimeTypeForFile(const QString &fileName, QMimeDatabase:
     }
 
     QUrl url = QUrl::fromLocalFile(fileName);
-    if (!ProtocolUtils::isLocalFile(url) && NetworkUtils::instance()->checkFtpOrSmbBusy(url))
+    if (!ProtocolUtils::isLocalFile(url) && NetworkUtils::instance()->checkFtpOrSmbBusy(url, 200))
         return QMimeType();
     auto link = FileUtils::symlinkTarget(url);
-    if (!link.isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(link)))
+    if (!link.isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(QUrl::fromLocalFile(link), 200))
         return QMimeType();
 
     return mimeTypeForFile(QFileInfo(fileName), mode, inod, isGvfs);

@@ -27,7 +27,7 @@ public:
     void renameProcessing();
 
 protected slots:
-    void acitonTriggered();
+    void actionTriggered();
     void copyFiles();
     void copyFilePath();
     void cutFiles();

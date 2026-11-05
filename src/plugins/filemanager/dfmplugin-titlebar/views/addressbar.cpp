@@ -12,6 +12,9 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
+#include <dfm-base/utils/clipboard.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/application/application.h>
 
@@ -25,6 +28,7 @@
 
 #include <QCompleter>
 #include <QFontMetrics>
+#include <QKeySequence>
 #include <QWindow>
 #include "addressbar.h"
 
@@ -172,7 +176,12 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
 
         const auto &currentDir = QDir::currentPath();
         QUrl curUrl = q->currentUrl();
-        if (curUrl.isLocalFile())
+        // curUrl.isLocalFile() ensures the scheme is "file"; ProtocolUtils::isLocalFile()
+        // additionally rejects GVFS mount paths (e.g. /run/user/*/gvfs/, /smb-share:) that
+        // have a "file" scheme but point to network-backed locations. For those we still
+        // perform a short (200 ms) network-busy check before switching the working dir.
+        bool isNetworkMount = !dfmbase::ProtocolUtils::isLocalFile(curUrl);
+        if (curUrl.isLocalFile() && (!isNetworkMount || !dfmbase::NetworkUtils::instance()->checkFtpOrSmbBusy(curUrl, 200)))
             QDir::setCurrent(curUrl.toLocalFile());
 
         const QUrl &url = UrlRoute::fromUserInput(strLocalPath, false);
@@ -502,6 +511,25 @@ void AddressBar::showOnFocusLostOnce()
     d->isKeepVisible = true;
 }
 
+void AddressBar::paste()
+{
+    auto urls = dfmbase::ClipBoard::instance()->clipboardFileUrlList();
+    if (!urls.isEmpty()) {
+        QStringList paths;
+        for (const auto &url : urls) {
+            QString path = url.toLocalFile();
+            if (path.isEmpty())
+                continue;
+            paths << path;
+        }
+        if (!paths.isEmpty()) {
+            insert(paths.join('\n'));
+            return;
+        }
+    }
+    QLineEdit::paste();
+}
+
 bool AddressBar::event(QEvent *e)
 {
     if (e->type() == QEvent::KeyPress) {
@@ -538,6 +566,13 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
     });
     d->lastPreviousKey = d->lastPressedKey;
     d->lastPressedKey = e->key();
+
+    if (e->matches(QKeySequence::Paste) ||
+        (e->key() == Qt::Key_V && (e->modifiers() & Qt::ControlModifier))) {
+        paste();
+        e->accept();
+        return;
+    }
 
     switch (e->key()) {
     case Qt::Key_Escape:

@@ -19,6 +19,7 @@
 #include <dfm-base/utils/finallyutil.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/protocolutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/application/application.h>
@@ -248,13 +249,26 @@ void TitleBarHelper::handleJumpToPressed(QWidget *sender, const QString &text)
             url.setPath("/");
         fmInfo() << "jump :" << inputStr;
         const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+        const bool isLocalUrl = ProtocolUtils::isLocalFile(url);
         if (info && info->exists() && info->isAttributes(OptInfoType::kIsFile)) {
-            if (!dpfHookSequence->run("dfmplugin_titlebar",
-                                      "hook_Tab_EnterDir",
-                                      TitleBarHelper::windowId(sender),
-                                      url,
-                                      currentUrl))
+            if (isLocalUrl && !info->isAttributes(OptInfoType::kIsReadable)) {
+                dfmbase::UniversalUtils::notifyMessage(
+                    QObject::tr("You do not have permission to access \"%1\"").arg(inputStr));
+            } else if (!dpfHookSequence->run("dfmplugin_titlebar",
+                                             "hook_Tab_EnterDir",
+                                             TitleBarHelper::windowId(sender),
+                                             url,
+                                             currentUrl)) {
                 TitleBarEventCaller::sendOpenFile(sender, url);
+            }
+        } else if (url.scheme() == Global::Scheme::kFile && (!info || !info->exists())) {
+            dfmbase::UniversalUtils::notifyMessage(
+                QObject::tr("The path \"%1\" does not exist").arg(inputStr));
+        } else if (isLocalUrl && info && info->exists() && info->isAttributes(OptInfoType::kIsDir)
+                   && (!info->isAttributes(OptInfoType::kIsReadable)
+                       || !info->isAttributes(OptInfoType::kIsExecutable))) {
+            dfmbase::UniversalUtils::notifyMessage(
+                QObject::tr("You do not have permission to access \"%1\"").arg(inputStr));
         } else {
             TitleBarEventCaller::sendCd(sender, url);
         }

@@ -17,6 +17,9 @@
 
 #include <QApplication>
 #include <QDBusConnection>
+#include <QDir>
+#include <QFileInfo>
+#include <QUrlQuery>
 #include <QUuid>
 
 DFMBASE_USE_NAMESPACE
@@ -157,7 +160,30 @@ void FileDialogManagerDBus::initEventsFilter()
                     FileDialog *dialog = qobject_cast<FileDialog *>(handle->widget());
                     if (!dialog)
                         continue;
-                    dialog->onAcceptButtonClicked();
+                    const QList<QUrl> urls = params.at(1).value<QList<QUrl>>();
+                    // Navigate to the parent directory and select the file,
+                    // instead of directly accepting the dialog.
+                    // (Task #396475)
+                    if (!urls.isEmpty()) {
+                        QUrl fileUrl = urls.first();
+                        if (!fileUrl.isLocalFile()) {
+                            dialog->onAcceptButtonClicked();
+                            break;
+                        }
+                        QUrl parentUrl = QUrl::fromLocalFile(
+                            QFileInfo(fileUrl.toLocalFile()).dir().absolutePath());
+                        // the workspace selects the file after the directory
+                        // traversal finished via the selectUrl query param;
+                        // the direct selectUrl below also covers the case
+                        // where the parent dir is already the current one.
+                        QUrlQuery query;
+                        query.addQueryItem("selectUrl", fileUrl.toString());
+                        parentUrl.setQuery(query);
+                        dialog->cd(parentUrl);
+                        dialog->selectUrl(fileUrl);
+                    } else {
+                        dialog->onAcceptButtonClicked();
+                    }
                     break;
                 }
             }
