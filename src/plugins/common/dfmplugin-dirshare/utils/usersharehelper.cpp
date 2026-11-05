@@ -681,6 +681,7 @@ void UserShareHelper::emitShareRemoved(const QString &path)
 
 void UserShareHelper::emitShareChanged(const QString &path)
 {
+    Q_EMIT shareChanged(path);
     dpfSignalDispatcher->publish(kEventSpace, "signal_Share_ShareChanged", path);
 }
 

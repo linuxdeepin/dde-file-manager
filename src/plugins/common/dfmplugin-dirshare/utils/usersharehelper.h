@@ -58,6 +58,7 @@ Q_SIGNALS:
     void shareCountChanged(int count);
     void shareAdded(const QString &path);
     void shareRemoved(const QString &path);
+    void shareChanged(const QString &path);
     void shareRemoveFailed(const QString &path);
     void sambaPasswordSet(bool success);
 
