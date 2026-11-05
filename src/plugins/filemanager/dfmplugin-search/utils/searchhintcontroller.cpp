@@ -37,6 +37,9 @@ SearchHintController *SearchHintController::instance()
 SearchHintController::SearchHintController(QObject *parent)
     : QObject(parent)
 {
+    m_debounceTimer.setSingleShot(true);
+    m_debounceTimer.setInterval(500);
+    connect(&m_debounceTimer, &QTimer::timeout, this, &SearchHintController::evaluateAndShowAllWindows);
 }
 
 SearchHintController::~SearchHintController()
@@ -76,6 +79,7 @@ void SearchHintController::stopListening()
 
     fmInfo() << "SearchHintController: stop listening, clearing all state";
     m_listening = false;
+    m_debounceTimer.stop();
 
     disconnect(TextIndexClient::instance(), nullptr, this, nullptr);
     disconnect(OcrIndexClient::instance(), nullptr, this, nullptr);
@@ -194,7 +198,7 @@ void SearchHintController::onTextStatusResult(const QString &state, const QStrin
     m_textGrade = grade;
     m_textStatusValid = true;
     fmDebug() << "Text index status:" << state << "grade:" << grade;
-    evaluateAndShowAllWindows();
+    scheduleReevaluate();
 }
 
 void SearchHintController::onOcrStatusResult(const QString &state, const QString &grade, bool success)
@@ -207,7 +211,7 @@ void SearchHintController::onOcrStatusResult(const QString &state, const QString
     m_ocrGrade = grade;
     m_ocrStatusValid = true;
     fmDebug() << "OCR index status:" << state << "grade:" << grade;
-    evaluateAndShowAllWindows();
+    scheduleReevaluate();
 }
 
 void SearchHintController::onTextStatusChanged(const QString &state, const QString &grade)
@@ -220,7 +224,7 @@ void SearchHintController::onTextStatusChanged(const QString &state, const QStri
     m_textState = state;
     m_textGrade = grade;
     m_textStatusValid = true;
-    evaluateAndShowAllWindows();
+    scheduleReevaluate();
 }
 
 void SearchHintController::onOcrStatusChanged(const QString &state, const QString &grade)
@@ -233,7 +237,14 @@ void SearchHintController::onOcrStatusChanged(const QString &state, const QStrin
     m_ocrState = state;
     m_ocrGrade = grade;
     m_ocrStatusValid = true;
-    evaluateAndShowAllWindows();
+    scheduleReevaluate();
+}
+
+void SearchHintController::scheduleReevaluate()
+{
+    // Debounce rapid index status changes (e.g. Running followed closely by Idle)
+    // so the hint doesn't flash when several signals arrive in quick succession.
+    m_debounceTimer.start();
 }
 
 void SearchHintController::evaluateAndShowAllWindows()
