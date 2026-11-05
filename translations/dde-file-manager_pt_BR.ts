@@ -175,12 +175,12 @@ A memória flash pode estar apresentando falhas. Faça um backup dos seus dados 
     <message>
         <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="73"/>
         <source>Back</source>
-        <translation type="unfinished"/>
+        <translation>Voltar</translation>
     </message>
     <message>
         <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="187"/>
         <source>Open in file manager</source>
-        <translation type="unfinished"/>
+        <translation>Abrir no gerenciador de arquivos</translation>
     </message>
 </context>
 <context>
