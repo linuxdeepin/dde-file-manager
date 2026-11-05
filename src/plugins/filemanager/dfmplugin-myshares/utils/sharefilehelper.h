@@ -8,6 +8,7 @@
 #include "dfmplugin_myshares_global.h"
 
 #include <QObject>
+#include <QFileDevice>
 
 DPMYSHARES_BEGIN_NAMESPACE
 
@@ -20,6 +21,7 @@ public:
 
     // file operation
     bool openFileInPlugin(quint64 windowId, const QList<QUrl> &urls);
+    bool setPermissionHandle(const quint64 windowId, const QUrl url, const QFileDevice::Permissions permissions, bool *ok, QString *error);
 
 private:
     explicit ShareFileHelper(QObject *parent = nullptr);

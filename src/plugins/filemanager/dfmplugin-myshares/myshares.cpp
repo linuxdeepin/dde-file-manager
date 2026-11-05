@@ -185,6 +185,7 @@ void MyShares::followEvents()
 
     // file operation
     dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin", ShareFileHelper::instance(), &ShareFileHelper::openFileInPlugin);
+    dpfHookSequence->follow("dfmplugin_fileoperations", "hook_Operation_SetPermission", ShareFileHelper::instance(), &ShareFileHelper::setPermissionHandle);
 }
 
 void MyShares::bindWindows()
