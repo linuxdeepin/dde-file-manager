@@ -20,7 +20,8 @@ public:
         kNotMount,   //指定位置未挂载
         kMountError,   //挂载错误
         kShareFoldListError,   //共享目录列表获取错误(已挂载过的ip地址，后来遇远端断网)
-        kUserCancelError   //用户主动取消挂载操作（密码对话框被取消）
+        kUserCancelError,   //用户主动取消挂载操作（密码对话框被取消） / User cancelled the mount operation (password dialog dismissed)
+        kNetworkTimeoutError   //网络访问超时、网络不可达，非真实挂载失败 / Network access timeout, network unreachable; not a real mount failure
     };
     QString type() const override;
     QJsonObject prepareData(const QVariantMap &args) const override;
