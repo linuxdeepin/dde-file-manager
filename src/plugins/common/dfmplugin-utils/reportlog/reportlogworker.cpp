@@ -207,9 +207,12 @@ void ReportLogWorker::handleMountNetworkResult(bool ret, dfmmount::DeviceError e
     using namespace dfmmount;
 
     QVariantMap data;
-    data.insert("result", ret);
+    // kGIOErrorAlreadyMounted 表示目录已挂载，二次进入视为成功上报，不记录错误字段
+    // kGIOErrorAlreadyMounted means the directory is already mounted; re-entry is reported as success without error fields
+    bool result = (err == DeviceError::kGIOErrorAlreadyMounted) ? true : ret;
+    data.insert("result", result);
 
-    if (!ret) {
+    if (!result) {
         switch (err) {
         case DeviceError::kUserErrorUserCancelled:
             data.insert("errorId", SmbReportData::kUserCancelError);
@@ -222,6 +225,11 @@ void ReportLogWorker::handleMountNetworkResult(bool ret, dfmmount::DeviceError e
             data.insert("errorId", SmbReportData::kNotMount);
             data.insert("errorSysMsg", msg);
             data.insert("errorUiMsg", msg);
+            break;
+        case DeviceError::kUserErrorTimedOut:
+            data.insert("errorId", SmbReportData::kNetworkTimeoutError);
+            data.insert("errorSysMsg", msg);
+            data.insert("errorUiMsg", "Network access timeout, network unreachable");
             break;
         default:
             data.insert("errorId", SmbReportData::kMountError);
