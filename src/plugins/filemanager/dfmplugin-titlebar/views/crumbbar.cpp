@@ -16,6 +16,7 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/networkutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -28,6 +29,7 @@
 #include <QMenu>
 #include <QDebug>
 #include <QGuiApplication>
+#include <QPointer>
 #include <QClipboard>
 #include <QPushButton>
 #include <QMouseEvent>
@@ -364,6 +366,14 @@ void CrumbBar::customMenu(const QUrl &url, QMenu *menu)
 {
     quint64 id { window()->internalWinId() };
 
+    auto checkNetworkBusy = [](const QUrl &url) -> bool {
+        if (NetworkUtils::instance()->checkFtpOrSmbBusy(url, 200)) {
+            DialogManagerInstance->showUnableToVistDir(url.path());
+            return true;
+        }
+        return false;
+    };
+
     bool tabAddable { TitleBarEventReceiver::instance()->handleTabAddable(id) };
     bool displayIcon { false };   // TODO: use dde-dconfig
     bool displayNewWindowAndTab { TitleBarHelper::newWindowAndTabEnabled };
@@ -387,11 +397,15 @@ void CrumbBar::customMenu(const QUrl &url, QMenu *menu)
     });
 
     if (displayNewWindowAndTab) {
-        menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url]() {
+        menu->addAction(newWndIcon, QObject::tr("Open in new window"), [url, checkNetworkBusy]() {
+            if (checkNetworkBusy(url))
+                return;
             TitleBarEventCaller::sendOpenWindow(url);
         });
 
-        QAction *tabAct = menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [url, id]() {
+        QAction *tabAct = menu->addAction(newTabIcon, QObject::tr("Open in new tab"), [url, id, checkNetworkBusy]() {
+            if (checkNetworkBusy(url))
+                return;
             TitleBarEventCaller::sendOpenTab(id, url);
         });
         tabAct->setDisabled(!tabAddable);
@@ -570,7 +584,7 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
             QString subText = crumbDataList[i + 1].displayText;
             button->setActiveSubDirectory(subText);
         }
-        connect(button, &UrlPushButton::urlButtonActivated, this, &CrumbBar::selectedUrl);
+        connect(button, &UrlPushButton::urlButtonActivated, this, &CrumbBar::onUrlButtonActivated);
         button->installEventFilter(this);
         d->appendWidget(button);
         d->navButtons.append(button);
@@ -579,7 +593,7 @@ void CrumbBar::onHideAddrAndUpdateCrumbs(const QUrl &url)
             button = new UrlPushButton(this);
             button->hide();
             button->setCrumbDatas(QList<CrumbData>(), true);
-            connect(button, &UrlPushButton::urlButtonActivated, this, &CrumbBar::selectedUrl);
+            connect(button, &UrlPushButton::urlButtonActivated, this, &CrumbBar::onUrlButtonActivated);
             button->installEventFilter(this);
             d->appendWidget(button);
             d->navButtons.append(button);
@@ -606,4 +620,18 @@ void CrumbBar::paintEvent(QPaintEvent *event)
         painter.drawRoundedRect(rect(), kCrumbBarRectRadius, kCrumbBarRectRadius);
         painter.restore();
     }
+}
+
+void CrumbBar::onUrlButtonActivated(const QUrl &url)
+{
+    QPointer<CrumbBar> guard(this);
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [guard, url](bool busy) {
+        if (!guard)
+            return;
+        if (busy) {
+            DialogManagerInstance->showUnableToVistDir(url.path());
+            return;
+        }
+        emit guard->selectedUrl(url);
+    });
 }

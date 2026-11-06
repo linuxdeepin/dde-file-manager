@@ -234,6 +234,7 @@ private:
     QUrl parseSelectedUrl(const QUrl &url);
     void openIndexByClicked(const ClickedAction action, const QModelIndex &index);
     void openIndex(const QModelIndex &index);
+    void showContextMenu(const QPoint &pos);
 
     void setFileViewStateValue(const QUrl &url, const QString &key, const QVariant &value);
 
