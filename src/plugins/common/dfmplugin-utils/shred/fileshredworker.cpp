@@ -193,11 +193,10 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QSt
 
         QProcess process;
 
-        // Set fixed Chinese environment
+        // Use C locale for stable English output from shred
         QProcessEnvironment env = QProcessEnvironment::systemEnvironment();
-        env.insert("LANG", "zh_CN.UTF-8");
-        env.insert("LC_ALL", "zh_CN.UTF-8");
-        env.insert("LANGUAGE", "zh_CN:zh");
+        env.insert("LANG", "C");
+        env.insert("LC_ALL", "C");
         process.setProcessEnvironment(env);
 
         process.start("shred", args);
@@ -209,6 +208,7 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QSt
         }
 
         QString savedErrorMsg;   // Used to save error information
+        QString accumulatedErrorOutput;   // Accumulated stderr for error classification
 
         while (process.state() != QProcess::NotRunning) {
             if (m_shouldStop) {
@@ -220,13 +220,14 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QSt
 
             process.waitForReadyRead(100);
             QString output = QString::fromLocal8Bit(process.readAllStandardError());
+            accumulatedErrorOutput += output;
 
-            // Only extract file path when error message hasn't been saved yet
-            if (savedErrorMsg.isEmpty() && output.contains("无法以写模式打开")) {
-                static QRegularExpression rx("shred:\\s*([^：]+)");   // Only match filename/path part before colon
+            // Extract file path from shred error (English: "failed to open for writing")
+            if (savedErrorMsg.isEmpty() && output.contains("failed to open for writing")) {
+                static QRegularExpression rx("shred:\\s*([^:]+)");   // Match filename/path before halfwidth colon
                 auto match = rx.match(output);
                 if (match.hasMatch()) {
-                    savedErrorMsg = match.captured(1).trimmed();   // Only save the first encountered filename/path
+                    savedErrorMsg = match.captured(1).trimmed();
                 }
             }
 
@@ -234,10 +235,20 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QSt
         }
 
         if (process.exitCode() != 0) {
-            msg = savedErrorMsg + ": " + tr("Permission denied");
 
-            if (savedErrorMsg.isEmpty())
-                msg = tr("The file has been moved or the process has exited");
+            if (accumulatedErrorOutput.contains("No such file or directory")) {
+                msg = savedErrorMsg.isEmpty()
+                          ? tr("File does not exist")
+                          : savedErrorMsg + ": " + tr("File does not exist");
+            } else if (accumulatedErrorOutput.contains("Permission denied")) {
+                msg = savedErrorMsg.isEmpty()
+                          ? tr("Permission denied")
+                          : savedErrorMsg + ": " + tr("Permission denied");
+            } else {
+                msg = savedErrorMsg.isEmpty()
+                          ? tr("The file has been moved or the process has exited")
+                          : savedErrorMsg + ": " + tr("Shred operation failed");
+            }
 
             fmWarning() << "Batch shred command failed: " << process.exitCode() << msg;
             return false;
@@ -262,16 +273,16 @@ void FileShredWorker::parseShredOutput(const QString &output)
         return;
 
     QString logOutput = output.trimmed();
-    int deletedCount = output.count("已删除");
+    int deletedCount = output.count("removed");
     if (deletedCount > 0) {
         m_processedFiles += deletedCount;
     }
 
     // Modified regex to more accurately match shred output format
-    static QRegularExpression infoReg(R"(shred:\s*([^：]+):\s*第\s*(\d+)\s*次，共\s*(\d+)\s*次\s*\(random\)\.\.\.((?:[\.\d]+[GM]iB/[\.\d]+[GM]iB\s*)?(\d+)?%)?)");
+    static QRegularExpression infoReg(R"(shred:\s*([^:]+):\s*pass\s*(\d+)/(\d+)\s*\(random\)\.\.\.((?:[\.\d]+[GM]iB/[\.\d]+[GM]iB\s*)?(\d+)?%)?)");
     auto match = infoReg.match(output);
     if (!match.hasMatch()) {
-        static QRegularExpression rmReg(R"(shred: ([^:]+): 正在删除)");
+        static QRegularExpression rmReg(R"(shred: ([^:]+): removing)");
         match = rmReg.match(output);
         if (match.hasMatch()) {
             int value = qMin(99, 1 + (m_processedFiles * 99 / m_totalFiles));
