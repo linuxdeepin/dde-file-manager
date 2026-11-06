@@ -104,12 +104,12 @@
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="508"/>
         <source>Detect Device Abnormality, Repair Recommended</source>
-        <translation type="unfinished"/>
+        <translation>Pikas Parregullsi Pajisjeje, Rekomandohet Riparim</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="509"/>
         <source>Your %1 has data errors, possibly caused by unsafe removal!</source>
-        <translation type="unfinished"/>
+        <translation>%1 juaj ka gabime të dhënash, me gjasa shkaktuar nga heqje jo e parrezik!</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="512"/>
@@ -2062,7 +2062,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="254"/>
         <source>Display sidebar disk partitions as a tree structure</source>
-        <translation>Shfaqi pjesët e diskut në anështyllë si një strukturë pemë </translation>
+        <translation>Shfaqi pjesët e diskut në anështyllë si një strukturë pemë</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -2458,12 +2458,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="190"/>
         <source>Filesystem error detected, device may not have been safely ejected. Mount might have failed due to filesystem corruption.</source>
-        <translation type="unfinished"/>
+        <translation>U pikas gabim sistemi kartelash, pajisja mund të mos jetë nxjerrë në mënyrë të parrezik. Montimi mund të ketë dështuar për shkak dëmtimi sistemi kartelash.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairmonitor.cpp" line="469"/>
         <source>Filesystem is severely corrupted and cannot be recognized. Data may be recoverable through repair.</source>
-        <translation type="unfinished"/>
+        <translation>Sistemi i kartelave është dëmtuar rëndë dhe s’mund të njihet. Të dhënat mund të jenë të shpëtueshme përmes riparimi.</translation>
     </message>
 </context>
 <context>
@@ -6742,7 +6742,7 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="198"/>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="214"/>
         <source>No read/write</source>
-        <translation type="unfinished"/>
+        <translation>Jo lexim/shkrim</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepermissionwidget.cpp" line="186"/>
@@ -6794,32 +6794,32 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="338"/>
         <source>Owner&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>I zoti&gt;Lexim-shkrim</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="340"/>
         <source>Owner&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>I zoti&gt; Vetëm lexim</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="374"/>
         <source>Group&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>I zoti&gt; Lexim-shkrim</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="376"/>
         <source>Group&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Grup&gt;Vetëm lexim</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="410"/>
         <source>Others&gt;Read-write</source>
-        <translation type="unfinished"/>
+        <translation>Të tjerë&gt;Lexim-shkrim</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-propertydialog/views/multifilepropertiesdialog.cpp" line="412"/>
         <source>Others&gt;Read only</source>
-        <translation type="unfinished"/>
+        <translation>Të tjerë&gt;Vetëm lexim</translation>
     </message>
 </context>
 <context>
@@ -7035,22 +7035,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="21"/>
         <source>Enable to build the file index immediately for faster file name searches</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizoni ndërtim treguesi kartelash menjëherë, për kërkime të të shpejtë emrash kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="22"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Po ndërtohet treguesi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="23"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi, %1 kartela të indeksuara</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="24"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi, %1/%2 objekte të indeksuar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="25"/>
@@ -7076,22 +7076,22 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Po përdoret bateri, përditësimi i treguesit është ndalur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="30"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Është e aktivizuar mënyra ruajtje energjie, përditësimi i treguesit është ndalur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="31"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet që pajisja të bëhet e plogësht, që të vazhdohet përditësimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="32"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet për përmirësim shërbimi treguesi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="33"/>
@@ -7101,12 +7101,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="63"/>
         <source>Confirm turning off file index?</source>
-        <translation type="unfinished"/>
+        <translation>E ripohoni çaktivizimin e treguesit të kartelave?</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="64"/>
         <source>If turned off, file searches will traverse the file system and severely reduce search speed, and the smart search feature will be unavailable.</source>
-        <translation type="unfinished"/>
+        <translation>Në u çaktivizoftë, kërkimet e kartelave do të përshkojnë krejt sistemin e kartelave dhe do të ulet ndjeshëm shpejtësia e kërkimeve, si dhe s’do të jetë e përdorshme veçoria e kërkimeve të mençur.</translation>
     </message>
 </context>
 <context>
@@ -7114,17 +7114,17 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="16"/>
         <source>Enable to search text in images</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizojeni, që të kërkohet tekst në figura</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Po ndërtohet treguesi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi, %1 kartela të indeksuara</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="19"/>
@@ -7155,27 +7155,27 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="24"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Po përdoret bateri, përditësimi i treguesit është ndalur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="25"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Është e aktivizuar mënyra ruajtje energjie, përditësimi i treguesit është ndalur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="26"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet që pajisja të bëhet e plogësht, që të vazhdohet përditësimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="27"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet për përmirësim shërbimi treguesi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Vazhdo përditësimin</translation>
     </message>
 </context>
 <context>
@@ -7183,7 +7183,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithsemanticindex.cpp" line="17"/>
         <source>Enable to search files using natural language, e.g. &quot;PPT documents edited yesterday&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizojeni, që të kërkohet duke përdorur gjuhë natyrore, p.sh., “Dokumente PPT të përpunuar dje”</translation>
     </message>
 </context>
 <context>
@@ -7191,68 +7191,68 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="16"/>
         <source>Enable to search file contents. Indexing may take a few minutes</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizojeni, që të kërkohet në lëndë kartelash. Indeksimi mund të hajë disa minuta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="17"/>
         <source>Building index</source>
-        <translation type="unfinished"/>
+        <translation>Po ndërtohet treguesi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="18"/>
         <source>Building index, %1 files indexed</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi, %1 kartela të indeksuara</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi, %1/%2 objekte të indeksuar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi i treguesit dështoi, ju lutemi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>riprovoni përditësimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi i treguesit u plotësua, kohë e përditësimit të fundit: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="23"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="29"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje treguesin tani</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="24"/>
         <source>Currently using battery, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Po përdoret bateri, përditësimi i treguesit është ndalur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="25"/>
         <source>Power saving mode is enabled, index update has been paused</source>
-        <translation type="unfinished"/>
+        <translation>Është e aktivizuar mënyra ruajtje energjie, përditësimi i treguesit është ndalur</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="26"/>
         <source>Waiting for the device to become idle to continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet që pajisja të bëhet e plogësht, që të vazhdohet përditësimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="27"/>
         <source>Waiting for index service upgrade</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet për përmirësim shërbimi treguesi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithtextindex.cpp" line="28"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Vazhdo përditësimin</translation>
     </message>
 </context>
 <context>
@@ -7260,12 +7260,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="56"/>
         <source>Exact match</source>
-        <translation type="unfinished"/>
+        <translation>Përkim saktësisht</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/groups/matchmethodgroupstrategy.cpp" line="58"/>
         <source>Smart match</source>
-        <translation type="unfinished"/>
+        <translation>Përkim i mençur</translation>
     </message>
 </context>
 <context>
@@ -7279,7 +7279,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="178"/>
         <source>Match method</source>
-        <translation type="unfinished"/>
+        <translation>Metodë përkimi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="201"/>
@@ -7294,12 +7294,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="244"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"/>
+        <translation>Kërkim në Figura dhe Lëndë</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="266"/>
         <source>Smart search</source>
-        <translation type="unfinished"/>
+        <translation>Kërkim i mençur</translation>
     </message>
 </context>
 <context>
@@ -7315,33 +7315,33 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="119"/>
         <source>Authorize to enable %1</source>
-        <translation type="unfinished"/>
+        <translation>Autorizoni aktivizimin e %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="144"/>
         <source>File Manager</source>
-        <translation type="unfinished"/>
+        <translation>Përgjegjës Kartelash</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="145"/>
         <source>You can manually enable %1 in Settings — Advanced — Search.</source>
-        <translation type="unfinished"/>
+        <translation>%1 mund ta aktivizoni dorazi që nga Rregullime — Të mëtejshme — Kërkim.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="344"/>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Aktivizoje</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="349"/>
         <source>Some index updates failed. Search results may be incomplete.</source>
-        <translation type="unfinished"/>
+        <translation>Disa përditësimi treguesi dështuan. Përfundimet e kërkimit mund të jenë të paplota.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="350"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="374"/>
         <source>Retry update</source>
-        <translation type="unfinished"/>
+        <translation>Riprovoni përditësimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="351"/>
@@ -7351,64 +7351,64 @@ You need to upgrade this vault to continue using it.</source>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="375"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="380"/>
         <source>View</source>
-        <translation type="unfinished"/>
+        <translation>Shiheni</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="355"/>
         <source>Running on battery. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Po përdoret bateri. Një pjesë e indeksimit të lëndës është ndalur.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="356"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="362"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="368"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Vazhdo përditësimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="361"/>
         <source>Power save mode is enabled. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Është e aktivizuar mënyra ruajtje energjie. Një pjesë e indeksimit të lëndës është ndalur.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="367"/>
         <source>Waiting for the device to become idle. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet që pajisja të bëhet e plogësht. Një pjesë e indeksimit të lëndës është ndalur.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="373"/>
         <source>Waiting for index service upgrade. Some content indexing has been paused.</source>
-        <translation type="unfinished"/>
+        <translation>Po pritet për përmirësim shërbimi indeksimi. Një pjesë e indeksimit të lëndës është ndalur.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="400"/>
         <source>Index is being updated. File name and file content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Treguesi po përditësohet. Kërkimi në emra kartelash dhe lëndë kartelash është gati.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="402"/>
         <source>Index is being updated. File name and image content search are available.</source>
-        <translation type="unfinished"/>
+        <translation>Treguesi po përditësohet. Kërkimi në emra kartelash dhe lëndë figurash është gati.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="403"/>
         <source>Index is being updated. File name search is available.</source>
-        <translation type="unfinished"/>
+        <translation>Treguesi po përditësohet. Kërkimi në emra kartelash është gati.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="523"/>
         <source>&quot;Full-Text search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>“Kërkim në Krejt Tekstin”</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="525"/>
         <source>&quot;Image-Content search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>“Kërkim në Figura dhe Lëndë”</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="528"/>
         <source>&quot;Smart search&quot;</source>
-        <translation type="unfinished"/>
+        <translation>“Kërkim i mençur”</translation>
     </message>
 </context>
 <context>
@@ -8299,7 +8299,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-utils/bluetooth/virtualbluetoothplugin.cpp" line="46"/>
         <source>Sending files now, please try later.</source>
-        <translation>Tani po dërgohen kartela, ju lutemi, provoni më vonë</translation>
+        <translation>Tani po dërgohen kartela, ju lutemi, provoni më vonë.</translation>
     </message>
 </context>
 <context>
@@ -8441,13 +8441,14 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="79"/>
         <source>Unlock failed</source>
-        <translation type="unfinished"/>
+        <translation>Shkyçja dështoi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-vault/utils/pathmanager.cpp" line="80"/>
         <source>The %1 directory is occupied,
  please clear the files in this directory and try to unlock the safe again.</source>
-        <translation type="unfinished"/>
+        <translation>Drejtoria %1 është e zënë,
+ ju lutemi, spastroni kartelat në këtë drejtori dhe riprovoni të shkyçni kasafortën.</translation>
     </message>
 </context>
 <context>
@@ -9378,12 +9379,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="666"/>
         <source>Show all</source>
-        <translation type="unfinished"/>
+        <translation>Shfaqi krejt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/baseitemdelegate.cpp" line="666"/>
         <source>Show partial</source>
-        <translation type="unfinished"/>
+        <translation>Shfaqe pjesërisht</translation>
     </message>
 </context>
 <context>
