@@ -18,6 +18,7 @@
 #include <QDBusConnection>
 #include <QDBusContext>
 #include <QDBusMessage>
+#include <QDBusConnectionInterface>
 #include <QDBusUnixFileDescriptor>
 #include <QDir>
 #include <QFile>
@@ -899,7 +900,7 @@ TEST_F(MountAuthTest, CheckAuthentication_CifsUsesDedicatedAction)
     CifsMountHelper helper(nullptr);
 
     // Act
-    const bool ok = helper.checkAuthentication("ut-app-name");
+    const bool ok = helper.checkAuthentication("ut-app-name", 0, true, "");
 
     // Assert
     EXPECT_TRUE(ok);
@@ -908,7 +909,7 @@ TEST_F(MountAuthTest, CheckAuthentication_CifsUsesDedicatedAction)
     EXPECT_EQ(g_polkitSubjects.first(), QString("ut-app-name"));
 }
 
-// AbstractMountHelper 默认鉴权使用通用 action（CommonMountHelper 未重写该接口）。
+// AbstractMountHelper 默认鉴权使用通用 action（doMount=true 时 CommonMountHelper 走默认 polkit 路径）。
 TEST_F(MountAuthTest, CheckAuthentication_DefaultUsesGenericAction)
 {
     // Arrange
@@ -917,7 +918,7 @@ TEST_F(MountAuthTest, CheckAuthentication_DefaultUsesGenericAction)
 
     // Act
     g_polkitAllowed = false;
-    const bool ok = base.checkAuthentication("ut-app");
+    const bool ok = base.checkAuthentication("ut-app", 0, true, "");
 
     // Assert
     EXPECT_FALSE(ok);
@@ -1005,7 +1006,7 @@ public:
         return { { MountReturnField::kResult, true }, { MountReturnField::kErrorCode, 0 } };
     }
 
-    bool checkAuthentication(const QString &) override
+    bool checkAuthentication(const QString &, const uint, const bool, const QString &) override
     {
         return authResult;
     }
@@ -1046,6 +1047,20 @@ public:
         });
         stub.set_lamda(&QDBusMessage::service, [](const QDBusMessage *) -> QString {
             return QString("ut.sender.bus");
+        });
+        // Mount/Unmount 现需解析 caller UID：connectToBus 返回空名连接，
+        // 需桩 isConnected → true、interface() → 非空、serviceUid → 有效 reply（uid=0）
+        // 以使 callerID != UINT_MAX 从而进入 checkAuthentication 分发路径。
+        stub.set_lamda(&QDBusConnection::isConnected, [](const QDBusConnection *) -> bool {
+            return true;
+        });
+        static QDBusConnectionInterface *g_fakeIface = reinterpret_cast<QDBusConnectionInterface *>(0x1);
+        stub.set_lamda(&QDBusConnection::interface, [](const QDBusConnection *) -> QDBusConnectionInterface * {
+            return g_fakeIface;
+        });
+        stub.set_lamda(&QDBusConnectionInterface::serviceUid,
+                       [](const QDBusConnectionInterface *, const QString &) -> QDBusReply<uint> {
+            return QDBusReply<uint>();
         });
     }
 
