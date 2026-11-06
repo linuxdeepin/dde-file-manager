@@ -1,3 +1,10 @@
+dde-file-manager (6.6.9) unstable; urgency=medium
+
+  * chore: Update version to 6.6.9
+  * fix(packaging): gate dock-plugin package on DDEShellDock cmake version
+
+ -- zhanghongyuan <zhanghongyuan@uniontech.com>  Fri, 06 Nov 2026 16:04:24 +0800
+
 dde-file-manager (6.6.8) unstable; urgency=medium
 
   * fix: check dfm.menu.hidden config for desktop
