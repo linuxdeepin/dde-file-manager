@@ -1,3 +1,43 @@
+dde-file-manager (6.6.8) unstable; urgency=medium
+
+  * fix: check dfm.menu.hidden config for desktop
+  * fix: debounce search hint index status evaluation
+  * test: add CSPRNG regression tests for vault password generation
+  * fix: async clearStaleBurnStates to avoid main thread blocking
+  * fix: sync launcher trash icon to AM via DConfig
+  * fix: skip encoding URL authority in openInUrls
+  * fix: flush inner tabbar layout cache on resize
+  * fix: use sync info creation to prevent cache poisoning on link file
+  * fix: correct size sorting on SMB by preferring sortInfo over fileInfo
+  * fix: theme-aware checked bg color for CustomDToolButton
+  * fix: clear clipboard cache only when mimeData is valid
+  * fix: use event position for sidebar drag cursor check
+  * fix: use 4-arg pixmap overload to avoid DPR double-scaling
+  * fix: use exclusive zone -1 for desktop background window
+  * fix: register SetPermission hook in myshares plugin
+  * fix: correct window title showing "System Disk" in My Shares
+  * fix: refresh share lock icon on permission change
+  * fix: add Q_EMIT and signal declaration for shareChanged
+  * refactor: simplify FileView destruction sequence
+  * fix: show AppImage/UAB thumbnails in file views
+  * test: add regression tests for thumbnail icon display
+  * fix: correct tilde path encoding in command line
+  * test: add regression tests for AppImage thumbnail display
+  * feat: rewrite markdown preview rendering pipeline
+  * fix: ensure completer popup positioned correctly on Wayland
+  * fix: implement window activation with xdg-activation tokens
+  * test: remove env-sensitive procfs cases in upgrade UT
+  * fix: resolve duplicate QMap::take causing watcher refcount leak
+  * fix: USB unmount and dock item issues during scan
+  * feat(dock): add folder-content plugin for pinning folders to dock taskbar
+  * test(dock): port folder-content tests to gtest
+  * feat(dock): add debian packaging for dde-file-manager-dock-plugin
+  * i18n: add translations for folder residence plugin
+  * fix: enable stacked unmount and bypass polkit for owner
+  * test(mountcontrol): adapt unit tests to new checkAuthentication signature
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Fri, 06 Nov 2026 11:34:06 +0800
+
 dde-file-manager (6.6.7) unstable; urgency=medium
 
   * fix(propertydialog): fix edit button focus after rename
