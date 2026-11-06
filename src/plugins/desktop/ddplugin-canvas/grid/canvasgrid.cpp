@@ -488,6 +488,10 @@ void CanvasGridPrivate::sync()
         // if itemPos's schema is desktop://,
         // using CanvasGridSpecialist::covertDesktopUrlToFiles(itemPos.value(idxs.first())) to cover it to file://
 
+        // mirror to multi-screen coordinates so restore() reads the latest
+        // position regardless of which mode was active when sync() ran.
+        auto screenKey = CanvasGridSpecialist::profileKey(idxs.first());
+        DispalyIns->setCoordinates(screenKey, itemPos.value(idxs.first()));
     } else {
         QList<QString> profile;
         for (const int &idx : idxs) {
@@ -503,6 +507,12 @@ void CanvasGridPrivate::sync()
 
         // update group ProFile
         DispalyIns->setProfile(profile);
+
+        // mirror primary screen (idx=1) position to SingleScreen so that
+        // switching back to single-screen mode restores the latest position.
+        if (idxs.contains(1)) {
+            DispalyIns->setCoordinates(CanvasGridSpecialist::singleIndex, itemPos.value(1));
+        }
     }
 }
 
