@@ -2374,7 +2374,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
         <source>The device will be unmounted during repair. It will be automatically remounted after repair is complete. Please do not remove the device during the repair process.</source>
-        <translation type="unfinished"/>
+        <translation>Gjatë riparimit, pajisja do të çmontohet. Do të rimontohet vetvetiu, pasi të jetë plotësuar riparimi. Ju lutemi, mos e hiqni pajisjen gjatë procesit të riparimit.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="132"/>
@@ -2471,68 +2471,68 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="40"/>
         <source>Invalid device path: %1</source>
-        <translation type="unfinished"/>
+        <translation>Shteg i pavlefshëm pajisjeje: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="46"/>
         <source>Device is already being repaired: %1</source>
-        <translation type="unfinished"/>
+        <translation>Pajisja po riparohet tashmë: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="53"/>
         <source>Cannot detect filesystem type for: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’pikaset dot lloj sistemi kartelash për: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="59"/>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="410"/>
         <source>Unsupported filesystem type: %1</source>
-        <translation type="unfinished"/>
+        <translation>Lloj i pambuluar sistemi kartelash: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="74"/>
         <source>Device is hardware write-protected, cannot repair</source>
-        <translation type="unfinished"/>
+        <translation>Pajisja mbrohet nga shkrimi me mekanizëm “hardware”, s’mund të bëhet riparim</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="80"/>
         <source>Authorization failed</source>
-        <translation type="unfinished"/>
+        <translation>Autorizimi dështoi</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="99"/>
         <source>Failed to unmount device: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të çmontohet pajisja: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="185"/>
         <source>Filesystem repair completed successfully</source>
-        <translation type="unfinished"/>
+        <translation>Riparimi i sistemit të kartelave u plotësua me sukses</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="188"/>
         <source>NTFS repair capability is limited on Linux. Please connect the device to a Windows system for deep repair.</source>
-        <translation type="unfinished"/>
+        <translation>Aftësia për riparim NTFS-sh është e kufizuar në Linux. Ju lutemi, për riparim të thellë, lidheni pajisjen te një sistem Windows.</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="193"/>
         <source>Filesystem errors have been repaired</source>
-        <translation type="unfinished"/>
+        <translation>Gabimet e sistemit të kartelave u riparuan</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="195"/>
         <source>Filesystem repair failed (exit code: %1)</source>
-        <translation type="unfinished"/>
+        <translation>Riparimi i sistemit të kartelave dështoi (kod daljeje: %1)</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="235"/>
         <source>Failed to start repair process: %1</source>
-        <translation type="unfinished"/>
+        <translation>S’u arrit të niset procesi i riparimit: %1</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="237"/>
         <source>unknown error</source>
-        <translation type="unfinished"/>
+        <translation>gabim i panjohur</translation>
     </message>
     <message>
         <location filename="../src/services/usbrepair/usbrepairworker.cpp" line="181"/>
