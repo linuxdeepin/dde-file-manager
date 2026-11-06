@@ -140,7 +140,7 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="525"/>
         <source>The data structure of %1 is severely damaged and cannot be recognized or repaired by the system. If there are important files inside, please stop using it. It is recommended to use professional data recovery software or seek professional assistance.</source>
-        <translation>Struktura e të dhënave të %1 është e dëmtuar rëndë dhe s’mund të kuptohet apo ndreqet nga sistem. Nëse brenda ka çfarëdo kartelash të rëndësishme, ju lutemi, reshtni së përdoruri atë. Rekomandohet të përdoret software profesional rimarrjeje të dhënash, ose të kërkohet asistencë profesionale.</translation>
+        <translation>Struktura e të dhënave të %1 është e dëmtuar rëndë dhe s’mund të kuptohet apo ndreqet nga sistemi. Nëse brenda ka çfarëdo kartelash të rëndësishme, ju lutemi, reshtni së përdoruri atë. Rekomandohet të përdoret “software” profesional rimarrjeje të dhënash, ose të kërkohet asistencë profesionale.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/device/dockitemdatamanager.cpp" line="735"/>
@@ -167,6 +167,19 @@ Flash memory may be failing. Please back up data immediately.</source>
         <location filename="../src/plugins/common/dfmplugin-fileoperations/fileoperations/fileoperationutils/fileoperatebaseworker.cpp" line="756"/>
         <source>The file name or the path is too long!</source>
         <translation>Emri ose shtegu për te kartela është shumë i gjatë!</translation>
+    </message>
+</context>
+<context>
+    <name>FolderView</name>
+    <message>
+        <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="73"/>
+        <source>Back</source>
+        <translation>Mbrapsht</translation>
+    </message>
+    <message>
+        <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="187"/>
+        <source>Open in file manager</source>
+        <translation>Hape në përgjegjës kartelash</translation>
     </message>
 </context>
 <context>
@@ -1033,21 +1046,21 @@ Jepni përdorues dhe fjalëkalim për %1</translation>
     </message>
     <message>
         <location filename="../src/apps/dde-file-manager-preview/libdfm-preview/utils/previewfileoperation.cpp" line="40"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="66"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="89"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="120"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="67"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="90"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="121"/>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/utils/fileoperatorhelper.cpp" line="116"/>
         <source>dde-file-manager</source>
         <translation>dde-file-manager</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="195"/>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="554"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="196"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="555"/>
         <source>Files are being processed</source>
         <translation>Kartelat po përpunohen</translation>
     </message>
     <message>
-        <location filename="../src/dfm-base/utils/universalutils.cpp" line="228"/>
+        <location filename="../src/dfm-base/utils/universalutils.cpp" line="229"/>
         <source>Bit</source>
         <translation>Bit</translation>
     </message>
@@ -2049,7 +2062,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-sidebar/utils/sidebarhelper.cpp" line="254"/>
         <source>Display sidebar disk partitions as a tree structure</source>
-        <translation type="unfinished"/>
+        <translation>Shfaqi pjesët e diskut në anështyllë si një strukturë pemë </translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -2115,12 +2128,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="647"/>
         <source>Please export to an external device such as a non-encrypted partition or USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Ju lutemi, eksportojeni te një pajisje e jashtme, fjala vjen, një pjesë e pafshehtëzuar, ose diskth USB.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="661"/>
         <source>The partition is encrypted, please export to a non-encrypted partition or external device such as a USB flash drive.</source>
-        <translation type="unfinished"/>
+        <translation>Pjesa është e fshehtëzuar, ju lutemi, eksportojeni te një pjesë e pafshehtëzuar, ose pajisje të jashtme, bie fjala, një diskth USB.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/utils/encryptutils.cpp" line="897"/>
@@ -2338,12 +2351,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="64"/>
         <source>Cannot connect to repair service</source>
-        <translation type="unfinished"/>
+        <translation>S’lidhet dot me shërbimin e riparimit</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/repair_dialog_main.cpp" line="151"/>
         <source>Mount failed after repair</source>
-        <translation type="unfinished"/>
+        <translation>Dështoi montimi pas riparimit</translation>
     </message>
 </context>
 <context>
@@ -2351,12 +2364,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="108"/>
         <source>Repair Storage Device</source>
-        <translation type="unfinished"/>
+        <translation>Riparo Pajisje Depozitimesh</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="113"/>
         <source>Preparing to repair device: %1 (%2 %3)</source>
-        <translation type="unfinished"/>
+        <translation>Po gatitet riparim pajisjeje: %1 (%2 %3)</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="118"/>
@@ -2412,7 +2425,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="206"/>
         <source>Failed to repair the device. This may be due to serious format errors or physical damage. To protect your data, it is recommended to stop writing new files and try using professional data recovery software or seek manual assistance.</source>
-        <translation>S’u arrit të riparohet pajisja. Kjo mund të vijë nga gabime serioze formatimit, ose nga dëmtim fizik. Që të mbrohen të dhënat tuaja, rekomandohet të ndalet shkrim kartelash të reja dhe të provohet përdorim software-i profesional rimarrjesh të dhënash, ose të kërkohet asistencë dorazi.</translation>
+        <translation>S’u arrit të riparohet pajisja. Kjo mund të vijë nga gabime serioze formatimi, ose nga dëmtim fizik. Që të mbrohen të dhënat tuaja, rekomandohet të ndalet shkrim kartelash të reja dhe të provohet përdorim software-i profesional rimarrjesh të dhënash, ose të kërkohet asistencë dorazi.</translation>
     </message>
     <message>
         <location filename="../src/external/dde-dock-plugins/disk-mount/widgets/repairdialog.cpp" line="220"/>
