@@ -164,9 +164,10 @@ TEST_F(DeviceManagerCov2Test, HandleDlnfsMount_Unmount_NoCrash)
 
 // ---- unmountStackedMount ----
 
-TEST_F(DeviceManagerCov2Test, UnmountStackedMount_NoOp_NoCrash)
+TEST_F(DeviceManagerCov2Test, UnmountStackedMount_DBusCall_NoCrash)
 {
-    // All code inside #if 0 — effectively a no-op
+    // unmountStackedMount 现已启用：向 daemon 发 Unmount D-Bus 调用，
+    // daemon 未运行时返回错误 reply，函数不崩溃即通过。
     EXPECT_NO_FATAL_FAILURE({
         DeviceManagerPrivate::unmountStackedMount("/mnt/test");
     });
