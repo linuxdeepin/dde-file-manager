@@ -7060,18 +7060,18 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="26"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>riprovoni përditësimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="27"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi i treguesit u plotësua, kohë e përditësimit të fundit: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="28"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="34"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje treguesin tani</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="29"/>
@@ -7096,7 +7096,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="33"/>
         <source>Continue updating</source>
-        <translation type="unfinished"/>
+        <translation>Vazhdo përditësimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithfileindex.cpp" line="63"/>
@@ -7129,28 +7129,28 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="19"/>
         <source>Building index, %1/%2 items indexed</source>
-        <translation type="unfinished"/>
+        <translation>Po krijohet treguesi, %1/%2 objekte të indeksuar</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="20"/>
         <source>Index update failed, please</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi i treguesit dështoi, ju lutemi</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="21"/>
         <source>try updating again</source>
-        <translation type="unfinished"/>
+        <translation>riprovoni përditësimin</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="22"/>
         <source>Index update completed, last update time: %1</source>
-        <translation type="unfinished"/>
+        <translation>Përditësimi i treguesit u plotësua, kohë e përditësimit të fundit: %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="23"/>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="29"/>
         <source>Update index now</source>
-        <translation type="unfinished"/>
+        <translation>Përditësoje treguesin tani</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/checkboxwithocrindex.cpp" line="24"/>
