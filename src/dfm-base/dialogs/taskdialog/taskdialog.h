@@ -54,6 +54,7 @@ private:
     QMap<JobHandlePointer, QListWidgetItem *> taskItems;
     DTitlebar *titlebar { nullptr };
     QDBusReply<QDBusUnixFileDescriptor> replyBlokShutDown;
+    QDBusReply<QDBusUnixFileDescriptor> replyIdleInhibit;
     static constexpr uint32_t kInvalidScreenSaverCookie = 0;
     uint32_t screenSaverCookie { kInvalidScreenSaverCookie };
     static int kMaxHeight;

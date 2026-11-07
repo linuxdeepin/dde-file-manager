@@ -67,8 +67,16 @@ public:
     /*!
      * \brief 锁定屏幕保护程序，防止系统进入休眠或屏保模式。
      * \return 成功时返回有效的 cookie，失败时返回 0。
+     * \param idleReply 当 ScreenSaver 服务不可用时（如 Wayland/Treeland），
+     *                  通过 login1 "idle" inhibitor 回退抑制空闲；fd 存入此参数。
      */
-    static uint32_t lockScreenSaver();
+    static uint32_t lockScreenSaver(QDBusReply<QDBusUnixFileDescriptor> *idleReply = nullptr);
+
+    /*!
+     * \brief 通过 login1 创建 "idle" inhibitor，阻止系统进入空闲待机。
+     * \param reply 输出参数，持有 inhibitor 的文件描述符；fd 关闭时自动释放抑制。
+     */
+    static void inhibitIdle(QDBusReply<QDBusUnixFileDescriptor> &reply);
 
     /*!
      * \brief 解除屏幕保护程序的锁定。
