@@ -69,7 +69,7 @@ void MultiFilePropertiesDialog::processHeight()
             + kBottomHeight;
     QRect newRect = geometry();
     newRect.setHeight(dialogHeight);
-    setGeometry(newRect);
+    resize(newRect.size());
 }
 
 void MultiFilePropertiesDialog::saveBtnClicked()
