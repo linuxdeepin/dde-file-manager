@@ -8,6 +8,7 @@
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/base/device/deviceutils.h>
+#include <dfm-base/base/device/devicealiasmanager.h>
 #include <dfm-base/dfm_global_defines.h>
 
 #include <dfm-framework/dpf.h>
@@ -141,6 +142,36 @@ bool SmbBrowserEventReceiver::hookCopyFilePath(quint64, const QList<QUrl> &urlLi
     QMimeData *data = new QMimeData;
     data->setText(pathList.join('\n'));
     ClipBoard::instance()->setDataToClipboard(data);
+    return true;
+}
+
+
+bool SmbBrowserEventReceiver::sepateTitlebarCrumb(const QUrl &url, QList<QVariantMap> *mapGroup)
+{
+    Q_ASSERT(mapGroup);
+    if (url.scheme() != Global::Scheme::kSmb)
+        return false;
+
+    QList<QUrl> urls;
+    urls.push_back(url);
+    UrlRoute::urlParentList(url, &urls);
+
+    for (int count = urls.size() - 1; count >= 0; count--) {
+        QUrl curUrl { urls.at(count) };
+        QString displayText;
+        if (UrlRoute::isRootUrl(curUrl)) {
+            const auto &alias = NPDeviceAliasManager::instance()->getAlias(curUrl);
+            displayText = alias.isEmpty() ? curUrl.host() : alias;
+        } else {
+            QStringList pathList { curUrl.path().split("/", Qt::SkipEmptyParts) };
+            displayText = pathList.isEmpty() ? curUrl.host() : pathList.last();
+        }
+        QVariantMap node;
+        node["CrumbData_Key_Url"] = curUrl;
+        node["CrumbData_Key_DisplayText"] = displayText;
+        mapGroup->push_back(node);
+    }
+
     return true;
 }
 

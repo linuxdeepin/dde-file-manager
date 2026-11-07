@@ -157,6 +157,7 @@ void SmbBrowser::followEvents()
     dpfHookSequence->follow("dfmplugin_titlebar", "hook_Copy_Addr", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookTitleBarAddrHandle);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_Allow_Repeat_Url", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookAllowRepeatUrl);
     dpfHookSequence->follow("dfmplugin_workspace", "hook_ShortCut_CopyFilePath", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::hookCopyFilePath);
+    dpfHookSequence->follow("dfmplugin_titlebar", "hook_Crumb_Seprate", SmbBrowserEventReceiver::instance(), &SmbBrowserEventReceiver::sepateTitlebarCrumb);
 }
 
 void SmbBrowser::updateNeighborToSidebar()
