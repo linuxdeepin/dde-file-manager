@@ -270,7 +270,7 @@ void FilePropertyDialog::processHeight(int height)
     int contentH = contentHeight() + kArrowExpandSpacing;
     int maxHeight = qMin(contentH, screenHeight);
     rect.setHeight(maxHeight);
-    setGeometry(rect);
+    resize(rect.size());
 
     if (scrollArea) {
         QWidget *content = scrollArea->widget();
