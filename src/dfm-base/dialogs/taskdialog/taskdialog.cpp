@@ -104,12 +104,15 @@ void TaskDialog::blockShutdown()
     // 添加进入节能模式的锁定处理
     // 防止重复调用导致 cookie 被覆盖
     if (screenSaverCookie == kInvalidScreenSaverCookie) {
-        screenSaverCookie = UniversalUtils::lockScreenSaver();
+        screenSaverCookie = UniversalUtils::lockScreenSaver(&replyIdleInhibit);
     }
 
     QObject::connect(this, &TaskDialog::closed, this, [this]() {
         QDBusReply<QDBusUnixFileDescriptor> tmp = replyBlokShutDown;   //::close(fd);
         replyBlokShutDown = QDBusReply<QDBusUnixFileDescriptor>();
+        // 释放 login1 idle inhibitor fd（ScreenSaver 不可用时的回退抑制）
+        QDBusReply<QDBusUnixFileDescriptor> idleTmp = replyIdleInhibit;
+        replyIdleInhibit = QDBusReply<QDBusUnixFileDescriptor>();
         // 添加进入节能模式的解除锁定处理
         if (screenSaverCookie != kInvalidScreenSaverCookie) {
             UniversalUtils::unlockScreenSaver(screenSaverCookie);
@@ -291,5 +294,9 @@ TaskDialog::~TaskDialog()
     if (screenSaverCookie != kInvalidScreenSaverCookie) {
         UniversalUtils::unlockScreenSaver(screenSaverCookie);
         screenSaverCookie = kInvalidScreenSaverCookie;
+    }
+    // 确保在析构时释放 login1 idle inhibitor fd
+    if (replyIdleInhibit.value().isValid()) {
+        replyIdleInhibit = QDBusReply<QDBusUnixFileDescriptor>();
     }
 }

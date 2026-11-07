@@ -537,13 +537,19 @@ int UniversalUtils::getTextLineHeight(const QString &text, const QFontMetrics &f
     return qMax(fontHeight, tightHeight);
 }
 
-uint32_t UniversalUtils::lockScreenSaver()
+uint32_t UniversalUtils::lockScreenSaver(QDBusReply<QDBusUnixFileDescriptor> *idleReply)
 {
     qCInfo(logDFMBase) << "UniversalUtils::lockScreenSaver create dbus to block computer screen saver!!!";
 
     // 检查是否有这个系统dbus
-    if (!checkDbusService(IDLE_SCREEN_SAVER_SERVICE, false))
+    if (!checkDbusService(IDLE_SCREEN_SAVER_SERVICE, false)) {
+        // ScreenSaver 服务不可用（如 Wayland/Treeland），回退到 login1 idle inhibitor
+        qCInfo(logDFMBase) << "ScreenSaver service unavailable, falling back to login1 idle inhibitor";
+        if (idleReply && !idleReply->value().isValid()) {
+            inhibitIdle(*idleReply);
+        }
         return 0;
+    }
 
     QDBusInterface screenSaverManager(IDLE_SCREEN_SAVER_SERVICE,
                                       IDLE_SCREEN_SAVER_PATH,
@@ -589,6 +595,30 @@ bool UniversalUtils::unlockScreenSaver(const uint32_t cookie)
     qCWarning(logDFMBase) << "UniversalUtils::unlockScreenSaver Failed to uninhibit screensaver:" << reply.error().message();
 
     return false;
+}
+
+void UniversalUtils::inhibitIdle(QDBusReply<QDBusUnixFileDescriptor> &reply)
+{
+    qCInfo(logDFMBase) << "Creating login1 idle inhibitor to prevent system idle";
+
+    if (reply.value().isValid()) {
+        qCWarning(logDFMBase) << "Idle inhibitor already active, skipping new request";
+        return;
+    }
+
+    QDBusInterface loginManager("org.freedesktop.login1",
+                                "/org/freedesktop/login1",
+                                "org.freedesktop.login1.Manager",
+                                QDBusConnection::systemBus());
+
+    QList<QVariant> arg;
+    arg << QString("idle")   // what
+        << qApp->applicationDisplayName()   // who
+        << QObject::tr("Files are being processed")   // why
+        << QString("block");   // mode
+
+    reply = loginManager.callWithArgumentList(QDBus::Block, "Inhibit", arg);
+    qCInfo(logDFMBase) << "Login1 idle inhibitor created successfully";
 }
 
 bool UniversalUtils::checkDbusService(const QString &service, bool isSystemDbus)
