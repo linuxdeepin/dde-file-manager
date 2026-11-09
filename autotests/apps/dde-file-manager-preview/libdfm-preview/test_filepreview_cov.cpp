@@ -29,7 +29,7 @@ DFMBASE_USE_NAMESPACE
 // C entry points implemented in filepreview.cpp (no public header)
 extern "C" {
 int initFilePreview();
-int showFilePreviewDialog(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl);
+int showFilePreviewDialog(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl, const QString &transitionToken = {}, const QString &transitionChannel = {});
 }
 
 namespace {
@@ -146,7 +146,7 @@ TEST_F(FilePreviewServiceTest, ShowFilePreview_Disabled_DoesNotDelegate)
     installDConfigStubs(true, QVariant(false));
     int managerCalls = 0;
     stub.set_lamda(&PreviewDialogManager::showPreviewDialog,
-                   [&managerCalls](PreviewDialogManager *, quint64, const QList<QUrl> &, const QList<QUrl> &) {
+                   [&managerCalls](PreviewDialogManager *, quint64, const QList<QUrl> &, const QList<QUrl> &, const QString &, const QString &) {
                        __DBG_STUB_INVOKE__
                        managerCalls++;
                    });
@@ -168,7 +168,7 @@ TEST_F(FilePreviewServiceTest, ShowFilePreview_Enabled_DelegatesToManager)
     QList<QUrl> capturedUrls;
     stub.set_lamda(&PreviewDialogManager::showPreviewDialog,
                    [&managerCalls, &capturedWinId, &capturedUrls](PreviewDialogManager *, quint64 winId,
-                                                                  const QList<QUrl> &urls, const QList<QUrl> &) {
+                                                                  const QList<QUrl> &urls, const QList<QUrl> &, const QString &, const QString &) {
                        __DBG_STUB_INVOKE__
                        managerCalls++;
                        capturedWinId = winId;

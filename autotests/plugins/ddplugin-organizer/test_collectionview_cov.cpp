@@ -54,6 +54,11 @@ public:
     void insert(const QUrl &, const QString &, const int) override {}
     QString remove(const QUrl &) override { return QString(); }
     QString change(const QUrl &) override { return QString(); }
+    // 数据提供方是 iconRect 位置查找的权威来源（桌面外壳托管数据时模型可为空）
+    QList<QUrl> items(const QString &) const override
+    {
+        return { QUrl::fromLocalFile("/tmp/ut-collection-iconrect.txt") };
+    }
 };
 
 // expose protected members for coverage testing
@@ -392,4 +397,21 @@ TEST_F(UT_CollectionViewCov, GraphicsEffectDraw_NoScrollRange_DrawsSourceOnly)
     // Assert: no scroll range means no gradient painted
     EXPECT_FALSE(img.isNull());
     EXPECT_EQ(view->verticalScrollBar()->minimum(), view->verticalScrollBar()->maximum());
+}
+
+// 空格预览过渡锚点：iconRect 经数据提供方查找位置并复刻 delegate 绘制几何
+TEST_F(UT_CollectionViewCov, IconRect_ProviderLookupAndDelegateGeometry)
+{
+    view->resize(800, 600);
+    view->setIconSize(QSize(48, 48));
+
+    const QRect rect = view->iconRect(QUrl::fromLocalFile("/tmp/ut-collection-iconrect.txt"));
+    EXPECT_TRUE(rect.isValid());
+    EXPECT_FALSE(rect.isEmpty());
+    // 与 CollectionItemDelegate::iconRect 同几何：图标尺寸、顶部间距对齐
+    EXPECT_EQ(rect.size(), view->iconSize());
+    EXPECT_TRUE(view->rect().contains(rect.center()));
+
+    // 提供方不知道的文件：无锚点，过渡回退
+    EXPECT_TRUE(view->iconRect(QUrl::fromLocalFile("/tmp/ut-collection-unknown.txt")).isEmpty());
 }

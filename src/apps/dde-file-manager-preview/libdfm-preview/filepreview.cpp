@@ -37,13 +37,13 @@ int initFilePreview()
     return 0;
 }
 
-int showFilePreviewDialog(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
+int showFilePreviewDialog(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl, const QString &transitionToken, const QString &transitionChannel)
 {
     qCInfo(logLibFilePreview) << "FilePreview: received preview request for window ID:" << windowId 
                               << "with" << selecturls.size() << "selected files and" << dirUrl.size() << "directory files";
     
     if (filePreviewIns) {
-        filePreviewIns->showFilePreview(windowId, selecturls, dirUrl);
+        filePreviewIns->showFilePreview(windowId, selecturls, dirUrl, transitionToken, transitionChannel);
     } else {
         qCCritical(logLibFilePreview) << "FilePreview: service instance is null, cannot show preview dialog";
     }
@@ -106,13 +106,13 @@ bool FilePreview::start()
     return true;
 }
 
-void FilePreview::showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
+void FilePreview::showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl, const QString &transitionToken, const QString &transitionChannel)
 {
     qCDebug(logLibFilePreview) << "FilePreview: checking if preview is enabled before showing dialog";
     
     if (isPreviewEnabled()) {
         qCInfo(logLibFilePreview) << "FilePreview: preview enabled, delegating to PreviewDialogManager";
-        PreviewDialogManager::instance()->showPreviewDialog(windowId, selecturls, dirUrl);
+        PreviewDialogManager::instance()->showPreviewDialog(windowId, selecturls, dirUrl, transitionToken, transitionChannel);
     } else {
         qCWarning(logLibFilePreview) << "FilePreview: preview is disabled, ignoring preview request";
     }

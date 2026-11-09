@@ -127,15 +127,20 @@ public:
     quint64 recvWinId = 0;
     QList<QUrl> recvSelectUrls;
     QList<QUrl> recvDirUrls;
+    QString recvToken;
+    QString recvChannel;
     int calls = 0;
 
     // 与 FileOperationsEventReceiver::handleOperationFilesPreview 同参签名
-    void onFilesPreview(const quint64 windowId, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
+    void onFilesPreview(const quint64 windowId, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls,
+                        const QString &transitionToken, const QString &transitionChannel)
     {
         ++calls;
         recvWinId = windowId;
         recvSelectUrls = selectUrls;
         recvDirUrls = currentDirUrls;
+        recvToken = transitionToken;
+        recvChannel = transitionChannel;
     }
 };
 }   // namespace
@@ -204,6 +209,9 @@ TEST_F(ShortcutOperTest, BUG116441_SpacePreview_PushesFilesPreviewSlotWithSelect
     EXPECT_EQ(receiver.recvWinId, view->topLevelWidget()->winId());
     EXPECT_EQ(receiver.recvSelectUrls, previewUrls);
     EXPECT_TRUE(receiver.recvDirUrls.isEmpty());
+    // 测试环境没有 Wayland 窗口句柄，过渡不可用：回退推送空令牌/通道
+    EXPECT_TRUE(receiver.recvToken.isEmpty());
+    EXPECT_TRUE(receiver.recvChannel.isEmpty());
 }
 
 // 自动重复的空格键不得重复触发预览推送

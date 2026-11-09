@@ -15,7 +15,7 @@ class FilePreview : public QObject
 public:
     void initialize();
     bool start();
-    void showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl);
+    void showFilePreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl, const QString &transitionToken = {}, const QString &transitionChannel = {});
 
 private:
     bool isPreviewEnabled();

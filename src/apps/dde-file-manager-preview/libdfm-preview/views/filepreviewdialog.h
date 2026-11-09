@@ -35,6 +35,8 @@ public:
 
 signals:
     void signalCloseEvent();
+    /*! \brief the file being shown changed (previous/next navigation) */
+    void signalCurrentPageChanged(const QUrl &url);
 
 public slots:
     void playCurrentPreviewFile();

@@ -120,6 +120,15 @@ public:
     bool isDropTarget(const QModelIndex &index) const;
 
     QRectF itemRect(const QUrl &url, const DFMGLOBAL_NAMESPACE::ItemRoles role) const;
+    /*!
+     * \brief The icon cell of the item at \a url as painted by the delegate
+     *
+     * Viewport coordinates. Replicates the paint geometry of the current view
+     * mode: grouped icon mode strips the virtual margins, list/tree views
+     * follow the paint proxies (first-row padding, vertical centering, tree
+     * indent).
+     */
+    QRect iconRect(const QUrl &url) const;
 
     bool isVerticalScrollBarSliderDragging() const;
     void updateViewportContentsMargins(const QSize &itemSize);

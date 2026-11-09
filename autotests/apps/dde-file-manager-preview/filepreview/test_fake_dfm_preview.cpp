@@ -45,10 +45,14 @@ __attribute__((visibility("default"))) int initFilePreview()
 
 __attribute__((visibility("default"))) int showFilePreviewDialog(quint64 windowId,
                                                                  const QList<QUrl> &selecturls,
-                                                                 const QList<QUrl> dirUrl)
+                                                                 const QList<QUrl> dirUrl,
+                                                                 const QString &transitionToken,
+                                                                 const QString &transitionChannel)
 {
     Q_UNUSED(selecturls)
     Q_UNUSED(dirUrl)
+    Q_UNUSED(transitionToken)
+    Q_UNUSED(transitionChannel)
     ++g_showCount;
     g_lastWinId = windowId;
     covLog("show", windowId);

@@ -23,6 +23,8 @@
 #include <QApplication>
 #include <QImage>
 #include <QClipboard>
+#include <QJsonDocument>
+#include <QJsonObject>
 
 #include "stubext.h"
 #include "dfm_hookreg.h"
@@ -1119,14 +1121,24 @@ TEST_F(FileOpsEventDispatchTest, FilesPreviewSlot_PushValidLists_PreviewToolLaun
     QList<QUrl> selectUrls { selected };
     QList<QUrl> dirUrls { QUrl::fromLocalFile(tempDir->path()) };
 
+    // 过渡令牌与通道须随槽参数一路透传到预览进程的 JSON 数据文件
     QVariant ret = dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview",
-                                        quint64(38), selectUrls, dirUrls);
+                                        quint64(38), selectUrls, dirUrls,
+                                        QString("token-ut"), QString("channel-ut"));
 
     EXPECT_TRUE(ret.isNull());
     ASSERT_TRUE(g_detached2Called);
     ASSERT_EQ(g_lastDetached2Args.size(), 1);
     QString tempFileName = g_lastDetached2Args.first();
     EXPECT_TRUE(QFileInfo(tempFileName).exists());
+
+    QFile dataFile(tempFileName);
+    ASSERT_TRUE(dataFile.open(QIODevice::ReadOnly));
+    const QJsonObject data = QJsonDocument::fromJson(dataFile.readAll()).object();
+    EXPECT_EQ(data.value("windowId").toString(), QString::number(38));
+    EXPECT_EQ(data.value("activationToken").toString(), QString("token-ut"));
+    EXPECT_EQ(data.value("transitionChannel").toString(), QString("channel-ut"));
+    dataFile.close();
     QFile::remove(tempFileName);   // handler sets autoRemove(false): clean up
 }
 
