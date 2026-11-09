@@ -688,7 +688,7 @@ static QString encodeBlockDevName(const QString &devName)
         if ((ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || (ch >= '0' && ch <= '9')) {
             encoded.append(ch);
         } else {
-            encoded.append(QString("_%1").arg(ch.unicode(), 2, 16, QChar('0')));
+            encoded.append(QString("_%1").arg(static_cast<int>(ch.unicode()), 2, 16, QChar('0')));
         }
     }
     return encoded;
