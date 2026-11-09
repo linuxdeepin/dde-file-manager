@@ -200,8 +200,24 @@ TEST(UniversalUtilsTest, BoardCastPastDataCallable)
 }
 
 #include <QMimeData>
+#include <QFileInfo>
+#include <QDir>
+#include <QIcon>
+#include <mutex>
+
+#include <dfm-base/base/schemefactory.h>
+#include <dfm-base/file/local/syncfileinfo.h>
+
 TEST(UniversalUtilsTest, SetDockDnDMimeDataWithDesktopFilePopulatesFormats)
 {
+    // Ensure the local "file" scheme can create FileInfo even when this
+    // suite runs standalone (--gtest_filter); no-op if already registered.
+    static std::once_flag regFlag;
+    std::call_once(regFlag, [] {
+        UrlRoute::regScheme(Global::Scheme::kFile, QDir::homePath(), QIcon(), false, "file");
+        InfoFactory::regClass<SyncFileInfo>(Global::Scheme::kFile);
+    });
+
     // setDockDnDMimeData only populates for .desktop file URLs.
     QTemporaryDir dir;
     ASSERT_TRUE(dir.isValid());
@@ -219,11 +235,37 @@ TEST(UniversalUtilsTest, SetDockDnDMimeDataWithDesktopFilePopulatesFormats)
     EXPECT_TRUE(md.hasFormat("text/x-dde-dock-dnd-source"));
 }
 
-TEST(UniversalUtilsTest, SetDockDnDMimeDataWithNonDesktopFileDoesNothing)
+TEST(UniversalUtilsTest, SetDockDnDMimeDataWithLocalDirectoryPopulatesFolderRef)
 {
+    // Since TASK-390571 a readable local directory carries an opaque
+    // file-manager folder reference so the dock can pin it.
+    QTemporaryDir dir;
+    ASSERT_TRUE(dir.isValid());
+    const QString canonical = QFileInfo(dir.path()).canonicalFilePath();
+    ASSERT_FALSE(canonical.isEmpty());
+
     QMimeData md;
-    UniversalUtils::setDockDnDMimeData(&md, QUrl::fromLocalFile("/tmp"), "test");
-    // Non-desktop file URL → early return → no formats set.
+    UniversalUtils::setDockDnDMimeData(&md, QUrl::fromLocalFile(dir.path()), "dde-desktop");
+    EXPECT_FALSE(md.formats().isEmpty());
+    EXPECT_TRUE(md.hasFormat("text/x-dde-dock-dnd-folder"));
+    EXPECT_TRUE(md.hasFormat("text/x-dde-dock-dnd-source"));
+    EXPECT_EQ(md.data("text/x-dde-dock-dnd-source"), QByteArray("dde-desktop"));
+
+    const QByteArray payload = md.data("text/x-dde-dock-dnd-folder");
+    const QByteArray prefix = QByteArrayLiteral("folder/filemanager/");
+    ASSERT_TRUE(payload.startsWith(prefix));
+    const QByteArray decoded = QByteArray::fromBase64(
+        payload.mid(prefix.size()),
+        QByteArray::Base64UrlEncoding | QByteArray::OmitTrailingEquals);
+    EXPECT_EQ(decoded, QUrl::fromLocalFile(canonical).toString(QUrl::FullyEncoded).toUtf8());
+}
+
+TEST(UniversalUtilsTest, SetDockDnDMimeDataWithUnsupportedUrlDoesNothing)
+{
+    // Neither a readable local directory nor a desktop file (unregistered
+    // scheme → no FileInfo) → nothing is written.
+    QMimeData md;
+    UniversalUtils::setDockDnDMimeData(&md, QUrl("ut-no-such-scheme://host/file.txt"), "test");
     EXPECT_TRUE(md.formats().isEmpty());
 }
 
