@@ -93,9 +93,18 @@ function(dfm_configure_base_library target_name)
     # is a plain xdg-activation request.
     find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS WaylandClient)
     find_package(TreelandProtocols QUIET)
-    if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClient AND TREELAND_PROTOCOLS_DATA_DIR)
+    # TreelandProtocolsConfig.cmake always sets TREELAND_PROTOCOLS_DATA_DIR, so
+    # testing the variable alone only proves the package is installed. The v2
+    # protocol is newer than the package that carries it: treeland-protocols
+    # 0.5.x still ships the v1 XML only, and pointing the generator at a
+    # missing file aborts the whole build. Probe the file itself.
+    set(DFM_TREELAND_TOPLEVEL_XML
+        ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-foreign-toplevel-manager-unstable-v2.xml)
+    if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClient
+            AND TREELAND_PROTOCOLS_DATA_DIR
+            AND EXISTS "${DFM_TREELAND_TOPLEVEL_XML}")
         qt6_generate_wayland_protocol_client_sources(${target_name}
-            FILES ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-foreign-toplevel-manager-unstable-v2.xml)
+            FILES ${DFM_TREELAND_TOPLEVEL_XML})
         target_link_libraries(${target_name} PRIVATE Qt${QT_VERSION_MAJOR}::WaylandClient)
         target_compile_definitions(${target_name} PRIVATE DFM_WITH_TREELAND_TOPLEVEL)
 
