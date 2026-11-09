@@ -419,13 +419,13 @@ void FileOperatorHelper::showFilesProperty(const FileView *view)
     dpfSlotChannel->push("dfmplugin_propertydialog", "slot_PropertyDialog_Show", urls, QVariantHash());
 }
 
-void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls)
+void FileOperatorHelper::previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls, const QString &transitionToken, const QString &transitionChannel)
 {
     quint64 winID = WorkspaceHelper::instance()->windowId(view);
     fmInfo() << "Starting file preview - selected files:" << selectUrls.size()
              << "current dir files:" << currentDirUrls.size() << "window ID:" << winID;
 
-    dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", winID, selectUrls, currentDirUrls);
+    dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", winID, selectUrls, currentDirUrls, transitionToken, transitionChannel);
 }
 
 void FileOperatorHelper::dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls)

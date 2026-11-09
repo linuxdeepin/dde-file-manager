@@ -1321,7 +1321,7 @@ TEST_F(TestFileOperationsEventReceiver, HandleOperationUndoCut_ValidOperation)
 TEST_F(TestFileOperationsEventReceiver, HandleOperationFilesPreview_EmptyLists)
 {
     // Should handle empty lists gracefully
-    receiver->handleOperationFilesPreview(0, QList<QUrl>(), QList<QUrl>());
+    receiver->handleOperationFilesPreview(0, QList<QUrl>(), QList<QUrl>(), QString(), QString());
 
     SUCCEED();
 }
@@ -1341,7 +1341,7 @@ TEST_F(TestFileOperationsEventReceiver, HandleOperationFilesPreview_ValidUrls)
     QList<QUrl> selectUrls = { selectFile };
     QList<QUrl> dirUrls = { dirUrl };
 
-    receiver->handleOperationFilesPreview(0, selectUrls, dirUrls);
+    receiver->handleOperationFilesPreview(0, selectUrls, dirUrls, QString(), QString());
 
     SUCCEED();
 }

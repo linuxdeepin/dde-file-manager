@@ -107,6 +107,23 @@ function(dfm_configure_base_library target_name)
             FILES ${DFM_TREELAND_TOPLEVEL_XML})
         target_link_libraries(${target_name} PRIVATE Qt${QT_VERSION_MAJOR}::WaylandClient)
         target_compile_definitions(${target_name} PRIVATE DFM_WITH_TREELAND_TOPLEVEL)
+
+        # Space-key preview window transition: the compositor plays the
+        # open/close animation around a rectangle attached to an xdg-activation
+        # token. The raw wl_surface access needs Qt's private Wayland headers
+        # (qt6-wayland-private-dev), exposed by the QtWaylandClientPrivate
+        # interface target.
+        pkg_get_variable(WAYLAND_PROTOCOLS_DATADIR wayland-protocols pkgdatadir)
+        if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClientPrivate AND WAYLAND_PROTOCOLS_DATADIR)
+            qt6_generate_wayland_protocol_client_sources(${target_name}
+                FILES
+                    ${WAYLAND_PROTOCOLS_DATADIR}/staging/xdg-activation/xdg-activation-v1.xml
+                    ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-window-transition-unstable-v1.xml)
+            target_link_libraries(${target_name} PRIVATE Qt${QT_VERSION_MAJOR}::WaylandClientPrivate)
+            target_compile_definitions(${target_name} PRIVATE DFM_WITH_TREELAND_TRANSITION)
+        else()
+            message(STATUS "DFM: Qt Wayland private headers unavailable, window transition is disabled")
+        endif()
     else()
         message(STATUS "DFM: Treeland protocol unavailable, minimized window restore on Treeland is disabled")
     endif()

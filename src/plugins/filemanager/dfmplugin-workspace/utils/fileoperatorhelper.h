@@ -37,7 +37,7 @@ public:
     void deleteFiles(const FileView *view);
     void openInTerminal(const FileView *view);
     void showFilesProperty(const FileView *view);
-    void previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls);
+    void previewFiles(const FileView *view, const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls, const QString &transitionToken = {}, const QString &transitionChannel = {});
     void dropFiles(const FileView *view, const Qt::DropAction &action, const QUrl &targetUrl, const QList<QUrl> &urls);
 
     void renameFilesByReplace(const QWidget *sender, const QList<QUrl> &urlList, const QPair<QString, QString> &replacePair);

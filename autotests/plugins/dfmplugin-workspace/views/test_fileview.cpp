@@ -392,3 +392,9 @@ TEST_F(FileViewTest, BUG125373_SetFilterData_NoCrash)
     EXPECT_NO_THROW(view->setFilterData(view->rootUrl(), QVariant()));
     EXPECT_NO_THROW(view->setFilterData(QUrl("file:///other-path"), QVariant()));
 }
+
+// 空格预览过渡锚点：模型中没有的 url 应得到空锚点，过渡回退
+TEST_F(FileViewTest, IconRect_UnknownUrl_ReturnsEmptyRect)
+{
+    EXPECT_TRUE(view->iconRect(QUrl::fromLocalFile("/tmp/ut-fileview-nonexistent.txt")).isEmpty());
+}

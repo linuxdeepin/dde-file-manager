@@ -678,7 +678,7 @@ TEST_F(FileOpsEventReceiverImpl, HandleCopyFilePath)
 TEST_F(FileOpsEventReceiverImpl, HandleOperationFilesPreview)
 {
     receiver->handleOperationFilesPreview(1, { QUrl::fromLocalFile("/tmp/a.txt") },
-                                          { QUrl::fromLocalFile("/tmp") });
+                                          { QUrl::fromLocalFile("/tmp") }, QString(), QString());
     SUCCEED();
 }
 

@@ -195,3 +195,19 @@ TEST_F(CanvasViewReal, inputMethodAndWinId)
     (void)id;
     SUCCEED();
 }
+
+// 空格预览过渡锚点：iconRect 复刻画布绘制几何（网格为权威，视图模型可为空）
+TEST_F(CanvasViewReal, iconRectForGridItem)
+{
+    const QRect rect = view->iconRect(urls.at(0));
+    EXPECT_TRUE(rect.isValid());
+    EXPECT_FALSE(rect.isEmpty());
+    // 与 CanvasItemDelegate::iconRect 同几何：图标尺寸顶对齐居中
+    EXPECT_EQ(rect.size(), view->iconSize());
+    EXPECT_TRUE(view->rect().contains(rect.center()));
+}
+
+TEST_F(CanvasViewReal, iconRectForUnknownUrlIsEmpty)
+{
+    EXPECT_TRUE(view->iconRect(QUrl::fromLocalFile("/tmp/ut-canvas-nonexistent.txt")).isEmpty());
+}

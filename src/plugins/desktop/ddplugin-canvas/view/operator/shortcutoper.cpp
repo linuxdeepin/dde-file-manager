@@ -15,6 +15,8 @@
 #include <dfm-base/base/application/settings.h>
 #include <dfm-base/utils/clipboard.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/interfaces/fileinfo.h>
+#include <dfm-base/utils/private/windowtransition_p.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -22,6 +24,7 @@
 #include <DGuiApplicationHelper>
 
 #include <QAction>
+#include <QPointer>
 
 DFMBASE_USE_NAMESPACE
 DWIDGET_USE_NAMESPACE
@@ -32,6 +35,10 @@ ShortcutOper::ShortcutOper(CanvasView *parent)
 {
     view->setObjectName("CanvasView");
     view->setAccessibleName("CanvasView");
+
+    // Bind the transition managers long before any preview, so the Wayland
+    // globals are ready when the first space press happens.
+    windowtransition::bindManagers();
 }
 
 bool ShortcutOper::keyPressed(QKeyEvent *event)
@@ -253,12 +260,90 @@ void ShortcutOper::switchHidden()
     bool isShowedHiddenFiles = Application::instance()->genericAttribute(Application::kShowedHiddenFiles).toBool();
     Application::instance()->setGenericAttribute(Application::kShowedHiddenFiles, !isShowedHiddenFiles);
 }
-
 void ShortcutOper::previewFiles()
 {
     const QList<QUrl> urls = view->selectionModel()->selectedUrls();
     if (urls.isEmpty())
         return;
     auto currentDirUrls = view->model()->files();
-    dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview", view->topLevelWidget()->winId(), urls, currentDirUrls);
+
+    const QUrl anchorUrl = urls.first();
+    QWidget *window = view->topLevelWidget();
+    if (!window || !window->windowHandle()) {
+        fmWarning() << "Preview without transition: window:" << (window != nullptr)
+                    << "windowHandle:" << (window ? window->windowHandle() != nullptr : false);
+        dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview",
+                             view->topLevelWidget()->winId(), urls, currentDirUrls, QString(), QString());
+        return;
+    }
+
+    // The anchor is recomputed while the preview lives, so the close animation
+    // follows the currently shown file (the preview may switch files) as well
+    // as icon size changes and rearranges; the view may go away meanwhile,
+    // which the provider reports by returning false. The viewport geometry is
+    // read per call so window resizes are picked up.
+    QPointer<CanvasView> v(view);
+
+    auto provider = [v](const QUrl &url, QRect *anchor, QPixmap *snapshot) -> bool {
+        if (!v) {
+            fmWarning() << "Preview transition provider: view gone";
+            return false;
+        }
+
+        QWidget *window = v->window();
+        const QPoint viewportOrigin = v->viewport()->mapTo(window, QPoint(0, 0));
+        const QRect viewportRect = v->viewport()->rect();
+
+        const QRect cell = v->iconRect(url);   // viewport coordinates, grid lookup
+        if (!cell.isValid()) {
+            fmWarning() << "Preview transition provider: icon cell invalid for" << url;
+            return false;
+        }
+
+        // The icon is resolved per url: the preview may switch files while it
+        // is open, and the anchor has to follow the currently shown one.
+        QIcon icon;
+        const QModelIndex index = v->model()->index(url);
+        if (index.isValid())
+            icon = index.data(Global::kItemIconRole).value<QIcon>();
+        if (icon.isNull()) {
+            const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+            if (info)
+                icon = info->fileIcon();
+        }
+
+        QPixmap cropped;
+        const QRectF visible = windowtransition::paintedIconRect(icon, QRectF(cell), &cropped);
+        if (visible.isEmpty()) {
+            fmWarning() << "Preview transition provider: no visible icon, icon null:" << icon.isNull()
+                        << "cell:" << cell;
+            return false;
+        }
+
+        // Clip to the visible viewport; the snapshot follows the clip so it
+        // keeps matching the anchor geometry.
+        const QRect visibleRect = visible.toAlignedRect();
+        const QRect clipped = visibleRect.intersected(viewportRect);
+        if (clipped.isEmpty()) {
+            fmWarning() << "Preview transition provider: anchor outside viewport, visible:" << visible
+                        << "viewport:" << viewportRect;
+            return false;
+        }
+
+        const QRect anchorRect = windowtransition::anchorInWindow(visibleRect, viewportRect, viewportOrigin);
+        if (anchorRect.isEmpty())
+            return false;
+
+        *anchor = anchorRect;
+        *snapshot = windowtransition::cropPixmapTo(cropped, visible, clipped);
+        return true;
+    };
+
+    auto onToken = [this, urls, currentDirUrls](const QString &token, const QString &channel) {
+        dpfSlotChannel->push("dfmplugin_fileoperations", "slot_Operation_FilesPreview",
+                             view->topLevelWidget()->winId(), urls, currentDirUrls, token, channel);
+    };
+
+    if (!windowtransition::WindowTransitionLaunch::create(window->windowHandle(), anchorUrl, provider, onToken, this))
+        onToken(QString(), QString());
 }

@@ -43,6 +43,14 @@ public:
 
 public:
     virtual QRect visualRect(const QModelIndex &index) const override;
+    /*!
+     * \brief The icon cell of the item at \a url as painted by the delegate
+     *
+     * Viewport coordinates. Looks the position up in the grid instead of the
+     * model: on Treeland the item data is provided through the desktop hook
+     * and the view's model may be empty while the grid is authoritative.
+     */
+    QRect iconRect(const QUrl &url) const;
     virtual void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     virtual QModelIndex indexAt(const QPoint &point) const override;
     virtual QModelIndex moveCursor(CursorAction cursorAction, Qt::KeyboardModifiers modifiers) override;

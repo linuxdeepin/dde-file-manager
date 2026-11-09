@@ -5,10 +5,13 @@
 #include "previewdialogmanager.h"
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/private/windowtransition_p.h>
 
 #include <dfm-framework/dpf.h>
 
 #include <DPlatformWindowHandle>
+
+#include <QLocalSocket>
 
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_filepreview;
@@ -53,7 +56,7 @@ PreviewDialogManager::PreviewDialogManager(QObject *parent)
     qCDebug(logLibFilePreview) << "PreviewDialogManager: initialized with 60s exit timer";
 }
 
-void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> &dirUrl)
+void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> &dirUrl, const QString &transitionToken, const QString &transitionChannel)
 {
     Q_UNUSED(winId)
 
@@ -128,6 +131,20 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
         filePreviewDialog->setEntryUrlList(dirUrl);
     }
 
+    // The transition channel reports the currently shown file to the launching
+    // process, so the close animation follows file switches inside the dialog.
+    if (!transitionChannel.isEmpty()) {
+        auto *channel = new QLocalSocket(filePreviewDialog);
+        QObject::connect(filePreviewDialog, &FilePreviewDialog::signalCurrentPageChanged,
+                         channel, [channel](const QUrl &url) {
+                             if (channel->state() != QLocalSocket::ConnectedState)
+                                 return;
+                             channel->write(url.toEncoded() + '\n');
+                             channel->flush();
+                         });
+        channel->connectToServer(transitionChannel);
+    }
+
     if (!filePreviewDialog->hasValidPreview()) {
         qCWarning(logLibFilePreview) << "PreviewDialogManager: preview creation failed, not showing dialog";
         filePreviewDialog->deleteLater();
@@ -136,10 +153,20 @@ void PreviewDialogManager::showPreviewDialog(const quint64 winId, const QList<QU
     }
 
     qCInfo(logLibFilePreview) << "PreviewDialogManager: displaying preview dialog";
+    bool transitionActivated = false;
     if (updatePos) {
         filePreviewDialog->show();
         filePreviewDialog->moveToCenter();
+        // Mirroring the treeland example's receiver: show() creates the shell
+        // surface, and activating before the first map commit makes the
+        // compositor play the open transition. The activation must not be sent
+        // before show(), or it would arrive for a role-less surface that the
+        // compositor does not know. When the xdg-activation global is not
+        // bound yet (fresh process), the activation is deferred until it
+        // arrives, still ahead of the first commit.
+        transitionActivated = windowtransition::activateWithToken(filePreviewDialog->windowHandle(), transitionToken);
     }
     filePreviewDialog->raise();
-    filePreviewDialog->activateWindow();
+    if (!transitionActivated)
+        filePreviewDialog->activateWindow();
 }

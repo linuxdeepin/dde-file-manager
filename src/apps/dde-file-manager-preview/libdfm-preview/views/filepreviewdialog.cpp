@@ -302,6 +302,7 @@ void FilePreviewDialog::switchToPage(int index)
     saveCenterPos();
 
     currentPageIndex = index;
+    emit signalCurrentPageChanged(fileList.at(index));
     statusBar->preButton()->setEnabled(index > 0);
     statusBar->nextButton()->setEnabled(index < fileList.count() - 1);
 
