@@ -86,48 +86,60 @@ function(dfm_configure_base_library target_name)
     )
 
     # Minimized window restore on Wayland: xdg-shell has no un-minimize request,
-    # so the client has to ask the compositor through
-    # treeland_foreign_toplevel_manager_v2. Its definition ships in
-    # treeland-protocols, the same package dde-shell uses. Both parts are
-    # optional - without them the library still builds complete and the fallback
-    # is a plain xdg-activation request.
+    # and xdg-activation cannot help because it only trusts tokens minted by a
+    # window the user is interacting with - which a minimized one never is.
+    # zwlr_foreign_toplevel_manager_v1 is what window switchers use instead, and
+    # it is a wlroots protocol rather than a compositor specific one. Optional:
+    # without it the library still builds and activation falls back to a plain
+    # request.
     find_package(Qt${QT_VERSION_MAJOR} QUIET COMPONENTS WaylandClient)
-    find_package(TreelandProtocols QUIET)
-    # TreelandProtocolsConfig.cmake always sets TREELAND_PROTOCOLS_DATA_DIR, so
-    # testing the variable alone only proves the package is installed. The v2
-    # protocol is newer than the package that carries it: treeland-protocols
-    # 0.5.x still ships the v1 XML only, and pointing the generator at a
-    # missing file aborts the whole build. Probe the file itself.
-    set(DFM_TREELAND_TOPLEVEL_XML
-        ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-foreign-toplevel-manager-unstable-v2.xml)
+    find_package(PkgConfig REQUIRED)
+    pkg_check_modules(WLR_PROTOCOLS QUIET wlr-protocols)
+    # pkg_check_modules does not export pkgdatadir, so read it directly. It is
+    # the only reliable pointer to where the protocol definitions live.
+    pkg_get_variable(WLR_PROTOCOLS_PKGDATADIR wlr-protocols pkgdatadir)
+    set(DFM_FOREIGN_TOPLEVEL_XML
+        ${WLR_PROTOCOLS_PKGDATADIR}/unstable/wlr-foreign-toplevel-management-unstable-v1.xml)
     if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClient
-            AND TREELAND_PROTOCOLS_DATA_DIR
-            AND EXISTS "${DFM_TREELAND_TOPLEVEL_XML}")
+            AND WLR_PROTOCOLS_FOUND
+            AND EXISTS "${DFM_FOREIGN_TOPLEVEL_XML}")
         qt6_generate_wayland_protocol_client_sources(${target_name}
-            FILES ${DFM_TREELAND_TOPLEVEL_XML})
+            FILES ${DFM_FOREIGN_TOPLEVEL_XML})
         target_link_libraries(${target_name} PRIVATE Qt${QT_VERSION_MAJOR}::WaylandClient)
-        target_compile_definitions(${target_name} PRIVATE DFM_WITH_TREELAND_TOPLEVEL)
-
-        # Space-key preview window transition: the compositor plays the
-        # open/close animation around a rectangle attached to an xdg-activation
-        # token. The raw wl_surface access needs Qt's private Wayland headers
-        # (qt6-wayland-private-dev), exposed by the QtWaylandClientPrivate
-        # interface target.
-        pkg_get_variable(WAYLAND_PROTOCOLS_DATADIR wayland-protocols pkgdatadir)
-        if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClientPrivate AND WAYLAND_PROTOCOLS_DATADIR)
-            qt6_generate_wayland_protocol_client_sources(${target_name}
-                FILES
-                    ${WAYLAND_PROTOCOLS_DATADIR}/staging/xdg-activation/xdg-activation-v1.xml
-                    ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-window-transition-unstable-v1.xml)
-            target_link_libraries(${target_name} PRIVATE Qt${QT_VERSION_MAJOR}::WaylandClientPrivate)
-            target_compile_definitions(${target_name} PRIVATE DFM_WITH_TREELAND_TRANSITION)
-        else()
-            message(STATUS "DFM: Qt Wayland private headers unavailable, window transition is disabled")
-        endif()
+        target_compile_definitions(${target_name} PRIVATE DFM_WITH_FOREIGN_TOPLEVEL)
     else()
-        message(STATUS "DFM: Treeland protocol unavailable, minimized window restore on Treeland is disabled")
+        message(STATUS "DFM: foreign-toplevel protocol unavailable, minimized window restore is disabled")
     endif()
-    
+
+    # Space-key preview window transition: the compositor plays the open/close
+    # animation around a rectangle attached to an xdg-activation token. That is
+    # a Treeland feature, so it depends on treeland-protocols, and the raw
+    # wl_surface access needs Qt's private Wayland headers
+    # (qt6-wayland-private-dev), exposed by the QtWaylandClientPrivate target.
+    # Independent of the foreign-toplevel block above: either can be absent.
+    find_package(TreelandProtocols QUIET)
+    pkg_get_variable(WAYLAND_PROTOCOLS_DATADIR wayland-protocols pkgdatadir)
+    set(DFM_WINDOW_TRANSITION_XML
+        ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-window-transition-unstable-v1.xml)
+    set(DFM_XDG_ACTIVATION_XML
+        ${WAYLAND_PROTOCOLS_DATADIR}/staging/xdg-activation/xdg-activation-v1.xml)
+    # Both XML files are inputs to the generator, which aborts the whole build
+    # when one is missing, so each of them has to be probed. wayland-protocols
+    # is only reachable through pkg-config: no Qt package depends on the file
+    # the transition protocol needs.
+    if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClientPrivate
+            AND EXISTS "${DFM_WINDOW_TRANSITION_XML}"
+            AND EXISTS "${DFM_XDG_ACTIVATION_XML}")
+        qt6_generate_wayland_protocol_client_sources(${target_name}
+            FILES
+                ${DFM_XDG_ACTIVATION_XML}
+                ${DFM_WINDOW_TRANSITION_XML})
+        target_link_libraries(${target_name} PRIVATE Qt${QT_VERSION_MAJOR}::WaylandClientPrivate)
+        target_compile_definitions(${target_name} PRIVATE DFM_WITH_TREELAND_TRANSITION)
+    else()
+        message(STATUS "DFM: window transition protocol unavailable, preview transition is disabled")
+    endif()
+
     # Include directories
     target_include_directories(${target_name} 
         PUBLIC
