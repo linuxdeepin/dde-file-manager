@@ -6,11 +6,11 @@
 # (src/external/dde-shell-plugins/folder-content). The plugin sources are
 # compiled directly into the test binary, like the disk-mount dock tests.
 
-# The dock API (dock/foldercontent.h, libdde-shell-dock) exists since
-# dde-shell 2.0.61; skip on older shells instead of failing the test build.
-find_package(DDEShellDock 2.0.61 QUIET)
+# The updated dock API (dock/foldercontent.h, libdde-shell-dock) shipped in
+# dde-shell 2.0.62; skip on older shells instead of failing the test build.
+find_package(DDEShellDock 2.0.62 QUIET)
 if(NOT TARGET Dde::ShellDock)
-    message(STATUS "dde-shell >= 2.0.61 not found, skipping folder-content unit tests")
+    message(STATUS "dde-shell >= 2.0.62 not found, skipping folder-content unit tests")
     return()
 endif()
 
