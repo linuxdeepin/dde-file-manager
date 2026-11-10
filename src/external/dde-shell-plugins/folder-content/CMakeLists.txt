@@ -3,12 +3,12 @@
 if(NOT TARGET Dde::Shell)
     find_package(DDEShell REQUIRED)
 endif()
-# The plugin needs the dde-shell 2.0.61 dock API (dock/foldercontent.h,
-# Dde::ShellDock). Skip gracefully on older dde-shell versions instead of
-# failing the whole build.
-find_package(DDEShellDock 2.0.61 QUIET)
+# The plugin needs the updated dock API shipped in dde-shell 2.0.62
+# (dock/foldercontent.h, Dde::ShellDock). Skip gracefully on older dde-shell
+# versions instead of failing the whole build.
+find_package(DDEShellDock 2.0.62 QUIET)
 if(NOT TARGET Dde::ShellDock)
-    message(STATUS "dde-shell >= 2.0.61 not found, skipping folder-content plugin")
+    message(STATUS "dde-shell >= 2.0.62 not found, skipping folder-content plugin")
     return()
 endif()
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Quick Concurrent Network)
