@@ -10,6 +10,7 @@
 #include <QApplication>
 #include <QScreen>
 #include <QWidget>
+#include <QWindow>
 
 bool DFMBASE_NAMESPACE::WindowUtils::isX11()
 {
@@ -117,6 +118,11 @@ void DFMBASE_NAMESPACE::WindowUtils::setActivationToken(const QString &token)
         qputenv("XDG_ACTIVATION_TOKEN", token.toUtf8());
 }
 
+void DFMBASE_NAMESPACE::WindowUtils::prepareActivation()
+{
+    windowactivator::prepare();
+}
+
 void DFMBASE_NAMESPACE::WindowUtils::activateWindow(QWidget *widget)
 {
     if (!widget)
@@ -125,10 +131,8 @@ void DFMBASE_NAMESPACE::WindowUtils::activateWindow(QWidget *widget)
     if (isWayLand()) {
         // Qt never reports Qt::WindowMinimized on Wayland and only the
         // compositor can clear it, so the restore and the focus have to be
-        // asked for together. When that is not possible the request below goes
-        // through xdg-activation, which picks up the token from the environment.
-        QWindow *window = widget->windowHandle();
-        if (window && windowactivator::restoreAndActivate(window))
+        // asked for together.
+        if (QWindow *window = widget->windowHandle(); window && windowactivator::restoreAndActivate(window))
             return;
     } else if (widget->isMinimized()) {
         // X11 exposes the minimized state to the client, so it can be cleared
