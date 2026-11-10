@@ -44,9 +44,18 @@ public:
     static void setActivationToken(const QString &token);
 
     /*!
+     * \brief Starts tracking the compositor's toplevels
+     *
+     * Binding is asynchronous, so this has to run while the application is
+     * still starting up; otherwise the first restore finds the protocol still
+     * unbound and leaves the window minimized.
+     */
+    static void prepareActivation();
+
+    /*!
      * \brief Brings \a widget to the front and gives it the keyboard focus
      *
-     * Restores the window first when the platform allows it. On Wayland a
+     * Restores the window first when the compositor allows it. On Wayland a
      * client cannot lift its own minimized state, so that part is delegated to
      * the compositor and the result falls back to a plain activation request.
      */

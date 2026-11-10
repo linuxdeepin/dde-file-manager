@@ -166,8 +166,8 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
 {
     Q_ASSERT_X(thread() == qApp->thread(), "FileManagerWindowsManager", "Show window must in main thread!");
     // The compositor has to be asked for its toplevels before any of our
-    // windows exists, so start listening when the first one is created.
-    windowactivator::bindToplevelManager();
+    // windows exists, so start tracking when the first one is created.
+    windowactivator::prepare();
     // The window transition managers are bound lazily on first use, which is
     // too late for the very first preview: their Wayland globals need an event
     // loop turn to arrive, so bind them here, long before any preview starts.
