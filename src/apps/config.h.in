@@ -10,14 +10,20 @@
 //  #undef DFM_PLUGIN_PATH
 //  #define DFM_PLUGIN_PATH xxx
 
+// Stringify a macro's value for diagnostic messages.
+#ifndef DFM_STRINGIFY
+#    define DFM_STRINGIFY_IMPL(x) #x
+#    define DFM_STRINGIFY(x) DFM_STRINGIFY_IMPL(x)
+#endif
+
 #ifndef DFM_BUILD_DIR
 #   ifdef QT_DEBUG
 #        define DFM_BUILD_DIR "${DFM_BUILD_DIR}"
 #   else
 #        define DFM_BUILD_DIR "/nonexistent"
 #   endif
-#elif
-#    warning "cmake unseting definition DFM_BUILD_DIR"
+#else
+#    pragma message("DFM_BUILD_DIR already defined: " DFM_STRINGIFY(DFM_BUILD_DIR))
 #endif
 
 #ifndef DFM_BUILD_PLUGIN_DIR
@@ -26,80 +32,80 @@
 #   else
 #        define DFM_BUILD_PLUGIN_DIR "/nonexistent"
 #   endif
-#elif
-#    warning "cmake unseting definition DFM_BUILD_PLUGIN_DIR"
+#else
+#    pragma message("DFM_BUILD_PLUGIN_DIR already defined: " DFM_STRINGIFY(DFM_BUILD_PLUGIN_DIR))
 #endif
 
 #ifndef DFM_PLUGIN_COMMON_CORE_DIR
 #    define DFM_PLUGIN_COMMON_CORE_DIR "${DFM_PLUGIN_COMMON_CORE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_COMMON_CORE_DIR"
+#else
+#    pragma message("DFM_PLUGIN_COMMON_CORE_DIR already defined: " DFM_STRINGIFY(DFM_PLUGIN_COMMON_CORE_DIR))
 #endif
 
 #ifndef DFM_PLUGIN_DESKTOP_CORE_DIR
 #    define DFM_PLUGIN_DESKTOP_CORE_DIR "${DFM_PLUGIN_DESKTOP_CORE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_DESKTOP_CORE_DIR"
+#else
+#    pragma message("DFM_PLUGIN_DESKTOP_CORE_DIR already defined: " DFM_STRINGIFY(DFM_PLUGIN_DESKTOP_CORE_DIR))
 #endif
 
 #ifndef DFM_PLUGIN_FILEMANAGER_CORE_DIR
 #    define DFM_PLUGIN_FILEMANAGER_CORE_DIR "${DFM_PLUGIN_FILEMANAGER_CORE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_FILEMANAGER_CORE_DIR"
+#else
+#    pragma message("DFM_PLUGIN_FILEMANAGER_CORE_DIR already defined: " DFM_STRINGIFY(DFM_PLUGIN_FILEMANAGER_CORE_DIR))
 #endif
 
 #ifndef DFM_PLUGIN_COMMON_EDGE_DIR
 #    define DFM_PLUGIN_COMMON_EDGE_DIR "${DFM_PLUGIN_COMMON_EDGE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_COMMON_EDGE_DIR"
+#else
+#    pragma message("DFM_PLUGIN_COMMON_EDGE_DIR already defined: " DFM_STRINGIFY(DFM_PLUGIN_COMMON_EDGE_DIR))
 #endif
 
 #ifndef DFM_PLUGIN_DAEMON_EDGE_DIR
 #    define DFM_PLUGIN_DAEMON_EDGE_DIR "${DFM_PLUGIN_DAEMON_EDGE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_DAEMON_EDGE_DIR"
+#else
+#    pragma message("DFM_PLUGIN_DAEMON_EDGE_DIR already defined: " DFM_STRINGIFY(DFM_PLUGIN_DAEMON_EDGE_DIR))
 #endif
 
 #ifndef DFM_PLUGIN_DESKTOP_EDGE_DIR
 #    define DFM_PLUGIN_DESKTOP_EDGE_DIR "${DFM_PLUGIN_DESKTOP_EDGE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_DESKTOP_EDGE_DIR"
+#else
+#    pragma message("DFM_PLUGIN_DESKTOP_EDGE_DIR already defined: " DFM_STRINGIFY(DFM_PLUGIN_DESKTOP_EDGE_DIR))
 #endif
 
 #ifndef DFM_PLUGIN_FILEMANAGER_EDGE_DIR
 #    define DFM_PLUGIN_FILEMANAGER_EDGE_DIR "${DFM_PLUGIN_FILEMANAGER_EDGE_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_PLUGIN_FILEMANAGER_EDGE_DIR"
+#else
+#    pragma message("DFM_PLUGIN_FILEMANAGER_EDGE_DIR already defined: " DFM_STRINGIFY(DFM_PLUGIN_FILEMANAGER_EDGE_DIR))
 #endif
 
 #ifndef DFM_TOOLS_DIR
 #    define DFM_TOOLS_DIR "${DFM_TOOLS_DIR}"
-#elif
-#    warning "cmake unseting definition DFM_TOOLS_DIR"
+#else
+#    pragma message("DFM_TOOLS_DIR already defined: " DFM_STRINGIFY(DFM_TOOLS_DIR))
 #endif
 
 #ifndef DFM_THUMBNAIL_TOOL
 #    define DFM_THUMBNAIL_TOOL "${DFM_THUMBNAIL_TOOL}"
-#elif
-#    warning "cmake unseting definition DFM_THUMBNAIL_TOOL"
+#else
+#    pragma message("DFM_THUMBNAIL_TOOL already defined: " DFM_STRINGIFY(DFM_THUMBNAIL_TOOL))
 #endif
 
 #ifndef DFM_PREVIEW_TOOL
 #    define DFM_PREVIEW_TOOL "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager-preview"
-#elif
-#    warning "cmake unseting definition DFM_PREVIEW_TOOL"
+#else
+#    pragma message("DFM_PREVIEW_TOOL already defined: " DFM_STRINGIFY(DFM_PREVIEW_TOOL))
 #endif
 
 #ifndef DFM_EXTRACTOR_TOOL
 #    define DFM_EXTRACTOR_TOOL "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager-extractor"
-#elif
-#    warning "cmake unseting definition DFM_EXTRACTOR_TOOL"
+#else
+#    pragma message("DFM_EXTRACTOR_TOOL already defined: " DFM_STRINGIFY(DFM_EXTRACTOR_TOOL))
 #endif
 
 #ifndef DFM_FILE_MANAGER_BINARY
 #    define DFM_FILE_MANAGER_BINARY "${CMAKE_INSTALL_FULL_LIBEXECDIR}/dde-file-manager"
-#elif
-#    warning "cmake unseting definition DFM_FILE_MANAGER_BINARY"
+#else
+#    pragma message("DFM_FILE_MANAGER_BINARY already defined: " DFM_STRINGIFY(DFM_FILE_MANAGER_BINARY))
 #endif
 
 #ifndef VERSION
