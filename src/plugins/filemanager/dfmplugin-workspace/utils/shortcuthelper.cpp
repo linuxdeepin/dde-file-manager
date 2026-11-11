@@ -8,6 +8,7 @@
 #include "views/baseitemdelegate.h"
 #include "views/fileview.h"
 #include "utils/workspacehelper.h"
+#include "utils/itemdelegatehelper.h"
 #include "events/workspaceeventcaller.h"
 
 #include <dfm-base/base/schemefactory.h>
@@ -22,6 +23,8 @@
 
 #include <QAction>
 #include <QDebug>
+#include <QIcon>
+#include <QTimer>
 
 Q_DECLARE_METATYPE(QList<QUrl> *)
 
@@ -447,6 +450,11 @@ void ShortcutHelper::previewFiles()
 
     fmInfo() << "Preview files operation - count:" << urls.size();
 
+    // The anchor is looked up in the view's model, which indexes the original
+    // urls; the urls handed to the preview process are transformed to local
+    // paths below.
+    const QUrl anchorUrl = urls.first();
+
     auto windowId = WorkspaceHelper::instance()->windowId(view);
     if (dpfHookSequence->run(kCurrentEventSpace, "hook_ShortCut_PreViewFiles", windowId, urls, view->rootUrl())) {
         fmDebug() << "Preview files handled by hook";
@@ -467,7 +475,79 @@ void ShortcutHelper::previewFiles()
     if (ok && !urlsTrans.isEmpty())
         currentDirUrls = urlsTrans;
 
-    FileOperatorHelperIns->previewFiles(view, selectUrls, currentDirUrls);
+    launchPreview(selectUrls, currentDirUrls, anchorUrl);
+}
+
+void ShortcutHelper::launchPreview(const QList<QUrl> &selectUrls, const QList<QUrl> &currentDirUrls, const QUrl &anchorUrl)
+{
+    // On Treeland the preview window grows out of the selected item and shrinks
+    // back into it. The launch helper defers the actual launch to the token's
+    // arrival; without one the preview starts as before, without an animation.
+    QWidget *window = view->window();
+    QWindow *handle = window ? window->windowHandle() : nullptr;
+
+    auto provider = [this](const QUrl &url, QRect *anchor, QPixmap *snapshot) -> bool {
+        return previewAnchor(url, anchor, snapshot);
+    };
+    auto onToken = [this, selectUrls, currentDirUrls](const QString &token, const QString &channel) {
+        FileOperatorHelperIns->previewFiles(view, selectUrls, currentDirUrls, token, channel);
+    };
+
+    if (!windowtransition::WindowTransitionLaunch::create(handle, anchorUrl, provider, onToken, this)) {
+        fmWarning() << "Preview without transition: launch creation failed for" << anchorUrl;
+        FileOperatorHelperIns->previewFiles(view, selectUrls, currentDirUrls, QString(), QString());
+    }
+}
+
+bool ShortcutHelper::previewAnchor(const QUrl &url, QRect *anchor, QPixmap *snapshot) const
+{
+    QWidget *window = view->window();
+    if (!window)
+        return false;
+
+    const QRect cell = view->iconRect(url);   // viewport coordinates
+    if (!cell.isValid())
+        return false;
+
+    // The icon is resolved per url: the preview may switch files while it is
+    // open, and the anchor has to follow the currently shown one.
+    QIcon icon;
+    QModelIndex index = view->model()->getIndexByUrl(url);
+    if (index.isValid())
+        icon = index.data(DFMGLOBAL_NAMESPACE::kItemIconRole).value<QIcon>();
+    if (icon.isNull()) {
+        const FileInfoPointer &info = InfoFactory::create<FileInfo>(url);
+        if (info)
+            icon = info->fileIcon();
+    }
+
+    // The anchor is the icon the user actually sees: the icon pixmap clamped
+    // to the cell and centered (IconPainterUtils::paintIcon geometry), trimmed
+    // to its non-transparent part.
+    QPixmap cropped;
+    const QRectF visibleIcon = windowtransition::paintedIconRect(icon, QRectF(cell), &cropped);
+    if (visibleIcon.isEmpty())
+        return false;
+
+    // Clip to the visible viewport and map into the file manager window - the
+    // coordinate space of its surface, which the compositor turns into a global
+    // area with the window's current position, so moving the window needs no
+    // updates here. The snapshot follows the clip so it matches the anchor.
+    const QRect viewportRect = view->viewport()->rect();
+    const QRect visibleRect = visibleIcon.toAlignedRect();
+    const QRect clipped = visibleRect.intersected(viewportRect);
+    if (clipped.isEmpty())
+        return false;
+
+    const QPoint origin = view->viewport()->mapTo(window, QPoint(0, 0));
+    const QRect anchorRect = windowtransition::anchorInWindow(visibleRect, viewportRect, origin);
+    if (anchorRect.isEmpty())
+        return false;
+
+    *anchor = anchorRect;
+    if (snapshot)
+        *snapshot = windowtransition::cropPixmapTo(cropped, visibleIcon, clipped);
+    return true;
 }
 
 void ShortcutHelper::openAction(const QList<QUrl> &urls, const DirOpenMode openMode)

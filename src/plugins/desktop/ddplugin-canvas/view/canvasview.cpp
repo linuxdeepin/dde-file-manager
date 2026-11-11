@@ -45,6 +45,19 @@ QRect CanvasView::visualRect(const QModelIndex &index) const
     return QRect();
 }
 
+QRect CanvasView::iconRect(const QUrl &url) const
+{
+    // The grid is authoritative for the item geometry (the model may be empty
+    // on Treeland, where the desktop shell provides the data through a hook).
+    QPair<int, QPoint> pos;
+    if (!GridIns->point(url.toString(), pos) || pos.first != d->screenNum)
+        return QRect();
+
+    // Mirror the paint geometry: strip the grid margins around the item, then
+    // the delegate derives the icon cell from the remainder.
+    return itemDelegate()->iconRect(d->itemRect(pos.second));
+}
+
 void CanvasView::scrollTo(const QModelIndex &index, QAbstractItemView::ScrollHint hint)
 {
     Q_UNUSED(index)

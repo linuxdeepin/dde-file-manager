@@ -1422,6 +1422,20 @@ QRect CollectionView::visualRect(const QModelIndex &index) const
     return d->visualRect(pos);
 }
 
+QRect CollectionView::iconRect(const QUrl &file) const
+{
+    // The collection data provider is authoritative for the geometry (the
+    // model may be empty when the desktop shell hosts the item data).
+    int node = d->provider->items(d->id).indexOf(file);
+    if (node < 0)
+        return QRect();
+
+    // Mirror CollectionViewPrivate::itemRect: strip the cell margins, then the
+    // delegate derives the icon cell from the remainder.
+    const QRect itemRect = d->visualRect(d->nodeToPos(node)).marginsRemoved(d->cellMargins);
+    return itemDelegate()->iconRect(itemRect);
+}
+
 void CollectionView::scrollTo(const QModelIndex &index, ScrollHint hint)
 {
     const QRect &&rect = visualRect(index);

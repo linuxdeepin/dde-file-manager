@@ -73,8 +73,8 @@ void PreviewLibrary::unload()
     }
 }
 
-void PreviewLibrary::showPreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl)
+void PreviewLibrary::showPreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl, const QString &transitionToken, const QString &transitionChannel)
 {
     if (showFunc)
-        showFunc(windowId, selecturls, dirUrl);
+        showFunc(windowId, selecturls, dirUrl, transitionToken, transitionChannel);
 }

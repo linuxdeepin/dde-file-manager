@@ -14,6 +14,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/windowutils.h>
 #include <dfm-base/utils/private/windowactivator_p.h>
+#include <dfm-base/utils/private/windowtransition_p.h>
 
 #include <QDebug>
 #include <QEvent>
@@ -167,6 +168,10 @@ FileManagerWindowsManager::FMWindow *FileManagerWindowsManager::createWindow(con
     // The compositor has to be asked for its toplevels before any of our
     // windows exists, so start listening when the first one is created.
     windowactivator::bindToplevelManager();
+    // The window transition managers are bound lazily on first use, which is
+    // too late for the very first preview: their Wayland globals need an event
+    // loop turn to arrive, so bind them here, long before any preview starts.
+    windowtransition::bindManagers();
 
     QString error;
     DFMBASE_NAMESPACE::FinallyUtil finally([&]() { if (errorString) *errorString = error; });

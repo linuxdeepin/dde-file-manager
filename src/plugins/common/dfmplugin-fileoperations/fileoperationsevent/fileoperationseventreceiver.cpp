@@ -1930,7 +1930,9 @@ void FileOperationsEventReceiver::handleOperationUndoCut(const quint64 windowId,
 
 void FileOperationsEventReceiver::handleOperationFilesPreview(const quint64 windowId,
                                                               const QList<QUrl> &selectUrls,
-                                                              const QList<QUrl> &dirUrls)
+                                                              const QList<QUrl> &dirUrls,
+                                                              const QString &transitionToken,
+                                                              const QString &transitionChannel)
 {
     if (selectUrls.isEmpty() || dirUrls.isEmpty())
         return;
@@ -1949,6 +1951,15 @@ void FileOperationsEventReceiver::handleOperationFilesPreview(const quint64 wind
     // Write data to temporary file in JSON format
     QJsonObject data;
     data["windowId"] = QString::number(windowId);
+
+    // The activation token drives the Treeland window transition of the
+    // preview window (open from / close back to the selected item). Empty when
+    // the transition is not available.
+    data["activationToken"] = transitionToken;
+
+    // The transition channel lets the preview process report the currently
+    // shown file, so the close animation follows file switches.
+    data["transitionChannel"] = transitionChannel;
 
     QJsonArray selectUrlsArray;
     for (const auto &url : selectUrls) {

@@ -55,6 +55,14 @@ public:
     void reset() override;
     void selectAll() override;
     QRect visualRect(const QModelIndex &index) const override;
+    /*!
+     * \brief The icon cell of the item at \a file as painted by the delegate
+     *
+     * Viewport coordinates. The position is looked up through the collection
+     * data provider instead of the model, which may be empty when the desktop
+     * shell hosts the item data.
+     */
+    QRect iconRect(const QUrl &file) const;
     void scrollTo(const QModelIndex &index, ScrollHint hint = EnsureVisible) override;
     QModelIndex indexAt(const QPoint &point) const override;
     bool edit(const QModelIndex &index, EditTrigger trigger, QEvent *event) override;

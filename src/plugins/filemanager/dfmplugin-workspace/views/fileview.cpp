@@ -19,6 +19,7 @@
 #include "utils/dragdrophelper.h"
 #include "utils/viewdrawhelper.h"
 #include "utils/selecthelper.h"
+#include "utils/itemdelegatehelper.h"
 #include "utils/shortcuthelper.h"
 #include "utils/fileviewmenuhelper.h"
 #include "utils/fileoperatorhelper.h"
@@ -1021,6 +1022,48 @@ QRectF FileView::itemRect(const QUrl &url, const ItemRoles role) const
     default:
         return QRectF();
     }
+}
+
+QRect FileView::iconRect(const QUrl &url) const
+{
+    QModelIndex index = model()->getIndexByUrl(url);
+    if (!index.isValid())
+        return QRect();
+
+    const bool grouped = isGroupedView();
+
+    // Replicate the paint geometry of the current view mode: the icon cell
+    // the delegate actually draws into.
+    QRectF itemRect = visualRect(index);
+    QRectF iconCell;
+    if (isListViewMode() || isTreeViewMode()) {
+        // ListItemDelegate::paint: the first row of a non-grouped list/tree
+        // carries a transparent top padding, shifting the painted content down.
+        if (!grouped && !itemDelegate()->isGroupHeaderItem(index)
+            && index.row() == 0 && index.parent() == rootIndex()) {
+            itemRect.setTop(itemRect.top() + kDefaultHeaderBottomMargin);
+        }
+        // ListItemPaintProxy / TreeItemPaintProxy::iconRect
+        iconCell = itemRect;
+        iconCell.setSize(iconSize());
+        int iconIntent = 0;
+        if (isTreeViewMode()) {
+            const int depth = index.data(DFMGLOBAL_NAMESPACE::kItemTreeViewDepthRole).toInt();
+            iconIntent = kTreeItemIndent * depth + kTreeExpandArrowWidth - kTreeArrowAndIconDistance;
+        }
+        iconCell.moveLeft(iconCell.left() + kListModeLeftMargin + kListModeLeftPadding + iconIntent);
+        iconCell.moveTop(iconCell.top() + (itemRect.bottom() - iconCell.bottom()) / 2);
+    } else {
+        // IconItemDelegate::paintItemIcon: in grouped icon mode the item rect
+        // carries kIconViewSpacing virtual margins that the painting strips off.
+        if (grouped && spacing() == 0) {
+            itemRect = itemRect.marginsRemoved(QMargins(kIconViewSpacing, kIconViewSpacing,
+                                                        kIconViewSpacing, kIconViewSpacing));
+        }
+        iconCell = itemDelegate()->itemIconRect(itemRect);
+    }
+
+    return iconCell.toRect();
 }
 
 bool FileView::isVerticalScrollBarSliderDragging() const
