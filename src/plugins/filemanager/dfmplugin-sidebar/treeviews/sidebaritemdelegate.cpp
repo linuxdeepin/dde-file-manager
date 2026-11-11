@@ -522,7 +522,6 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         if (!iconName.isEmpty()) {
             const qreal ratio = painter->device()->devicePixelRatioF();
             QPixmap px = IconCacheManager::getPixmap(iconName, iconSize, ratio, iconMode, state);
-            px.setDevicePixelRatio(ratio);
             painter->drawPixmap(iconRect.topLeft(), px);
         } else {
             // 非主题图标（如自定义文件图标）回退到 QIcon::paint
@@ -554,7 +553,6 @@ void SideBarItemDelegate::drawIcon(const QStyleOptionViewItem &option,
         if (dciIcon.isNull()) {
             const qreal ratio = painter->device()->devicePixelRatioF();
             QPixmap px = IconCacheManager::getPixmap("media-eject-symbolic", ejectIconSize, ratio, pixmapMode, QIcon::On);
-            px.setDevicePixelRatio(ratio);
             QStyle *style { option.widget ? option.widget->style() : QApplication::style() };
             style->drawItemPixmap(painter, iconRect, Qt::AlignCenter, px);
         } else {
