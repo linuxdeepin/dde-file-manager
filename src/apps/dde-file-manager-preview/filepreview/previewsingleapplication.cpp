@@ -78,6 +78,8 @@ void PreviewSingleApplication::processArgs(const QStringList &list)
 
     QJsonObject data = doc.object();
     quint64 winId = data["windowId"].toString().toULongLong();
+    const QString &transitionToken = data["activationToken"].toString();
+    const QString &transitionChannel = data["transitionChannel"].toString();
 
     // 正确处理JSON数组转换为QUrl列表
     const QJsonArray &selectUrlsArray = data["selectUrls"].toArray();
@@ -108,7 +110,7 @@ void PreviewSingleApplication::processArgs(const QStringList &list)
         return;
     }
 
-    lib.showPreview(winId, selectUrls, dirUrls);
+    lib.showPreview(winId, selectUrls, dirUrls, transitionToken, transitionChannel);
 }
 
 void PreviewSingleApplication::initConnect()

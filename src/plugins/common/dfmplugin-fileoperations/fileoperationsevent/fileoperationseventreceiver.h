@@ -208,7 +208,9 @@ public slots:
                                 const QVariantMap &op);
     void handleOperationFilesPreview(const quint64 windowId,
                                      const QList<QUrl> &selectUrls,
-                                     const QList<QUrl> &dirUrls);
+                                     const QList<QUrl> &dirUrls,
+                                     const QString &transitionToken,
+                                     const QString &transitionChannel);
     bool handleIsSubFile(const QUrl &parent, const QUrl &sub);
     void handleCopyFilePath(const QList<QUrl> &urlList);
 

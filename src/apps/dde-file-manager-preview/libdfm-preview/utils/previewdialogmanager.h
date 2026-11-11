@@ -24,7 +24,7 @@ private:
     explicit PreviewDialogManager(QObject *parent = nullptr);
 
 public slots:
-    void showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> &dirUrl);
+    void showPreviewDialog(const quint64 winId, const QList<QUrl> &selecturls, const QList<QUrl> &dirUrl, const QString &transitionToken = {}, const QString &transitionChannel = {});
 
 private:
     FilePreviewDialog *filePreviewDialog { nullptr };

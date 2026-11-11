@@ -13,7 +13,7 @@
 #define DFMPREVIEW_LOG_CG dde_file_manager_preview
 DFM_LOG_USE_CATEGORY(DFMPREVIEW_LOG_CG)
 
-typedef int (*ShowPreviewDialog)(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl);
+typedef int (*ShowPreviewDialog)(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl, const QString &transitionToken, const QString &transitionChannel);
 typedef int (*InitializePreview)();
 class QLibrary;
 
@@ -25,7 +25,7 @@ public:
 
     bool load();
     void unload();
-    void showPreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl);
+    void showPreview(quint64 windowId, const QList<QUrl> &selecturls, const QList<QUrl> dirUrl, const QString &transitionToken = {}, const QString &transitionChannel = {});
 
 protected:
     ShowPreviewDialog showFunc = nullptr;
