@@ -981,3 +981,81 @@ TEST_F(DialogManagerTest, BUG133251_AuthenticationFailedSilentOnUnmount)
     dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kUnmount, err);
     EXPECT_EQ(callCount, 0);
 }
+
+// ============================================================
+// PMS:394643 SMB report migration — errMsgFromErrMessage guard tests
+// ============================================================
+
+// PMS:394643 When errMsg is derived from err.message (GIO error path),
+// the system error detail must NOT be appended again to avoid duplication.
+TEST_F(DialogManagerTest, BUG394643_GIOErrorNoDuplicateSystemMessage)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    QString capturedMsg;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &, const QString &msg) {
+                       __DBG_STUB_INVOKE__
+                       capturedMsg = msg;
+                   });
+
+    DFMMOUNT::OperationErrorInfo err;
+    err.code = DFMMOUNT::DeviceError::kGIOError;
+    err.message = "GIO detailed error info";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+
+    // errMsg should be exactly err.message — no duplicate appended
+    EXPECT_EQ(capturedMsg, QStringLiteral("GIO detailed error info"));
+}
+
+// PMS:394643 For a generic mount error where errMsg is a translated fallback
+// (not derived from err.message), the system error detail should be appended
+// to help root cause diagnosis.
+TEST_F(DialogManagerTest, BUG394643_DefaultMountErrorAppendsSystemMessage)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    QString capturedMsg;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &, const QString &msg) {
+                       __DBG_STUB_INVOKE__
+                       capturedMsg = msg;
+                   });
+
+    DFMMOUNT::OperationErrorInfo err;
+    // Use a code that does not match any known DeviceError to fall through to the default branch
+    err.code = static_cast<DFMMOUNT::DeviceError>(9999);
+    err.message = "system error detail";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+
+    // errMsg should contain the system error detail appended after the fallback message
+    EXPECT_TRUE(capturedMsg.contains("system error detail"));
+}
+
+// PMS:394643 When user cancels (kUserErrorUserCancelled), errMsg is cleared
+// and no system error detail should be appended.
+TEST_F(DialogManagerTest, BUG394643_UserCancelledNoSystemMessageAppended)
+{
+    auto *dm = DialogManager::instance();
+    ASSERT_NE(dm, nullptr);
+
+    QString capturedMsg = "non_empty_sentinel";
+    int callCount = 0;
+    stub.set_lamda(ADDR(DialogManager, showErrorDialog),
+                   [&](DialogManager *, const QString &, const QString &msg) {
+                       __DBG_STUB_INVOKE__
+                       capturedMsg = msg;
+                       ++callCount;
+                   });
+
+    DFMMOUNT::OperationErrorInfo err;
+    err.code = DFMMOUNT::DeviceError::kUserErrorUserCancelled;
+    err.message = "should not appear";
+    dm->showErrorDialogWhenOperateDeviceFailed(DialogManager::kMount, err);
+
+    // errMsg should be empty — user cancelled, no error dialog content
+    EXPECT_TRUE(capturedMsg.isEmpty());
+    EXPECT_EQ(callCount, 0);
+}

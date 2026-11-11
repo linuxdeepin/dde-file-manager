@@ -151,11 +151,14 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
         title = kMountFailed;
         qCWarning(logDFMBase) << "mount device failed: " << err.code << err.message;
 
-        if (err.code == DeviceError::kUserErrorNetworkAnonymousNotAllowed)
+        bool suppressAppendErrMessage = false;
+        if (err.code == DeviceError::kUserErrorNetworkAnonymousNotAllowed) {
             errMsg = tr("Anonymous mount is not allowed");
-        else if (err.code == DeviceError ::kUserErrorNetworkWrongPasswd)
+            suppressAppendErrMessage = true;
+        } else if (err.code == DeviceError ::kUserErrorNetworkWrongPasswd) {
             errMsg = tr("Wrong password");
-        else if (err.code == DeviceError::kUserErrorUserCancelled)
+            suppressAppendErrMessage = true;
+        } else if (err.code == DeviceError::kUserErrorUserCancelled)
             errMsg.clear();
         else if (err.code == DeviceError::kDaemonErrorCannotMkdirMountPoint)
             errMsg = tr("Cannot create the mountpoint: the file name is too long");
@@ -165,14 +168,23 @@ void DialogManager::showErrorDialogWhenOperateDeviceFailed(OperateType type, DFM
             errMsg = tr("No such file or directory");
         else if (err.code == DeviceError::kUserErrorFailed
                  || (err.code >= DeviceError::kGIOError
-                     && err.code <= DeviceError::kGIOErrorMessageTooLarge))
+                     && err.code <= DeviceError::kGIOErrorMessageTooLarge)) {
             errMsg = err.message;
-        else
+            suppressAppendErrMessage = true;
+        } else
             errMsg = tr("Error occurred while mounting device");
 
         if (err.message.contains("Operation not permitted.")) {   // TASK(222725)
             errMsg = tr("The device has been blocked and you do not have permission to access it. "
                         "Please configure its connection policy in Security Center or contact your administrator.");
+            suppressAppendErrMessage = true;
+        }
+        // 追加系统返回的详细错误信息，帮助定位根因；四重守护避免重复或空展示
+        // Append the system-returned detailed error message to help locate the root cause;
+        // quadruple guard: errMsg non-empty (keep user-cancel suppression), err.message non-empty,
+        // not already contained, and errMsg not directly derived from err.message (avoid duplication)
+        if (!errMsg.isEmpty() && !err.message.isEmpty() && !errMsg.contains(err.message) && !suppressAppendErrMessage) {
+            errMsg += QStringLiteral("\n") + err.message;
         }
     } else if (type == OperateType::kRemove || type == OperateType::kUnmount) {
         if (err.code == DeviceError::kUserErrorAuthenticationFailed) {
