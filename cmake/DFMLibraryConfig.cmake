@@ -140,6 +140,29 @@ function(dfm_configure_base_library target_name)
         message(STATUS "DFM: window transition protocol unavailable, preview transition is disabled")
     endif()
 
+    # File dialog dock-icon hiding: the dialog sets the skip-dock-preview bit
+    # of treeland-dde-shell-v1 on its surface, which removes the window from
+    # the foreign toplevel lists the dock taskbar consumes. Another Treeland
+    # protocol from the package the transition block above probes, and the
+    # raw wl_surface access reuses the private Wayland headers that block
+    # links. Independent of both blocks above: each can be absent.
+    set(DFM_DDE_SHELL_XML
+        ${TREELAND_PROTOCOLS_DATA_DIR}/treeland-dde-shell-v1.xml)
+    if(TARGET Qt${QT_VERSION_MAJOR}::WaylandClientPrivate
+            AND EXISTS "${DFM_DDE_SHELL_XML}")
+        # NO_INCLUDE_CORE_ONLY: the protocol references wl_callback, whose
+        # interface symbol only wayland-client.h (not the -core split) declares.
+        qt6_generate_wayland_protocol_client_sources(${target_name}
+            NO_INCLUDE_CORE_ONLY
+            FILES ${DFM_DDE_SHELL_XML})
+        target_link_libraries(${target_name} PRIVATE
+            Qt${QT_VERSION_MAJOR}::WaylandClient
+            Qt${QT_VERSION_MAJOR}::WaylandClientPrivate)
+        target_compile_definitions(${target_name} PRIVATE DFM_WITH_DDE_SHELL)
+    else()
+        message(STATUS "DFM: dde-shell protocol unavailable, file dialog dock-icon hiding is disabled")
+    endif()
+
     # Include directories
     target_include_directories(${target_name} 
         PUBLIC

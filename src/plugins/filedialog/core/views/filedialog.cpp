@@ -14,6 +14,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/dfm_global_defines.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/private/ddeshellwindow_p.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <dfm-framework/event/event.h>
@@ -1096,6 +1097,11 @@ void FileDialog::showEvent(QShowEvent *event)
         setWindowTitle(info->displayOf(DisPlayInfoType::kFileDisplayName));
 
     FileManagerWindow::showEvent(event);
+
+    // The dialog is a transient chooser; the dock taskbar should not list it.
+    // On Treeland the skip-dock-preview bit of the dde shell protocol removes
+    // it from the compositor's toplevel lists; elsewhere the call is a no-op.
+    ddeshell::setSkipDockPreview(windowHandle(), true);
 }
 
 void FileDialog::closeEvent(QCloseEvent *event)
