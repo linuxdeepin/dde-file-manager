@@ -61,17 +61,17 @@ bool DFMBASE_NAMESPACE::WindowUtils::isWayLand()
 
 bool DFMBASE_NAMESPACE::WindowUtils::keyShiftIsPressed()
 {
-    return qApp->keyboardModifiers() == Qt::ShiftModifier;
+    return qApp->keyboardModifiers() & Qt::ShiftModifier;
 }
 
 bool DFMBASE_NAMESPACE::WindowUtils::keyCtrlIsPressed()
 {
-    return qApp->queryKeyboardModifiers() == Qt::ControlModifier;
+    return qApp->keyboardModifiers() & Qt::ControlModifier;
 }
 
 bool DFMBASE_NAMESPACE::WindowUtils::keyAltIsPressed()
 {
-    return qApp->keyboardModifiers() == Qt::AltModifier;
+    return qApp->keyboardModifiers() & Qt::AltModifier;
 }
 
 QScreen *DFMBASE_NAMESPACE::WindowUtils::cursorScreen()

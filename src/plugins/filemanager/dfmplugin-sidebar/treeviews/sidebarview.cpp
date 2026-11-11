@@ -1424,9 +1424,9 @@ Qt::DropAction SideBarView::canDropMimeData(SideBarItem *item, const QMimeData *
         action = Qt::LinkAction;
     }
 
-    if (qApp->keyboardModifiers() == Qt::AltModifier) {
+    if (qApp->keyboardModifiers() & Qt::AltModifier) {
         action = Qt::MoveAction;
-    } else if (qApp->queryKeyboardModifiers() == Qt::ControlModifier) {
+    } else if (qApp->keyboardModifiers() & Qt::ControlModifier) {
         if (action == Qt::MoveAction)
             action = Qt::CopyAction;
     } else if (FileUtils::isSameDevice(urls.first(), targetItemUrl)) {
