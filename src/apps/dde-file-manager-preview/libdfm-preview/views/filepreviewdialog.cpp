@@ -12,6 +12,7 @@
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/fileinfohelper.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/private/ddeshellwindow_p.h>
 #include <dfm-base/mimetype/dmimedatabase.h>
 #include <dfm-framework/dpf.h>
 
@@ -177,7 +178,12 @@ void FilePreviewDialog::childEvent(QChildEvent *event)
 
 void FilePreviewDialog::showEvent(QShowEvent *event)
 {
-    return DAbstractDialog::showEvent(event);
+    DAbstractDialog::showEvent(event);
+
+    // The preview is a transient chooser; the dock taskbar should not list it.
+    // On Treeland the skip-dock-preview bit of the dde shell protocol removes
+    // it from the compositor's toplevel lists; elsewhere the call is a no-op.
+    ddeshell::setSkipDockPreview(windowHandle(), true);
 }
 
 void FilePreviewDialog::closeEvent(QCloseEvent *event)
