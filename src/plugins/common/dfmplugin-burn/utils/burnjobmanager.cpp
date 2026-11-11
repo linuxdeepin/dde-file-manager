@@ -14,6 +14,7 @@
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/base/device/deviceproxymanager.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -28,6 +29,21 @@ DFMBASE_USE_NAMESPACE
 
 using namespace dfmplugin_burn;
 using namespace GlobalServerDefines;
+
+namespace {
+// Result dialogs outlive the TaskDialog: it is closed by requestRemoveTaskWidget
+// inside the dialog's own nested event loop, and on Wayland unmapping the
+// transient parent tears the child dialog down with it (appears then vanishes).
+// Parent to the last activated file-manager window instead; fall back to
+// nullptr when no main window exists.
+QWidget *resultDialogParent()
+{
+    QWidget *win = FMWindowsIns.findWindowById(FMWindowsIns.lastActivedWindowId());
+    if (win)
+        return win;
+    return qApp->activeWindow();
+}
+}   // namespace
 
 BurnJobManager *BurnJobManager::instance()
 {
@@ -227,7 +243,7 @@ bool BurnJobManager::deleteStagingDir(const QUrl &url)
 
 void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(resultDialogParent());
     d.setIcon(QIcon::fromTheme(icon));
     d.setTitle(msg);
     d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
@@ -240,7 +256,7 @@ void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QS
 
 void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(resultDialogParent());
     d.setIcon(QIcon::fromTheme("dde-file-manager"));
     QString failureType;
     switch (type) {
@@ -302,7 +318,7 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
 
 void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(resultDialogParent());
     d.setFixedSize(400, 242);
     d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
@@ -337,7 +353,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 
     // add icon label
     QLabel *iconLabel { new QLabel };
-    iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-ok"), QSize(96, 96), qApp->activeWindow()));
+    iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-ok"), QSize(96, 96), resultDialogParent()));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
     d.move(WindowUtils::cursorScreen()->geometry().center()
@@ -347,7 +363,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 
 void BurnJobManager::showOpticalDumpISOFailedDialog()
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(resultDialogParent());
     d.setFixedSize(400, 242);
     d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
@@ -372,7 +388,7 @@ void BurnJobManager::showOpticalDumpISOFailedDialog()
 
     // add icon label
     QLabel *iconLabel { new QLabel };
-    iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-error"), QSize(96, 96), qApp->activeWindow()));
+    iconLabel->setPixmap(IconUtils::hiDpiPixmap(QIcon::fromTheme("dialog-error"), QSize(96, 96), resultDialogParent()));
     mainLayout->addWidget(iconLabel, 0, Qt::AlignTop | Qt::AlignCenter);
 
     d.move(WindowUtils::cursorScreen()->geometry().center()
