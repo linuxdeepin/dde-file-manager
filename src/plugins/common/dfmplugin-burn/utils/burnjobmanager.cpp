@@ -227,7 +227,7 @@ bool BurnJobManager::deleteStagingDir(const QUrl &url)
 
 void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QString &icon)
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(nullptr);
     d.setIcon(QIcon::fromTheme(icon));
     d.setTitle(msg);
     d.addButton(tr("OK", "button"), true, DDialog::ButtonRecommend);
@@ -240,7 +240,7 @@ void BurnJobManager::showOpticalJobCompletionDialog(const QString &msg, const QS
 
 void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, const QStringList &details)
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(nullptr);
     d.setIcon(QIcon::fromTheme("dde-file-manager"));
     QString failureType;
     switch (type) {
@@ -302,7 +302,7 @@ void BurnJobManager::showOpticalJobFailureDialog(int type, const QString &err, c
 
 void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(nullptr);
     d.setFixedSize(400, 242);
     d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
@@ -347,7 +347,7 @@ void BurnJobManager::showOpticalDumpISOSuccessDialog(const QUrl &imageUrl)
 
 void BurnJobManager::showOpticalDumpISOFailedDialog()
 {
-    DDialog d(qApp->activeWindow());
+    DDialog d(nullptr);
     d.setFixedSize(400, 242);
     d.setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
     d.setIcon(QIcon::fromTheme("media-optical").pixmap(32, 32));
