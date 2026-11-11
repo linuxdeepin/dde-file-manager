@@ -59,8 +59,6 @@ QPixmap IconPainterUtils::getIconPixmap(const QIcon &icon, const QSize &size,
     if (px.isNull() || px.size().isEmpty())
         return QPixmap();
 
-    px.setDevicePixelRatio(pixelRatio);
-
     return px;
 }
 
