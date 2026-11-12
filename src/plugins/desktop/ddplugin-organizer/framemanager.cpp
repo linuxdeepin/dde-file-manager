@@ -203,7 +203,7 @@ void FrameManagerPrivate::onHideAllKeyPressed()
         QString cmdNoRepeation = "dde-dconfig,--set,-a,org.deepin.dde.file-manager,-r,org.deepin.dde.file-manager.desktop.organizer,-k,hideAllDialogRepeatNoMore,-v,true";
         auto sendHideAllNotification = std::make_shared<std::function<void(quint32, bool)>>();
         *sendHideAllNotification = [this, keySequence, tips, cmdNoRepeation, sendHideAllNotification](quint32 replacesId, bool allowRetry) {
-            QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,com.deepin.dde.Notification.CloseNotification,uint32:%1")
+            QString cmdCloseNotify = QString("dbus-send,--type=method_call,--dest=org.freedesktop.Notifications,/org/freedesktop/Notifications,org.freedesktop.Notifications.CloseNotification,uint32:%1")
                                              .arg(replacesId);
             QDBusPendingCall pendingReply = DDBusSender()
                                                     .service("org.freedesktop.Notifications")
