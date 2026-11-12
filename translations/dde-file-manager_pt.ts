@@ -5669,7 +5669,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptprogressdialog.cpp" line="161"/>
         <source>Cannot create recovery key file!</source>
-        <translation type="unfinished"/>
+        <translation>Não é possível criar o ficheiro da chave de recuperação!</translation>
     </message>
 </context>
 <context>
