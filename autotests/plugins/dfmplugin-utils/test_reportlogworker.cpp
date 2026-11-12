@@ -6,6 +6,7 @@
 #include "plugins/common/dfmplugin-utils/reportlog/reportlogworker.h"
 #include "plugins/common/dfmplugin-utils/reportlog/datas/reportdatainterface.h"
 
+#include "plugins/common/dfmplugin-utils/reportlog/datas/smbreportdata.h"
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/base/device/private/devicehelper.h>
@@ -212,4 +213,98 @@ TEST_F(UT_ReportLogWorker, BUG355011_InitTwiceDoesNotReregisterDatas)
 
     worker->init();   // second run must short-circuit on the idempotency guard
     EXPECT_EQ(registerCalls, 0);
+}
+
+// ---------------------------------------------------------------------------
+// UT: SMB report migration — kGIOErrorAlreadyMounted treated as success
+// ---------------------------------------------------------------------------
+
+// PMS:394643 When a share is already mounted (kGIOErrorAlreadyMounted), the
+// worker must report result=true even if the caller passed ret=false, so that
+// re-entry to a mounted share does not generate a false-negative report.
+TEST_F(UT_ReportLogWorker, HandleMountNetworkResult_AlreadyMounted_ReportedAsSuccess)
+{
+    QVariantMap capturedData;
+    stub.set_lamda(ADDR(ReportLogWorker, commitLog),
+                   [&capturedData](ReportLogWorker *, const QString &type, const QVariantMap &data) {
+                       __DBG_STUB_INVOKE__
+                       if (type == "Smb")
+                           capturedData = data;
+                   });
+
+    worker->handleMountNetworkResult(false, dfmmount::DeviceError::kGIOErrorAlreadyMounted, "already mounted");
+
+    EXPECT_TRUE(capturedData.value("result").toBool());
+    EXPECT_FALSE(capturedData.contains("errorId"));
+}
+
+// ---------------------------------------------------------------------------
+// UT: SMB report migration — kUserErrorTimedOut maps to kNetworkTimeoutError
+// ---------------------------------------------------------------------------
+
+// PMS:394643 Network timeout/unreachable must be classified as
+// kNetworkTimeoutError (distinct from real mount failures) so analytics can
+// separate infrastructure issues from authentication/permission errors.
+TEST_F(UT_ReportLogWorker, HandleMountNetworkResult_TimedOut_SetsNetworkTimeoutError)
+{
+    QVariantMap capturedData;
+    stub.set_lamda(ADDR(ReportLogWorker, commitLog),
+                   [&capturedData](ReportLogWorker *, const QString &type, const QVariantMap &data) {
+                       __DBG_STUB_INVOKE__
+                       if (type == "Smb")
+                           capturedData = data;
+                   });
+
+    worker->handleMountNetworkResult(false, dfmmount::DeviceError::kUserErrorTimedOut, "connection timed out");
+
+    EXPECT_FALSE(capturedData.value("result").toBool());
+    EXPECT_EQ(capturedData.value("errorId").toInt(),
+              static_cast<int>(SmbReportData::kNetworkTimeoutError));
+    EXPECT_EQ(capturedData.value("errorSysMsg").toString(), "connection timed out");
+    EXPECT_EQ(capturedData.value("errorUiMsg").toString(), "Network access timeout, network unreachable");
+}
+
+// ---------------------------------------------------------------------------
+// AT: SMB report migration — end-to-end data shape verification
+// ---------------------------------------------------------------------------
+
+// PMS:394643 Acceptance test: verify that the SmbReportData::prepareData
+// correctly clears error fields when result is true (covering the
+// kGIOErrorAlreadyMounted → success path end-to-end through prepareData).
+TEST_F(UT_ReportLogWorker, AT_SmbReportData_PrepareData_SuccessClearsErrorFields)
+{
+    SmbReportData reportData;
+    QVariantMap args;
+    args.insert("result", true);
+    args.insert("errorId", SmbReportData::kNetworkTimeoutError);
+    args.insert("errorSysMsg", "should be cleared");
+    args.insert("errorUiMsg", "should be cleared");
+
+    QJsonObject json = reportData.prepareData(args);
+
+    EXPECT_EQ(json.value("result").toBool(), true);
+    EXPECT_EQ(json.value("errorId").toInt(), 0);
+    EXPECT_TRUE(json.value("errorSysMsg").toString().isEmpty());
+    EXPECT_TRUE(json.value("errorUiMsg").toString().isEmpty());
+    EXPECT_EQ(json.value("tid").toInt(), 1000500001);
+}
+
+// PMS:394643 Acceptance test: verify that when result is false, error fields
+// are preserved through prepareData (covering the kUserErrorTimedOut path).
+TEST_F(UT_ReportLogWorker, AT_SmbReportData_PrepareData_FailurePreservesErrorFields)
+{
+    SmbReportData reportData;
+    QVariantMap args;
+    args.insert("result", false);
+    args.insert("errorId", SmbReportData::kNetworkTimeoutError);
+    args.insert("errorSysMsg", "connection timed out");
+    args.insert("errorUiMsg", "Network access timeout, network unreachable");
+
+    QJsonObject json = reportData.prepareData(args);
+
+    EXPECT_EQ(json.value("result").toBool(), false);
+    EXPECT_EQ(json.value("errorId").toInt(),
+              static_cast<int>(SmbReportData::kNetworkTimeoutError));
+    EXPECT_EQ(json.value("errorSysMsg").toString(), "connection timed out");
+    EXPECT_EQ(json.value("errorUiMsg").toString(), "Network access timeout, network unreachable");
 }
