@@ -88,6 +88,11 @@ void FileViewMenuHelper::showEmptyAreaMenu()
         fmDebug() << "Empty area menu dismissed without selection";
     }
     delete scene;
+    // free the menu right away: a lingering (hidden) menu popup keeps the topmost
+    // popup slot on wayland, so popups created afterwards (e.g. the tag editor)
+    // would be anchored to it instead of to the main window
+    delete menuPtr;
+    menuPtr = nullptr;
 }
 
 void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags)
@@ -147,6 +152,11 @@ void FileViewMenuHelper::showNormalMenu(const QModelIndex &index, const Qt::Item
         scene->triggered(act);
     }
     delete scene;
+    // free the menu right away: a lingering (hidden) menu popup keeps the topmost
+    // popup slot on wayland, so popups created afterwards (e.g. the tag editor)
+    // would be anchored to it instead of to the main window
+    delete menuPtr;
+    menuPtr = nullptr;
 }
 
 QString FileViewMenuHelper::currentMenuScene() const

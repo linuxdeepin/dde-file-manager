@@ -17,10 +17,12 @@
 #include <dfm-base/dfm_desktop_defines.h>
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>
+#include <QWidget>
 #include <QWidgetAction>
 
 using namespace dfmplugin_tag;
@@ -123,6 +125,7 @@ bool TagMenuScene::triggered(QAction *action)
     if (d->predicateAction.value(TagActionId::kActTagAddKey) != action || !d->focusFile.isValid())
         return false;
 
+    QWidget *parent = nullptr;
     QRectF viewRect;
     QRectF iconRect;
 
@@ -137,9 +140,14 @@ bool TagMenuScene::triggered(QAction *action)
             const QRect &visualRect = TagEventCaller::getCollectionVisualRect(id, d->focusFile);
             iconRect = TagEventCaller::getCollectionIconRect(id, visualRect);
             if (auto view = TagEventCaller::getCollectionView(id)) {
-                viewRect = d->getSurfaceRect(view);
-                QPoint iconTopLeft = view->mapToGlobal(iconRect.topLeft().toPoint());
-                iconRect.setRect(iconTopLeft.x(), iconTopLeft.y(), iconRect.width(), iconRect.height());
+                if (auto window = view->window()) {
+                    parent = window;
+                    const QPoint origin = view->mapTo(window, QPoint(0, 0));
+                    iconRect.translate(origin);
+                    QRect surfaceRect;
+                    if (QWidget *surface = d->getSurface(view, &surfaceRect))
+                        viewRect = surfaceRect.translated(surface->mapTo(window, QPoint(0, 0)));
+                }
             } else {
                 fmWarning() << "can not get collection view, id:" << id;
             }
@@ -152,9 +160,12 @@ bool TagMenuScene::triggered(QAction *action)
             const QRect &visualRect = TagEventCaller::getVisualRect(viewIndex, d->focusFile);
             iconRect = TagEventCaller::getIconRect(viewIndex, visualRect);
             if (auto view = TagEventCaller::getDesktopView(viewIndex)) {
-                viewRect = view->rect();
-                QPoint iconTopLeft = view->mapToGlobal(iconRect.topLeft().toPoint());
-                iconRect.setRect(iconTopLeft.x(), iconTopLeft.y(), iconRect.width(), iconRect.height());
+                if (auto window = view->window()) {
+                    parent = window;
+                    const QPoint origin = view->mapTo(window, QPoint(0, 0));
+                    viewRect = view->rect().translated(origin);
+                    iconRect.translate(origin);
+                }
             } else {
                 fmWarning() << "can not get canvas view, index:" << viewIndex;
             }
@@ -162,9 +173,16 @@ bool TagMenuScene::triggered(QAction *action)
     } else {
         viewRect = TagEventCaller::getVisibleGeometry(d->windowId);
         iconRect = TagEventCaller::getItemRect(d->windowId, d->focusFile, DFMGLOBAL_NAMESPACE::kItemIconRole);
+        if (auto window = FMWindowsIns.findWindowById(d->windowId)) {
+            parent = window;
+            // rects from the workspace plugin are global, convert them to window relative
+            const QPointF origin = window->mapToGlobal(QPoint(0, 0));
+            viewRect.translate(-origin);
+            iconRect.translate(-origin);
+        }
     }
 
-    TagHelper::instance()->showTagEdit(viewRect, iconRect, d->selectFiles, (d->currentDir.scheme() == TagManager::scheme()));
+    TagHelper::instance()->showTagEdit(parent, viewRect, iconRect, d->selectFiles, (d->currentDir.scheme() == TagManager::scheme()));
 
     return AbstractMenuScene::triggered(action);
 }

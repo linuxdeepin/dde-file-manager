@@ -8,11 +8,14 @@
 
 #include <dfm-base/utils/fileutils.h>
 #include <dfm-base/utils/universalutils.h>
+#include <dfm-base/utils/windowutils.h>
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 
 #include <QMap>
 #include <QVector>
 #include <QPainter>
+#include <QPointer>
+#include <QTimer>
 #include <QUrl>
 #include <QIcon>
 #include <QTextBlock>
@@ -247,30 +250,53 @@ QVariantMap TagHelper::createSidebarItemInfo(const QString &tag)
     return infoMap;
 }
 
-void TagHelper::showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList, bool showInTagDir)
+void TagHelper::showTagEdit(QWidget *parent, const QRectF &viewRect, const QRectF &iconRect, const QList<QUrl> &fileList, bool showInTagDir)
 {
-    TagEditor *editor = new TagEditor(nullptr, showInTagDir);
+    // Defer creation by one event loop turn: the context menu that triggered this
+    // action is still the topmost popup until its window is torn down, and on
+    // wayland Qt anchors any new popup to the topmost popup (the menu) instead of
+    // to the anchor window, which breaks its positioning and dismissal behavior.
+    QPointer<QWidget> anchor(parent);
+    QTimer::singleShot(0, this, [this, anchor, viewRect, iconRect, fileList, showInTagDir] {
+        if (!anchor)
+            return;
 
-    editor->setBaseSize(160, 160);
-    editor->setFilesForTagging(fileList);
-    editor->setAttribute(Qt::WA_DeleteOnClose);
-    editor->setFocusOutSelfClosing(true);
+        TagEditor *editor = new TagEditor(nullptr, showInTagDir);
 
-    const QList<QString> &sameTagsInDiffFiles = TagManager::instance()->getTagsByUrls(fileList);
-    editor->setDefaultCrumbs(sameTagsInDiffFiles);
+        editor->setBaseSize(160, 160);
+        editor->setFilesForTagging(fileList);
+        editor->setAttribute(Qt::WA_DeleteOnClose);
+        editor->setFocusOutSelfClosing(true);
 
-    int showPosX = static_cast<int>(iconRect.center().x());
-    int showPosY = static_cast<int>(iconRect.bottom());
+        const QList<QString> &sameTagsInDiffFiles = TagManager::instance()->getTagsByUrls(fileList);
+        editor->setDefaultCrumbs(sameTagsInDiffFiles);
 
-    showPosX = qMax(showPosX, static_cast<int>((parentRect.left() + 10)));
+        int showPosX = static_cast<int>(iconRect.center().x());
+        int showPosY = static_cast<int>(iconRect.bottom());
 
-    auto subValue = parentRect.bottom() - showPosY;
-    if (subValue < editor->height()) {
-        editor->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
-        showPosY = qMin(static_cast<int>(parentRect.bottom()), showPosY);
-    }
+        showPosX = qMax(showPosX, static_cast<int>((viewRect.left() + 10)));
 
-    editor->show(showPosX, showPosY);
+        auto subValue = viewRect.bottom() - showPosY;
+        if (subValue < editor->height()) {
+            editor->setArrowDirection(DArrowRectangle::ArrowDirection::ArrowBottom);
+            showPosY = qMin(static_cast<int>(viewRect.bottom()), showPosY);
+        }
+
+        // viewRect/iconRect are relative to the anchor window. On wayland a floating
+        // window without a parent cannot be positioned by us (the compositor alone
+        // decides where toplevel surfaces go), so anchor the editor to the window.
+        // On X11 DArrowRectangle draws its arrow by clipping the toplevel native window
+        // (DPlatformWindowHandle), which only works while the editor is itself a
+        // toplevel window — parenting it turns it into a child widget and loses the
+        // arrow. Keep it parentless there and convert back to global coordinates.
+        if (dfmbase::WindowUtils::isWayLand()) {
+            editor->setParent(anchor);
+            editor->show(showPosX, showPosY);
+        } else {
+            const QPoint origin = anchor->mapToGlobal(QPoint(0, 0));
+            editor->show(showPosX + origin.x(), showPosY + origin.y());
+        }
+    });
 }
 
 void TagHelper::crumbEditInputFilter(DCrumbEdit *edit)

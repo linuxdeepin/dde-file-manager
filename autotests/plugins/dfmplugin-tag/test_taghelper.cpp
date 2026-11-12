@@ -13,6 +13,7 @@
 
 #include <gtest/gtest.h>
 
+#include <QApplication>
 #include <QSignalSpy>
 
 #include <QUrl>
@@ -371,7 +372,11 @@ TEST_F(UT_TagHelper, showTagEdit)
         flag = true;
     });
 
-    helper->showTagEdit(QRectF(), QRectF(), QList<QUrl>() << QUrl("tag:/test"), true);
+    // creation is deferred by one event loop turn and requires an anchor window
+    QWidget anchor;
+    helper->showTagEdit(&anchor, QRectF(), QRectF(), QList<QUrl>() << QUrl("tag:/test"), true);
+    EXPECT_FALSE(flag);
+    qApp->processEvents();
     EXPECT_TRUE(flag);
 }
 
