@@ -100,6 +100,11 @@ void CanvasViewMenuProxy::showEmptyAreaMenu(const Qt::ItemFlags &indexFlags, con
     }
 
     delete canvasScene;
+    // free the menu right away: a lingering (hidden) menu popup keeps the topmost
+    // popup slot on wayland, so popups created afterwards (e.g. the tag editor)
+    // would be anchored to it instead of to the canvas window
+    delete menuPtr;
+    menuPtr = nullptr;
 }
 
 void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::ItemFlags &indexFlags, const QPoint gridPos)
@@ -161,6 +166,11 @@ void CanvasViewMenuProxy::showNormalMenu(const QModelIndex &index, const Qt::Ite
     }
 
     delete canvasScene;
+    // free the menu right away: a lingering (hidden) menu popup keeps the topmost
+    // popup slot on wayland, so popups created afterwards (e.g. the tag editor)
+    // would be anchored to it instead of to the canvas window
+    delete menuPtr;
+    menuPtr = nullptr;
 }
 
 void CanvasViewMenuProxy::changeIconLevel(bool increase)

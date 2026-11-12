@@ -11,6 +11,7 @@
 #include <QColor>
 
 class QPainter;
+class QWidget;
 
 namespace dfmplugin_tag {
 
@@ -64,7 +65,7 @@ public:
 
     QVariantMap createSidebarItemInfo(const QString &tag);
 
-    void showTagEdit(const QRectF &parentRect, const QRectF &iconRect, const QList<QUrl> &fileList, bool showInTagDir = false);
+    void showTagEdit(QWidget *parent, const QRectF &viewRect, const QRectF &iconRect, const QList<QUrl> &fileList, bool showInTagDir = false);
 
     void crumbEditInputFilter(DTK_WIDGET_NAMESPACE::DCrumbEdit *edit);
 
