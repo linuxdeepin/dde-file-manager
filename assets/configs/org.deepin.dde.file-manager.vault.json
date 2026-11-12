@@ -4,7 +4,7 @@
     "contents":{
         "enableUnlockVaultInNetwork": {
             "value": true,
-            "serial": 0,
+            "serial": 1,
             "flags": [],
             "name": "支持联网下解锁保险箱",
             "name[zh_CN]": "支持联网下解锁保险箱",
@@ -27,7 +27,7 @@
                 "select-all",
                 "property"
             ],
-            "serial": 0,
+            "serial": 1,
             "flags": [],
             "name": "空白区域菜单项",
             "name[zh_CN]": "空白区域菜单项",
@@ -46,6 +46,8 @@
                 "stage-file-to-burning",
                 "cut",
                 "copy",
+                "copy-file-path",
+                "copy-folder-path",
                 "rename",
                 "delete",
                 "reverse-select",
@@ -54,7 +56,7 @@
                 "send-to",
                 "property"
             ],
-            "serial": 0,
+            "serial": 1,
             "flags": [],
             "name": "常规菜单项",
             "name[zh_CN]": "常规菜单项",

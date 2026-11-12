@@ -310,7 +310,7 @@ TEST_F(UT_LocalFileHandlerPms, BUG293935_OpenSymlinkLoopTerminatesWithoutHang)
                        ++breakDialogCount;
                        return GlobalEventType::kUnknowType;
                    });
-    stub.set_lamda(ADDR(NetworkUtils, checkFtpOrSmbBusy),
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy),
                    [](NetworkUtils *, const QUrl &) -> bool {
                        __DBG_STUB_INVOKE__
                        return false;

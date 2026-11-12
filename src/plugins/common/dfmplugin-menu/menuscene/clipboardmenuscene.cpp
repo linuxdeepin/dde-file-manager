@@ -16,6 +16,7 @@
 #include <dfm-framework/dpf.h>
 
 #include <QMenu>
+#include <QGuiApplication>
 #include <QVariant>
 #include <QClipboard>
 #include <QMimeData>
@@ -37,6 +38,8 @@ ClipBoardMenuScenePrivate::ClipBoardMenuScenePrivate(AbstractMenuScene *qq)
     predicateName[ActionID::kPaste] = tr("&Paste");
     predicateName[ActionID::kCut] = tr("Cu&t");
     predicateName[ActionID::kCopy] = tr("&Copy");
+    predicateName[ActionID::kCopyFilePath] = tr("Copy file path");
+    predicateName[ActionID::kCopyFolderPath] = tr("Copy folder path");
 }
 
 ClipBoardMenuScene::ClipBoardMenuScene(QObject *parent)
@@ -58,6 +61,7 @@ bool ClipBoardMenuScene::initialize(const QVariantHash &params)
         d->focusFile = d->selectFiles.first();
     d->treeSelectedUrls = params.value(MenuParamKey::kTreeSelectFiles).value<QList<QUrl>>();
     d->isEmptyArea = params.value(MenuParamKey::kIsEmptyArea).toBool();
+    d->windowId = params.value(MenuParamKey::kWindowId).toULongLong();
 
     const auto &tmpParams = dfmplugin_menu::MenuUtils::perfectMenuParams(params);
     d->isSystemPathIncluded = tmpParams.value(MenuParamKey::kIsSystemPathIncluded, false).toBool();
@@ -107,6 +111,16 @@ bool ClipBoardMenuScene::create(QMenu *parent)
         QAction *tempAction = parent->addAction(d->predicateName.value(ActionID::kCopy));
         d->predicateAction[ActionID::kCopy] = tempAction;
         tempAction->setProperty(ActionPropertyKey::kActionID, QString(ActionID::kCopy));
+
+        // copy path (top-level menu item, before "Send to")
+        // Single file -> "Copy file path", single dir -> "Copy folder path",
+        // multi-select (including mixed file+folder) -> "Copy file path"
+        const QString copyActionId = (d->selectFiles.count() == 1 && d->focusFileInfo
+            && d->focusFileInfo->isAttributes(OptInfoType::kIsDir))
+            ? ActionID::kCopyFolderPath : ActionID::kCopyFilePath;
+        QAction *actionCopyPath = parent->addAction(d->predicateName.value(copyActionId));
+        actionCopyPath->setProperty(ActionPropertyKey::kActionID, copyActionId);
+        d->predicateAction[copyActionId] = actionCopyPath;
     }
 
     return AbstractMenuScene::create(parent);
@@ -164,7 +178,17 @@ bool ClipBoardMenuScene::triggered(QAction *action)
     if (ok && !urls.isEmpty())
         selectedUrlsTemp = urls;
 
-    if (id == ActionID::kPaste) {
+    if (id == ActionID::kCopyFilePath || id == ActionID::kCopyFolderPath) {
+        QStringList paths;
+        for (const auto &url : selectedUrlsTemp) {
+            QString path = url.toLocalFile();
+            if (!path.isEmpty())
+                paths << path;
+        }
+        if (!paths.isEmpty())
+            QGuiApplication::clipboard()->setText(paths.join('\n'));
+        return true;
+    } else if (id == ActionID::kPaste) {
         ClipBoard::ClipboardAction action = ClipBoard::instance()->clipboardAction();
         if (ClipBoard::kCopyAction == action) {
             dpfSignalDispatcher->publish(GlobalEventType::kCopy, d->windowId, selectedUrlsTemp, d->currentDir, AbstractJobHandler::JobFlag::kNoHint, nullptr, nullptr, QVariant(), nullptr);

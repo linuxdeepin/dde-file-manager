@@ -237,6 +237,61 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
     return busy;
 }
 
+void NetworkUtils::checkFtpOrSmbBusyAsync(const QUrl &url, std::function<void(bool)> callback)
+{
+    if (!url.isValid() || !url.isLocalFile()) {
+        if (callback)
+            callback(false);
+        return;
+    }
+
+    QString host;
+    QStringList ports;
+    if (!parseIp(url.path(), host, ports)) {
+        if (callback)
+            callback(!host.isEmpty());
+        return;
+    }
+
+    doAfterCheckNet(host, ports, [callback](bool connected) {
+        if (callback)
+            callback(!connected);
+    });
+}
+
+bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url, int msecs)
+{
+    if (!url.isValid() || !url.isLocalFile())
+        return false;
+
+    QString host;
+    QStringList ports;
+    if (!parseIp(url.path(), host, ports))
+        return !host.isEmpty();
+
+    // Cache pre-check: when all ports have cache hits, return early
+    // without performing network I/O, mirroring checkFtpOrSmbBusy(url).
+    bool allCached { true };
+    bool allBusy { true };
+    for (const auto &port : ports) {
+        auto cached = getFromCache(host, port);
+        if (!cached.timestamp.isValid()) {
+            allCached = false;
+            break;
+        }
+        if (!cached.busy)
+            allBusy = false;
+    }
+    if (allCached)
+        return allBusy;
+
+    auto busy = !checkNetConnection(host, ports, msecs);
+    if (busy)
+        qCInfo(logDFMBase) << "can not connect url = " << url << " host =  " << host << " port = " << ports;
+
+    return busy;
+}
+
 QMap<QString, QString> NetworkUtils::cifsMountHostInfo()
 {
     static QMutex mutex;

@@ -63,9 +63,10 @@ void ShortcutHelper::registerAction(QKeySequence::StandardKey shortcut, bool aut
     QAction *action = new QAction(parent());
     action->setAutoRepeat(autoRepeat);
     action->setShortcut(shortcut);
+    action->setShortcutContext(Qt::WidgetShortcut);
     action->setProperty(kViewShortcutKey, shortcut);
     view->addAction(action);
-    connect(action, &QAction::triggered, this, &ShortcutHelper::acitonTriggered);
+    connect(action, &QAction::triggered, this, &ShortcutHelper::actionTriggered);
     fmDebug() << "Registered shortcut action - key:" << static_cast<int>(shortcut) << "autoRepeat:" << autoRepeat;
 }
 
@@ -270,7 +271,7 @@ bool ShortcutHelper::processKeyPressEvent(QKeyEvent *event)
     return false;
 }
 
-void ShortcutHelper::acitonTriggered()
+void ShortcutHelper::actionTriggered()
 {
     QAction *action = qobject_cast<QAction *>(sender());
     if (!action) {
