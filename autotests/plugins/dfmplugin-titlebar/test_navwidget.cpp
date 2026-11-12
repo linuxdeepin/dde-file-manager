@@ -156,3 +156,82 @@ TEST_F(NavWidgetTest, RemoveNavStackAt_ValidIndex_StackRemoved)
 
     widget->removeNavStackAt(0);
 }
+
+// ===== PMS task 398283: tests for navigateWithCheck (async network check) =====
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/dialogmanager.h>
+#include "events/titlebareventcaller.h"
+
+DFMBASE_USE_NAMESPACE
+
+TEST_F(NavWidgetTest, NavigateWithCheck_InvalidUrl_NoCrash)
+{
+    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusyAsync,
+                   [](NetworkUtils *, const QUrl &, std::function<void(bool)> callback) {
+                       __DBG_STUB_INVOKE__
+                       if (callback)
+                           callback(false);
+                   });
+    stub.set_lamda(&TitleBarEventCaller::sendCd, [](QWidget *, const QUrl &) {
+        __DBG_STUB_INVOKE__
+    });
+
+    QUrl url;
+    EXPECT_NO_FATAL_FAILURE({ widget->navigateWithCheck(url); });
+
+    for (int i = 0; i < 10; ++i) {
+        QCoreApplication::processEvents();
+        QTest::qWait(50);
+    }
+}
+
+TEST_F(NavWidgetTest, NavigateWithCheck_BusyUrl_NoSendCd)
+{
+    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusyAsync,
+                   [](NetworkUtils *, const QUrl &, std::function<void(bool)> callback) {
+                       __DBG_STUB_INVOKE__
+                       if (callback)
+                           callback(true);
+                   });
+    stub.set_lamda(&DialogManager::showUnableToVistDir, [](DialogManager *, const QString &) {
+        __DBG_STUB_INVOKE__
+    });
+
+    bool sendCdCalled = false;
+    stub.set_lamda(&TitleBarEventCaller::sendCd, [&sendCdCalled](QWidget *, const QUrl &) {
+        __DBG_STUB_INVOKE__
+        sendCdCalled = true;
+    });
+
+    widget->navigateWithCheck(QUrl("file:///run/user/1000/gvfs/ftp:host=1.2.3.4"));
+
+    for (int i = 0; i < 10; ++i) {
+        QCoreApplication::processEvents();
+        QTest::qWait(50);
+    }
+    EXPECT_FALSE(sendCdCalled);
+}
+
+TEST_F(NavWidgetTest, NavigateWithCheck_NotBusyUrl_CallsSendCd)
+{
+    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusyAsync,
+                   [](NetworkUtils *, const QUrl &, std::function<void(bool)> callback) {
+                       __DBG_STUB_INVOKE__
+                       if (callback)
+                           callback(false);
+                   });
+
+    bool sendCdCalled = false;
+    stub.set_lamda(&TitleBarEventCaller::sendCd, [&sendCdCalled](QWidget *, const QUrl &) {
+        __DBG_STUB_INVOKE__
+        sendCdCalled = true;
+    });
+
+    widget->navigateWithCheck(QUrl("file:///home/test"));
+
+    for (int i = 0; i < 10 && !sendCdCalled; ++i) {
+        QCoreApplication::processEvents();
+        QTest::qWait(50);
+    }
+    EXPECT_TRUE(sendCdCalled);
+}

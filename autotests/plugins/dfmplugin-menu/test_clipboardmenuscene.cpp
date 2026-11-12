@@ -1034,7 +1034,7 @@ TEST_F(UT_ClipBoardMenuScene, PrivateCtor_RegistersPredicateNames)
 {
     ClipBoardMenuScenePrivate pri(scene);
     EXPECT_EQ(pri.parent(), scene);
-    EXPECT_EQ(pri.predicateName.size(), 3);
+    EXPECT_EQ(pri.predicateName.size(), 5);  // kPaste, kCut, kCopy, kCopyFilePath, kCopyFolderPath
     EXPECT_TRUE(pri.predicateName.contains(ActionID::kPaste));
     EXPECT_TRUE(pri.predicateName.contains(ActionID::kCut));
     EXPECT_TRUE(pri.predicateName.contains(ActionID::kCopy));
@@ -1065,4 +1065,97 @@ TEST_F(UT_ClipBoardMenuScene, Initialize_TreeSelectFiles_StoredInPrivate)
 
     EXPECT_TRUE(scene->initialize(params));
     EXPECT_EQ(scene->d->treeSelectedUrls, treeUrls);
+}
+
+// ===== PMS task 398283: tests for kCopyFilePath / kCopyFolderPath menu actions =====
+
+TEST_F(UT_ClipBoardMenuScene, PrivateCtor_RegistersCopyPathPredicateNames)
+{
+    ClipBoardMenuScenePrivate pri(scene);
+    // After migration: kPaste, kCut, kCopy, kCopyFilePath, kCopyFolderPath
+    EXPECT_EQ(pri.predicateName.size(), 5);
+    EXPECT_TRUE(pri.predicateName.contains(ActionID::kCopyFilePath));
+    EXPECT_TRUE(pri.predicateName.contains(ActionID::kCopyFolderPath));
+}
+
+TEST_F(UT_ClipBoardMenuScene, Create_SingleFile_HasCopyFilePathAction)
+{
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = QUrl::fromLocalFile("/tmp");
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(
+        QList<QUrl> { QUrl::fromLocalFile("/tmp/test.txt") });
+    params[MenuParamKey::kIsEmptyArea] = false;
+
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       __DBG_STUB_INVOKE__
+                       return QSharedPointer<FileInfo>(new FileInfo(url));
+                   });
+    stub.set_lamda(VADDR(AbstractMenuScene, initialize), [](AbstractMenuScene *, const QVariantHash &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+    stub.set_lamda(VADDR(AbstractMenuScene, create), [](AbstractMenuScene *, QMenu *) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    ASSERT_TRUE(scene->initialize(params));
+
+    QMenu menu;
+    ASSERT_TRUE(scene->create(&menu));
+
+    auto actions = menu.actions();
+    bool foundCopyFilePath = false;
+    for (auto *act : actions) {
+        if (act->property(ActionPropertyKey::kActionID.toString()).toString() == ActionID::kCopyFilePath) {
+            foundCopyFilePath = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(foundCopyFilePath);
+}
+
+TEST_F(UT_ClipBoardMenuScene, Triggered_CopyFilePath_SetsClipboardText)
+{
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = QUrl::fromLocalFile("/tmp");
+    QList<QUrl> selectedUrls = {
+        QUrl::fromLocalFile("/tmp/file_a.txt"),
+        QUrl::fromLocalFile("/tmp/file_b.txt")
+    };
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(selectedUrls);
+    params[MenuParamKey::kIsEmptyArea] = false;
+
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       __DBG_STUB_INVOKE__
+                       return QSharedPointer<FileInfo>(new FileInfo(url));
+                   });
+    stub.set_lamda(VADDR(AbstractMenuScene, initialize), [](AbstractMenuScene *, const QVariantHash &) {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    ASSERT_TRUE(scene->initialize(params));
+
+    QMenu menu;
+    scene->create(&menu);
+
+    // Find the copy-file-path action and trigger it
+    QAction *copyPathAction = nullptr;
+    for (auto *act : menu.actions()) {
+        if (act->property(ActionPropertyKey::kActionID.toString()).toString() == ActionID::kCopyFilePath) {
+            copyPathAction = act;
+            break;
+        }
+    }
+    ASSERT_NE(copyPathAction, nullptr);
+
+    EXPECT_TRUE(scene->triggered(copyPathAction));
+
+    // Verify clipboard text contains both paths
+    QString clipText = QGuiApplication::clipboard()->text();
+    EXPECT_TRUE(clipText.contains("/tmp/file_a.txt"));
+    EXPECT_TRUE(clipText.contains("/tmp/file_b.txt"));
 }

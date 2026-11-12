@@ -164,4 +164,47 @@ TEST_F(UT_PrehandlerUtils, SplitMountSource)
     sub.clear();
     EXPECT_TRUE(prehandler_utils::splitMountSource("").isEmpty());
     EXPECT_NO_FATAL_FAILURE(prehandler_utils::splitMountSource("", nullptr));
+
+    // ftp/sftp: mount source is the host only, subPath is the rest
+    sub.clear();
+    EXPECT_EQ("ftp://1.2.3.4", prehandler_utils::splitMountSource("ftp://1.2.3.4/path", &sub));
+    EXPECT_EQ("path", sub);
+
+    sub.clear();
+    EXPECT_EQ("sftp://1.2.3.4", prehandler_utils::splitMountSource("sftp://1.2.3.4/path/to/file", &sub));
+    EXPECT_EQ("path/to/file", sub);
+
+    // ftp/sftp with no path: mount source is host, subPath is empty
+    sub.clear();
+    EXPECT_EQ("sftp://1.2.3.4", prehandler_utils::splitMountSource("sftp://1.2.3.4", &sub));
+    EXPECT_TRUE(sub.isEmpty());
+
+    // ftp/sftp with trailing slash only
+    sub.clear();
+    EXPECT_EQ("ftp://1.2.3.4", prehandler_utils::splitMountSource("ftp://1.2.3.4/", &sub));
+    EXPECT_TRUE(sub.isEmpty());
+
+    // ftp/sftp with ?query (e.g. charset=gbk): query must be preserved on mount source
+    sub.clear();
+    EXPECT_EQ("sftp://1.2.3.4?charset=gbk", prehandler_utils::splitMountSource("sftp://1.2.3.4/path?charset=gbk", &sub));
+    EXPECT_EQ("path", sub);
+
+    // uppercase scheme: regex is case-insensitive
+    sub.clear();
+    EXPECT_EQ("SFTP://1.2.3.4", prehandler_utils::splitMountSource("SFTP://1.2.3.4/path", &sub));
+    EXPECT_EQ("path", sub);
+
+    sub.clear();
+    EXPECT_EQ("FTP://1.2.3.4", prehandler_utils::splitMountSource("FTP://1.2.3.4/dir", &sub));
+    EXPECT_EQ("dir", sub);
+
+    // uppercase scheme with query
+    sub.clear();
+    EXPECT_EQ("SFTP://1.2.3.4?charset=utf-8", prehandler_utils::splitMountSource("SFTP://1.2.3.4/sub?charset=utf-8", &sub));
+    EXPECT_EQ("sub", sub);
+
+    // non-matching scheme returns source unchanged
+    sub.clear();
+    EXPECT_EQ("nfs://1.2.3.4/path", prehandler_utils::splitMountSource("nfs://1.2.3.4/path", &sub));
+    EXPECT_TRUE(sub.isEmpty());
 }

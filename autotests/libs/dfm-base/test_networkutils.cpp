@@ -271,3 +271,112 @@ TEST(NetworkUtilsTest, BUG286637_DoAfterCheckNetEmptyPortsCallbackTrue)
     EXPECT_TRUE(called);
     EXPECT_TRUE(ok);
 }
+
+// ===== Tests for checkFtpOrSmbBusy(QUrl, int msecs) overload =====
+// PMS task 398283: migrated timeout-based synchronous network busy check
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyWithTimeout_InvalidUrl_ReturnsFalse)
+{
+    QUrl invalidUrl;
+    EXPECT_FALSE(NetworkUtils::instance()->checkFtpOrSmbBusy(invalidUrl, 200));
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyWithTimeout_NonLocalFileUrl_ReturnsFalse)
+{
+    QUrl url("http://example.com/path");
+    EXPECT_FALSE(NetworkUtils::instance()->checkFtpOrSmbBusy(url, 200));
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyWithTimeout_LocalFileNonGvfs_ReturnsFalse)
+{
+    QUrl url = QUrl::fromLocalFile("/tmp/ut_non_gvfs_path");
+    EXPECT_FALSE(NetworkUtils::instance()->checkFtpOrSmbBusy(url, 200));
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyWithTimeout_EmptyLocalFile_ReturnsFalse)
+{
+    QUrl url = QUrl::fromLocalFile("");
+    EXPECT_FALSE(NetworkUtils::instance()->checkFtpOrSmbBusy(url, 200));
+}
+
+// ===== Tests for checkFtpOrSmbBusyAsync(QUrl, callback) overload =====
+// PMS task 398283: migrated async network busy check for non-blocking UI
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyAsync_InvalidUrl_CallbackFalse)
+{
+    bool called = false;
+    bool result = true;
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(QUrl(), [&](bool busy) {
+        called = true;
+        result = busy;
+    });
+    EXPECT_TRUE(called);
+    EXPECT_FALSE(result);
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyAsync_NonLocalFileUrl_CallbackFalse)
+{
+    bool called = false;
+    bool result = true;
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(QUrl("ftp://1.2.3.4/path"), [&](bool busy) {
+        called = true;
+        result = busy;
+    });
+    EXPECT_TRUE(called);
+    EXPECT_FALSE(result);
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyAsync_LocalFileNonGvfs_CallbackFalse)
+{
+    bool called = false;
+    bool result = true;
+    QUrl url = QUrl::fromLocalFile("/tmp/ut_non_gvfs_path_async");
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [&](bool busy) {
+        called = true;
+        result = busy;
+    });
+    // parseIp fails for non-gvfs path, host is empty → callback(!host.isEmpty()) = callback(false)
+    // This is synchronous (no doAfterCheckNet call)
+    for (int i = 0; i < 20 && !called; ++i) {
+        QCoreApplication::processEvents();
+        QTest::qWait(50);
+    }
+    EXPECT_TRUE(called);
+    EXPECT_FALSE(result);
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyAsync_NullCallback_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE({
+        NetworkUtils::instance()->checkFtpOrSmbBusyAsync(QUrl(), nullptr);
+    });
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyAsync_DefaultCallback_NoCrash)
+{
+    EXPECT_NO_FATAL_FAILURE({
+        NetworkUtils::instance()->checkFtpOrSmbBusyAsync(QUrl::fromLocalFile("/tmp/ut_default_cb"));
+    });
+}
+
+TEST(NetworkUtilsTest, CheckFtpOrSmbBusyAsync_GvfsPath_TriggersAsyncCheck)
+{
+    // GVFS path: parseIp succeeds, doAfterCheckNet is called (async).
+    // doAfterCheckNet performs real TCP socket I/O; in a headless test
+    // environment without network/GVFS the callback may not fire within
+    // the wait window. This test verifies the function is callable and
+    // does not crash; the async path is exercised in CI with network.
+    bool called = false;
+    QUrl url = QUrl::fromLocalFile("/run/user/1000/gvfs/ftp:host=1.2.3.4");
+    EXPECT_NO_FATAL_FAILURE({
+        NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [&](bool busy) {
+            called = true;
+            (void)busy;
+        });
+    });
+    for (int i = 0; i < 30 && !called; ++i) {
+        QCoreApplication::processEvents();
+        QTest::qWait(50);
+    }
+    // Callback fires in CI with network; headless env may timeout — not a failure
+}

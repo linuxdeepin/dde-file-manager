@@ -49,7 +49,7 @@ protected:
         testUrl = QUrl::fromLocalFile("/tmp/ut_ws_fileview");
         view = new FileView(testUrl);
 
-        stub.set_lamda(&dfmbase::NetworkUtils::checkFtpOrSmbBusy,
+        stub.set_lamda(static_cast<bool (dfmbase::NetworkUtils::*)(const QUrl &)>(&dfmbase::NetworkUtils::checkFtpOrSmbBusy),
                        [](dfmbase::NetworkUtils *, const QUrl &) { return false; });
 
         stub.set_lamda(ADDR(dfmbase::Application, appAttribute),

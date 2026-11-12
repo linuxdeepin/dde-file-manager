@@ -391,3 +391,60 @@ TEST_F(AddressBarTest, CompleterActivated_EmptyString_DoesNotEmitUrlChanged)
 
     EXPECT_FALSE(signalEmitted);
 }
+
+// ===== PMS task 398283: tests for paste() override (file URL pasting) =====
+#include <dfm-base/utils/clipboard.h>
+
+TEST_F(AddressBarTest, Paste_EmptyClipboard_FallsBackToBasePaste)
+{
+    // Stub clipboardFileUrlList to return empty list
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        return QList<QUrl>();
+    });
+
+    EXPECT_NO_THROW({ addressBar->paste(); });
+}
+
+TEST_F(AddressBarTest, Paste_WithFileUrls_InsertsPaths)
+{
+    // Stub clipboardFileUrlList to return file URLs
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        QList<QUrl> urls;
+        urls << QUrl::fromLocalFile("/tmp/test1.txt");
+        urls << QUrl::fromLocalFile("/tmp/test2.txt");
+        return urls;
+    });
+
+    addressBar->clear();
+    EXPECT_NO_THROW({ addressBar->paste(); });
+    EXPECT_TRUE(addressBar->text().contains("/tmp/test1.txt"));
+    EXPECT_TRUE(addressBar->text().contains("/tmp/test2.txt"));
+}
+
+TEST_F(AddressBarTest, Paste_WithNonLocalUrl_FallsBackToBasePaste)
+{
+    // Stub clipboardFileUrlList to return non-local URLs (toLocalFile returns empty)
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        QList<QUrl> urls;
+        urls << QUrl("ftp://1.2.3.4/path");
+        return urls;
+    });
+
+    EXPECT_NO_THROW({ addressBar->paste(); });
+}
+
+TEST_F(AddressBarTest, KeyPressEvent_CtrlV_TriggersPaste)
+{
+    // Stub clipboardFileUrlList to return empty
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        return QList<QUrl>();
+    });
+
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier);
+    EXPECT_NO_THROW({ addressBar->keyPressEvent(&event); });
+    EXPECT_TRUE(event.isAccepted());
+}
