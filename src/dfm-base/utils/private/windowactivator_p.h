@@ -16,28 +16,30 @@ DFMBASE_BEGIN_NAMESPACE
 namespace windowactivator {
 
 /*!
- * \brief Starts tracking the compositor's toplevels
+ * \brief Starts listening to the compositor's toplevels
  *
- * Binding the manager is asynchronous and the compositor only describes the
- * toplevels that already existed when the bind reached it, so the manager has
- * to be created before the windows it will later act on. Called where the
- * application starts opening windows, which leaves the event loop enough turns
- * to learn about them long before one of them can be minimized.
+ * Binding is asynchronous and the compositor only describes the toplevels that
+ * already existed when the bind reached it, so the manager has to be created
+ * before the windows it will later act on. Called from
+ * FileManagerWindowsManager::createWindow(), where every file manager window is
+ * born, which leaves the event loop enough turns to learn about them long
+ * before one of them can be minimized.
  */
-void prepare();
+void bindToplevelManager();
 
 /*!
  * \brief Asks the compositor to restore \a window and give it focus
  *
- * xdg-shell exposes set_minimized() alone, so a client cannot lift its own
- * minimized state, and xdg-activation is of no use here: the compositor only
- * trusts a token minted by a window the user is interacting with, which a
- * minimized window never is. zwlr_foreign_toplevel_manager_v1 is what window
- * switchers use instead, and it lets a client act on its own toplevels.
+ * On Wayland a client cannot lift its own minimized state: xdg-shell exposes
+ * set_minimized() alone, and Qt never reports Qt::WindowMinimized, so
+ * QWidget::isMinimized() is always false and showNormal() sends nothing.
+ * Treeland does offer a client side way to ask, through
+ * treeland_foreign_toplevel_manager_v2. The manager only exists on Wayland, so
+ * there is nothing to restore on the other platforms.
  *
- * Returns \c false when there is nothing to ask - the platform is not Wayland,
- * the compositor does not expose the protocol, or it reports no toplevel for
- * \a window - so the caller can fall back to a plain activation request.
+ * Returns \c false when there is nothing to ask - the compositor does not
+ * expose that protocol, or it reports no toplevel for \a window - so the caller
+ * can fall back to xdg-activation.
  */
 bool restoreAndActivate(QWindow *window);
 

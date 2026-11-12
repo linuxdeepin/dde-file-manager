@@ -59,6 +59,7 @@ protected:
 
 private:
     void onHideAddrAndUpdateCrumbs(const QUrl &url);
+    void onUrlButtonActivated(const QUrl &url);
 };
 
 }

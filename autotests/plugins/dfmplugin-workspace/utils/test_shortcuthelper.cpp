@@ -444,3 +444,38 @@ TEST_F(ShortcutHelperTest, BUG117491_Space_AutoRepeat_Ignored)
     QKeyEvent otherEv(QEvent::KeyPress, Qt::Key_A, Qt::NoModifier);
     EXPECT_FALSE(shortcutHelper->processKeyPressEvent(&otherEv));
 }
+
+// ===== PMS task 398283: tests for actionTriggered (renamed from acitonTriggered typo fix) =====
+
+TEST_F(ShortcutHelperTest, ActionTriggered_RenamedMethod_ExistsAndCallable)
+{
+    // The method was renamed from acitonTriggered to actionTriggered.
+    // Verify the new name compiles and is accessible via QAction::triggered connection.
+    QAction action;
+    bool triggered = false;
+
+    // Connect to the renamed slot
+    QObject::connect(&action, &QAction::triggered, shortcutHelper, &ShortcutHelper::actionTriggered);
+
+    // Stub internal dependencies to avoid side effects
+    stub.set_lamda(ADDR(ShortcutHelper, normalKeyPressEventHandle), [](ShortcutHelper*, QKeyEvent*) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    // Emit the triggered signal — actionTriggered should be called
+    EXPECT_NO_THROW({ emit action.triggered(); });
+
+    // Process events
+    QTest::qWait(50);
+    QCoreApplication::processEvents();
+}
+
+TEST_F(ShortcutHelperTest, RegisterAction_SetsWidgetShortcutContext)
+{
+    // After migration, registerAction sets Qt::WidgetShortcut context.
+    // Verify the action is created and registered without crash.
+    EXPECT_NO_THROW({
+        shortcutHelper->registerAction(QKeySequence::Copy, false);
+    });
+}

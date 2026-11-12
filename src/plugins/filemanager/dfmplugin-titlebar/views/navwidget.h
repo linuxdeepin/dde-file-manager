@@ -44,6 +44,7 @@ public Q_SLOT:
 private:
     void initializeUi();
     void initConnect();
+    void navigateWithCheck(const QUrl &url);
 };
 }
 

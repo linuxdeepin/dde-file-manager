@@ -141,7 +141,7 @@ TEST_F(UT_BookmarkCallBack, CdBookMarkUrlCallBack_FileExists)
     });
 
     // Mock network check
-    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusy, [](NetworkUtils *, const QUrl &) -> bool {
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy), [](NetworkUtils *, const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
@@ -195,7 +195,7 @@ TEST_F(UT_BookmarkCallBack, CdBookMarkUrlCallBack_NetworkBusy)
     });
 
     // Mock network busy
-    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusy, [](NetworkUtils *, const QUrl &) -> bool {
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy), [](NetworkUtils *, const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return true;
     });
@@ -240,7 +240,7 @@ TEST_F(UT_BookmarkCallBack, CdBookMarkUrlCallBack_SMBFileNotExists)
     });
 
     // Mock network not busy
-    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusy, [](NetworkUtils *, const QUrl &) -> bool {
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy), [](NetworkUtils *, const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
@@ -302,7 +302,7 @@ TEST_F(UT_BookmarkCallBack, CdBookMarkUrlCallBack_ShowRemoveDialog)
     });
 
     // Mock network not busy
-    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusy, [](NetworkUtils *, const QUrl &) -> bool {
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy), [](NetworkUtils *, const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });
