@@ -13,6 +13,8 @@
 
 #include <QUrl>
 #include <QColor>
+#include <QCloseEvent>
+#include <QMouseEvent>
 #include <DCrumbEdit>
 
 DWIDGET_USE_NAMESPACE
@@ -200,4 +202,66 @@ TEST_F(UT_TagEditor, constructorWithInTagDir)
     if (tagDirEditor) {
         tagDirEditor->deleteLater();
     }
+}
+
+TEST_F(UT_TagEditor, mousePressOutsideCloses)
+{
+    bool closed = false;
+    stub.set_lamda(&TagEditor::close, [&closed] {
+        __DBG_STUB_INVOKE__
+        closed = true;
+        return true;
+    });
+
+    QMouseEvent event(QEvent::MouseButtonPress, QPointF(1000, 1000), QPointF(1000, 1000),
+                      Qt::LeftButton, Qt::LeftButton, Qt::NoModifier);
+    EXPECT_NO_THROW(editor->mousePressEvent(&event));
+    EXPECT_TRUE(closed);
+}
+
+TEST_F(UT_TagEditor, closeEventCommitsInputOnWayland)
+{
+    editor->setFocusOutSelfClosing(true);
+
+    stub.set_lamda(&dfmbase::WindowUtils::isWayLand, []() -> bool {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(&DCrumbEdit::toPlainText, [] {
+        __DBG_STUB_INVOKE__
+        return "NewTag";
+    });
+
+    typedef bool (DCrumbEdit::*AppendCrumb)(const QString &);
+    stub.set_lamda(static_cast<AppendCrumb>(&DCrumbEdit::appendCrumb), [] {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    stub.set_lamda(&DCrumbEdit::crumbList, [](const DCrumbEdit *) -> QStringList {
+        __DBG_STUB_INVOKE__
+        return { "NewTag" };
+    });
+
+    stub.set_lamda(&DCrumbEdit::clear, [] {
+        __DBG_STUB_INVOKE__
+    });
+
+    typedef bool (DCrumbEdit::*InsertCrumb)(const DCrumbTextFormat &, int);
+    stub.set_lamda(static_cast<InsertCrumb>(&DCrumbEdit::insertCrumb), [] {
+        __DBG_STUB_INVOKE__
+        return true;
+    });
+
+    bool tagsSet = false;
+    stub.set_lamda(&TagManager::setTagsForFiles, [&tagsSet](TagManager *, const QStringList &, const QList<QUrl> &) -> bool {
+        __DBG_STUB_INVOKE__
+        tagsSet = true;
+        return true;
+    });
+
+    QCloseEvent event;
+    EXPECT_NO_THROW(editor->closeEvent(&event));
+    EXPECT_TRUE(tagsSet);
 }

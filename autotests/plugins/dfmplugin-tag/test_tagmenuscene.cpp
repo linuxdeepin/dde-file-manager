@@ -114,7 +114,7 @@ TEST_F(TagMenuSceneTest, create)
 TEST_F(TagMenuSceneTest, triggered)
 {
     auto act = new QAction("hello");
-    stub.set_lamda(&TagHelper::showTagEdit, [] { __DBG_STUB_INVOKE__ });
+    stub.set_lamda(&TagHelper::showTagEdit, [](TagHelper *, QWidget *, const QRectF &, const QRectF &, const QList<QUrl> &, bool) { __DBG_STUB_INVOKE__ });
     act->setProperty(ActionPropertyKey::kActionID, "hello");
     scene->d->predicateAction.insert(TagActionId::kActTagAddKey, act);
     scene->d->focusFile.setUrl("/hello");
@@ -207,14 +207,20 @@ TEST_F(TagMenuSceneTest, onColorClicked)
     tagWidget = nullptr;
 }
 
-TEST_F(TagMenuSceneTest, getSurfaceRect)
+TEST_F(TagMenuSceneTest, getSurface)
 {
     QWidget *w = new QWidget();
     QWidget w2;
     w2.setFixedSize(10, 10);
     w2.setProperty("WidgetName", QString("organizersurface"));
     w->setParent(&w2);
-    EXPECT_TRUE(d->getSurfaceRect(w) == w2.rect());
+
+    QRect rect;
+    EXPECT_EQ(&w2, d->getSurface(w, &rect));
+    EXPECT_EQ(rect, w2.rect());
+    EXPECT_EQ(nullptr, d->getSurface(nullptr));
+
+    delete w;
 }
 
 TEST_F(TagMenuSceneTest, getMenuListWidget)

@@ -19,7 +19,7 @@ class TagMenuScenePrivate : public DFMBASE_NAMESPACE::AbstractMenuScenePrivate
 
 public:
     explicit TagMenuScenePrivate(DFMBASE_NAMESPACE::AbstractMenuScene *qq);
-    QRect getSurfaceRect(QWidget *);
+    QWidget *getSurface(QWidget *w, QRect *rect = nullptr);
     QStringList tagNames {};
     bool onCollection { false };
     QMap<QString, QString> colorToTag {};
