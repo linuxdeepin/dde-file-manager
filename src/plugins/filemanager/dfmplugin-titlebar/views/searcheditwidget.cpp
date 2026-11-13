@@ -349,6 +349,14 @@ void SearchEditWidget::initUI()
     // searchEdit->setFocusPolicy(Qt::StrongFocus);
     searchEdit->lineEdit()->setFocusPolicy(Qt::ClickFocus);
 
+    // PMS 375607: DTK DSearchEdit hardcodes iconSize(20x20) and active-state
+    // DIconButton position (x=3). Override icon size to match design spec (16x16).
+    auto searchIconButtons = searchEdit->findChildren<DIconButton *>();
+    for (auto btn : searchIconButtons) {
+        if (btn->accessibleName() == QStringLiteral("DSearchEditIconButton"))
+            btn->setIconSize(QSize(kToolButtonIconSize, kToolButtonIconSize));
+    }
+
     searchEditOpacityEffect = new QGraphicsOpacityEffect(searchEdit);
     searchEditOpacityEffect->setOpacity(1.0);
     searchEdit->setGraphicsEffect(searchEditOpacityEffect);
@@ -409,6 +417,22 @@ void SearchEditWidget::initConnect()
         int posEnd = searchEdit->lineEdit()->selectionEnd();
         selectPosStart = posStart < posEnd ? posStart : posEnd;
         selectLength = searchEdit->lineEdit()->selectionLength();
+    });
+
+    // PMS 375607: On focus, DTK repositions the active DIconButton to x=3 via
+    // QAction LeadingPosition. Delay one frame and move to x=6 to match the
+    // inactive-state left margin. y-axis keeps DTK default value.
+    connect(searchEdit, &DLineEdit::focusChanged, this, [this](bool focused) {
+        if (!focused)
+            return;
+        QTimer::singleShot(0, this, [this]() {
+            auto buttons = searchEdit->findChildren<DIconButton *>();
+            for (auto btn : buttons) {
+                if (btn->accessibleName() == QStringLiteral("DSearchEditIconButton")
+                        && btn->isVisible())
+                    btn->move(6, btn->pos().y());
+            }
+        });
     });
 }
 
