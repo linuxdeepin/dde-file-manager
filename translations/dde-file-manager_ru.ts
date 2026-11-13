@@ -2548,7 +2548,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="122"/>
         <source>Sort by</source>
-        <translation>Сортировать по</translation>
+        <translation>Сортировка</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-canvas/menu/canvasmenuscene.cpp" line="127"/>
@@ -3499,7 +3499,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="397"/>
         <source>Do you want to run %1?</source>
-        <translation>Вы хотите запустить %1?</translation>
+        <translation>Хотите запустить %1?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="398"/>
@@ -3569,12 +3569,12 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="526"/>
         <source>Do you want to delete %1?</source>
-        <translation>Вы хотите удалить %1?</translation>
+        <translation>Хотите удалить %1?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="527"/>
         <source>Do you want to delete the selected %1 items?</source>
-        <translation>Вы хотите удалить выбранные %1 элементов?</translation>
+        <translation>Хотите удалить выбранные объекты (%1)?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="558"/>
@@ -3629,7 +3629,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="729"/>
         <source>This file will be hidden if the file name starts with &apos;.&apos;. Do you want to hide it?</source>
-        <translation>Этот файл будет скрыт, если его имя начинается с &apos;.&apos;. Вы хотите скрыть его?</translation>
+        <translation>Этот файл будет скрыт, если имя файла начинается с «.». Хотите его скрыть?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="730"/>
@@ -3654,7 +3654,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="775"/>
         <source>Do you want to delete this shortcut？</source>
-        <translation>Вы хотите удалить этот ярлык?</translation>
+        <translation>Хотите удалить этот ярлык?</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="800"/>
@@ -4109,7 +4109,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="24"/>
         <source>Reverse selection</source>
-        <translation>Инвертировать выделение</translation>
+        <translation>Обратить выделение</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/shortcut/shortcut.cpp" line="25"/>
@@ -6409,7 +6409,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/opendirmenuscene.cpp" line="37"/>
         <source>Reverse select</source>
-        <translation>Инвертировать выделение</translation>
+        <translation>Обратить выделение</translation>
     </message>
 </context>
 <context>
@@ -6892,7 +6892,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="207"/>
         <source>Open file location</source>
-        <translation>Открыть местоположение файла</translation>
+        <translation>Открыть расположение файла</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="208"/>
@@ -7419,7 +7419,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="225"/>
         <source>Open file location</source>
-        <translation>Открыть местоположение файла</translation>
+        <translation>Открыть расположение файла</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="226"/>
@@ -7529,7 +7529,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagdirmenuscene.cpp" line="93"/>
         <source>Open file location</source>
-        <translation>Открыть местоположение файла</translation>
+        <translation>Открыть расположение файла</translation>
     </message>
 </context>
 <context>
@@ -7815,7 +7815,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="309"/>
         <source>Sort by</source>
-        <translation>Сортировать по</translation>
+        <translation>Сортировка</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/optionbuttonbox.cpp" line="315"/>
@@ -9444,7 +9444,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="93"/>
         <source>Loading...</source>
-        <translation>Загрузка...</translation>
+        <translation>Загрузка…</translation>
     </message>
 </context>
 <context>
@@ -9511,7 +9511,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="41"/>
         <source>Sort by</source>
-        <translation>Сортировать по</translation>
+        <translation>Сортировка</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/menus/sortanddisplaymenuscene.cpp" line="43"/>
