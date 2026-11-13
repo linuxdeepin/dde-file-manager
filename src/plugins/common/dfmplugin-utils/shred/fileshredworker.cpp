@@ -209,6 +209,7 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QSt
         }
 
         QString savedErrorMsg;   // Used to save error information
+        bool fileNotFound = false;   // Distinguish file-not-found from permission errors
 
         while (process.state() != QProcess::NotRunning) {
             if (m_shouldStop) {
@@ -228,16 +229,20 @@ bool FileShredWorker::executeShredCommandBatch(const QStringList &filePaths, QSt
                 if (match.hasMatch()) {
                     savedErrorMsg = match.captured(1).trimmed();   // Only save the first encountered filename/path
                 }
+                if (output.contains(QStringLiteral("没有那个文件或目录")))
+                    fileNotFound = true;
             }
 
             parseShredOutput(output);
         }
 
         if (process.exitCode() != 0) {
-            msg = savedErrorMsg + ": " + tr("Permission denied");
-
             if (savedErrorMsg.isEmpty())
                 msg = tr("The file has been moved or the process has exited");
+            else if (fileNotFound)
+                msg = savedErrorMsg + ": " + tr("File does not exist");
+            else
+                msg = savedErrorMsg + ": " + tr("Permission denied");
 
             fmWarning() << "Batch shred command failed: " << process.exitCode() << msg;
             return false;
