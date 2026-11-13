@@ -6892,7 +6892,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="207"/>
         <source>Open file location</source>
-        <translation>Открыть местоположение файла</translation>
+        <translation>Открыть расположение файла</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-recent/menus/recentmenuscene.cpp" line="208"/>
@@ -7419,7 +7419,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="225"/>
         <source>Open file location</source>
-        <translation>Открыть местоположение файла</translation>
+        <translation>Открыть расположение файла</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/menus/searchmenuscene.cpp" line="226"/>
@@ -7529,7 +7529,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/common/dfmplugin-tag/menu/tagdirmenuscene.cpp" line="93"/>
         <source>Open file location</source>
-        <translation>Открыть местоположение файла</translation>
+        <translation>Открыть расположение файла</translation>
     </message>
 </context>
 <context>
@@ -9444,7 +9444,7 @@ You need to upgrade this vault to continue using it.</source>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-workspace/views/fileviewstatusbar.cpp" line="93"/>
         <source>Loading...</source>
-        <translation>Загрузка...</translation>
+        <translation>Загрузка…</translation>
     </message>
 </context>
 <context>
