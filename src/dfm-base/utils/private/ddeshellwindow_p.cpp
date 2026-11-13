@@ -17,7 +17,7 @@
 #    include <private/qwaylanddisplay_p.h>
 #    include <private/qwaylandwindow_p.h>
 
-#    include "qwayland-treeland-dde-shell-v1.h"
+#    include "qwayland-treeland-dde-shell-unstable-v2.h"
 
 #    include <wayland-client.h>
 
@@ -25,14 +25,19 @@ DFMBASE_BEGIN_NAMESPACE
 namespace ddeshell {
 namespace {
 
+// treeland_dde_shell_surface_v2 enum values. The generated header exposes
+// the requests as plain uint32_t, so the constants are spelled out here.
+constexpr uint32_t kRoleNormal = 0;              // role.normal
+constexpr uint32_t kSkipFlagDockPreview = 0x2;   // skip_flag.dock_preview
+
 /*!
- * \brief Binds treeland_dde_shell_manager_v1 (shell surface creation)
+ * \brief Binds treeland_dde_shell_manager_v2 (shell surface creation)
  *
  * The compositor registers the global at version 1, which covers
- * get_shell_surface and everything the skip bit needs.
+ * get_shell_surface and everything the skip bits need.
  */
 class DDEShellManager : public QWaylandClientExtensionTemplate<DDEShellManager>,
-                        public QtWayland::treeland_dde_shell_manager_v1
+                        public QtWayland::treeland_dde_shell_manager_v2
 {
     Q_OBJECT
 public:
@@ -51,15 +56,20 @@ public:
 };
 
 /*!
- * \brief A shell surface carrying the skip-dock-preview bit
+ * \brief A shell surface carrying the skip flags
  */
-class DDEShellSurface : public QObject, public QtWayland::treeland_dde_shell_surface_v1
+class DDEShellSurface : public QObject, public QtWayland::treeland_dde_shell_surface_v2
 {
     Q_OBJECT
 public:
-    explicit DDEShellSurface(::treeland_dde_shell_surface_v1 *object)
-        : QtWayland::treeland_dde_shell_surface_v1(object)
+    explicit DDEShellSurface(::treeland_dde_shell_surface_v2 *object)
+        : QtWayland::treeland_dde_shell_surface_v2(object)
     {
+        // Unlike v1, a v2 shell surface defaults to the overlay role, which
+        // would stack the window above ordinary toplevels. Put it back into
+        // the normal layer; sent in the same flush as the creation request,
+        // so the compositor never renders the transient overlay state.
+        set_role(kRoleNormal);
     }
 
     ~DDEShellSurface() override
@@ -127,7 +137,7 @@ void flushRequests(QtWaylandClient::QWaylandDisplay *display)
 }
 
 /*!
- * \brief Applies the skip-dock-preview bit to windows, retrying while the
+ * \brief Applies the dock-preview skip flag to windows, retrying while the
  * manager global or the platform surface are still pending
  */
 class SkipDockController : public QObject
@@ -197,7 +207,9 @@ public:
             entry.shellSurface = new DDEShellSurface(mgr->get_shell_surface(surface));
             qCInfo(logDFMBase) << "Created dde shell surface to hide window from the dock:" << window;
         }
-        entry.shellSurface->set_skip_dock_preview(skip ? 1 : 0);
+        // set_skip_flags replaces the whole bitfield; this surface only ever
+        // carries the dock-preview bit.
+        entry.shellSurface->set_skip_flags(skip ? kSkipFlagDockPreview : 0);
         flushRequests(windowDisplay(window));
     }
 
