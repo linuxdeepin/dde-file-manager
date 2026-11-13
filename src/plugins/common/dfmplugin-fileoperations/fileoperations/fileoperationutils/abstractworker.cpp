@@ -26,6 +26,7 @@
 #include <QRegularExpression>
 #include <QDebug>
 #include <qplatformdefs.h>
+#include <linux/limits.h>
 
 DPFILEOPERATIONS_USE_NAMESPACE
 
@@ -663,13 +664,15 @@ QString AbstractWorker::formatFileName(const QString &fileName)
 
     const QString &fs_type = QStorageInfo(targetUrl.path()).fileSystemType();
 
-    if (fs_type == "vfat") {
-        QString new_name = fileName;
+    QString result = fileName;
 
-        return new_name.replace(QRegularExpression("[\"*:<>?\\|]"), "_");
+    if (fs_type == "vfat") {
+        result.replace(QRegularExpression("[\"*:<>?\\|]"), "_");
     }
 
-    return fileName;
+    result = FileUtils::cutFileName(result, NAME_MAX, FileUtils::supportLongName(targetUrl));
+
+    return result;
 }
 
 void AbstractWorker::saveOperations()
