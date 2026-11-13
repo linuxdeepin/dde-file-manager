@@ -1053,14 +1053,6 @@ MountPassInfo DeviceManagerPrivate::askForPasswdWhenMountNetworkDevice(const QSt
         info.domain = data.value(kDomain).toString();
         info.savePasswd = static_cast<DFMMOUNT::NetworkMountPasswdSaveMode>(data.value(kPasswdSaveMode).toInt());
         info.passwd = data.value(kPasswd).toString();
-
-        // save password in session if samba is integrated.
-        if (uri.startsWith(Global::Scheme::kSmb)) {
-            using AppGA = Application::GenericAttribute;
-            bool smbIntegrated = Application::genericAttribute(AppGA::kMergeTheEntriesOfSambaSharedFolders).toBool();
-            if (smbIntegrated && info.savePasswd != dfmmount::NetworkMountPasswdSaveMode::kSavePermanently)
-                info.savePasswd = NetworkMountPasswdSaveMode::kSaveBeforeLogout;
-        }
     }
 
     QApplication::setOverrideCursor(Qt::WaitCursor);
