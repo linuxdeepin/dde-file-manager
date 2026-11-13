@@ -20,9 +20,11 @@ namespace ddeshell {
 /*!
  * \brief Hides \a window from the Treeland dock taskbar
  *
- * Client side of treeland-dde-shell-v1: the window's wl_surface gets a shell
- * surface whose skip-dock-preview bit is set, which makes the compositor keep
- * the window out of the foreign toplevel lists the dock taskbar consumes.
+ * Client side of treeland-dde-shell-unstable-v2: the window's wl_surface gets
+ * a shell surface whose skip flags carry the dock-preview bit, which makes
+ * the compositor keep the window out of the foreign toplevel lists the dock
+ * taskbar consumes. The surface is put back into the normal role right away,
+ * since the v2 shell surface role defaults to the overlay layer.
  *
  * The manager binds asynchronously and the platform surface does not exist
  * before the window is first shown, so a call made before either is ready is
