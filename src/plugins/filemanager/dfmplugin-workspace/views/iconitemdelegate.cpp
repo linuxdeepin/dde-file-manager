@@ -786,7 +786,8 @@ QSize IconItemDelegate::sizeHint(const QStyleOptionViewItem &option, const QMode
     // If there is one selection and the name is very long,
     // set the item height to maximum for the last index to make the scrollbar appear on the right side
     if (index.isValid() && parent()->isLastIndex(index) && d->expandedItem
-        && d->expandedIndex.isValid() && d->expandedItem->isVisible()) {
+        && d->expandedIndex.isValid() && d->expandedItem->isVisible()
+        && index == d->expandedIndex) {
         d->expandedItem->setIconHeight(parent()->parent()->iconSize().height());
         auto hight = qMax(size.height(), d->expandedItem->heightForWidth(size.width()) - d->expandedItem->getDifferenceOfLastRow() * size.height());
         return QSize(size.width(), hight);
