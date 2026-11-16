@@ -10,6 +10,8 @@
 #include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <dfm-framework/event/event.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <DIconButton>
 #include <DGuiApplicationHelper>
@@ -18,6 +20,7 @@
 #endif
 
 #include <QAbstractButton>
+#include <QPointer>
 #include <QProxyStyle>
 
 using namespace dfmplugin_titlebar;
@@ -72,16 +75,28 @@ void NavWidget::removeUrlFromHistoryStack(const QUrl &url)
     d->updateBackForwardButtonsState();
 }
 
+void NavWidget::navigateWithCheck(const QUrl &url)
+{
+    QPointer<NavWidget> guard(this);
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [guard, url](bool busy) {
+        if (!guard)
+            return;
+        if (busy) {
+            DialogManager::instance()->showUnableToVistDir(url.path());
+            return;
+        }
+        guard->d->updateBackForwardButtonsState();
+        TitleBarEventCaller::sendCd(guard.data(), url);
+    });
+}
+
 void NavWidget::back()
 {
     if (!d->curNavStack)
         return;
     QUrl &&url = d->curNavStack->back();
-
-    if (!url.isEmpty()) {
-        d->updateBackForwardButtonsState();
-        TitleBarEventCaller::sendCd(this, url);
-    }
+    if (!url.isEmpty())
+        navigateWithCheck(url);
 }
 
 void NavWidget::forward()
@@ -89,11 +104,8 @@ void NavWidget::forward()
     if (!d->curNavStack)
         return;
     QUrl &&url = d->curNavStack->forward();
-
-    if (!url.isEmpty()) {
-        d->updateBackForwardButtonsState();
-        TitleBarEventCaller::sendCd(this, url);
-    }
+    if (!url.isEmpty())
+        navigateWithCheck(url);
 }
 
 void NavWidget::onDevUnmounted(const QString &id, const QString &oldMpt)
