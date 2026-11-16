@@ -61,7 +61,7 @@ void CustomDToolButton::paintEvent(QPaintEvent *event)
         DStyleHelper dstyle(style());
         const int radius = dstyle.pixelMetric(DStyle::PM_FrameRadius);
         QColor bgColor = isDarkTheme ? QColor(0, 0, 0, 76)
-                                     : QColor(0, 0, 0, 26);
+                                     : QColor(0, 0, 0, 51);
         p.setPen(Qt::NoPen);
         p.setBrush(bgColor);
         p.drawRoundedRect(rect(), radius, radius);
