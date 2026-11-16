@@ -295,7 +295,7 @@ TEST_F(FileInfoAsycWorkerTest, FileRefreshWithSmbBusy)
     // Stub NetworkUtils::checkFtpOrSmbBusy to return true so fileRefresh
     // actually calls dfileInfo->refresh()
     stub_ext::StubExt stub;
-    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusy, [](NetworkUtils *, const QUrl &) -> bool {
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy), [](NetworkUtils *, const QUrl &) -> bool {
         return true;
     });
 
@@ -326,7 +326,7 @@ TEST_F(FileInfoAsycWorkerTest, FileRefreshWithSmbNotBusy)
 {
     // checkFtpOrSmbBusy returns false → dfileInfo->refresh() is NOT called
     stub_ext::StubExt stub;
-    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusy, [](NetworkUtils *, const QUrl &) -> bool {
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy), [](NetworkUtils *, const QUrl &) -> bool {
         return false;
     });
 
