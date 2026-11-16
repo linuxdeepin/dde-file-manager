@@ -4,27 +4,24 @@
 
 #include "windowactivator_p.h"
 
-#if defined(DFM_WITH_FOREIGN_TOPLEVEL)
+#if defined(DFM_WITH_TREELAND_TOPLEVEL)
 
 #    include <QCoreApplication>
 #    include <QDebug>
-#    include <QFileInfo>
 #    include <QGuiApplication>
-#    include <QPointer>
 #    include <QStringList>
-#    include <QTimer>
 #    include <QWindow>
 
 #    include <QtGui/qguiapplication_platform.h>
 #    include <QtWaylandClient/QWaylandClientExtension>
 
-#    include "qwayland-wlr-foreign-toplevel-management-unstable-v1.h"
+#    include "qwayland-treeland-foreign-toplevel-manager-unstable-v2.h"
 
-#    include <algorithm>
-#    include <functional>
-#    include <utility>
 #    include <wayland-client-core.h>
 #    include <wayland-util.h>
+
+#    include <functional>
+#    include <utility>
 
 DFMBASE_BEGIN_NAMESPACE
 namespace windowactivator {
@@ -33,18 +30,17 @@ namespace {
 /*!
  * \brief One toplevel as described by the compositor
  *
- * zwlr_foreign_toplevel_manager_v1 reports every mapped toplevel of every
- * client, so the fields needed to recognise one of our own windows - the
- * app_id and the mirrored title, plus the minimized state - are cached here.
- * The protocol has no pid event, so a window is identified by app_id and title.
+ * Treeland reports every mapped toplevel of every client through this
+ * protocol, so the fields needed to recognise one of our own windows - the
+ * owning pid, the mirrored title and the minimized state - are cached here.
  */
-class ForeignToplevelHandle : public QtWayland::zwlr_foreign_toplevel_handle_v1
+class ForeignToplevelHandle : public QtWayland::treeland_foreign_toplevel_handle_v2
 {
 public:
     using ClosedHandler = std::function<void(ForeignToplevelHandle *)>;
 
-    ForeignToplevelHandle(::zwlr_foreign_toplevel_handle_v1 *object, ClosedHandler onClosed)
-        : QtWayland::zwlr_foreign_toplevel_handle_v1(object), m_onClosed(std::move(onClosed))
+    ForeignToplevelHandle(::treeland_foreign_toplevel_handle_v2 *object, ClosedHandler onClosed)
+        : QtWayland::treeland_foreign_toplevel_handle_v2(object), m_onClosed(std::move(onClosed))
     {
     }
 
@@ -54,11 +50,11 @@ public:
             destroy();
     }
 
-    const QString &appId() const { return m_appId; }
+    uint32_t pid() const { return m_pid; }
     const QString &title() const { return m_title; }
     bool isMinimized() const { return m_minimized; }
 
-    void restoreAndActivate(::wl_seat *seat)
+    void restoreAndActivate(struct ::wl_seat *seat)
     {
         if (m_minimized)
             unset_minimized();
@@ -67,17 +63,17 @@ public:
     }
 
 protected:
-    void zwlr_foreign_toplevel_handle_v1_app_id(const QString &appId) override
+    void treeland_foreign_toplevel_handle_v2_pid(uint32_t pid) override
     {
-        m_appId = appId;
+        m_pid = pid;
     }
 
-    void zwlr_foreign_toplevel_handle_v1_title(const QString &title) override
+    void treeland_foreign_toplevel_handle_v2_title(const QString &title) override
     {
         m_title = title;
     }
 
-    void zwlr_foreign_toplevel_handle_v1_state(struct ::wl_array *state) override
+    void treeland_foreign_toplevel_handle_v2_state(struct ::wl_array *state) override
     {
         m_minimized = false;
         if (!state || !state->data)
@@ -85,14 +81,14 @@ protected:
 
         const auto *states = static_cast<const uint32_t *>(state->data);
         for (size_t i = 0; i < state->size / sizeof(uint32_t); ++i) {
-            if (states[i] == ZWLR_FOREIGN_TOPLEVEL_HANDLE_V1_STATE_MINIMIZED) {
+            if (states[i] == TREELAND_FOREIGN_TOPLEVEL_HANDLE_V2_STATE_MINIMIZED) {
                 m_minimized = true;
                 break;
             }
         }
     }
 
-    void zwlr_foreign_toplevel_handle_v1_closed() override
+    void treeland_foreign_toplevel_handle_v2_closed() override
     {
         // The compositor unmapped this window; the handle is inert from here
         // on and must not be used, so let the manager drop it.
@@ -101,80 +97,44 @@ protected:
 
 private:
     ClosedHandler m_onClosed;
-    QString m_appId;
+    uint32_t m_pid { 0 };
     QString m_title;
     bool m_minimized { false };
 };
 
 /*!
- * \brief Binds zwlr_foreign_toplevel_manager_v1 and tracks its handles
+ * \brief Binds treeland_foreign_toplevel_manager_v2 and tracks its handles
  */
 class ForeignToplevelManager : public QWaylandClientExtensionTemplate<ForeignToplevelManager>,
-                               public QtWayland::zwlr_foreign_toplevel_manager_v1
+                               public QtWayland::treeland_foreign_toplevel_manager_v2
 {
     Q_OBJECT
 
 public:
     ForeignToplevelManager()
-        : QWaylandClientExtensionTemplate(3)
+        : QWaylandClientExtensionTemplate(1)
     {
     }
 
     /*!
      * \brief Restores and focuses the toplevel belonging to \a window
      *
-     * Returns false only when the compositor does not expose the protocol, so
-     * the caller can fall back. Otherwise the window is handled here, though
-     * possibly not before the next event loop turns: a window that was just
-     * created has no toplevel yet, and one whose title was just changed is
-     * still reported under the old title, so the handle cannot be picked right
-     * away. Asking again once that has settled keeps multiple windows apart
-     * without having to guess.
+     * Returns false when there is nothing to ask: the compositor does not
+     * expose the protocol, or it reports no toplevel for \a window.
      */
     bool restoreAndActivate(QWindow *window)
     {
-        if (!isActive() || !qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>())
-            return false;
-
-        if (restoreNow(window))
-            return true;
-
-        scheduleRetry(QPointer<QWindow>(window), kRetryAttempts);
-        return true;
-    }
-
-protected:
-    void zwlr_foreign_toplevel_manager_v1_toplevel(::zwlr_foreign_toplevel_handle_v1 *toplevel) override
-    {
-        m_handles.append(new ForeignToplevelHandle(toplevel, [this](ForeignToplevelHandle *handle) {
-            m_handles.removeAll(handle);
-            delete handle;
-        }));
-    }
-
-    void zwlr_foreign_toplevel_manager_v1_finished() override
-    {
-        qCInfo(logDFMBase) << "Foreign toplevel manager finished";
-    }
-
-private:
-    static constexpr int kRetryAttempts = 6;
-    static constexpr int kRetryDelayMs = 40;
-
-    /*!
-     * \brief Restores \a window if its toplevel is known right now
-     */
-    bool restoreNow(QWindow *window)
-    {
-        ForeignToplevelHandle *target = handleFor(window);
-        if (!target)
-            return false;
-
         auto *waylandApp = qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>();
-        if (!waylandApp)
+        if (!waylandApp || !isActive())
             return false;
 
-        qCInfo(logDFMBase) << "Restoring foreign toplevel, app_id:" << target->appId()
+        ForeignToplevelHandle *target = handleFor(window);
+        if (!target) {
+            qCDebug(logDFMBase) << "No foreign toplevel for window:" << window->title();
+            return false;
+        }
+
+        qCInfo(logDFMBase) << "Restoring foreign toplevel, pid:" << target->pid()
                            << "minimized:" << target->isMinimized()
                            << "title:" << target->title();
         target->restoreAndActivate(waylandApp->seat());
@@ -185,42 +145,37 @@ private:
         return true;
     }
 
-    /*!
-     * \brief Tries restoreNow() again until the compositor catches up
-     */
-    void scheduleRetry(QPointer<QWindow> window, int attemptsLeft)
+protected:
+    void treeland_foreign_toplevel_manager_v2_toplevel(::treeland_foreign_toplevel_handle_v2 *toplevel) override
     {
-        if (attemptsLeft <= 0) {
-            qCWarning(logDFMBase) << "No foreign toplevel appeared for window:"
-                                  << (window ? window->title() : QString());
-            return;
-        }
-
-        QTimer::singleShot(kRetryDelayMs, this, [this, window, attemptsLeft] {
-            if (!window)
-                return;
-            if (!restoreNow(window))
-                scheduleRetry(window, attemptsLeft - 1);
-        });
+        m_handles.append(new ForeignToplevelHandle(toplevel, [this](ForeignToplevelHandle *handle) {
+            m_handles.removeAll(handle);
+            delete handle;
+        }));
     }
 
+    void treeland_foreign_toplevel_manager_v2_finished() override
+    {
+        qCInfo(logDFMBase) << "Treeland foreign toplevel manager finished";
+    }
+
+private:
     /*!
      * \brief Picks the handle that belongs to \a window
      *
-     * Only handles carrying our app_id are considered, since the protocol does
-     * not say which client a toplevel belongs to. Among those, the title is what
-     * identifies a window - but the compositor mirrors it with a delay, and
-     * opening a tab renames the window right before it is activated. So when no
-     * title matches, the handles known to belong to our other windows are taken
-     * out of the picture first: whatever is left is this one, even while the
-     * compositor still reports it under its previous name.
+     * The protocol never maps a handle back to a wl_surface, so a window is
+     * identified by this process' pid plus the title the compositor mirrors
+     * from xdg-toplevel. That title lags behind the window itself and opening a
+     * tab changes it right before activation, so a title match is preferred but
+     * an unmatched one falls back to the only minimized toplevel - the state a
+     * restore has to lift.
      */
     ForeignToplevelHandle *handleFor(const QWindow *window) const
     {
-        const QStringList &appIds = compositorAppIds();
+        const uint32_t selfPid = QCoreApplication::applicationPid();
         QList<ForeignToplevelHandle *> own;
         for (auto *handle : m_handles) {
-            if (appIds.contains(handle->appId()))
+            if (handle->pid() == selfPid)
                 own.append(handle);
         }
         if (own.isEmpty())
@@ -236,101 +191,18 @@ private:
                 return handle;
         }
 
-        // No title match: drop the handles that belong to our other windows,
-        // then accept what remains if it can only be this window.
-        const QStringList &others = otherWindowsTitles(window);
-        QList<ForeignToplevelHandle *> unclaimed;
+        if (own.size() == 1)
+            return own.first();
+
+        ForeignToplevelHandle *minimized = nullptr;
         for (auto *handle : std::as_const(own)) {
-            if (!others.contains(handle->title()))
-                unclaimed.append(handle);
-        }
-        return soleMatch(unclaimed, true);
-    }
-
-    /*!
-     * \brief The only handle among \a candidates that can be the wanted window
-     *
-     * Returns null when there is more than one, because picking then would mean
-     * restoring an arbitrary window - better to report failure and let the
-     * caller fall back than to raise the wrong window.
-     */
-    static ForeignToplevelHandle *soleMatch(const QList<ForeignToplevelHandle *> &candidates,
-                                            bool preferMinimized)
-    {
-        if (candidates.size() == 1)
-            return candidates.first();
-
-        if (!preferMinimized)
-            return nullptr;
-
-        ForeignToplevelHandle *onlyMinimized = nullptr;
-        for (auto *handle : candidates) {
             if (!handle->isMinimized())
                 continue;
-            if (onlyMinimized)
-                return nullptr;
-            onlyMinimized = handle;
+            if (minimized)
+                return nullptr;   // ambiguous, leave it to xdg-activation
+            minimized = handle;
         }
-        return onlyMinimized;
-    }
-
-    /*!
-     * \brief The titles our other live windows currently report
-     *
-     * Used to tell the toplevels of this application's other windows apart when
-     * \a window's own title cannot be matched yet.
-     */
-    static QStringList otherWindowsTitles(const QWindow *window)
-    {
-        QStringList titles;
-        for (QWindow *other : QGuiApplication::allWindows()) {
-            if (other == window)
-                continue;
-            const QStringList &candidates = compositorTitles(other);
-            for (const QString &title : candidates) {
-                if (!titles.contains(title))
-                    titles.append(title);
-            }
-        }
-        return titles;
-    }
-
-    /*!
-     * \brief The app_ids under which the compositor may report our windows
-     *
-     * QWaylandWindow derives the app_id from the desktop file name, falling
-     * back to the executable name optionally prefixed with the reversed
-     * organization domain, so all of those spellings have to be accepted.
-     */
-    static QStringList compositorAppIds()
-    {
-        const QString &desktopFileName = QGuiApplication::desktopFileName();
-        if (!desktopFileName.isEmpty())
-            return { desktopFileName };
-
-        QStringList names { QCoreApplication::applicationName() };
-        const QString &executable = QCoreApplication::applicationFilePath();
-        if (!executable.isEmpty()) {
-            const QString &baseName = QFileInfo(executable).baseName();
-            if (!names.contains(baseName))
-                names << baseName;
-        }
-
-        // Qt prepends the organization domain component by component, so the
-        // resulting app_id carries the domain in reverse order.
-        const QStringList &domain = QCoreApplication::organizationDomain().split(
-                QLatin1Char('.'), Qt::SkipEmptyParts);
-        if (domain.isEmpty())
-            return names;
-
-        QStringList reversed = domain;
-        std::reverse(reversed.begin(), reversed.end());
-        const QString &prefix = reversed.join(QLatin1Char('.')) + QLatin1Char('.');
-
-        QStringList appIds = names;
-        for (const QString &name : std::as_const(names))
-            appIds << prefix + name;
-        return appIds;
+        return minimized;
     }
 
     /*!
@@ -367,16 +239,14 @@ private:
 ForeignToplevelManager *manager()
 {
     static ForeignToplevelManager *instance = nullptr;
-    if (!instance && qGuiApp
-        && qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>()) {
+    if (!instance && qGuiApp && qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>())
         instance = new ForeignToplevelManager;
-    }
     return instance;
 }
 
 }   // namespace
 
-void prepare()
+void bindToplevelManager()
 {
     manager();
 }
@@ -400,7 +270,7 @@ DFMBASE_END_NAMESPACE
 DFMBASE_BEGIN_NAMESPACE
 namespace windowactivator {
 
-void prepare()
+void bindToplevelManager()
 {
 }
 
@@ -412,4 +282,4 @@ bool restoreAndActivate(QWindow *)
 }   // namespace windowactivator
 DFMBASE_END_NAMESPACE
 
-#endif   // DFM_WITH_FOREIGN_TOPLEVEL
+#endif   // DFM_WITH_TREELAND_TOPLEVEL
