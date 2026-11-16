@@ -9,6 +9,8 @@
 
 #include <mutex>
 
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+
 DFMBASE_USE_NAMESPACE
 using namespace dfmplugin_workspace;
 
@@ -214,9 +216,10 @@ QStringList BaseSortMenuScenePrivate::primaryMenuRule()
         ret.append("reverse-select");
         ret.append(ActionID::kSeparatorLine);
 
+        ret.append(dfmplugin_menu::ActionID::kCopyFilePath);   // 复制文件路径
+        ret.append(dfmplugin_menu::ActionID::kCopyFolderPath);   // 复制文件夹路径
         ret.append("add-share");   // 添加共享
         ret.append("remove-share");   // 移除共享
-
         ret.append("send-to");   // 发送到
         ret.append("share");   // 共享
         ret.append("add-bookmark");   // 添加书签

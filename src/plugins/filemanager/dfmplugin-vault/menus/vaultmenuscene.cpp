@@ -67,6 +67,8 @@ QStringList VaultMenuScenePrivate::normalMenuActionRule()
         "stage-file-to-burning",
         "cut",
         "copy",
+        "copy-file-path",
+        "copy-folder-path",
         "rename",
         "delete",
         "reverse-select",
