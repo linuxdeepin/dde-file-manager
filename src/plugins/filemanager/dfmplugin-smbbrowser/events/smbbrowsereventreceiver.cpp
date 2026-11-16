@@ -4,6 +4,8 @@
 
 #include "smbbrowsereventreceiver.h"
 #include <dfm-base/file/local/syncfileinfo.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/universalutils.h>
 #include <dfm-base/utils/systempathutil.h>
 #include <dfm-base/utils/clipboard.h>

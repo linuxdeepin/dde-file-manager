@@ -200,7 +200,7 @@ QList<CrumbData> TitleBarHelper::crumbSeprateUrl(const QUrl &url)
                                                                                 Global::CreateFileInfoType::kCreateFileInfoSync);
             if (!networkBusy && infoPointer) {
                 const QString &displayName = infoPointer->displayOf(DisPlayInfoType::kFileDisplayName);
-                if (!displayName.isEmpty())
+                if (!displayName.isEmpty() && displayName != "/")
                     displayText = displayName;
             }
             CrumbData data(oneUrl, displayText);

@@ -68,7 +68,7 @@ void UrlPushButtonPrivate::initConnect()
 int UrlPushButtonPrivate::arrowWidth() const
 {
     int width = 0;
-    if (q->icon().isNull()) {
+    if (q->icon().isNull() && !q->text().isEmpty()) {
         // 计算箭头宽度
         QFont adjustedFont(font);
         adjustedFont.setBold(subDir.isEmpty());
@@ -329,7 +329,12 @@ void UrlPushButton::setCrumbDatas(const QList<CrumbData> &datas, bool stacked)
         if (data.iconName.isEmpty()) {
             setText(data.displayText);
         } else {
-            setIcon(QIcon::fromTheme(getIconName(data)));
+            QIcon icon(QIcon::fromTheme(getIconName(data)));
+            if (icon.isNull()) {
+                setText(data.displayText);
+            } else {
+                setIcon(icon);
+            }
         }
     }
     updateWidth();
@@ -423,7 +428,7 @@ void UrlPushButton::paintEvent(QPaintEvent *event)
                                 kFolderButtonRectRadius, kFolderButtonRectRadius);
         painter.restore();
         style()->drawPrimitive(QStyle::PE_IndicatorArrowDown, &option, &painter, this);
-    } else {
+    } else if (!text().isEmpty()) {
         painter.save();
         if (!d->stacked && d->subDir.isEmpty())
             painter.setPen(palette().highlight().color());
