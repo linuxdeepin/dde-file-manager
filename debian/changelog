@@ -1,3 +1,29 @@
+dde-file-manager (6.5.180) unstable; urgency=medium
+
+  * fix: correct size sorting on SMB by preferring sortInfo over fileInfo
+  * fix: use event position for sidebar drag cursor check
+  * fix: clear clipboard cache only when mimeData is valid
+  * fix: restore desktop context menu on non-primary screens in treeland extend mode
+  * fix: recreate desktop window when screen changes to fix layer-shell output binding
+  * fix: use exclusive zone -1 for desktop background window
+  * fix: ensure completer popup positioned correctly on Wayland
+  * fix: implement window activation with xdg-activation tokens
+  * fix: register SetPermission hook in myshares plugin
+  * fix: enable stacked unmount and bypass polkit for owner
+  * fix: refresh share lock icon on permission change
+  * fix: add Q_EMIT and signal declaration for shareChanged
+  * fix: sync cross-mode coordinates in canvas grid
+  * feat: implement space-key preview open/close transition on Treeland
+  * fix: check existence of Treeland toplevel protocol XML file
+  * refactor: migrate from treeland to wlr foreign toplevel protocol
+  * fix: replace invalid bare #elif with #else in config.h.in
+  * feat: hide file dialog from the dock taskbar on Treeland
+  * feat: hide preview window from the dock taskbar on Treeland
+  * fix: fix result dialog parent issue on Wayland
+  * fix: correct tag editor popup positioning and dismissal on Treeland
+
+ -- Liu Zhangjian <liuzhangjian@uniontech.com>  Tue, 17 Nov 2026 16:32:46 +0800
+
 dde-file-manager (6.5.179) unstable; urgency=medium
 
   * docs(file-manager): add Portuguese help manual
