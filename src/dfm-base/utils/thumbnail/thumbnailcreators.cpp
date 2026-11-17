@@ -578,12 +578,10 @@ QImage ThumbnailCreators::appimageThumbnailCreator(const QString &filePath, Thum
         return QImage();
     }
 
-    // 2. Check if file is AppImage type and has executable permission
-    if (info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppAppimage
-        || !info->isAttributes(FileInfo::FileIsType::kIsExecutable)) {
-        qCWarning(logDFMBase) << "thumbnail: file is not a valid AppImage or lacks executable permission:" << filePath
-                              << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null")
-                              << "isExecutable:" << (info ? info->isAttributes(FileInfo::FileIsType::kIsExecutable) : false);
+    // 2. Check if file is AppImage type
+    if (info->nameOf(NameInfoType::kMimeTypeName) != Global::Mime::kTypeAppAppimage) {
+        qCWarning(logDFMBase) << "thumbnail: file is not a valid AppImage:" << filePath
+                              << "mimeType:" << (info ? info->nameOf(NameInfoType::kMimeTypeName) : "null");
         return QImage();
     }
 
