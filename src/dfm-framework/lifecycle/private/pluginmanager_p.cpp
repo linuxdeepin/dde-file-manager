@@ -150,7 +150,7 @@ void PluginManagerPrivate::scanfAllPlugin()
             QJsonObject &&dataJson = metaJson.value("MetaData").toObject();
             QString &&iid = metaJson.value("IID").toString();
             if (!pluginLoadIIDs.contains(iid)) {
-                qCWarning(logDPF) << "Invalid iid:" << fileName << iid;
+                qCDebug(logDPF) << "Invalid iid:" << fileName << iid;
                 continue;
             }
 
@@ -219,7 +219,7 @@ bool PluginManagerPrivate::isBlackListed(const QString &name)
     }
 
     if (blackListFilter && blackListFilter(name)) {
-        qCWarning(logDPF) << "Black plugin(filter): " << name << "don't load!";
+        qCDebug(logDPF) << "Black plugin(filter): " << name << "don't load!";
         return true;
     }
 
