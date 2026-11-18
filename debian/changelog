@@ -1,3 +1,10 @@
+dde-file-manager (6.5.181) unstable; urgency=medium
+
+  * fix: migrate notification close interface
+  * fix: remove stale executable check in AppImage
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 18 Nov 2026 10:50:59 +0800
+
 dde-file-manager (6.5.180) unstable; urgency=medium
 
   * fix: correct size sorting on SMB by preferring sortInfo over fileInfo
