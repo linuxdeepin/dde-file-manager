@@ -1,3 +1,28 @@
+dde-file-manager (6.6.10) unstable; urgency=medium
+
+  * fix: sync cross-mode coordinates in canvas grid
+  * fix: lighten checked bg alpha for CustomDToolButton
+  * fix: remove harmful setDevicePixelRatio override on icon pixmaps
+  * fix: check existence of Treeland toplevel protocol XML file
+  * test: add service guard and async refresh for optical share daemon
+  * refactor: migrate from treeland to wlr foreign toplevel protocol
+  * fix: fix result dialog parent issue on Wayland
+  * fix: cast QChar::unicode() to int for Qt 6.12 QString::arg
+  * feat: Add test-prj-running.sh wrapper script for running unit tests
+  * test(ut): align setDockDnDMimeData tests with folder-pin behavior
+  * fix(opticalshare): avoid main-thread blocking on D-Bus service activation during login
+  * feat: implement space-key preview open/close transition on Treeland
+  * feat: hide file dialog from the dock taskbar on Treeland
+  * feat: hide preview window from the dock taskbar on Treeland
+  * fix: correct tag editor popup positioning and dismissal on Treeland
+  * fix: migrate skip-dock-preview to treeland-dde-shell-unstable-v2
+  * fix: replace invalid bare #elif with #else in config.h.in
+  * fix: migrate notification close interface
+  * fix: remove stale executable check in AppImage
+  * feat(smbreport): migrate SMB report analytics to v25 master
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Wed, 18 Nov 2026 16:04:44 +0800
+
 dde-file-manager (6.6.9) unstable; urgency=medium
 
   * chore: Update version to 6.6.9
