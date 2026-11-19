@@ -23,13 +23,32 @@
 #include <QPaintEvent>
 #include <QShowEvent>
 #include <QInputMethodEvent>
+#include <QContextMenuEvent>
+#include <QMenu>
+#include <QAction>
 #include <QAbstractItemView>
+#include <QClipboard>
+#include <QImage>
+#include <QMimeData>
 #include <QPainter>
 #include <QPropertyAnimation>
 
 DFMBASE_USE_NAMESPACE
 DPF_USE_NAMESPACE
 using namespace dfmplugin_titlebar;
+
+class AddressBarShowAddrHook : public QObject
+{
+public:
+    bool called { false };
+
+    bool handle(QUrl *url)
+    {
+        Q_UNUSED(url)
+        called = true;
+        return true;
+    }
+};
 
 class AddressBarTest : public testing::Test
 {
@@ -97,17 +116,14 @@ protected:
 TEST_F(AddressBarTest, SetCurrentUrl_LocalFileUrl_SetsUrlAndText)
 {
     QUrl url("file:///home/test");
-    bool hookCalled = false;
+    AddressBarShowAddrHook handler;
+    auto method = &AddressBarShowAddrHook::handle;
 
-    typedef bool (EventSequenceManager::*RunFunc)(const QString &, const QString &, QUrl *);
-    stub.set_lamda(static_cast<RunFunc>(&EventSequenceManager::run), [&hookCalled] {
-        __DBG_STUB_INVOKE__
-        hookCalled = true;
-        return true;
-    });
-
+    Event::instance()->registerEventType(EventStratege::kHook, "dfmplugin_titlebar", "hook_Show_Addr");
+    ASSERT_TRUE(dpfHookSequence->follow("dfmplugin_titlebar", "hook_Show_Addr", &handler, method));
     addressBar->setCurrentUrl(url);
-    EXPECT_TRUE(hookCalled);
+    EXPECT_TRUE(handler.called);
+    dpfHookSequence->unfollow("dfmplugin_titlebar", "hook_Show_Addr", &handler, method);
 }
 
 TEST_F(AddressBarTest, SetCurrentUrl_HookReturnsFalse_DoesNotSetUrl)
@@ -390,4 +406,119 @@ TEST_F(AddressBarTest, CompleterActivated_EmptyString_DoesNotEmitUrlChanged)
     }
 
     EXPECT_FALSE(signalEmitted);
+}
+
+// ===== PMS task 398283: tests for paste() override (file URL pasting) =====
+#include <dfm-base/utils/clipboard.h>
+
+TEST_F(AddressBarTest, Paste_EmptyClipboard_FallsBackToBasePaste)
+{
+    // Stub clipboardFileUrlList to return empty list
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        return QList<QUrl>();
+    });
+
+    EXPECT_NO_THROW({ addressBar->paste(); });
+}
+
+TEST_F(AddressBarTest, Paste_WithFileUrls_InsertsPaths)
+{
+    // Stub clipboardFileUrlList to return file URLs
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        QList<QUrl> urls;
+        urls << QUrl::fromLocalFile("/tmp/test1.txt");
+        urls << QUrl::fromLocalFile("/tmp/test2.txt");
+        return urls;
+    });
+
+    stub.set_lamda(&AddressBar::currentUrl, [] {
+        __DBG_STUB_INVOKE__
+        return QUrl::fromLocalFile("/tmp");
+    });
+
+    addressBar->clear();
+    EXPECT_NO_THROW({ addressBar->paste(); });
+    EXPECT_EQ(addressBar->text(), QString("/tmp/test1.txt"));
+    EXPECT_FALSE(addressBar->text().contains("/tmp/test2.txt"));
+}
+
+TEST_F(AddressBarTest, Paste_ImageOnlyClipboard_DoesNotInsertPlaceholder)
+{
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        return QList<QUrl>();
+    });
+
+    QMimeData imageData;
+    imageData.setImageData(QVariant::fromValue(QImage(4, 4, QImage::Format_ARGB32)));
+    stub.set_lamda(&QClipboard::mimeData, [&imageData](const QClipboard *, QClipboard::Mode) -> const QMimeData * {
+        __DBG_STUB_INVOKE__
+        return &imageData;
+    });
+
+    addressBar->clear();
+    addressBar->paste();
+    EXPECT_TRUE(addressBar->text().isEmpty());
+}
+
+TEST_F(AddressBarTest, Paste_WithNonLocalUrl_FallsBackToBasePaste)
+{
+    // Stub clipboardFileUrlList to return non-local URLs (toLocalFile returns empty)
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        QList<QUrl> urls;
+        urls << QUrl("ftp://1.2.3.4/path");
+        return urls;
+    });
+
+    EXPECT_NO_THROW({ addressBar->paste(); });
+}
+
+TEST_F(AddressBarTest, KeyPressEvent_CtrlV_TriggersPaste)
+{
+    // Stub clipboardFileUrlList to return empty
+    stub.set_lamda(&ClipBoard::clipboardFileUrlList, []() {
+        __DBG_STUB_INVOKE__
+        return QList<QUrl>();
+    });
+
+    QKeyEvent event(QEvent::KeyPress, Qt::Key_V, Qt::ControlModifier);
+    EXPECT_NO_THROW({ addressBar->keyPressEvent(&event); });
+    EXPECT_TRUE(event.isAccepted());
+}
+
+TEST_F(AddressBarTest, ContextMenuEvent_ReconnectsEditPasteAction)
+{
+    bool pasteCalled = false;
+    stub.set_lamda(&AddressBar::paste, [&pasteCalled] {
+        __DBG_STUB_INVOKE__
+        pasteCalled = true;
+    });
+
+    QMenu *menu = nullptr;
+    QAction *pasteAction = nullptr;
+    stub.set_lamda(static_cast<QMenu * (QLineEdit::*)()>(&QLineEdit::createStandardContextMenu),
+                   [&menu, &pasteAction]() -> QMenu * {
+                       __DBG_STUB_INVOKE__
+                       menu = new QMenu;
+                       pasteAction = menu->addAction("Paste");
+                       pasteAction->setObjectName("edit-paste");
+                       return menu;
+                   });
+
+    using PopupFunc = void (QMenu::*)(const QPoint &, QAction *);
+    stub.set_lamda(static_cast<PopupFunc>(&QMenu::popup), [](QMenu *, const QPoint &, QAction *) {
+        __DBG_STUB_INVOKE__
+    });
+
+    QContextMenuEvent event(QContextMenuEvent::Mouse, QPoint(10, 10), QPoint(10, 10));
+    addressBar->contextMenuEvent(&event);
+
+    ASSERT_NE(pasteAction, nullptr);
+    pasteAction->trigger();
+    EXPECT_TRUE(pasteCalled);
+
+    delete menu;
 }

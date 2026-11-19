@@ -15,6 +15,7 @@
 #include <dfm-base/base/device/deviceutils.h>
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/utils/dialogmanager.h>
+#include <dfm-base/utils/networkutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -57,16 +58,24 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
                  << "newUrl" << netUrl;
     }
 
+    // Probe the server before trying to mount: an unreachable host must fail
+    // fast instead of leaving a stale "connecting" state in the view.
+    if (!netUrl.host().isEmpty() && NetworkUtils::instance()->checkFtpOrSmbBusy(netUrl, 1000)) {
+        QApplication::restoreOverrideCursor();
+        fmWarning() << "Network is not reachable for URL:" << netUrl.toString();
+        DialogManager::instance()->showUnableToVistDir(netUrl.toString());
+        return;
+    }
+
     // the mounted source must be the TOP dir.
     // if smb://1.2.3.4/top/subdir is passed in, the param passed to mount function must be smb://1.2.3.4/top
-    // and only deal smb scheme now.
+    // smb/ftp/sftp share the same split logic; other schemes return source unchanged.
     QString mountSource = netUrl.toString();
     QString subPath;
     bool isSmb = false;
-    if (scheme == Global::Scheme::kSmb) {
-        mountSource = prehandler_utils::splitMountSource(QUrl::fromPercentEncoding(netUrl.toString().toUtf8()), &subPath);
+    mountSource = prehandler_utils::splitMountSource(QUrl::fromPercentEncoding(netUrl.toString().toUtf8()), &subPath);
+    if (scheme == Global::Scheme::kSmb)
         isSmb = true;
-    }
 
     // fix 237183
     QString origUrl;
@@ -100,7 +109,10 @@ void travers_prehandler::networkAccessPrehandler(quint64 winId, const QUrl &url,
         if (!mpt.isEmpty()) {
             doChangeCurrentUrl(winId, mpt, subPath, netUrl);
         } else if (ok || err.code == DFMMOUNT::DeviceError::kGIOErrorAlreadyMounted) {
-            if (isSmb) onSmbRootMounted(mountSource, after);
+            if (isSmb)
+                onSmbRootMounted(mountSource, after);
+            else if (after)
+                after();
         } else {
             fmWarning() << "mount done: " << netUrl << ok << err.code << err.message << mpt;
             QApplication::restoreOverrideCursor();
@@ -135,15 +147,27 @@ void travers_prehandler::smbAccessPrehandler(quint64 winId, const QUrl &url, std
 
 QString prehandler_utils::splitMountSource(const QString &source, QString *subPath)
 {
-    static const QRegularExpression regx(R"((^smb://[^/]*/[^/]*))");
-    auto match = regx.match(source);
+    // smb/ftp/sftp 的 query（如 ?charset=gbk）是挂载参数，要随挂载地址保留；
+    // 它在首个 '/' 之后会被下面的截断规则当成子目录，先摘出、最后拼回（fad1a3b8b 引入）
+    QString addr = source;
+    QString query;
+    const int queryPos = source.indexOf('?');
+    const QString &scheme = QUrl(source).scheme();
+    if (queryPos > 0 && (scheme == Global::Scheme::kSmb || scheme == Global::Scheme::kFtp || scheme == Global::Scheme::kSFtp)) {
+        addr = source.left(queryPos);
+        query = source.mid(queryPos);
+    }
+
+    static const QRegularExpression regx(R"((^smb://[^/]*/[^/]*|^s?ftp://[^/]*))",
+                                         QRegularExpression::CaseInsensitiveOption);
+    auto match = regx.match(addr);
     if (match.hasMatch()) {
         QString top = match.captured(1);
         if (subPath)
-            *subPath = source.mid(top.length() + 1);   // skip the '/'
+            *subPath = addr.mid(top.length() + 1);   // skip the '/'
         while (top.endsWith("/"))
             top.chop(1);
-        return top;
+        return top + query;
     }
 
     return source;
@@ -158,7 +182,13 @@ void travers_prehandler::doChangeCurrentUrl(quint64 winId, const QString &mpt, c
 
     QUrl url = QUrl::fromLocalFile(targetPath);
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url, Global::kCreateFileInfoSync);
-    if (fileInfo && fileInfo->isAttributes(FileInfo::FileIsType::kIsFile)) {
+    if (!fileInfo || !fileInfo->exists()) {
+        QApplication::restoreOverrideCursor();
+        fmWarning() << "Mounted path does not exist:" << targetPath;
+        DialogManager::instance()->showUnableToVistDir(targetPath);
+        return;
+    }
+    if (fileInfo->isAttributes(FileInfo::FileIsType::kIsFile)) {
         dpfSignalDispatcher->publish(GlobalEventType::kOpenFiles, winId, QList<QUrl> { url });
 
         QUrl parentUrl = fileInfo->urlOf(UrlInfoType::kParentUrl);

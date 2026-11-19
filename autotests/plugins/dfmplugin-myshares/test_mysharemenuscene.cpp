@@ -9,6 +9,7 @@
 #include "private/mysharemenuscene_p.h"
 #include "events/shareeventscaller.h"
 #include "dfmplugin_myshares_global.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/schemefactory.h>
@@ -182,6 +183,34 @@ TEST_F(UT_MyShareMenuScenePrivate, CreateFileMenu)
     EXPECT_NO_FATAL_FAILURE(d->createFileMenu(menu));
 
     delete menu;
+}
+
+TEST_F(UT_MyShareMenuScenePrivate, CreateFileMenu_HasCopyFolderPathAction)
+{
+    d->selectFiles.append(QUrl::fromLocalFile("/Hello/World"));
+    FileInfoPointer info(new FileInfo(d->selectFiles.first()));
+    stub.set_lamda(static_cast<FileInfoPointer (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [info](const QUrl &, bool *, Global::CreateFileInfoType, QString *) -> FileInfoPointer {
+                       __DBG_STUB_INVOKE__
+                       return info;
+                   });
+    stub.set_lamda(VADDR(FileInfo, isAttributes), [](FileInfo *, const OptInfoType type) {
+        __DBG_STUB_INVOKE__
+        return type == OptInfoType::kIsDir;
+    });
+
+    QMenu menu;
+    d->createFileMenu(&menu);
+
+    bool found = false;
+    for (QAction *act : menu.actions()) {
+        if (act->property(ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kCopyFolderPath) {
+            found = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found);
+    EXPECT_TRUE(d->predicateAction.contains(dfmplugin_menu::ActionID::kCopyFolderPath));
 }
 
 TEST_F(UT_MyShareMenuScenePrivate, Triggered)

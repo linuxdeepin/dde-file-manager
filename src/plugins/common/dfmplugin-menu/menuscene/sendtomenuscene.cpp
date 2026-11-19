@@ -123,7 +123,6 @@ bool SendToMenuScene::create(QMenu *parent)
             auto &&data = DevProxyMng->queryBlockInfo(dev);
             QString label = DeviceUtils::convertSuitableDisplayName(data);
             QString mpt = data.value(DeviceProperty::kMountPoint).toString();
-            QString devDesc = data.value(DeviceProperty::kDevice).toString();
 
             if (data.value(DeviceProperty::kOptical).toBool() || DeviceUtils::isBuiltInDisk(data)) {
                 continue;   // this should be added in burn plugin.

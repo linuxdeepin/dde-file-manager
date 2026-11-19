@@ -415,6 +415,12 @@ TEST_F(TitleBarHelperTest, HandleJumpToPressed_ValidLocalPath_SendsCdEvent)
         __DBG_STUB_INVOKE__
     });
 
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       __DBG_STUB_INVOKE__
+                       return QSharedPointer<FileInfo>(new FileInfo(url));
+                   });
+
     stub.set_lamda(qOverload<const QString &, bool>(&UrlRoute::fromUserInput), [](const QString &, bool) {
         __DBG_STUB_INVOKE__
         return QUrl("file:///home/user");

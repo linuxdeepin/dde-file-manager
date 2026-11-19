@@ -14,6 +14,7 @@
 #include <dfm-framework/event/event.h>
 
 #include <QUrl>
+#include <QObject>
 #include <QVariantMap>
 #include <QSharedPointer>
 
@@ -22,6 +23,19 @@ DFMBASE_USE_NAMESPACE
 
 static const QUrl kTestUrl { "usershare:///test" };
 
+class ShareFileInfoTestSink : public QObject
+{
+public:
+    QVariantMap infoMap;
+    int refreshCalls { 0 };
+
+    QVariantMap shareInfoOfPath(const QString &)
+    {
+        ++refreshCalls;
+        return infoMap;
+    }
+};
+
 class UT_ShareFileInfo : public testing::Test
 {
     // Test interface
@@ -29,9 +43,9 @@ protected:
     virtual void SetUp() override
     {
         conStub.set_lamda(&ShareFileInfo::setProxy, [] { __DBG_STUB_INVOKE__ });
-        conStub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
-        typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
-        conStub.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [] { __DBG_STUB_INVOKE__ return QVariant(); });
+        conStub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                          [] { __DBG_STUB_INVOKE__ return QSharedPointer<FileInfo>(); });
+        connectShareInfoSlot();
         info = new ShareFileInfo(kTestUrl);
         d = info->d.data();
         d->info = { { ShareInfoKeys::kName, "test" },
@@ -45,14 +59,24 @@ protected:
     virtual void TearDown() override
     {
         conStub.clear();
+        dpf::EventChannelManager *channel = dpf::Event::instance()->channel();
+        channel->disconnect("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath");
         delete info;
         info = nullptr;
         d = nullptr;
     }
 
+    void connectShareInfoSlot()
+    {
+        if (dpf::Event::instance()->eventType("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath") == dpf::EventTypeScope::kInValid)
+            dpf::Event::instance()->registerEventType(dpf::EventStratege::kSlot, "dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath");
+        dpf::Event::instance()->channel()->connect("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", &sink, &ShareFileInfoTestSink::shareInfoOfPath);
+    }
+
     stub_ext::StubExt conStub;
     ShareFileInfo *info { nullptr };
     ShareFileInfoPrivate *d { nullptr };
+    ShareFileInfoTestSink sink;
 };
 
 TEST_F(UT_ShareFileInfo, UrlOf_RedirectedFileUrl_ReturnsLocalFileUrl)
@@ -169,24 +193,27 @@ protected:
     virtual void SetUp() override
     {
         // setProxy is NOT stubbed here: a valid proxy is set from the factory result.
-        proxyStub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] {
+        proxyStub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] {
             __DBG_STUB_INVOKE__
             return FileInfoPointer(new FileInfo(QUrl::fromLocalFile("/tmp")));
         });
-        typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
-        proxyStub.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [] { __DBG_STUB_INVOKE__ return QVariant(); });
+        if (dpf::Event::instance()->eventType("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath") == dpf::EventTypeScope::kInValid)
+            dpf::Event::instance()->registerEventType(dpf::EventStratege::kSlot, "dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath");
+        dpf::Event::instance()->channel()->connect("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", &sink, &ShareFileInfoTestSink::shareInfoOfPath);
         info = new ShareFileInfo(kTestUrl);
     }
 
     virtual void TearDown() override
     {
         proxyStub.clear();
+        dpf::Event::instance()->channel()->disconnect("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath");
         delete info;
         info = nullptr;
     }
 
     stub_ext::StubExt proxyStub;
     ShareFileInfo *info { nullptr };
+    ShareFileInfoTestSink sink;
 };
 
 TEST_F(UT_ShareFileInfoWithProxy, CanAttributes_CanRedirectionWithProxy_ReturnsTrue)
@@ -212,15 +239,18 @@ protected:
     virtual void SetUp() override
     {
         stub.set_lamda(&ShareFileInfo::setProxy, [] { __DBG_STUB_INVOKE__ });
-        stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
-        typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
-        stub.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [] { __DBG_STUB_INVOKE__ return QVariant(); });
+        stub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                       [] { __DBG_STUB_INVOKE__ return QSharedPointer<FileInfo>(); });
+        if (dpf::Event::instance()->eventType("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath") == dpf::EventTypeScope::kInValid)
+            dpf::Event::instance()->registerEventType(dpf::EventStratege::kSlot, "dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath");
+        dpf::Event::instance()->channel()->connect("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath", &sink, &ShareFileInfoTestSink::shareInfoOfPath);
         info = new ShareFileInfo(kTestUrl);
         d = info->d.data();
     }
     virtual void TearDown() override
     {
         stub.clear();
+        dpf::Event::instance()->channel()->disconnect("dfmplugin_dirshare", "slot_Share_ShareInfoOfFilePath");
         delete info;
         info = nullptr;
         d = nullptr;
@@ -229,15 +259,12 @@ protected:
     stub_ext::StubExt stub;
     ShareFileInfo *info { nullptr };
     ShareFileInfoPrivate *d { nullptr };
+    ShareFileInfoTestSink sink;
 };
 
 TEST_F(UT_ShareFileInfoPrivate, Ctor_NonRootUrl_LoadsInfoFromSlot)
 {
-    stub_ext::StubExt local;
-    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
-    local.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [] {
-        return QVariant(QVariantMap { { ShareInfoKeys::kName, "fromSlot" } });
-    });
+    sink.infoMap = { { ShareInfoKeys::kName, "fromSlot" } };
 
     ShareFileInfo fresh(kTestUrl);
     auto *fd = fresh.d.data();
@@ -247,36 +274,24 @@ TEST_F(UT_ShareFileInfoPrivate, Ctor_NonRootUrl_LoadsInfoFromSlot)
 
 TEST_F(UT_ShareFileInfoPrivate, Refresh_NonRootUrl_QueriesSlotAndUpdatesInfo)
 {
-    int pushed = 0;
-    stub_ext::StubExt local;
-    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
-    local.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [&pushed]() -> QVariant {
-        ++pushed;
-        return QVariant(QVariantMap { { ShareInfoKeys::kName, "refreshed" } });
-    });
+    sink.infoMap = { { ShareInfoKeys::kName, "refreshed" } };
+    const int before = sink.refreshCalls;
 
     d->info.clear();
     EXPECT_NO_FATAL_FAILURE(d->refresh());
-    EXPECT_EQ(pushed, 1);
+    EXPECT_EQ(sink.refreshCalls, before + 1);
     EXPECT_EQ(d->fileName(), QString("refreshed"));
 }
 
 TEST_F(UT_ShareFileInfoPrivate, Refresh_RootUrl_SkipsSlotQuery)
 {
+    const int before = sink.refreshCalls;
     ShareFileInfo rootInfo(QUrl("usershare:///"));
     auto *rd = rootInfo.d.data();
     ASSERT_TRUE(rd != nullptr);
 
-    bool pushed = false;
-    stub_ext::StubExt local;
-    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, QString);
-    local.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push), [&pushed]() -> QVariant {
-        pushed = true;
-        return QVariant();
-    });
-
     EXPECT_NO_FATAL_FAILURE(rd->refresh());
-    EXPECT_FALSE(pushed);
+    EXPECT_EQ(sink.refreshCalls, before);
     EXPECT_TRUE(rd->fileName().isEmpty());
 }
 

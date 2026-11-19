@@ -12,6 +12,7 @@
 #include <dfm-base/widgets/filemanagerwindowsmanager.h>
 #include <dfm-base/base/schemefactory.h>
 #include <dfm-base/utils/fileutils.h>
+#include <dfm-base/utils/clipboard.h>
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/application/application.h>
 
@@ -23,8 +24,14 @@
 #endif
 #include <DDialog>
 
+#include <QAction>
+#include <QClipboard>
 #include <QCompleter>
 #include <QFontMetrics>
+#include <QGuiApplication>
+#include <QKeySequence>
+#include <QMenu>
+#include <QMimeData>
 #include <QWindow>
 #include "addressbar.h"
 
@@ -171,12 +178,15 @@ void AddressBarPrivate::updateCompletionState(const QString &text)
         strLocalPath = hasSlash ? strLocalPath.left(slashIndex + 1) : strLocalPath;
 
         const auto &currentDir = QDir::currentPath();
-        QUrl curUrl = q->currentUrl();
-        if (curUrl.isLocalFile())
-            QDir::setCurrent(curUrl.toLocalFile());
+        const QUrl &curUrl = q->currentUrl();
+        QString localPath = strLocalPath;
+        if (!localPath.isEmpty() && !localPath.startsWith('/') && !localPath.startsWith('~')
+            && QUrl(localPath).scheme().isEmpty()) {
+            const QString workingDir = curUrl.isLocalFile() ? curUrl.toLocalFile() : currentDir;
+            localPath = QDir(workingDir).absoluteFilePath(localPath);
+        }
 
-        const QUrl &url = UrlRoute::fromUserInput(strLocalPath, false);
-        QDir::setCurrent(currentDir);
+        const QUrl &url = UrlRoute::fromUserInput(localPath, false);
 
         // Check if the entered text is a string to search or a url to complete.
         if (hasSlash && url.isValid() && !url.scheme().isEmpty()) {
@@ -502,6 +512,30 @@ void AddressBar::showOnFocusLostOnce()
     d->isKeepVisible = true;
 }
 
+void AddressBar::paste()
+{
+    const auto urls = dfmbase::ClipBoard::instance()->clipboardFileUrlList();
+    for (const auto &url : urls) {
+        const QString path = url.toLocalFile();
+        if (path.isEmpty())
+            continue;
+
+        // A line edit cannot hold multiple paths: inserting '\n' would create
+        // an invalid path and break the following navigation. Paste only the
+        // focused/first file, matching the single-path nature of the address bar.
+        insert(path);
+        return;
+    }
+
+    const QMimeData *mimeData = QGuiApplication::clipboard()->mimeData();
+    if (mimeData && !mimeData->hasText()) {
+        // Image-only clipboard data has no meaningful text representation in
+        // the address bar (it used to be pasted as a placeholder).
+        return;
+    }
+    QLineEdit::paste();
+}
+
 bool AddressBar::event(QEvent *e)
 {
     if (e->type() == QEvent::KeyPress) {
@@ -538,6 +572,13 @@ void AddressBar::keyPressEvent(QKeyEvent *e)
     });
     d->lastPreviousKey = d->lastPressedKey;
     d->lastPressedKey = e->key();
+
+    if (e->matches(QKeySequence::Paste) ||
+        (e->key() == Qt::Key_V && (e->modifiers() & Qt::ControlModifier))) {
+        paste();
+        e->accept();
+        return;
+    }
 
     switch (e->key()) {
     case Qt::Key_Escape:
@@ -674,5 +715,26 @@ void AddressBar::inputMethodEvent(QInputMethodEvent *e)
 void dfmplugin_titlebar::AddressBar::contextMenuEvent(QContextMenuEvent *e)
 {
     showOnFocusLostOnce();
-    QLineEdit::contextMenuEvent(e);
+
+    QMenu *menu = createStandardContextMenu();
+    if (!menu) {
+        QLineEdit::contextMenuEvent(e);
+        return;
+    }
+
+    // QLineEdit connects its standard Paste action to QLineEdit::paste with a
+    // pointer-to-member connection, which bypasses AddressBar::paste. Standard
+    // actions carry no QAction::shortcut() (the key hint is part of the text),
+    // so match the stable object name and reconnect to our implementation.
+    const auto actions = menu->actions();
+    for (QAction *action : actions) {
+        if (action->objectName() == QLatin1String("edit-paste")) {
+            action->disconnect();
+            connect(action, &QAction::triggered, this, &AddressBar::paste);
+            break;
+        }
+    }
+
+    menu->setAttribute(Qt::WA_DeleteOnClose);
+    menu->popup(e->globalPos());
 }

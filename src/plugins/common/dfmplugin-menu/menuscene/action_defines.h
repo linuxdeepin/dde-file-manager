@@ -52,6 +52,8 @@ inline constexpr char kSendTo[] = "send-to";
 inline constexpr char kSendToRemovablePrefix[] = "send-to-removable-";
 inline constexpr char kSendToDesktop[] = "send-to-desktop";
 inline constexpr char kSendToBluetooth[] = "send-to-bluetooth";
+inline constexpr char kCopyFilePath[] = "copy-file-path";
+inline constexpr char kCopyFolderPath[] = "copy-folder-path";
 
 // Separator
 inline constexpr char kSeparator[] = "separator-line";

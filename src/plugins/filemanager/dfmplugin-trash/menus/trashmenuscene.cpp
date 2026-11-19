@@ -240,6 +240,8 @@ TrashMenuScenePrivate::TrashMenuScenePrivate(TrashMenuScene *qq)
 
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCut);
     selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopy);
+    selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopyFilePath);
+    selectSupportActions.insert(kClipBoardMenuSceneName, dfmplugin_menu::ActionID::kCopyFolderPath);
     selectSupportActions.insert(kFileOperatorMenuSceneName, dfmplugin_menu::ActionID::kDelete);
     selectSupportActions.insert(kFileOperatorMenuSceneName, dfmplugin_menu::ActionID::kOpen);
     selectSupportActions.insert(kPropertyMenuSceneName, "property");

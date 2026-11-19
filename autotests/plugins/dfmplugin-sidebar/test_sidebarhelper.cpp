@@ -328,7 +328,7 @@ TEST_F(UT_SideBarHelper, DefaultContextMenu)
         __DBG_STUB_INVOKE__
     });
 
-    stub.set_lamda(&NetworkUtils::checkFtpOrSmbBusy, [](NetworkUtils *, const QUrl &) -> bool {
+    stub.set_lamda(static_cast<bool (NetworkUtils::*)(const QUrl &)>(&NetworkUtils::checkFtpOrSmbBusy), [](NetworkUtils *, const QUrl &) -> bool {
         __DBG_STUB_INVOKE__
         return false;
     });

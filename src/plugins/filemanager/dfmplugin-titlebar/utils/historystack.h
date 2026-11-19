@@ -26,6 +26,7 @@ public:
     void removeAt(int i);
     void removeUrl(const QUrl &url);
     int currentIndex();
+    void setCurrentIndex(int i);
 
     bool backIsExist();
     bool forwardIsExist();

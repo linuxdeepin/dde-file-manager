@@ -17,6 +17,7 @@
 #include <QUrl>
 #include <QSignalSpy>
 #include <QSharedPointer>
+#include <QStringList>
 
 using namespace dfmplugin_myshares;
 DFMBASE_USE_NAMESPACE
@@ -43,7 +44,7 @@ public:
 
 TEST_F(UT_ShareWatcher, ShareAdded_NullInfo_EmitsSubfileCreated)
 {
-    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
     QSignalSpy spy(watcher, &AbstractFileWatcher::subfileCreated);
 
     watcher->shareAdded("/hello/world");
@@ -54,7 +55,7 @@ TEST_F(UT_ShareWatcher, ShareAdded_NullInfo_EmitsSubfileCreated)
 TEST_F(UT_ShareWatcher, ShareAdded_ValidInfo_RefreshesInfoAndEmits)
 {
     bool infoCreated = false;
-    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [&infoCreated]() -> FileInfoPointer {
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [&infoCreated]() -> FileInfoPointer {
         infoCreated = true;
         return FileInfoPointer(new FileInfo(QUrl::fromLocalFile("/tmp")));
     });
@@ -88,9 +89,24 @@ public:
     virtual void TearDown() override
     {
         stub.clear();
+        if (d)
+            d->stop();
         delete watcher;
         watcher = nullptr;
         d = nullptr;
+    }
+
+    static void ensureSignals()
+    {
+        const QStringList topics {
+            "signal_Share_ShareAdded",
+            "signal_Share_ShareRemoved",
+            "signal_Share_ShareChanged"
+        };
+        for (const QString &topic : topics) {
+            if (Event::instance()->eventType("dfmplugin_dirshare", topic) == EventTypeScope::kInValid)
+                Event::instance()->registerEventType(EventStratege::kSignal, "dfmplugin_dirshare", topic);
+        }
     }
 
     stub_ext::StubExt stub;
@@ -100,9 +116,7 @@ public:
 
 TEST_F(UT_ShareWatcherPrivate, Start_WhenSubscribeSucceeds_ReturnsTrue)
 {
-    typedef void (ShareWatcher::*Callback)(const QString &);
-    typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, ShareWatcher *, Callback);
-    stub.set_lamda(static_cast<Subscribe>(&EventDispatcherManager::subscribe), [] { __DBG_STUB_INVOKE__ return true; });
+    ensureSignals();
 
     EXPECT_TRUE(d->start());
     EXPECT_NO_FATAL_FAILURE(d->start());
@@ -110,18 +124,18 @@ TEST_F(UT_ShareWatcherPrivate, Start_WhenSubscribeSucceeds_ReturnsTrue)
 
 TEST_F(UT_ShareWatcherPrivate, Start_WhenSubscribeFails_ReturnsFalse)
 {
-    typedef void (ShareWatcher::*Callback)(const QString &);
-    typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, ShareWatcher *, Callback);
-    stub.set_lamda(static_cast<Subscribe>(&EventDispatcherManager::subscribe), [] { __DBG_STUB_INVOKE__ return false; });
+    const auto savedConverter = EventConverter::convertFunc;
+    EventConverter::convertFunc = [](const QString &, const QString &) { return EventTypeScope::kInValid; };
+    const bool started = d->start();
+    EventConverter::convertFunc = savedConverter;
 
-    EXPECT_FALSE(d->start());
+    EXPECT_FALSE(started);
 }
 
 TEST_F(UT_ShareWatcherPrivate, Stop_WhenUnsubscribeSucceeds_ReturnsTrue)
 {
-    typedef void (ShareWatcher::*Callback)(const QString &);
-    typedef bool (EventDispatcherManager::*Unsubscribe)(const QString &, const QString &, ShareWatcher *, Callback);
-    stub.set_lamda(static_cast<Unsubscribe>(&EventDispatcherManager::unsubscribe), [] { __DBG_STUB_INVOKE__ return true; });
+    ensureSignals();
+    ASSERT_TRUE(d->start());
 
     EXPECT_TRUE(d->stop());
     EXPECT_NO_FATAL_FAILURE(d->stop());
@@ -129,18 +143,17 @@ TEST_F(UT_ShareWatcherPrivate, Stop_WhenUnsubscribeSucceeds_ReturnsTrue)
 
 TEST_F(UT_ShareWatcherPrivate, Stop_WhenUnsubscribeFails_ReturnsFalse)
 {
-    typedef void (ShareWatcher::*Callback)(const QString &);
-    typedef bool (EventDispatcherManager::*Unsubscribe)(const QString &, const QString &, ShareWatcher *, Callback);
-    stub.set_lamda(static_cast<Unsubscribe>(&EventDispatcherManager::unsubscribe), [] { __DBG_STUB_INVOKE__ return false; });
+    const auto savedConverter = EventConverter::convertFunc;
+    EventConverter::convertFunc = [](const QString &, const QString &) { return EventTypeScope::kInValid; };
+    const bool stopped = d->stop();
+    EventConverter::convertFunc = savedConverter;
 
-    EXPECT_FALSE(d->stop());
+    EXPECT_FALSE(stopped);
 }
 
 TEST_F(UT_ShareWatcherPrivate, StartWatcher_PublicEntry_StartsAndIsIdempotent)
 {
-    typedef void (ShareWatcher::*Callback)(const QString &);
-    typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, ShareWatcher *, Callback);
-    stub.set_lamda(static_cast<Subscribe>(&EventDispatcherManager::subscribe), [] { __DBG_STUB_INVOKE__ return true; });
+    ensureSignals();
 
     EXPECT_TRUE(watcher->startWatcher());
     // second call early-returns true because it is already started
@@ -149,11 +162,7 @@ TEST_F(UT_ShareWatcherPrivate, StartWatcher_PublicEntry_StartsAndIsIdempotent)
 
 TEST_F(UT_ShareWatcherPrivate, StopWatcher_PublicEntry_StopsAndIsIdempotent)
 {
-    typedef void (ShareWatcher::*Callback)(const QString &);
-    typedef bool (EventDispatcherManager::*Subscribe)(const QString &, const QString &, ShareWatcher *, Callback);
-    typedef bool (EventDispatcherManager::*Unsubscribe)(const QString &, const QString &, ShareWatcher *, Callback);
-    stub.set_lamda(static_cast<Subscribe>(&EventDispatcherManager::subscribe), [] { __DBG_STUB_INVOKE__ return true; });
-    stub.set_lamda(static_cast<Unsubscribe>(&EventDispatcherManager::unsubscribe), [] { __DBG_STUB_INVOKE__ return true; });
+    ensureSignals();
 
     ASSERT_TRUE(watcher->startWatcher());
     EXPECT_TRUE(watcher->stopWatcher());

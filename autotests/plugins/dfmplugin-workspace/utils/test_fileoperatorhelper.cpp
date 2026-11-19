@@ -520,7 +520,7 @@ TEST_F(FileOperatorHelperTest, RedoFiles_ValidView_RedoesFiles)
 //        发布 GlobalEventType::kRevocation 撤销事件。
 TEST_F(FileOperatorHelperTest, BUG130603_UndoFiles_PublishesRevocationWithWindowId)
 {
-    stub.set_lamda(&dfmbase::NetworkUtils::checkFtpOrSmbBusy,
+    stub.set_lamda(static_cast<bool (dfmbase::NetworkUtils::*)(const QUrl &)>(&dfmbase::NetworkUtils::checkFtpOrSmbBusy),
                    [](dfmbase::NetworkUtils *, const QUrl &) { return false; });
     stub.set_lamda(ADDR(dfmbase::Application, appAttribute),
                    [](dfmbase::Application::ApplicationAttribute) { return QVariant(1); });
