@@ -14,6 +14,7 @@ file(GLOB_RECURSE TEST_SOURCES
 dfm_add_test(test-textindex
     SOURCES ${TEST_SOURCES}
     LINK_LIBRARIES dde-filemanager-textindex dfm6-search Qt6::Core Qt6::Test PkgConfig::NL
+    COVERS src/services/textindex
 )
 
 # textindex source files use relative includes (e.g. "service_textindex_global.h")
@@ -21,4 +22,12 @@ dfm_add_test(test-textindex
 target_include_directories(test-textindex PRIVATE
     ${DFM_SOURCE_DIR}/services/textindex
     ${DFM_PROJECT_ROOT}/include
+)
+
+# Link against the in-tree extractor library (test depends on it via
+# dde-filemanager-textindex). DT_RUNPATH does not propagate to transitive
+# dependencies, so inject LD_LIBRARY_PATH via the ctest ENVIRONMENT property
+# instead — that covers the whole child process.
+set_tests_properties(test-textindex PROPERTIES
+    ENVIRONMENT "LD_LIBRARY_PATH=${CMAKE_BINARY_DIR}/src/apps/dde-file-manager-extractor"
 )

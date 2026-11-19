@@ -82,3 +82,17 @@ AGENTS.md
 Testing
 __pycache__
 *.pyc
+
+# local tool working dirs (UT defect tracking / PMS cache / agent caches)
+.ut/
+.ut-pms/
+.ut-defects.json
+.pms/
+.codebase-memory/
+.npm-cache/
+.openclaude/
+.unipi/
+.zcode/
+.zcodeignore
+autotests/.ut-pms/
+autotests/.ut-defects.json

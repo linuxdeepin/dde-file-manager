@@ -9,6 +9,9 @@ cmake_minimum_required(VERSION 3.10)
 # Call once from autotests/CMakeLists.txt before adding any test subdirectories.
 # ---------------------------------------------------------------------------
 function(dfm_setup_test_env)
+    # Reset suite-to-source mapping file (consumed by autotests/run-ut.sh
+    # for incremental CI: changed files -> affected test suites)
+    file(WRITE "${CMAKE_BINARY_DIR}/ut-suite-map.tsv" "# suite\tsource-dir\n")
     # GTest
     find_package(GTest REQUIRED)
     include_directories(${GTEST_INCLUDE_DIRS})
@@ -57,9 +60,12 @@ endfunction()
 #
 # Optional:
 #   LINK_LIBRARIES ... - additional link libraries (e.g. DFM6::framework)
+#   COVERS ...         - source dirs (relative to CMAKE_SOURCE_DIR) this suite
+#                        covers; recorded in build/ut-suite-map.tsv so
+#                        run-ut.sh can map changed files to suites
 # ---------------------------------------------------------------------------
 function(dfm_add_test name)
-    cmake_parse_arguments(ARG "" "" "SOURCES;LINK_LIBRARIES" ${ARGN})
+    cmake_parse_arguments(ARG "" "" "SOURCES;LINK_LIBRARIES;COVERS" ${ARGN})
 
     if(NOT ARG_SOURCES)
         message(FATAL_ERROR "dfm_add_test(${name}): SOURCES is required")
@@ -89,6 +95,41 @@ function(dfm_add_test name)
     endif()
 
     add_test(NAME ${name} COMMAND ${name})
+
+    # Record suite mapping for incremental CI (run-ut.sh):
+    #   suite -> its own test dir + every COVERS source dir
+    # The test dir is derived from the first real test source (skipping the
+    # shared main.cpp / stub files) so per-subdir suites map precisely.
+    set(_map_file "${CMAKE_BINARY_DIR}/ut-suite-map.tsv")
+    set(_test_dir "")
+    foreach(_s ${ARG_SOURCES})
+        if(NOT IS_ABSOLUTE "${_s}")
+            get_filename_component(_s "${_s}" ABSOLUTE)
+        endif()
+        get_filename_component(_fname "${_s}" NAME)
+        if(_fname STREQUAL "main.cpp" OR _fname STREQUAL "dfm_extension_stub.cpp")
+            continue()
+        endif()
+        if(DFM_STUB_SOURCES AND _s IN_LIST DFM_STUB_SOURCES)
+            continue()
+        endif()
+        get_filename_component(_test_dir "${_s}" DIRECTORY)
+        break()
+    endforeach()
+    if("${_test_dir}" STREQUAL "")
+        set(_test_dir "${CMAKE_CURRENT_SOURCE_DIR}")
+    endif()
+    file(RELATIVE_PATH _test_dir_rel "${CMAKE_SOURCE_DIR}" "${_test_dir}")
+    file(APPEND "${_map_file}" "${name}\t${_test_dir_rel}\n")
+    foreach(_cover ${ARG_COVERS})
+        if(IS_ABSOLUTE "${_cover}")
+            file(RELATIVE_PATH _cover_rel "${CMAKE_SOURCE_DIR}" "${_cover}")
+        else()
+            set(_cover_rel "${_cover}")
+        endif()
+        file(APPEND "${_map_file}" "${name}\t${_cover_rel}\n")
+    endforeach()
+
     message(STATUS "DFM: Added test ${name}")
 endfunction()
 
