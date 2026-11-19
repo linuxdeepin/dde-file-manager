@@ -25,6 +25,8 @@ IndexClientDescriptor buildDescriptor()
         QStringLiteral("TextIndexClient"),
         QStringLiteral("org.deepin.Filemanager.TextIndex"),
         QStringLiteral("/org/deepin/Filemanager/TextIndex"),
+        DConfig::kSearchCfgPath,
+        DConfig::kEnableFullTextSearch,
         [](QObject *parent) -> QDBusAbstractInterface * {
             return new OrgDeepinFilemanagerTextIndexInterface(
                     QStringLiteral("org.deepin.Filemanager.TextIndex"),
