@@ -12,4 +12,5 @@ file(GLOB_RECURSE TEST_SOURCES
 dfm_add_test(test-dfm-base
     SOURCES ${TEST_SOURCES}
     LINK_LIBRARIES DFM6::base Qt6::Test
+    COVERS src/dfm-base
 )
