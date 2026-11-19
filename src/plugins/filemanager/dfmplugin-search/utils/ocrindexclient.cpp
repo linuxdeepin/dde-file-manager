@@ -27,6 +27,8 @@ IndexClientDescriptor buildDescriptor()
         QStringLiteral("OcrIndexClient"),
         QStringLiteral("org.deepin.Filemanager.OcrIndex"),
         QStringLiteral("/org/deepin/Filemanager/OcrIndex"),
+        DConfig::kSearchCfgPath,
+        DConfig::kEnableOcrTextSearch,
         [](QObject *parent) -> QDBusAbstractInterface * {
             return new OrgDeepinFilemanagerOcrIndexInterface(
                     QStringLiteral("org.deepin.Filemanager.OcrIndex"),

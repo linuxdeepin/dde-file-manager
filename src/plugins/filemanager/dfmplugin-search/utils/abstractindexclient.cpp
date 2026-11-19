@@ -4,6 +4,7 @@
 #include "abstractindexclient.h"
 
 #include <dfm-base/utils/finallyutil.h>
+#include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 
 #include <QApplication>
 #include <QDBusAbstractInterface>
@@ -55,6 +56,15 @@ bool AbstractIndexClient::ensureInterface()
     if (!sessionBusIface) {
         fmWarning() << "[" << m_descriptor.clientName << "] failed to get session bus interface";
         return false;
+    }
+
+    if (!m_descriptor.configPath.isEmpty() && !m_descriptor.enableKey.isEmpty()) {
+        const bool enabled = DConfigManager::instance()->value(
+                m_descriptor.configPath, m_descriptor.enableKey, false).toBool();
+        if (!enabled) {
+            fmInfo() << "[" << m_descriptor.clientName << "] index disabled in DConfig, skip activating service";
+            return false;
+        }
     }
 
     if (!sessionBusIface->isServiceRegistered(m_descriptor.dbusServiceName)) {

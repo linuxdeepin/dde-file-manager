@@ -17,6 +17,8 @@ struct IndexClientDescriptor
     QString clientName;
     QString dbusServiceName;
     QString dbusObjectPath;
+    QString configPath;
+    QString enableKey;
     std::function<QDBusAbstractInterface *(QObject *parent)> interfaceFactory;
 };
 

@@ -27,6 +27,8 @@ IndexClientDescriptor buildDescriptor()
         QStringLiteral("FileNameIndexClient"),
         QStringLiteral("org.deepin.Filemanager.FileNameIndex"),
         QStringLiteral("/org/deepin/Filemanager/FileNameIndex"),
+        DConfig::kSearchCfgPath,
+        DConfig::kEnableFileIndexSearch,
         [](QObject *parent) -> QDBusAbstractInterface * {
             return new OrgDeepinFilemanagerFileNameIndexInterface(
                     QStringLiteral("org.deepin.Filemanager.FileNameIndex"),
