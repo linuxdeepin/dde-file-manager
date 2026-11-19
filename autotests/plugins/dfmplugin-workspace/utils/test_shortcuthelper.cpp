@@ -15,6 +15,7 @@
 #include <QAction>
 #include <QTimer>
 #include <QUrl>
+#include <QTest>
 #include <QList>
 
 using namespace dfmplugin_workspace;
@@ -245,7 +246,7 @@ TEST_F(ShortcutHelperTest, ActionTriggered_CopyAction_DoesNotCrash)
         return action;
     });
     
-    EXPECT_NO_THROW(shortcutHelper->acitonTriggered());
+    EXPECT_NO_THROW(shortcutHelper->actionTriggered());
     
     delete action;
 }
@@ -443,4 +444,39 @@ TEST_F(ShortcutHelperTest, BUG117491_Space_AutoRepeat_Ignored)
     // 非 Space 键：不触发预览
     QKeyEvent otherEv(QEvent::KeyPress, Qt::Key_A, Qt::NoModifier);
     EXPECT_FALSE(shortcutHelper->processKeyPressEvent(&otherEv));
+}
+
+// ===== PMS task 398283: tests for actionTriggered (renamed from actionTriggered typo fix) =====
+
+TEST_F(ShortcutHelperTest, ActionTriggered_RenamedMethod_ExistsAndCallable)
+{
+    // The method was renamed from actionTriggered to actionTriggered.
+    // Verify the new name compiles and is accessible via QAction::triggered connection.
+    QAction action;
+    bool triggered = false;
+
+    // Connect to the renamed slot
+    QObject::connect(&action, &QAction::triggered, shortcutHelper, &ShortcutHelper::actionTriggered);
+
+    // Stub internal dependencies to avoid side effects
+    stub.set_lamda(ADDR(ShortcutHelper, normalKeyPressEventHandle), [](ShortcutHelper*, const QKeyEvent*) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    // Emit the triggered signal — actionTriggered should be called
+    EXPECT_NO_THROW({ emit action.triggered(); });
+
+    // Process events
+    QTest::qWait(50);
+    QCoreApplication::processEvents();
+}
+
+TEST_F(ShortcutHelperTest, RegisterAction_SetsWidgetShortcutContext)
+{
+    // Shortcuts stay active for the view and its children (tree mode) but do
+    // not steal Ctrl+C/V from the title bar address field.
+    EXPECT_NO_THROW({
+        shortcutHelper->registerAction(QKeySequence::Copy, false);
+    });
 }

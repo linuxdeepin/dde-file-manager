@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QString>
+#include <QUrl>
 #include <QMap>
 #include <QDateTime>
 #include <QMutex>
@@ -32,6 +33,8 @@ public:
     bool parseIp(const QString &mpt, QString &ip, QStringList &ports);
     bool checkAllCIFSBusy();
     bool checkFtpOrSmbBusy(const QUrl &url);
+    void checkFtpOrSmbBusyAsync(const QUrl &url, std::function<void(bool)> callback = nullptr);
+    bool checkFtpOrSmbBusy(const QUrl &url, int msecs);
 
     // TTL 缓存：避免短期内对同一 host:port 重复 TCP 连接
     struct NetCacheEntry {
@@ -63,6 +66,8 @@ public:
     static QUrl resolveLocalSftpMountUrl(const QUrl &url);
 
 private:
+    bool allPortsCached(const QString &host, const QStringList &ports, bool *busy) const;
+    bool networkHostAndPorts(const QUrl &url, QString &host, QStringList &ports);
     mutable QMutex cacheMutex;
     mutable QMap<QString, NetCacheEntry> netCache;
 

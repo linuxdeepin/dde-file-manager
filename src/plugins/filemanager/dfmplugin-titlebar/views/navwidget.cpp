@@ -10,6 +10,8 @@
 #include <dfm-base/widgets/dfmcustombuttons/customiconbutton.h>
 
 #include <dfm-framework/event/event.h>
+#include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/dialogmanager.h>
 
 #include <DIconButton>
 #include <DGuiApplicationHelper>
@@ -18,6 +20,7 @@
 #endif
 
 #include <QAbstractButton>
+#include <QPointer>
 #include <QProxyStyle>
 
 using namespace dfmplugin_titlebar;
@@ -72,28 +75,45 @@ void NavWidget::removeUrlFromHistoryStack(const QUrl &url)
     d->updateBackForwardButtonsState();
 }
 
+void NavWidget::navigateWithCheck(const QUrl &url, HistoryStack *stack, int previousIndex)
+{
+    QPointer<NavWidget> guard(this);
+    NetworkUtils::instance()->checkFtpOrSmbBusyAsync(url, [guard, url, stack, previousIndex](bool busy) {
+        if (!guard)
+            return;
+        if (busy) {
+            // HistoryStack::back()/forward() already moved the index (and may
+            // have dropped invalid entries). Roll it back so the next
+            // navigation does not skip an item when the jump was cancelled.
+            if (stack && guard->d->curNavStack.get() == stack)
+                stack->setCurrentIndex(previousIndex);
+            guard->d->updateBackForwardButtonsState();
+            DialogManager::instance()->showUnableToVistDir(url.path());
+            return;
+        }
+        guard->d->updateBackForwardButtonsState();
+        TitleBarEventCaller::sendCd(guard.data(), url);
+    });
+}
+
 void NavWidget::back()
 {
     if (!d->curNavStack)
         return;
+    const int previousIndex = d->curNavStack->currentIndex();
     QUrl &&url = d->curNavStack->back();
-
-    if (!url.isEmpty()) {
-        d->updateBackForwardButtonsState();
-        TitleBarEventCaller::sendCd(this, url);
-    }
+    if (!url.isEmpty())
+        navigateWithCheck(url, d->curNavStack.get(), previousIndex);
 }
 
 void NavWidget::forward()
 {
     if (!d->curNavStack)
         return;
+    const int previousIndex = d->curNavStack->currentIndex();
     QUrl &&url = d->curNavStack->forward();
-
-    if (!url.isEmpty()) {
-        d->updateBackForwardButtonsState();
-        TitleBarEventCaller::sendCd(this, url);
-    }
+    if (!url.isEmpty())
+        navigateWithCheck(url, d->curNavStack.get(), previousIndex);
 }
 
 void NavWidget::onDevUnmounted(const QString &id, const QString &oldMpt)

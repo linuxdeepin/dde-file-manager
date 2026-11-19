@@ -6,6 +6,7 @@
 
 #include <dfm-base/base/configs/dconfig/dconfigmanager.h>
 #include <dfm-base/base/configs/dconfig/global_dconf_defines.h>
+#include <dfm-base/dfm_global_defines.h>
 
 #include <QtConcurrent>
 #include <QFutureWatcher>
@@ -28,6 +29,9 @@ static constexpr char kSmbPort[] { "445" };
 static constexpr char kSmbPortOther[] { "139" };
 static constexpr char kFtpPort[] { "21" };
 static constexpr char kSftpPort[] { "22" };
+static constexpr char kDavPort[] { "443" };
+static constexpr char kDavPortOther[] { "80" };
+static constexpr char kNfsPort[] { "2049" };
 static constexpr char kCheckNetworkAccessable[] { "checkNetworkAccessable" };
 
 NetworkUtils *NetworkUtils::instance()
@@ -100,8 +104,69 @@ bool NetworkUtils::checkNetConnection(const QString &host, QStringList ports, in
     return false;
 }
 
+bool NetworkUtils::allPortsCached(const QString &host, const QStringList &ports, bool *busy) const
+{
+    if (ports.isEmpty())
+        return false;
+
+    bool allBusy { true };
+    for (const auto &port : ports) {
+        const auto &cached = getFromCache(host, port);
+        if (!cached.timestamp.isValid())
+            return false;
+        if (!cached.busy)
+            allBusy = false;
+    }
+    if (busy)
+        *busy = allBusy;
+    return true;
+}
+
+bool NetworkUtils::networkHostAndPorts(const QUrl &url, QString &host, QStringList &ports)
+{
+    if (url.isLocalFile())
+        return parseIp(url.path(), host, ports);
+
+    host = url.host();
+    if (host.isEmpty())
+        return false;
+
+    if (url.port() != -1) {
+        ports << QString::number(url.port());
+        return true;
+    }
+
+    const auto &scheme = url.scheme();
+    if (scheme == Global::Scheme::kSmb) {
+        ports << kSmbPort << kSmbPortOther;
+    } else if (scheme == Global::Scheme::kFtp) {
+        ports << kFtpPort;
+    } else if (scheme == Global::Scheme::kSFtp) {
+        ports << kSftpPort;
+    } else if (scheme == Global::Scheme::kNfs) {
+        ports << kNfsPort;
+    } else if (scheme == Global::Scheme::kDav) {
+        ports << kDavPortOther;
+    } else if (scheme == Global::Scheme::kDavs) {
+        ports << kDavPort;
+    } else {
+        return false;
+    }
+
+    return true;
+}
+
 void NetworkUtils::doAfterCheckNet(const QString &host, const QStringList &ports, std::function<void(bool)> callback, int msecs)
 {
+    // All ports already checked recently: report the cached result without
+    // spawning a worker/thread or doing another TCP probe.
+    bool cachedBusy { false };
+    if (allPortsCached(host, ports, &cachedBusy)) {
+        if (callback)
+            callback(!cachedBusy);
+        return;
+    }
+
     QFutureWatcher<bool> *watcher = new QFutureWatcher<bool>();
     QObject::connect(watcher, &QFutureWatcher<bool>::finished, [callback, watcher]() {
         if (callback)
@@ -211,28 +276,63 @@ bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url)
 {
     QString host;
     QStringList ports;
-    if (!parseIp(url.path(), host, ports))
+    if (!networkHostAndPorts(url, host, ports))
         return false;
 
     // 先查缓存：所有端口都有缓存命中时，仅当全部 busy 才判 busy，
     // 与非缓存路径 !checkNetConnection(host, ports) 语义一致
-    bool allCached { true };
-    bool allBusy { true };
-    for (const auto &port : ports) {
-        auto cached = getFromCache(host, port);
-        if (!cached.timestamp.isValid()) {
-            allCached = false;
-            break;
-        }
-        if (!cached.busy)
-            allBusy = false;
-    }
-    if (allCached)
-        return allBusy;
+    bool cachedBusy { false };
+    if (allPortsCached(host, ports, &cachedBusy))
+        return cachedBusy;
 
     auto busy = !checkNetConnection(host, ports);
     if (busy)
         qCWarning(logDFMBase) << "Network connection failed for URL:" << url << "host:" << host << "ports:" << ports;
+
+    return busy;
+}
+
+void NetworkUtils::checkFtpOrSmbBusyAsync(const QUrl &url, std::function<void(bool)> callback)
+{
+    if (!url.isValid()) {
+        if (callback)
+            callback(false);
+        return;
+    }
+
+    QString host;
+    QStringList ports;
+    if (!networkHostAndPorts(url, host, ports)) {
+        if (callback)
+            callback(false);
+        return;
+    }
+
+    doAfterCheckNet(host, ports, [callback](bool connected) {
+        if (callback)
+            callback(!connected);
+    });
+}
+
+bool NetworkUtils::checkFtpOrSmbBusy(const QUrl &url, int msecs)
+{
+    if (!url.isValid())
+        return false;
+
+    QString host;
+    QStringList ports;
+    if (!networkHostAndPorts(url, host, ports))
+        return false;
+
+    // Cache pre-check: when all ports have cache hits, return early
+    // without performing network I/O, mirroring checkFtpOrSmbBusy(url).
+    bool cachedBusy { false };
+    if (allPortsCached(host, ports, &cachedBusy))
+        return cachedBusy;
+
+    auto busy = !checkNetConnection(host, ports, msecs);
+    if (busy)
+        qCInfo(logDFMBase) << "can not connect url = " << url << " host =  " << host << " port = " << ports;
 
     return busy;
 }

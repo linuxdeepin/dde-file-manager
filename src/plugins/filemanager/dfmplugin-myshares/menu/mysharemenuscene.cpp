@@ -7,8 +7,13 @@
 #include "events/shareeventscaller.h"
 
 #include <dfm-base/dfm_menu_defines.h>
+#include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/utils/universalutils.h>
 #include "plugins/common/dfmplugin-menu/menu_eventinterface_helper.h"
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
+
+#include <dfm-framework/dpf.h>
 
 #include <QMenu>
 #include <QDebug>
@@ -123,6 +128,7 @@ MyShareMenuScenePrivate::MyShareMenuScenePrivate(AbstractMenuScene *qq)
     predicateName[MySharesActionId::kOpenShareInNewWin] = tr("Open in new window");
     predicateName[MySharesActionId::kOpenShareInNewTab] = tr("Open in new tab");
     predicateName[MySharesActionId::kCancleSharing] = tr("Cancel sharing");
+    predicateName[dfmplugin_menu::ActionID::kCopyFolderPath] = tr("Copy folder path");
     predicateName[MySharesActionId::kShareProperty] = tr("P&roperties");
 }
 
@@ -162,6 +168,10 @@ void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
                 act->setProperty(ActionPropertyKey::kActionID, MySharesActionId::kCancleSharing);
                 predicateAction[MySharesActionId::kCancleSharing] = act;
             }
+
+            act = parent->addAction(predicateName[dfmplugin_menu::ActionID::kCopyFolderPath]);
+            act->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kCopyFolderPath);
+            predicateAction[dfmplugin_menu::ActionID::kCopyFolderPath] = act;
         }
     }
     parent->addSeparator();
@@ -197,6 +207,15 @@ bool MyShareMenuScenePrivate::triggered(const QString &id)
         }
         fmInfo() << "Canceling sharing for file:" << selectFiles.first();
         ShareEventsCaller::sendCancelSharing(selectFiles.first());
+    } else if (id == dfmplugin_menu::ActionID::kCopyFolderPath) {
+        QList<QUrl> urls;
+        UniversalUtils::urlsTransformToLocal(selectFiles, &urls);
+        if (urls.isEmpty())
+            urls = selectFiles;
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_ShortCut_CopyFilePath", windowId, urls, currentDir))
+            return true;
+        dpfSignalDispatcher->publish(GlobalEventType::kCopyFilePath, urls);
+        return true;
     } else if (id == MySharesActionId::kShareProperty) {
         fmInfo() << "Showing properties for" << selectFiles.count() << "selected files";
         ShareEventsCaller::sendShowProperty(selectFiles);

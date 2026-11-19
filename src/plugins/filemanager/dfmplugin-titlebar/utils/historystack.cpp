@@ -182,6 +182,12 @@ int HistoryStack::currentIndex()
     return index;
 }
 
+void HistoryStack::setCurrentIndex(int i)
+{
+    if (i >= 0 && i < list.count())
+        index = i;
+}
+
 bool HistoryStack::backIsExist()
 {
     if (index <= 0)

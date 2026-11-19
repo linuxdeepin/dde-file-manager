@@ -35,6 +35,8 @@
 #include <QMenu>
 #include <QAction>
 #include <QList>
+#include <QObject>
+#include <QPair>
 #include <QVariantMap>
 #include <QFileInfo>
 
@@ -54,37 +56,214 @@ using PushCreatorRef = QVariant (EventChannelManager::*)(const QString &, const 
 using SubscribeMyShares = bool (EventDispatcherManager::*)(const QString &, const QString &, MyShares *, void (MyShares::*)(const QString &));
 using PublishMenuLog = bool (EventDispatcherManager::*)(const QString &, const QString &, QString, QList<QUrl> &);
 
+class MySharesTestSink : public QObject
+{
+public:
+    ShareInfoList shareInfos;
+    bool menuContainsResult { false };
+
+    int registerFileViewCalls { 0 };
+    int registerMenuSceneCalls { 0 };
+    int removeCalls { 0 };
+    int insertCalls { 0 };
+    int customRegisterCalls { 0 };
+    int menuContainsCalls { 0 };
+    int menuBindCalls { 0 };
+    int menuRegisterCalls { 0 };
+    int viewPropertyCalls { 0 };
+    int titlebarPropertyCalls { 0 };
+    int logCalls { 0 };
+
+    QString lastRegisterFileViewScheme;
+    QString lastRegisterMenuSceneScheme;
+    QString lastRegisterMenuSceneName;
+    QString lastMenuScene;
+    QString lastMenuParent;
+    QString lastRegisterSceneName;
+    QUrl lastRemovedUrl;
+    int lastInsertIndex { -1 };
+    QUrl lastInsertUrl;
+    QVariantMap lastInsertMap;
+    QVariantMap lastCustomRegisterMap;
+    QVariantMap lastViewPropertyMap;
+    QVariantMap lastTitlebarPropertyMap;
+    QString lastLogText;
+    QList<QUrl> lastLogUrls;
+
+    bool registerFileView(const QString &scheme)
+    {
+        ++registerFileViewCalls;
+        lastRegisterFileViewScheme = scheme;
+        return true;
+    }
+
+    bool registerMenuScene(const QString &scheme, const QString &name)
+    {
+        ++registerMenuSceneCalls;
+        lastRegisterMenuSceneScheme = scheme;
+        lastRegisterMenuSceneName = name;
+        return true;
+    }
+
+    ShareInfoList allShareInfos()
+    {
+        return shareInfos;
+    }
+
+    bool removeItem(const QUrl &url)
+    {
+        ++removeCalls;
+        lastRemovedUrl = url;
+        return true;
+    }
+
+    bool insertItem(int index, const QUrl &url, const QVariantMap &map)
+    {
+        ++insertCalls;
+        lastInsertIndex = index;
+        lastInsertUrl = url;
+        lastInsertMap = map;
+        return true;
+    }
+
+    bool customRegister(const QString &scheme, const QVariantMap &map)
+    {
+        Q_UNUSED(scheme)
+        ++customRegisterCalls;
+        lastCustomRegisterMap = map;
+        return true;
+    }
+
+    bool menuContains(const QString &scene)
+    {
+        ++menuContainsCalls;
+        lastMenuScene = scene;
+        return menuContainsResult;
+    }
+
+    bool menuBind(const QString &scene, const QString &parent)
+    {
+        ++menuBindCalls;
+        lastMenuScene = scene;
+        lastMenuParent = parent;
+        return true;
+    }
+
+    bool registerScene(const QString &name, AbstractSceneCreator *creator)
+    {
+        ++menuRegisterCalls;
+        lastRegisterSceneName = name;
+        if (creator)
+            delete creator;
+        return true;
+    }
+
+    bool viewProperty(const QString &scheme, const QVariantMap &map)
+    {
+        Q_UNUSED(scheme)
+        ++viewPropertyCalls;
+        lastViewPropertyMap = map;
+        return true;
+    }
+
+    bool titlebarProperty(const QString &scheme, const QVariantMap &map)
+    {
+        Q_UNUSED(scheme)
+        ++titlebarPropertyCalls;
+        lastTitlebarPropertyMap = map;
+        return true;
+    }
+
+    bool reportLog(const QString &text, const QList<QUrl> &urls)
+    {
+        ++logCalls;
+        lastLogText = text;
+        lastLogUrls = urls;
+        return true;
+    }
+};
+
 class UT_MyShares : public testing::Test
 {
 public:
-    virtual void SetUp() override { }
-    virtual void TearDown() override { stub.clear(); }
+    virtual void SetUp() override
+    {
+        ensureEvent(EventStratege::kSlot, "dfmplugin_workspace", "slot_RegisterFileView");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_workspace", "slot_RegisterMenuScene");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_dirshare", "slot_Share_AllShareInfos");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_sidebar", "slot_Item_Remove");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_sidebar", "slot_Item_Insert");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_search", "slot_Custom_Register");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_menu", "slot_MenuScene_Contains");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_menu", "slot_MenuScene_Bind");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_menu", "slot_MenuScene_RegisterScene");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_workspace", "slot_View_SetCustomViewProperty");
+        ensureEvent(EventStratege::kSlot, "dfmplugin_titlebar", "slot_Custom_Register");
+
+        ensureEvent(EventStratege::kSignal, "dfmplugin_menu", "signal_MenuScene_SceneAdded");
+        ensureEvent(EventStratege::kSignal, "dfmplugin_dirshare", "signal_Share_ShareAdded");
+        ensureEvent(EventStratege::kSignal, "dfmplugin_dirshare", "signal_Share_ShareRemoved");
+        ensureEvent(EventStratege::kSignal, "dfmplugin_myshares", "signal_ReportLog_MenuData");
+
+        ensureEvent(EventStratege::kHook, "dfmplugin_workspace", "hook_ShortCut_DeleteFiles");
+        ensureEvent(EventStratege::kHook, "dfmplugin_workspace", "hook_ShortCut_MoveToTrash");
+        ensureEvent(EventStratege::kHook, "dfmplugin_workspace", "hook_ShortCut_PasteFiles");
+        ensureEvent(EventStratege::kHook, "dfmplugin_workspace", "hook_SendOpenWindow");
+        ensureEvent(EventStratege::kHook, "dfmplugin_workspace", "hook_SendChangeCurrentUrl");
+        ensureEvent(EventStratege::kHook, "dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin");
+        ensureEvent(EventStratege::kHook, "dfmplugin_fileoperations", "hook_Operation_SetPermission");
+
+        connectSlot("dfmplugin_workspace", "slot_RegisterFileView", &MySharesTestSink::registerFileView);
+        connectSlot("dfmplugin_workspace", "slot_RegisterMenuScene", &MySharesTestSink::registerMenuScene);
+        connectSlot("dfmplugin_dirshare", "slot_Share_AllShareInfos", &MySharesTestSink::allShareInfos);
+        connectSlot("dfmplugin_sidebar", "slot_Item_Remove", &MySharesTestSink::removeItem);
+        connectSlot("dfmplugin_sidebar", "slot_Item_Insert", &MySharesTestSink::insertItem);
+        connectSlot("dfmplugin_search", "slot_Custom_Register", &MySharesTestSink::customRegister);
+        connectSlot("dfmplugin_menu", "slot_MenuScene_Contains", &MySharesTestSink::menuContains);
+        connectSlot("dfmplugin_menu", "slot_MenuScene_Bind", &MySharesTestSink::menuBind);
+        connectSlot("dfmplugin_menu", "slot_MenuScene_RegisterScene", &MySharesTestSink::registerScene);
+        connectSlot("dfmplugin_workspace", "slot_View_SetCustomViewProperty", &MySharesTestSink::viewProperty);
+        connectSlot("dfmplugin_titlebar", "slot_Custom_Register", &MySharesTestSink::titlebarProperty);
+
+        ASSERT_TRUE(dpfSignalDispatcher->subscribe("dfmplugin_myshares", "signal_ReportLog_MenuData", &sink, &MySharesTestSink::reportLog));
+    }
+
+    virtual void TearDown() override
+    {
+        dpfSignalDispatcher->unsubscribe("dfmplugin_myshares", "signal_ReportLog_MenuData", &sink, &MySharesTestSink::reportLog);
+        for (const auto &pair : connectedSlots)
+            dpfSlotChannel->disconnect(pair.first, pair.second);
+        connectedSlots.clear();
+        stub.clear();
+    }
+
+    static void ensureEvent(EventStratege strategy, const QString &space, const QString &topic)
+    {
+        if (Event::instance()->eventType(space, topic) == EventTypeScope::kInValid)
+            Event::instance()->registerEventType(strategy, space, topic);
+    }
+
+    template<class Func>
+    void connectSlot(const QString &space, const QString &topic, Func method)
+    {
+        dpfSlotChannel->connect(space, topic, &sink, method);
+        connectedSlots.append(qMakePair(space, topic));
+    }
 
     stub_ext::StubExt stub;
     MyShares ins;
+    MySharesTestSink sink;
+    QList<QPair<QString, QString>> connectedSlots;
 };
 
 TEST_F(UT_MyShares, Start_RegisterViewAndMenuScene_ReturnsTrue)
 {
-    int viewPushes = 0;
-    stub.set_lamda(static_cast<PushQString>(&EventChannelManager::push),
-                   [&viewPushes](EventChannelManager *, const QString &, const QString &, QString) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++viewPushes;
-                       return QVariant();
-                   });
-
-    int menuPushes = 0;
-    stub.set_lamda(static_cast<PushQStringQStrRRef>(&EventChannelManager::push),
-                   [&menuPushes](EventChannelManager *, const QString &, const QString &, QString, QString) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++menuPushes;
-                       return QVariant();
-                   });
-
     EXPECT_TRUE(ins.start());
-    EXPECT_EQ(1, viewPushes);
-    EXPECT_EQ(1, menuPushes);
+    EXPECT_EQ(1, sink.registerFileViewCalls);
+    EXPECT_EQ(1, sink.registerMenuSceneCalls);
+    EXPECT_EQ(ShareUtils::scheme(), sink.lastRegisterFileViewScheme);
+    EXPECT_EQ(ShareUtils::scheme(), sink.lastRegisterMenuSceneScheme);
+    EXPECT_EQ(MyShareMenuCreator::name(), sink.lastRegisterMenuSceneName);
 }
 
 TEST_F(UT_MyShares, Initialize_DirshareNotStarted_DefersToPluginStarted)
@@ -234,96 +413,41 @@ TEST_F(UT_MyShares, OnShareAdded_AnyPath_CallsAddToSidebar)
 
 TEST_F(UT_MyShares, OnShareRemoved_AllSharesGone_RemovesSidebarItem)
 {
-    int removePushes = 0;
-    stub.set_lamda(static_cast<PushQUrl>(&EventChannelManager::push),
-                   [&removePushes](EventChannelManager *, const QString &, const QString &, QUrl) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++removePushes;
-                       return QVariant();
-                   });
-
-    stub.set_lamda(static_cast<PushNoArg>(&EventChannelManager::push),
-                   []() -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return QVariant();   // no share left
-                   });
+    sink.shareInfos.clear();
 
     EXPECT_NO_FATAL_FAILURE(ins.onShareRemoved(""));
-    EXPECT_EQ(1, removePushes);
+    EXPECT_EQ(1, sink.removeCalls);
+    EXPECT_EQ(ShareUtils::rootUrl(), sink.lastRemovedUrl);
 }
 
 TEST_F(UT_MyShares, OnShareRemoved_SharesRemain_KeepsSidebarItem)
 {
-    int removePushes = 0;
-    stub.set_lamda(static_cast<PushQUrl>(&EventChannelManager::push),
-                   [&removePushes](EventChannelManager *, const QString &, const QString &, QUrl) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++removePushes;
-                       return QVariant();
-                   });
-
-    stub.set_lamda(static_cast<PushNoArg>(&EventChannelManager::push),
-                   []() -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ShareInfoList lst { ShareInfo() };   // one share still exists
-                       return QVariant::fromValue<ShareInfoList>(lst);
-                   });
+    sink.shareInfos = ShareInfoList { ShareInfo() };
 
     EXPECT_NO_FATAL_FAILURE(ins.onShareRemoved("whatever/path"));
-    EXPECT_EQ(0, removePushes);
+    EXPECT_EQ(0, sink.removeCalls);
 }
 
 TEST_F(UT_MyShares, AddToSideBar_NoShares_SkipsInsert)
 {
-    int insertPushes = 0;
-    stub.set_lamda(static_cast<PushSidebarInsert>(&EventChannelManager::push),
-                   [&insertPushes](EventChannelManager *, const QString &, const QString &, int, QUrl, QVariantMap &) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++insertPushes;
-                       return QVariant();
-                   });
-
-    stub.set_lamda(static_cast<PushNoArg>(&EventChannelManager::push),
-                   []() -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return QVariant();   // no share infos
-                   });
+    sink.shareInfos.clear();
 
     EXPECT_NO_FATAL_FAILURE(ins.addToSidebar());
-    EXPECT_EQ(0, insertPushes);
+    EXPECT_EQ(0, sink.insertCalls);
 }
 
 TEST_F(UT_MyShares, AddToSideBar_HasShares_InsertsToNetworkGroup)
 {
-    int insertPushes = 0;
-    int insertIndex = -1;
-    QString insertTopic;
-    QVariantMap insertMap;
-    stub.set_lamda(static_cast<PushSidebarInsert>(&EventChannelManager::push),
-                   [&](EventChannelManager *, const QString &, const QString &topic, int index, QUrl, QVariantMap &map) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++insertPushes;
-                       insertIndex = index;
-                       insertTopic = topic;
-                       insertMap = map;
-                       return QVariant();
-                   });
-
-    stub.set_lamda(static_cast<PushNoArg>(&EventChannelManager::push),
-                   []() -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ShareInfoList lst { ShareInfo(), ShareInfo() };
-                       return QVariant::fromValue<ShareInfoList>(lst);
-                   });
+    sink.shareInfos = ShareInfoList { ShareInfo(), ShareInfo() };
 
     EXPECT_NO_FATAL_FAILURE(ins.addToSidebar());
-    EXPECT_EQ(1, insertPushes);
-    EXPECT_EQ(1, insertIndex);
-    EXPECT_EQ("slot_Item_Insert", insertTopic);
-    EXPECT_EQ("Group_Network", insertMap.value("Property_Key_Group").toString());
-    EXPECT_EQ("my_shares", insertMap.value("Property_Key_VisiableControl").toString());
-    EXPECT_EQ("UserShare", insertMap.value("Property_Key_ReportName").toString());
-    EXPECT_TRUE(insertMap.value("Property_Key_CallbackContextMenu").isValid());
+    EXPECT_EQ(1, sink.insertCalls);
+    EXPECT_EQ(1, sink.lastInsertIndex);
+    EXPECT_EQ(ShareUtils::rootUrl(), sink.lastInsertUrl);
+    EXPECT_EQ("Group_Network", sink.lastInsertMap.value("Property_Key_Group").toString());
+    EXPECT_EQ("my_shares", sink.lastInsertMap.value("Property_Key_VisiableControl").toString());
+    EXPECT_EQ("UserShare", sink.lastInsertMap.value("Property_Key_ReportName").toString());
+    EXPECT_TRUE(sink.lastInsertMap.value("Property_Key_CallbackContextMenu").isValid());
 }
 
 TEST_F(UT_MyShares, RegMyShareToSearch_DisableSearchSet_RegistersCustomScheme)
@@ -357,11 +481,7 @@ TEST_F(UT_MyShares, BeMySubScene_SceneNotRegistered_SubscribesSceneAdded)
                        return true;
                    });
 
-    stub.set_lamda(static_cast<PushQString>(&EventChannelManager::push),
-                   [](EventChannelManager *, const QString &, const QString &, QString) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return QVariant();   // scene not registered
-                   });
+    sink.menuContainsResult = false;
 
     ins.eventSubscribed = false;
     ins.waitToBind.clear();
@@ -378,25 +498,12 @@ TEST_F(UT_MyShares, BeMySubScene_SceneNotRegistered_SubscribesSceneAdded)
 
 TEST_F(UT_MyShares, BeMySubScene_SceneRegistered_BindsSubScene)
 {
-    int bindPushes = 0;
-    QString bindParent;
-    stub.set_lamda(static_cast<PushQStringQStrCRef>(&EventChannelManager::push),
-                   [&bindPushes, &bindParent](EventChannelManager *, const QString &, const QString &, QString, const QString &parent) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++bindPushes;
-                       bindParent = parent;
-                       return QVariant::fromValue(true);
-                   });
-
-    stub.set_lamda(static_cast<PushQString>(&EventChannelManager::push),
-                   [](EventChannelManager *, const QString &, const QString &, QString) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return QVariant::fromValue(true);   // scene registered
-                   });
+    sink.menuContainsResult = true;
 
     EXPECT_NO_FATAL_FAILURE(ins.beMySubScene("hello"));
-    EXPECT_EQ(1, bindPushes);
-    EXPECT_EQ(MyShareMenuCreator::name(), bindParent);
+    EXPECT_EQ(1, sink.menuBindCalls);
+    EXPECT_EQ(MyShareMenuCreator::name(), sink.lastMenuParent);
+    EXPECT_TRUE(ins.waitToBind.isEmpty());
 }
 
 TEST_F(UT_MyShares, BeMySubOnAdded_SceneWaiting_BindsSceneAndUnsubscribes)
@@ -407,20 +514,13 @@ TEST_F(UT_MyShares, BeMySubOnAdded_SceneWaiting_BindsSceneAndUnsubscribes)
         ++bindCalls;
     });
 
-    int unsubscribes = 0;
-    stub.set_lamda(static_cast<SubscribeMyShares>(&EventDispatcherManager::unsubscribe),
-                   [&unsubscribes](EventDispatcherManager *, const QString &, const QString &, MyShares *, void (MyShares::*)(const QString &)) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++unsubscribes;
-                       return true;
-                   });
+    ASSERT_TRUE(dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", &ins, &MyShares::beMySubOnAdded));
 
     ins.waitToBind.clear();
     ins.waitToBind.insert("hello");
     ins.eventSubscribed = true;
     EXPECT_NO_FATAL_FAILURE(ins.beMySubOnAdded("hello"));
     EXPECT_EQ(1, bindCalls);
-    EXPECT_EQ(1, unsubscribes);
     EXPECT_TRUE(ins.waitToBind.isEmpty());
     EXPECT_FALSE(ins.eventSubscribed);
 }
@@ -433,72 +533,43 @@ TEST_F(UT_MyShares, BeMySubOnAdded_MoreScenesWaiting_KeepsSubscription)
         ++bindCalls;
     });
 
-    int unsubscribes = 0;
-    stub.set_lamda(static_cast<SubscribeMyShares>(&EventDispatcherManager::unsubscribe),
-                   [&unsubscribes](EventDispatcherManager *, const QString &, const QString &, MyShares *, void (MyShares::*)(const QString &)) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++unsubscribes;
-                       return true;
-                   });
+    ASSERT_TRUE(dpfSignalDispatcher->subscribe("dfmplugin_menu", "signal_MenuScene_SceneAdded", &ins, &MyShares::beMySubOnAdded));
 
     ins.waitToBind.clear();
     ins.waitToBind.insert("hello");
     ins.waitToBind.insert("world");
+    ins.eventSubscribed = true;
     EXPECT_NO_FATAL_FAILURE(ins.beMySubOnAdded("hello"));
     EXPECT_EQ(1, bindCalls);
-    EXPECT_EQ(0, unsubscribes);   // "world" still waiting
+    EXPECT_TRUE(ins.eventSubscribed);   // "world" still waiting
 
     // unknown scene: nothing happens
     EXPECT_NO_FATAL_FAILURE(ins.beMySubOnAdded("unknown"));
     EXPECT_EQ(1, bindCalls);
-    EXPECT_EQ(0, unsubscribes);
+    EXPECT_TRUE(ins.eventSubscribed);
 }
 
 TEST_F(UT_MyShares, HookEvent_FollowsAllHookSequences_RegistersAll)
 {
-    typedef bool (ShareEventHelper::*HookFn3Args)(quint64, const QList<QUrl> &, const QUrl &);   // blockDelete/blockMoveToTrash/blockPaste
-    typedef bool (EventSequenceManager::*Follow3Args)(const QString &, const QString &, ShareEventHelper *, HookFn3Args);
-    typedef bool (ShareEventHelper::*HookFnUrls)(const QList<QUrl> &);   // hookSendOpenWindow
-    typedef bool (EventSequenceManager::*FollowUrls)(const QString &, const QString &, ShareEventHelper *, HookFnUrls);
-    typedef bool (ShareEventHelper::*HookFnWinUrl)(quint64, const QUrl &);   // hookSendChangeCurrentUrl
-    typedef bool (EventSequenceManager::*FollowWinUrl)(const QString &, const QString &, ShareEventHelper *, HookFnWinUrl);
-    typedef bool (ShareFileHelper::*HookFnOpen)(quint64, const QList<QUrl> &);   // openFileInPlugin
-    typedef bool (EventSequenceManager::*FollowOpen)(const QString &, const QString &, ShareFileHelper *, HookFnOpen);
-
-    int follow3 = 0;
-    stub.set_lamda(static_cast<Follow3Args>(&EventSequenceManager::follow),
-                   [&follow3](EventSequenceManager *, const QString &, const QString &, ShareEventHelper *, HookFn3Args) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++follow3;
-                       return true;
-                   });
-    int followUrls = 0;
-    stub.set_lamda(static_cast<FollowUrls>(&EventSequenceManager::follow),
-                   [&followUrls](EventSequenceManager *, const QString &, const QString &, ShareEventHelper *, HookFnUrls) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++followUrls;
-                       return true;
-                   });
-    int followWinUrl = 0;
-    stub.set_lamda(static_cast<FollowWinUrl>(&EventSequenceManager::follow),
-                   [&followWinUrl](EventSequenceManager *, const QString &, const QString &, ShareEventHelper *, HookFnWinUrl) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++followWinUrl;
-                       return true;
-                   });
-    int followOpen = 0;
-    stub.set_lamda(static_cast<FollowOpen>(&EventSequenceManager::follow),
-                   [&followOpen](EventSequenceManager *, const QString &, const QString &, ShareFileHelper *, HookFnOpen) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++followOpen;
-                       return true;
-                   });
+    QUrl shareUrl;
+    shareUrl.setScheme(ShareUtils::scheme());
+    shareUrl.setPath("/hello");
 
     EXPECT_NO_FATAL_FAILURE(ins.followEvents());
-    EXPECT_EQ(3, follow3);
-    EXPECT_EQ(1, followUrls);
-    EXPECT_EQ(1, followWinUrl);
-    EXPECT_EQ(1, followOpen);
+
+    EXPECT_TRUE(dpfHookSequence->run("dfmplugin_workspace", "hook_ShortCut_DeleteFiles",
+                                     quint64(0), QList<QUrl> { shareUrl }, QUrl()));
+    EXPECT_TRUE(dpfHookSequence->run("dfmplugin_workspace", "hook_ShortCut_MoveToTrash",
+                                     quint64(0), QList<QUrl> { shareUrl }, QUrl()));
+    EXPECT_TRUE(dpfHookSequence->run("dfmplugin_workspace", "hook_ShortCut_PasteFiles",
+                                     quint64(0), QList<QUrl> {}, shareUrl));
+    EXPECT_TRUE(dpfHookSequence->run("dfmplugin_workspace", "hook_SendOpenWindow",
+                                     QList<QUrl> { shareUrl }));
+    EXPECT_TRUE(dpfHookSequence->run("dfmplugin_workspace", "hook_SendChangeCurrentUrl",
+                                     quint64(0), shareUrl));
+    EXPECT_TRUE(dpfHookSequence->run("dfmplugin_fileoperations", "hook_Operation_OpenFileInPlugin",
+                                     quint64(0), QList<QUrl> { shareUrl }));
+    EXPECT_TRUE(Event::instance()->eventType("dfmplugin_fileoperations", "hook_Operation_SetPermission") > 0);
 }
 
 TEST_F(UT_MyShares, BindWindows_ExistingWindows_BindsAllAndConnectsFuture)
@@ -543,31 +614,7 @@ TEST_F(UT_MyShares, DoInitialize_RegistersFactoriesAndEvents)
                        return true;
                    });
 
-    stub.set_lamda(static_cast<PushQString>(&EventChannelManager::push),
-                   [](EventChannelManager *, const QString &, const QString &, QString) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return QVariant();   // menu scene not registered
-                   });
-
-    int sceneRegisters = 0;
-    stub.set_lamda(static_cast<PushCreatorRef>(&EventChannelManager::push),
-                   [&sceneRegisters](EventChannelManager *, const QString &, const QString &, QString, AbstractSceneCreator *&creator) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++sceneRegisters;
-                       if (creator)
-                           delete creator;
-                       return QVariant::fromValue(true);
-                   });
-
-    int propPushes = 0;
-    stub.set_lamda(static_cast<PushQStringMapRef>(&EventChannelManager::push),
-                   [&propPushes](EventChannelManager *, const QString &, const QString &topic, QString, QVariantMap &map) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       ++propPushes;
-                       if (topic == "slot_View_SetCustomViewProperty")
-                           EXPECT_FALSE(map.value(Global::ViewCustomKeys::kSupportTreeMode).toBool());
-                       return QVariant();
-                   });
+    sink.menuContainsResult = false;
 
     EXPECT_NO_FATAL_FAILURE(ins.doInitialize());
 
@@ -578,11 +625,14 @@ TEST_F(UT_MyShares, DoInitialize_RegistersFactoriesAndEvents)
     EXPECT_TRUE(WatcherFactory::create<AbstractFileWatcher>(ShareUtils::rootUrl()));
 
     // menu scene registered, two sub scenes deferred by subscription
-    EXPECT_EQ(1, sceneRegisters);
+    EXPECT_EQ(1, sink.menuRegisterCalls);
+    EXPECT_EQ(2, sink.menuContainsCalls);
     EXPECT_EQ(3, subscribes);   // ShareAdded + ShareRemoved + SceneAdded
 
     // workspace + titlebar custom properties pushed
-    EXPECT_EQ(2, propPushes);
+    EXPECT_EQ(1, sink.viewPropertyCalls);
+    EXPECT_EQ(1, sink.titlebarPropertyCalls);
+    EXPECT_FALSE(sink.lastViewPropertyMap.value(Global::ViewCustomKeys::kSupportTreeMode).toBool());
 
     EXPECT_TRUE(followEventsCalled);
     EXPECT_TRUE(bindWindowsCalled);
@@ -611,16 +661,6 @@ TEST_F(UT_MyShares, ContenxtMenuHandle_UrlExists_MenuEnabledAndLogPublished)
                        return tabAddable;
                    });
 
-    int logPublished = 0;
-    QList<QUrl> logUrls;
-    stub.set_lamda(static_cast<PublishMenuLog>(&EventDispatcherManager::publish),
-                   [&logPublished, &logUrls](EventDispatcherManager *, const QString &, const QString &, QString, QList<QUrl> &urls) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++logPublished;
-                       logUrls = urls;
-                       return true;
-                   });
-
     QList<bool> actEnabled;   // actions are deleted by contenxtMenuHandle, snapshot states inside exec
     stub.set_lamda(static_cast<QAction *(QMenu::*)(const QPoint &, QAction *)>(&QMenu::exec),
                    [&actEnabled](QMenu *menu, const QPoint &, QAction *) -> QAction * {
@@ -639,15 +679,15 @@ TEST_F(UT_MyShares, ContenxtMenuHandle_UrlExists_MenuEnabledAndLogPublished)
     EXPECT_TRUE(actEnabled.at(1));   // exists && tab addable
     EXPECT_EQ(1, addableCalls);
     EXPECT_EQ(addableWinId, quint64(1));
-    EXPECT_EQ(1, logPublished);   // exec returned an action
-    EXPECT_EQ(url, logUrls.first());
+    EXPECT_EQ(1, sink.logCalls);   // exec returned an action
+    EXPECT_EQ(url, sink.lastLogUrls.first());
 
     // tab not addable: tab action disabled, log still published on selection
     tabAddable = false;
     EXPECT_NO_FATAL_FAILURE(MyShares::contenxtMenuHandle(1, url, QPoint(10, 10)));
     EXPECT_TRUE(actEnabled.at(0));
     EXPECT_FALSE(actEnabled.at(1));
-    EXPECT_EQ(2, logPublished);
+    EXPECT_EQ(2, sink.logCalls);
 }
 
 TEST_F(UT_MyShares, ContenxtMenuHandle_UrlNotExists_ActionsDisabledAndNoLog)
@@ -658,14 +698,6 @@ TEST_F(UT_MyShares, ContenxtMenuHandle_UrlNotExists_ActionsDisabledAndNoLog)
         __DBG_STUB_INVOKE__
         return true;
     });
-
-    int logPublished = 0;
-    stub.set_lamda(static_cast<PublishMenuLog>(&EventDispatcherManager::publish),
-                   [&logPublished](EventDispatcherManager *, const QString &, const QString &, QString, QList<QUrl> &) -> bool {
-                       __DBG_STUB_INVOKE__
-                       ++logPublished;
-                       return true;
-                   });
 
     QList<bool> actEnabled;   // actions are deleted by contenxtMenuHandle, snapshot states inside exec
     stub.set_lamda(static_cast<QAction *(QMenu::*)(const QPoint &, QAction *)>(&QMenu::exec),
@@ -683,7 +715,7 @@ TEST_F(UT_MyShares, ContenxtMenuHandle_UrlNotExists_ActionsDisabledAndNoLog)
     EXPECT_EQ(2, actEnabled.count());
     EXPECT_FALSE(actEnabled.at(0));
     EXPECT_FALSE(actEnabled.at(1));
-    EXPECT_EQ(0, logPublished);   // no action triggered
+    EXPECT_EQ(0, sink.logCalls);   // no action triggered
 }
 
 // 触发菜单两个 action 的 lambda（sendOpenWindow / sendOpenTab），

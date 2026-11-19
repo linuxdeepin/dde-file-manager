@@ -18,6 +18,7 @@
 #include <QStringList>
 #include <QDir>
 #include <QDirIterator>
+#include <QObject>
 #include <QVariantMap>
 #include <QTemporaryDir>
 #include <QFile>
@@ -25,38 +26,54 @@
 using namespace dfmplugin_myshares;
 DFMBASE_USE_NAMESPACE
 
+class ShareIteratorTestSink : public QObject
+{
+public:
+    QList<QVariantMap> shares;
+    int allShareInfosCalls { 0 };
+
+    QList<QVariantMap> allShareInfos()
+    {
+        ++allShareInfosCalls;
+        return shares;
+    }
+};
+
 class UT_ShareIterator : public testing::Test
 {
     // Test interface
 public:
     virtual void SetUp() override
     {
-        typedef QVariant (dpf::EventChannelManager::*PushAll)(const QString &, const QString &);
-        stub.set_lamda(static_cast<PushAll>(&dpf::EventChannelManager::push), [] { __DBG_STUB_INVOKE__ return QVariant(); });
+        connectAllShareInfosSlot();
         it = new ShareIterator(QUrl("usershare:///"), {}, QDir::NoFilter, QDirIterator::NoIteratorFlags);
     }
     virtual void TearDown() override
     {
         stub.clear();
+        dpf::Event::instance()->channel()->disconnect("dfmplugin_dirshare", "slot_Share_AllShareInfos");
         delete it;
         it = nullptr;
     }
 
+    void connectAllShareInfosSlot()
+    {
+        if (dpf::Event::instance()->eventType("dfmplugin_dirshare", "slot_Share_AllShareInfos") == dpf::EventTypeScope::kInValid)
+            dpf::Event::instance()->registerEventType(dpf::EventStratege::kSlot, "dfmplugin_dirshare", "slot_Share_AllShareInfos");
+        dpf::Event::instance()->channel()->connect("dfmplugin_dirshare", "slot_Share_AllShareInfos", &sink, &ShareIteratorTestSink::allShareInfos);
+    }
+
     stub_ext::StubExt stub;
     ShareIterator *it { nullptr };
+    ShareIteratorTestSink sink;
 };
 
 TEST_F(UT_ShareIterator, Ctor_RootUrl_LoadsSharesFromSlot)
 {
-    stub_ext::StubExt local;
-    typedef QVariant (dpf::EventChannelManager::*PushAll)(const QString &, const QString &);
-    local.set_lamda(static_cast<PushAll>(&dpf::EventChannelManager::push), [] {
-        const QList<QVariantMap> shares {
-            { { ShareInfoKeys::kName, "a" }, { ShareInfoKeys::kPath, "/a" } },
-            { { ShareInfoKeys::kName, "b" }, { ShareInfoKeys::kPath, "/b" } }
-        };
-        return QVariant::fromValue(shares);
-    });
+    sink.shares = {
+        { { ShareInfoKeys::kName, "a" }, { ShareInfoKeys::kPath, "/a" } },
+        { { ShareInfoKeys::kName, "b" }, { ShareInfoKeys::kPath, "/b" } }
+    };
 
     ShareIterator seeded(QUrl("usershare:///"));
     EXPECT_TRUE(seeded.d->proxy == nullptr);
@@ -123,7 +140,8 @@ TEST_F(UT_ShareIterator, FileUrl_MakesShareUrlFromCurrentSharePath)
 
 TEST_F(UT_ShareIterator, FileInfo_ReturnsInfoFactoryResult)
 {
-    stub.set_lamda(static_cast<QSharedPointer<FileInfo>(*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>), [] { __DBG_STUB_INVOKE__ return nullptr; });
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [] { __DBG_STUB_INVOKE__ return QSharedPointer<FileInfo>(); });
     it->d->currentInfo = { { ShareInfoKeys::kPath, "/hello/world" } };
     EXPECT_TRUE(it->fileInfo() == nullptr);
 }
