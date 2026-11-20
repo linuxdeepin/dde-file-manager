@@ -16,6 +16,7 @@
 #include <dfm-base/base/device/devicemanager.h>
 #include <dfm-base/utils/dialogmanager.h>
 #include <dfm-base/utils/networkutils.h>
+#include <dfm-base/utils/protocolutils.h>
 
 #include <dfm-framework/event/event.h>
 
@@ -173,12 +174,53 @@ QString prehandler_utils::splitMountSource(const QString &source, QString *subPa
     return source;
 }
 
+/*!
+ * \brief prehandler_utils::joinMountedPath
+ *
+ * Builds the local path to navigate to from the mount point reported by the mount
+ * backend and the remote sub path parsed by \a splitMountSource.
+ *
+ * The mount point of a GVFS mount is NOT the mount root but its *default location*
+ * (see gvfs backend: sftp/ftp report the login home directory via PWD, smb reports
+ * the top-most existing directory of the share). The sub path however is always
+ * relative to the remote root, so a plain concatenation duplicates the prefix:
+ *
+ *   mount point : /run/user/1000/gvfs/sftp:host=1.2.3.4,user=bob/home/bob
+ *   sub path    : home/bob/Documents
+ *   concat      : .../home/bob/home/bob/Documents   <- wrong
+ *
+ * For GVFS mounts the base therefore must be the mount root, i.e. the path up to
+ * the mount spec (/run/user/<uid>/gvfs/<spec> or /root/.gvfs/<spec>). Non-GVFS
+ * mounts (cifs/smbmounts, nfs, ...) are rooted at their mount point, so the plain
+ * concatenation is kept there.
+ */
+QString prehandler_utils::joinMountedPath(const QString &mountPoint, const QString &subPath)
+{
+    if (subPath.isEmpty())
+        return mountPoint;
+
+    QString base = mountPoint;
+    const QString gvfsRoot = ProtocolUtils::gvfsMountRoot(mountPoint);
+    if (!gvfsRoot.isEmpty()) {
+        base = gvfsRoot;
+        fmDebug() << "joinMountedPath: gvfs default location replaced by mount root."
+                  << "mountPoint:" << mountPoint
+                  << "mountRoot:" << base
+                  << "subPath:" << subPath;
+    }
+
+    while (base.endsWith("/"))
+        base.chop(1);
+
+    QString path = base + "/" + subPath;
+    while (path.size() > 1 && path.endsWith("/"))
+        path.chop(1);
+    return path;
+}
+
 void travers_prehandler::doChangeCurrentUrl(quint64 winId, const QString &mpt, const QString &subPath, const QUrl &sourceUrl)
 {
-    QString targetPath = mpt;
-    if (!subPath.isEmpty() && !targetPath.endsWith("/"))
-        targetPath.append("/");
-    targetPath.append(subPath);
+    QString targetPath = prehandler_utils::joinMountedPath(mpt, subPath);
 
     QUrl url = QUrl::fromLocalFile(targetPath);
     FileInfoPointer fileInfo = InfoFactory::create<FileInfo>(url, Global::kCreateFileInfoSync);

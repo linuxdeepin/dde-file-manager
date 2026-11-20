@@ -212,6 +212,47 @@ TEST_F(UT_TraversPrehandler, DoChangeCurrentUrl_MissingSubDirectory_ShowsErrorAn
     EXPECT_FALSE(navigationPublished);
 }
 
+TEST_F(UT_TraversPrehandler, DoChangeCurrentUrl_GvfsDefaultLocation_DoesNotDuplicateHomePath)
+{
+    // GIO reports the sftp/ftp home directory as the mount point while the sub path is
+    // relative to the remote root; the mount root must be used as base, otherwise the
+    // home prefix is duplicated, e.g. accessing
+    // /run/user/1000/gvfs/sftp:host=...,user=testuser/home/testuser/home/testuser/...
+    const QString gvfsRoot = "/run/user/1000/gvfs/sftp:host=127.0.0.1,port=2222,user=testuser";
+
+    QString navigatedPath;
+    typedef bool (dpf::EventDispatcherManager::*PublishFunc)(dpf::EventType, quint64, QUrl &);
+    stub.set_lamda(static_cast<PublishFunc>(&dpf::EventDispatcherManager::publish),
+                   [&navigatedPath](dpf::EventDispatcherManager *, dpf::EventType, quint64, QUrl &url) {
+                       __DBG_STUB_INVOKE__
+                       navigatedPath = url.toLocalFile();
+                       return true;
+                   });
+    typedef QVariant (dpf::EventChannelManager::*Push)(const QString &, const QString &, quint64, const QUrl &);
+    stub.set_lamda(static_cast<Push>(&dpf::EventChannelManager::push),
+                   [] { __DBG_STUB_INVOKE__ return QVariant(); });
+
+    stub.set_lamda(static_cast<QSharedPointer<FileInfo> (*)(const QUrl &, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [](const QUrl &url, Global::CreateFileInfoType, QString *) -> QSharedPointer<FileInfo> {
+                       __DBG_STUB_INVOKE__
+                       return QSharedPointer<FileInfo>(new SyncFileInfo(url));
+                   });
+    // the synthesized gvfs path does not exist on disk; treat it as an existing directory
+    stub.set_lamda(VADDR(SyncFileInfo, exists), [] { __DBG_STUB_INVOKE__ return true; });
+    stub.set_lamda(VADDR(SyncFileInfo, isAttributes), [](SyncFileInfo *, const FileInfo::FileIsType) {
+        __DBG_STUB_INVOKE__
+        return false;
+    });
+
+    const QString mountPoint = gvfsRoot + "/home/testuser";
+    travers_prehandler::doChangeCurrentUrl(0, mountPoint,
+                                           "home/testuser/Documents/project",
+                                           QUrl("sftp://testuser@127.0.0.1:2222/home/testuser/Documents/project"));
+
+    EXPECT_EQ(navigatedPath, gvfsRoot + "/home/testuser/Documents/project");
+    EXPECT_FALSE(navigatedPath.contains("/home/testuser/home/testuser"));
+}
+
 class UT_PrehandlerUtils : public testing::Test
 {
 protected:
@@ -296,4 +337,33 @@ TEST_F(UT_PrehandlerUtils, SplitMountSource)
     sub.clear();
     EXPECT_EQ("nfs://1.2.3.4/path", prehandler_utils::splitMountSource("nfs://1.2.3.4/path", &sub));
     EXPECT_TRUE(sub.isEmpty());
+}
+
+TEST_F(UT_PrehandlerUtils, JoinMountedPath)
+{
+    // Non-GVFS mounts are rooted at their mount point: keep the plain concatenation
+    EXPECT_EQ("/run/media/u/smbmounts/x/share/dir",
+              prehandler_utils::joinMountedPath("/run/media/u/smbmounts/x", "share/dir"));
+    EXPECT_EQ("/run/media/u/smbmounts/x/share/dir",
+              prehandler_utils::joinMountedPath("/run/media/u/smbmounts/x/", "share/dir"));
+
+    // empty sub path returns the mount point untouched
+    EXPECT_EQ("/run/media/u/smbmounts/x", prehandler_utils::joinMountedPath("/run/media/u/smbmounts/x", ""));
+    EXPECT_EQ("", prehandler_utils::joinMountedPath("", ""));
+
+    // GVFS: the mount point is the default location, so the base must be the mount spec root
+    const QString gvfsRoot = "/run/user/1000/gvfs/sftp:host=127.0.0.1,port=2222,user=testuser";
+    EXPECT_EQ(gvfsRoot + "/home/testuser/Documents",
+              prehandler_utils::joinMountedPath(gvfsRoot + "/home/testuser", "home/testuser/Documents"));
+
+    // already at the mount root (mount point == mount root)
+    EXPECT_EQ(gvfsRoot + "/etc", prehandler_utils::joinMountedPath(gvfsRoot, "etc"));
+
+    // legacy /root/.gvfs form
+    EXPECT_EQ("/root/.gvfs/ftp:host=1.2.3.4/var/www/html",
+              prehandler_utils::joinMountedPath("/root/.gvfs/ftp:host=1.2.3.4/var/www", "var/www/html"));
+
+    // gvfs smb: mount point is the top-most existing dir of the share
+    EXPECT_EQ("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=d/dir/sub",
+              prehandler_utils::joinMountedPath("/run/user/1000/gvfs/smb-share:server=1.2.3.4,share=d", "dir/sub"));
 }

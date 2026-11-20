@@ -48,6 +48,35 @@ static bool isGvfsProtocolPath(const QString &path, const QString &protocolPrefi
     return start >= 0 && path.mid(start).startsWith(protocolPrefix);
 }
 
+/*!
+ * \brief ProtocolUtils::gvfsMountRoot
+ *
+ * Returns the mount root of a GVFS path, i.e. everything up to but excluding the
+ * mount spec, e.g.
+ *   \c /run/user/1000/gvfs/sftp:host=h,user=u/home/u/doc  ->  \c /run/user/1000/gvfs/sftp:host=h,user=u
+ *   \c /root/.gvfs/ftp:host=h/var/www                     ->  \c /root/.gvfs/ftp:host=h
+ *
+ * An empty string is returned when \a path is not a GVFS path.
+ *
+ * Used by callers that must map a remote absolute path onto the GVFS mount: the
+ * mount point reported by GIO is the mount's default location (for sftp/ftp the
+ * login home directory), not the root where the remote '/' is exposed.
+ */
+QString gvfsMountRoot(const QString &path)
+{
+    const int specStart = gvfsPathStart(path);
+    if (specStart < 0)
+        return QString();
+
+    // The mount spec itself must be non-empty: '/run/user/1000/gvfs/' ends right at
+    // the prefix, so it carries no mount and therefore has no root.
+    if (specStart >= path.size())
+        return QString();
+
+    const int specEnd = path.indexOf('/', specStart);
+    return specEnd < 0 ? path : path.left(specEnd);
+}
+
 static bool isMediaSmbMountPath(const QString &path)
 {
     if (!path.startsWith(QStringLiteral("/media/")) && !path.startsWith(QStringLiteral("/run/media/")))
