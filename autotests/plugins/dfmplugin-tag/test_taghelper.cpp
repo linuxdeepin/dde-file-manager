@@ -320,6 +320,30 @@ TEST_F(UT_TagHelper, isDefaultTag_CustomTag)
     EXPECT_FALSE(isDefault);
 }
 
+TEST_F(UT_TagHelper, isDefaultTag_ColorName)
+{
+    // PMS: BUG-380765 — colorName is locale-independent, should match across locales
+    bool isDefault = helper->isDefaultTag("Navy-blue");
+
+    EXPECT_TRUE(isDefault);
+}
+
+TEST_F(UT_TagHelper, isDefaultColor_DefaultColor)
+{
+    // PMS: BUG-380765 — default color should be recognized
+    bool isDefault = helper->isDefaultColor(QColor("#3468ff"));
+
+    EXPECT_TRUE(isDefault);
+}
+
+TEST_F(UT_TagHelper, isDefaultColor_CustomColor)
+{
+    // PMS: BUG-380765 — non-default color should return false
+    bool isDefault = helper->isDefaultColor(QColor("#123456"));
+
+    EXPECT_FALSE(isDefault);
+}
+
 TEST_F(UT_TagHelper, paintTags)
 {
     // Test painting tags
