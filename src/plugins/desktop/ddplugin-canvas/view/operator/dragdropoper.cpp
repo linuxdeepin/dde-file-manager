@@ -370,6 +370,9 @@ bool DragDropOper::dropClientDownload(QDropEvent *event) const
 {
     auto data = event->mimeData();
     if (DFileDragClient::checkMimeData(data)) {
+        if (FileUtils::isTrashDesktopFile(m_target))
+            return false;
+
         fmInfo() << "DFileDragClient download detected - target:" << m_target;
         event->acceptProposedAction();
         fmWarning() << "drop on" << m_target;
