@@ -32,6 +32,7 @@
 #include <sys/mman.h>
 #include <sys/sysmacros.h>
 #include <linux/fs.h>
+#include <linux/limits.h>
 
 #include "sync_interface_qt6.h"
 
@@ -1067,6 +1068,9 @@ QUrl FileOperateBaseWorker::createNewTargetUrl(const DFileInfoPointer &toInfo, c
         return {};
 
     QString fileNewName = formatFileName(fileName);
+    if (!FileUtils::supportLongName(toInfo->uri())
+        && fileNewName.toLocal8Bit().size() > NAME_MAX)
+        fileNewName = FileUtils::cutFileName(fileNewName, NAME_MAX, false);
     // 创建文件的名称
     QUrl newTargetUrl = toInfo->uri();
     const QString &newTargetPath = newTargetUrl.path();
