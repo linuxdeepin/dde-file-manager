@@ -166,8 +166,8 @@ void PluginManagerPrivate::scanfAllPlugin()
         }
         qCDebug(logDPF) << "PluginManagerPrivate: scanned" << pathScanned << "files in path:" << path;
     }
-    
-    qCInfo(logDPF) << "PluginManagerPrivate: plugin scan completed - total scanned:" << totalScanned 
+
+    qCInfo(logDPF) << "PluginManagerPrivate: plugin scan completed - total scanned:" << totalScanned
                    << "valid plugins:" << validPlugins << "in read queue:" << readQueue.size();
 }
 
@@ -214,12 +214,12 @@ void PluginManagerPrivate::scanfVirtualPlugin(const QString &fileName,
 bool PluginManagerPrivate::isBlackListed(const QString &name)
 {
     if (blackPluginNames.contains(name)) {
-        qCWarning(logDPF) << "Black plugin: " << name << "don't load!";
+        qCDebug(logDPF) << "Black plugin: " << name << "don't load!";
         return true;
     }
 
     if (blackListFilter && blackListFilter(name)) {
-        qCWarning(logDPF) << "Black plugin(filter): " << name << "don't load!";
+        qCDebug(logDPF) << "Black plugin(filter): " << name << "don't load!";
         return true;
     }
 
@@ -261,7 +261,7 @@ void PluginManagerPrivate::readJsonToMeta(PluginMetaObjectPointer metaObject)
 void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const QJsonObject &metaData)
 {
     qCDebug(logDPF) << "PluginManagerPrivate: parsing JSON metadata for plugin:" << metaObject->d->name;
-    
+
     metaObject->d->version = metaData.value(kPluginVersion).toString();
     metaObject->d->category = metaData.value(kPluginCategory).toString();
     metaObject->d->description = metaData.value(kPluginDescription).toString();
@@ -287,7 +287,7 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
     // QML 组件信息
     QJsonArray &&quickArray = metaData.value(kQuick).toArray();
     qCDebug(logDPF) << "PluginManagerPrivate: processing" << quickArray.size() << "Quick components for plugin:" << metaObject->d->name;
-    
+
     for (const auto &quickItr : quickArray) {
         const QJsonObject &quick = quickItr.toObject();
 
@@ -330,7 +330,7 @@ void PluginManagerPrivate::jsonToMeta(PluginMetaObjectPointer metaObject, const 
         metaObject->d->quickMetaList.append(quickMeta);
         qCDebug(logDPF) << "PluginManagerPrivate: added Quick component:" << id << "url:" << fullPath;
     }
-    
+
     qCDebug(logDPF) << "PluginManagerPrivate: JSON metadata parsing completed for plugin:" << metaObject->d->name;
 }
 
