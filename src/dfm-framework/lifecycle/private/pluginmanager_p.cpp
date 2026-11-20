@@ -150,7 +150,7 @@ void PluginManagerPrivate::scanfAllPlugin()
             QJsonObject &&dataJson = metaJson.value("MetaData").toObject();
             QString &&iid = metaJson.value("IID").toString();
             if (!pluginLoadIIDs.contains(iid)) {
-                qCWarning(logDPF) << "Invalid iid:" << fileName << iid;
+                qCDebug(logDPF) << "Invalid iid:" << fileName << iid;
                 continue;
             }
 
