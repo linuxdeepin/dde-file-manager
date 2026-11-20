@@ -213,6 +213,37 @@ TEST_F(UT_MyShareMenuScenePrivate, CreateFileMenu_HasCopyFolderPathAction)
     EXPECT_TRUE(d->predicateAction.contains(dfmplugin_menu::ActionID::kCopyFolderPath));
 }
 
+TEST_F(UT_MyShareMenuScenePrivate, CreateFileMenu_MultiSelect_HasCopyFilePathAction)
+{
+    // Multi-selection is reachable by Ctrl+Shift+C in the same view, so the menu
+    // must offer a copy-path entry too (file path, per ClipBoardMenuScene rule).
+    d->selectFiles.append(QUrl::fromLocalFile("/Hello/World"));
+    d->selectFiles.append(QUrl::fromLocalFile("/Hello/Other"));
+    FileInfoPointer info(new FileInfo(d->selectFiles.first()));
+    stub.set_lamda(static_cast<FileInfoPointer (*)(const QUrl &, bool *, Global::CreateFileInfoType, QString *)>(&InfoFactory::create<FileInfo>),
+                   [info](const QUrl &, bool *, Global::CreateFileInfoType, QString *) -> FileInfoPointer {
+                       __DBG_STUB_INVOKE__
+                       return info;
+                   });
+    stub.set_lamda(VADDR(FileInfo, isAttributes), [](FileInfo *, const OptInfoType type) {
+        __DBG_STUB_INVOKE__
+        return type == OptInfoType::kIsDir;
+    });
+
+    QMenu menu;
+    d->createFileMenu(&menu);
+
+    bool found = false;
+    for (QAction *act : menu.actions()) {
+        if (act->property(ActionPropertyKey::kActionID).toString() == dfmplugin_menu::ActionID::kCopyFilePath) {
+            found = true;
+            break;
+        }
+    }
+    EXPECT_TRUE(found);
+    EXPECT_TRUE(d->predicateAction.contains(dfmplugin_menu::ActionID::kCopyFilePath));
+}
+
 TEST_F(UT_MyShareMenuScenePrivate, Triggered)
 {
     d->predicateAction.clear();

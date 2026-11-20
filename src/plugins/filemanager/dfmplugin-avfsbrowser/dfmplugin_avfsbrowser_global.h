@@ -19,6 +19,8 @@ DFM_LOG_USE_CATEGORY(DPAVFSBROWSER_NAMESPACE)
 namespace AvfsMenuActionId {
 inline constexpr char kOpen[] { "act-avfs-open" };
 inline constexpr char kCopy[] { "act-avfs-copy" };
+inline constexpr char kCopyFilePath[] { "copy-file-path" };
+inline constexpr char kCopyFolderPath[] { "copy-folder-path" };
 inline constexpr char kProperty[] { "act-avfs-property" };
 }
 

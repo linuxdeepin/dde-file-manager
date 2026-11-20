@@ -10,6 +10,9 @@
 
 #include <dfm-base/interfaces/abstractmenuscene.h>
 #include <dfm-base/interfaces/abstractscenecreator.h>
+#include <dfm-base/dfm_menu_defines.h>
+
+#include "plugins/common/dfmplugin-menu/menuscene/action_defines.h"
 
 #include <QMenu>
 #include <QAction>
@@ -46,9 +49,11 @@ protected:
     }
 
 private:
-    stub_ext::StubExt stub;
     FileDialogMenuCreator *creator = nullptr;
     FileDialogMenuScene *scene = nullptr;
+
+protected:
+    stub_ext::StubExt stub;
 };
 
 TEST_F(UT_FileDialogMenuScene, CreatorName_ReturnsCorrectName)
@@ -107,6 +112,29 @@ TEST_F(UT_FileDialogMenuScene, UpdateState_NullMenu_DoesNotCrash)
     // Instead, test with a valid menu to ensure the method works
     QMenu menu;
     EXPECT_NO_THROW(scene->updateState(&menu));
+}
+
+// PMS: the dialog embeds the workspace FileView, where Ctrl+Shift+C is handled by
+// ShortcutHelper, so the whitelist must not filter the copy-path actions out.
+TEST_F(UT_FileDialogMenuScene, UpdateState_KeepsCopyPathActionsVisible)
+{
+    // In the real dialog the actions belong to the ClipBoardMenu subscene, so the
+    // scene-name filter passes; provide that here since no workspace scene is built.
+    stub.set_lamda(ADDR(FileDialogMenuScene, findSceneName), [](FileDialogMenuScene *, QAction *) {
+        __DBG_STUB_INVOKE__
+        return QString("ClipBoardMenu");
+    });
+
+    QMenu menu;
+    QAction *copyFilePath = menu.addAction("Copy file path");
+    copyFilePath->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kCopyFilePath);
+    QAction *copyFolderPath = menu.addAction("Copy folder path");
+    copyFolderPath->setProperty(ActionPropertyKey::kActionID, dfmplugin_menu::ActionID::kCopyFolderPath);
+
+    scene->updateState(&menu);
+
+    EXPECT_TRUE(copyFilePath->isVisible());
+    EXPECT_TRUE(copyFolderPath->isVisible());
 }
 
 TEST_F(UT_FileDialogMenuScene, ActionFilter_ValidAction_ReturnsFalse)

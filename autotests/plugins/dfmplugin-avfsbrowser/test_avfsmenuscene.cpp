@@ -15,12 +15,15 @@
 #include <QStandardPaths>
 #include <QMenu>
 
+#include <algorithm>
+
 #include "stubext.h"
 
 #include "menu/avfsmenuscene.h"
 
 #include <dfm-base/base/urlroute.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/application/application.h>
 #include <dfm-base/interfaces/fileinfo.h>
 #include <dfm-base/interfaces/abstractdiriterator.h>
@@ -99,6 +102,69 @@ TEST_F(TestAvfsMenuScene, UpdateState)
     QMenu *parent = new QMenu();
     EXPECT_NO_FATAL_FAILURE(scene.updateState(parent));
     delete parent;
+}
+
+// PMS: the archive view is shown by the workspace FileView, so Ctrl+Shift+C works
+// there. The self-implemented menu must expose the same copy-path capability.
+static bool hasActionId(QMenu *menu, const QString &id)
+{
+    const auto actions = menu->actions();
+    return std::any_of(actions.cbegin(), actions.cend(), [&id](QAction *act) {
+        return act->property(DFMBASE_NAMESPACE::ActionPropertyKey::kActionID).toString() == id;
+    });
+}
+
+// The test binary registers no 'file' scheme creator, so inject the FileInfo and
+// its isDir attribute instead of touching the filesystem.
+using CreateFileInfoFn = QSharedPointer<DFMBASE_NAMESPACE::FileInfo> (*)(
+        const QUrl &, const DFMBASE_NAMESPACE::Global::CreateFileInfoType, QString *);
+
+static void stubFileInfo(stub_ext::StubExt &stub, bool isDir)
+{
+    stub.set_lamda(static_cast<CreateFileInfoFn>(&InfoFactory::create<DFMBASE_NAMESPACE::FileInfo>),
+                   [](const QUrl &url, const DFMBASE_NAMESPACE::Global::CreateFileInfoType, QString *) {
+                       __DBG_STUB_INVOKE__
+                       return QSharedPointer<DFMBASE_NAMESPACE::FileInfo>::create(url);
+                   });
+    stub.set_lamda(VADDR(DFMBASE_NAMESPACE::FileInfo, isAttributes),
+                   [isDir](DFMBASE_NAMESPACE::FileInfo *, DFMBASE_NAMESPACE::OptInfoType type) {
+                       __DBG_STUB_INVOKE__
+                       return type == DFMBASE_NAMESPACE::OptInfoType::kIsDir ? isDir : false;
+                   });
+}
+
+TEST_F(TestAvfsMenuScene, Create_SelectedFile_HasCopyFilePath)
+{
+    stubFileInfo(stub, false);
+
+    AvfsMenuScene scene;
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = QUrl::fromLocalFile("/tmp");
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(QList<QUrl> { QUrl::fromLocalFile("/tmp/a.txt") });
+    params[MenuParamKey::kIsEmptyArea] = false;
+    scene.initialize(params);
+
+    QMenu menu;
+    scene.create(&menu);
+
+    EXPECT_TRUE(hasActionId(&menu, "copy-file-path"));
+}
+
+TEST_F(TestAvfsMenuScene, Create_SelectedDir_HasCopyFolderPath)
+{
+    stubFileInfo(stub, true);
+
+    AvfsMenuScene scene;
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = QUrl::fromLocalFile("/tmp");
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(QList<QUrl> { QUrl::fromLocalFile("/tmp/sub") });
+    params[MenuParamKey::kIsEmptyArea] = false;
+    scene.initialize(params);
+
+    QMenu menu;
+    scene.create(&menu);
+
+    EXPECT_TRUE(hasActionId(&menu, "copy-folder-path"));
 }
 
 TEST_F(TestAvfsMenuScene, Triggered)

@@ -93,7 +93,9 @@ void FileDialogMenuScene::filterAction(QMenu *parent, bool isSubMenu)
                                               ActionID::kDisplayAs, ActionID::kSortBy, ActionID::kGroupBy,
                                               ActionID::kOpen, ActionID::kRename,
                                               ActionID::kDelete, ActionID::kCopy,
-                                              ActionID::kCut, ActionID::kPaste };
+                                              ActionID::kCut, ActionID::kPaste,
+                                              // keep in sync with the Ctrl+Shift+C shortcut of the embedded FileView
+                                              ActionID::kCopyFilePath, ActionID::kCopyFolderPath };
     static const QStringList whiteSceneList { "NewCreateMenu", "ClipBoardMenu", "OpenDirMenu", "FileOperatorMenu",
                                               "OpenWithMenu", "ShareMenu", "SortAndDisplayMenu" };
     static const QStringList extSceneList { "ExtendMenu", "OemMenu", "ExtensionLibMenu" };
