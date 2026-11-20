@@ -20,7 +20,7 @@ using namespace dfmbase;
 static const int kDefaultWidth { 700 };
 int TaskDialog::kMaxHeight { 0 };
 
-TaskDialog::TaskDialog(QObject *parent)
+TaskDialog::TaskDialog(QWidget *parent)
     : DAbstractDialog(parent)
 {
     moveToThread(qApp->thread());
