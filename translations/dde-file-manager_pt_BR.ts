@@ -6333,12 +6333,12 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="40"/>
         <source>Copy file path</source>
-        <translation type="unfinished"/>
+        <translation>Copiar caminho do arquivo</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-menu/menuscene/clipboardmenuscene.cpp" line="41"/>
         <source>Copy folder path</source>
-        <translation type="unfinished"/>
+        <translation>Copiar caminho da pasta</translation>
     </message>
 </context>
 <context>
@@ -6504,7 +6504,7 @@ Você precisa atualizar este cofre para continuar usando-o.</translation>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="131"/>
         <source>Copy folder path</source>
-        <translation type="unfinished"/>
+        <translation>Copiar caminho da pasta</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-myshares/menu/mysharemenuscene.cpp" line="132"/>
