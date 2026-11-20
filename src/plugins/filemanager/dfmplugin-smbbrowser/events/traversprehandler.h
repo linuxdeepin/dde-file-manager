@@ -25,6 +25,7 @@ void onSmbRootMounted(const QString &mountSource, Handler after);
 
 namespace prehandler_utils {
 QString splitMountSource(const QString &source, QString *subPath = nullptr);
+QString joinMountedPath(const QString &mountPoint, const QString &subPath);
 }   // namespace prehandler_utils
 
 DPSMBBROWSER_END_NAMESPACE

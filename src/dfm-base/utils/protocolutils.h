@@ -18,6 +18,7 @@ bool isSMBFile(const QUrl &url);
 bool isNFSFile(const QUrl &url);
 bool isDavFile(const QUrl &url);
 bool isDavsFile(const QUrl &url);
+QString gvfsMountRoot(const QString &path);
 }   // namespace ProtocolUtils
 
 DFMBASE_END_NAMESPACE

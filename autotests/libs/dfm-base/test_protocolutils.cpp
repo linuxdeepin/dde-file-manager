@@ -608,3 +608,58 @@ TEST_F(TestNonLocalUrl, DavUrlWithSslInPath)
     QUrl url("dav://host/dav:host=server,ssl=false");
     EXPECT_TRUE(ProtocolUtils::isDavFile(url));   // true via scheme
 }
+
+// =============================================================================
+// gvfsMountRoot
+// =============================================================================
+
+class TestGvfsMountRoot : public TestProtocolUtils
+{
+};
+
+TEST_F(TestGvfsMountRoot, UserGvfsPath_ReturnsMountSpec)
+{
+    // Everything up to the mount spec is the root where the remote '/' is exposed;
+    // the tail after it is the remote absolute path (here the login home directory).
+    EXPECT_EQ("/run/user/1000/gvfs/sftp:host=127.0.0.1,port=2222,user=testuser",
+              ProtocolUtils::gvfsMountRoot(gvfsPath(1000, "sftp:host=127.0.0.1,port=2222,user=testuser")
+                                           + "/home/testuser/Documents"));
+}
+
+TEST_F(TestGvfsMountRoot, RootGvfsPath_ReturnsMountSpec)
+{
+    EXPECT_EQ("/root/.gvfs/ftp:host=1.2.3.4",
+              ProtocolUtils::gvfsMountRoot("/root/.gvfs/ftp:host=1.2.3.4/var/www/html"));
+}
+
+TEST_F(TestGvfsMountRoot, PathIsAlreadyMountRoot_ReturnedAsIs)
+{
+    const QString root = gvfsPath(1000, "smb-share:server=1.2.3.4,share=d");
+    EXPECT_EQ(root, ProtocolUtils::gvfsMountRoot(root));
+}
+
+TEST_F(TestGvfsMountRoot, UidWithMultipleDigits_Handled)
+{
+    EXPECT_EQ("/run/user/1001/gvfs/sftp:host=h",
+              ProtocolUtils::gvfsMountRoot("/run/user/1001/gvfs/sftp:host=h/root"));
+}
+
+TEST_F(TestGvfsMountRoot, NotAGvfsPath_ReturnsEmpty)
+{
+    EXPECT_TRUE(ProtocolUtils::gvfsMountRoot("/home/testuser/Documents").isEmpty());
+    EXPECT_TRUE(ProtocolUtils::gvfsMountRoot("/media/testuser/usb/data").isEmpty());
+    EXPECT_TRUE(ProtocolUtils::gvfsMountRoot("").isEmpty());
+
+    // no digits in the uid position
+    EXPECT_TRUE(ProtocolUtils::gvfsMountRoot("/run/user/abc/gvfs/sftp:host=h/root").isEmpty());
+    // '/run/user/<uid>/' without the gvfs segment
+    EXPECT_TRUE(ProtocolUtils::gvfsMountRoot("/run/user/1000/other/sftp:host=h/root").isEmpty());
+}
+
+TEST_F(TestGvfsMountRoot, NoMountSpec_ReturnsEmpty)
+{
+    // '/run/user/<uid>/gvfs/' stops right at the prefix and carries no mount spec,
+    // so there is no root to return.
+    EXPECT_TRUE(ProtocolUtils::gvfsMountRoot(gvfsPath(1000, "")).isEmpty());
+    EXPECT_TRUE(ProtocolUtils::gvfsMountRoot("/run/user/1000/gvfs").isEmpty());
+}
