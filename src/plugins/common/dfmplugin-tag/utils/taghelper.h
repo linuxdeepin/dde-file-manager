@@ -60,6 +60,7 @@ public:
 
     QString getColorNameByTag(const QString &tagName) const;
     bool isDefaultTag(const QString &tagName) const;
+    bool isDefaultColor(const QColor &color) const;
 
     void paintTags(QPainter *painter, QRectF &rect, const QList<QColor> &colors) const;
 
