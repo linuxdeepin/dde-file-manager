@@ -114,6 +114,9 @@ void PacketWritingMenuScene::updateState(QMenu *parent)
         "open-with",
         "delete",
         "copy",
+        // copy path must stay consistent with the Ctrl+Shift+C shortcut.
+        "copy-file-path",
+        "copy-folder-path",
         "rename",
         "send-to",
         "property",

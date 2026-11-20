@@ -447,9 +447,52 @@ TEST_F(TestOpticalMenuScene, UpdateState_SeparatorActions_AlwaysVisible)
     EXPECT_TRUE(separatorAction->isVisible());
 }
 
-// Test OpticalMenuScenePrivate methods
-TEST_F(TestOpticalMenuScene, FindSceneName_ValidAction_ReturnsSceneName)
+// PMS: the copy-path actions must survive the optical whitelist so that the
+// context menu matches the Ctrl+Shift+C shortcut, which works in burn:// views.
+TEST_F(TestOpticalMenuScene, UpdateState_NormalArea_KeepsCopyPathActions)
 {
+    QVariantHash params;
+    params[MenuParamKey::kCurrentDir] = QUrl("burn:///dev/sr0/disc_files/");
+    params[MenuParamKey::kIsEmptyArea] = false;
+    params[MenuParamKey::kSelectFiles] = QVariant::fromValue(QList<QUrl> { QUrl("burn:///dev/sr0/disc_files/test.txt") });
+
+    stub.set_lamda(VADDR(MasteredMediaFileInfo, extraProperties), []() {
+        __DBG_STUB_INVOKE__
+        QVariantHash props;
+        props["mm_backer"] = "/tmp/test.txt";
+        return props;
+    });
+
+    stub.set_lamda(&dfmplugin_menu_util::menuSceneCreateScene, [](const QString &name) {
+        __DBG_STUB_INVOKE__
+        return static_cast<AbstractMenuScene *>(nullptr);
+    });
+
+    scene->initialize(params);
+
+    QMenu menu;
+    QAction *copyFilePath = new QAction("Copy file path", &menu);
+    copyFilePath->setProperty(ActionPropertyKey::kActionID, "copy-file-path");
+    menu.addAction(copyFilePath);
+
+    QAction *copyFolderPath = new QAction("Copy folder path", &menu);
+    copyFolderPath->setProperty(ActionPropertyKey::kActionID, "copy-folder-path");
+    menu.addAction(copyFolderPath);
+
+    stub.set_lamda(ADDR(OpticalMenuScenePrivate, findSceneName), [](OpticalMenuScenePrivate *, QAction *) {
+        __DBG_STUB_INVOKE__
+        return QString("ClipBoardMenu");
+    });
+
+    mockIsOnDisc = true;
+    scene->updateState(&menu);
+
+    EXPECT_TRUE(copyFilePath->isVisible());
+    EXPECT_TRUE(copyFolderPath->isVisible());
+}
+
+// Test OpticalMenuScenePrivate methods
+TEST_F(TestOpticalMenuScene, FindSceneName_ValidAction_ReturnsSceneName){
     // Create a mock action with scene
     QAction action;
 

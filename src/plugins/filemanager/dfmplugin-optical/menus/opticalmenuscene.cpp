@@ -81,6 +81,10 @@ void OpticalMenuScene::updateState(QMenu *parent)
         "open-with",
         "delete",
         "copy",
+        // copy path must stay consistent with the Ctrl+Shift+C shortcut,
+        // which is available in burn:// views as well.
+        "copy-file-path",
+        "copy-folder-path",
         "send-to",
         "property",
         "open-in-new-window",

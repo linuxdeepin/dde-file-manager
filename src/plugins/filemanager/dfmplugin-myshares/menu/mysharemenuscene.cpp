@@ -129,6 +129,7 @@ MyShareMenuScenePrivate::MyShareMenuScenePrivate(AbstractMenuScene *qq)
     predicateName[MySharesActionId::kOpenShareInNewTab] = tr("Open in new tab");
     predicateName[MySharesActionId::kCancleSharing] = tr("Cancel sharing");
     predicateName[dfmplugin_menu::ActionID::kCopyFolderPath] = tr("Copy folder path");
+    predicateName[dfmplugin_menu::ActionID::kCopyFilePath] = tr("Copy file path");
     predicateName[MySharesActionId::kShareProperty] = tr("P&roperties");
 }
 
@@ -174,6 +175,20 @@ void MyShareMenuScenePrivate::createFileMenu(QMenu *parent)
             predicateAction[dfmplugin_menu::ActionID::kCopyFolderPath] = act;
         }
     }
+
+    // Same rule as ClipBoardMenuScene, so the menu matches the Ctrl+Shift+C shortcut
+    // for multi-selection as well: single dir -> folder path, otherwise file path.
+    const bool isSingleDir = selectFiles.count() == 1 && [this] {
+        auto info = InfoFactory::create<FileInfo>(selectFiles.first());
+        return info && info->isAttributes(OptInfoType::kIsDir);
+    }();
+    const QString copyPathId = isSingleDir ? dfmplugin_menu::ActionID::kCopyFolderPath
+                                           : dfmplugin_menu::ActionID::kCopyFilePath;
+    if (!predicateAction.contains(copyPathId)) {
+        act = parent->addAction(predicateName[copyPathId]);
+        act->setProperty(ActionPropertyKey::kActionID, copyPathId);
+        predicateAction[copyPathId] = act;
+    }
     parent->addSeparator();
 
     act = parent->addAction(predicateName[MySharesActionId::kShareProperty]);
@@ -207,14 +222,13 @@ bool MyShareMenuScenePrivate::triggered(const QString &id)
         }
         fmInfo() << "Canceling sharing for file:" << selectFiles.first();
         ShareEventsCaller::sendCancelSharing(selectFiles.first());
-    } else if (id == dfmplugin_menu::ActionID::kCopyFolderPath) {
-        QList<QUrl> urls;
-        UniversalUtils::urlsTransformToLocal(selectFiles, &urls);
-        if (urls.isEmpty())
-            urls = selectFiles;
-        if (dpfHookSequence->run("dfmplugin_workspace", "hook_ShortCut_CopyFilePath", windowId, urls, currentDir))
+    } else if (id == dfmplugin_menu::ActionID::kCopyFolderPath
+               || id == dfmplugin_menu::ActionID::kCopyFilePath) {
+        // Keep the original urls: pre-converting breaks schemes that build their
+        // path inside the hook (e.g. trash). Identical to the shortcut chain.
+        if (dpfHookSequence->run("dfmplugin_workspace", "hook_ShortCut_CopyFilePath", windowId, selectFiles, currentDir))
             return true;
-        dpfSignalDispatcher->publish(GlobalEventType::kCopyFilePath, urls);
+        dpfSignalDispatcher->publish(GlobalEventType::kCopyFilePath, selectFiles);
         return true;
     } else if (id == MySharesActionId::kShareProperty) {
         fmInfo() << "Showing properties for" << selectFiles.count() << "selected files";

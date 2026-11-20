@@ -9,6 +9,7 @@
 
 #include <dfm-base/dfm_menu_defines.h>
 #include <dfm-base/base/schemefactory.h>
+#include <dfm-base/dfm_event_defines.h>
 
 #include <dfm-framework/dpf.h>
 
@@ -91,6 +92,18 @@ bool AvfsMenuScene::create(QMenu *parent)
         act->setProperty(ActionPropertyKey::kActionID, kCopy);
         d->predicateAction[kCopy] = act;
 
+        // Keep the archive view menu consistent with the Ctrl+Shift+C shortcut,
+        // which is available here because archives are shown by the workspace FileView.
+        const bool isDir = d->selectFiles.count() == 1
+                && [&] {
+                       auto info = InfoFactory::create<FileInfo>(d->selectFiles.first());
+                       return info && info->isAttributes(OptInfoType::kIsDir);
+                   }();
+        const QString copyPathId = isDir ? kCopyFolderPath : kCopyFilePath;
+        act = parent->addAction(d->predicateName[copyPathId]);
+        act->setProperty(ActionPropertyKey::kActionID, copyPathId);
+        d->predicateAction[copyPathId] = act;
+
         parent->addSeparator();
     } else {
         parent->addAction(d->predicateAction[k3rdDisplayAs]);
@@ -119,7 +132,13 @@ bool AvfsMenuScene::triggered(QAction *action)
     if (d->predicateName.contains(id) && d->predicateAction.values().contains(action)) {
         if (id == kCopy)
             AvfsEventHandler::instance()->writeToClipbord(d->windowId, d->selectFiles);
-        else if (id == kOpen)
+        else if (id == kCopyFilePath || id == kCopyFolderPath) {
+            // Same chain as the Ctrl+Shift+C shortcut (ShortcutHelper::copyFilePath).
+            if (dpfHookSequence->run("dfmplugin_workspace", "hook_ShortCut_CopyFilePath",
+                                     d->windowId, d->selectFiles, d->currentDir))
+                return true;
+            dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kCopyFilePath, d->selectFiles);
+        } else if (id == kOpen)
             AvfsEventHandler::instance()->hookOpenFiles(d->windowId, d->selectFiles);
         else if (id == kProperty)
             AvfsEventHandler::instance()->showProperty(d->selectFiles.isEmpty() ? QList<QUrl> { d->currentDir } : d->selectFiles);
@@ -146,5 +165,7 @@ AvfsMenuScenePrivate::AvfsMenuScenePrivate(AvfsMenuScene *qq)
     using namespace AvfsMenuActionId;
     predicateName[kOpen] = tr("Open");
     predicateName[kCopy] = tr("Copy");
+    predicateName[kCopyFilePath] = tr("Copy file path");
+    predicateName[kCopyFolderPath] = tr("Copy folder path");
     predicateName[kProperty] = tr("Properties");
 }
