@@ -22,6 +22,10 @@
 using namespace dfmplugin_workspace;
 using namespace dfmbase;
 
+namespace {
+constexpr int kMaxExpandedLines { 15 };
+}
+
 ExpandedItem::ExpandedItem(dfmplugin_workspace::IconItemDelegate *d, QWidget *parent)
     : QWidget(parent),
       delegate(d)
@@ -58,13 +62,13 @@ void ExpandedItem::paintEvent(QPaintEvent *)
 
     const QMargins &margins = contentsMargins();
 
+    QString str = delegate->displayFileName(index);
+    int lineHeight = UniversalUtils::getTextLineHeight(str, delegate->parent()->parent()->fontMetrics());
+
     QRect labelRect(kIconModeRectRadius + margins.left(),
                     iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing + margins.top(),
                     width() - kIconModeRectRadius * 2,
-                    INT_MAX);
-
-    QString str = delegate->displayFileName(index);
-    int lineHeight = UniversalUtils::getTextLineHeight(str, delegate->parent()->parent()->fontMetrics());
+                    lineHeight * kMaxExpandedLines);
 
     QScopedPointer<ElideTextLayout> layout(ItemDelegateHelper::createTextLayout(str, QTextOption::WrapAtWordBoundaryOrAnywhere,
                                                                                 lineHeight, Qt::AlignCenter, &pa));
@@ -175,12 +179,14 @@ QRectF ExpandedItem::textGeometry(int width) const
 
         width -= (margins.left() + margins.right());
 
+        QString str = delegate->displayFileName(index);
+        int lineHeight = UniversalUtils::getTextLineHeight(str, delegate->parent()->parent()->fontMetrics());
+
         QRect labelRect(kIconModeTextPadding + margins.left(),
                         iconHeight + kIconModeTextPadding + 2 * kIconModeIconSpacing + margins.top(),
                         width - kIconModeRectRadius * 2,
-                        INT_MAX);
+                        lineHeight * kMaxExpandedLines);
 
-        QString str = delegate->displayFileName(index);
         const QList<QRectF> &lines = delegate->calcFileNameRect(index, labelRect, option.textElideMode);
 
         textBounding = GlobalPrivate::boundingRect(lines);
