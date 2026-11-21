@@ -776,7 +776,7 @@ TEST(DeviceManagerTest, BUG195467_DetachNormalDiskPowersOff)
     EXPECT_TRUE(powerOffCalled);
 }
 
-// PMS:180409 smb 整合视图开启时保存密码模式必须降级为 kSaveBeforeLogout（会话内保存）
+// PMS:180409 smb 整合视图开启时用户未勾选记住密码，保存模式应保持 kNeverSavePasswd 不被覆盖
 TEST(DeviceManagerTest, BUG180409_SmbIntegratedDowngradesSavePasswdMode)
 {
     using namespace GlobalServerDefines::NetworkMountParamKey;
@@ -803,7 +803,7 @@ TEST(DeviceManagerTest, BUG180409_SmbIntegratedDowngradesSavePasswdMode)
     auto info = DeviceManager::instance()->d.data()->askForPasswdWhenMountNetworkDevice(
         "ut message", "u", "d", "smb://utserver/share");
     EXPECT_FALSE(info.cancelled);
-    EXPECT_EQ(info.savePasswd, dfmmount::NetworkMountPasswdSaveMode::kSaveBeforeLogout);
+    EXPECT_EQ(info.savePasswd, dfmmount::NetworkMountPasswdSaveMode::kNeverSavePasswd);
 }
 
 // PMS:180409 非 smb 网络协议（sftp/ftp/dav/davs）无域概念，域输入行必须隐藏
