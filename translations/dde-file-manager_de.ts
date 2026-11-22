@@ -179,12 +179,12 @@ Flash memory may be failing. Please back up data immediately.</source>
     <message>
         <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="385"/>
         <source>Open in file manager</source>
-        <translation type="unfinished"/>
+        <translation>In der Dateiverwaltung öffnen</translation>
     </message>
     <message>
         <location filename="../src/external/dde-shell-plugins/folder-content/package/FolderView.qml" line="421"/>
         <source>Network is unreachable</source>
-        <translation type="unfinished"/>
+        <translation>Netzwerk ist nicht erreichbar</translation>
     </message>
 </context>
 <context>
@@ -1575,12 +1575,12 @@ Benutzer und Passwort eingeben für %1</translation>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="256"/>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="271"/>
         <source>You do not have permission to access &quot;%1&quot;</source>
-        <translation type="unfinished"/>
+        <translation>Sie haben keine Zugriffsberechtigung auf %1</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/utils/titlebarhelper.cpp" line="266"/>
         <source>The path &quot;%1&quot; does not exist</source>
-        <translation type="unfinished"/>
+        <translation>Der Pfad &quot;%1&quot; existiert nicht</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-titlebar/views/crumbbar.cpp" line="392"/>
@@ -1964,12 +1964,12 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="90"/>
         <source>Proxy authentication failed</source>
-        <translation type="unfinished"/>
+        <translation>Proxy- Authentifizierung fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="92"/>
         <source>Proxy server needs authentication</source>
-        <translation type="unfinished"/>
+        <translation>Proxy-Server benötigt Authentifizierung</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/qrc/configure/global-setting-template-dfmio-trans.cpp" line="94"/>
