@@ -2907,7 +2907,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="201"/>
         <source>To disable the One-Click Hide feature, invoke the &quot;Desktop Settings&quot; window in the desktop context menu and turn off the &quot;One-Click Hide Collection&quot;.</source>
-        <translation type="unfinished"/>
+        <translation>Um das 1-Klick-Ausblend-Feature abzuschalten, rufen Sie das &quot;Schreibtischeinstellungen-Fenster&quot; im Schreibtisch-Kontext-Menü auf und schalten die &quot;1-Klick-Ausblend-Sammlung&quot; aus.</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/framemanager.cpp" line="213"/>
@@ -2951,7 +2951,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="91"/>
         <source>Desktop Settings</source>
-        <translation type="unfinished"/>
+        <translation>Schreibtischeinstellungen</translation>
     </message>
     <message>
         <location filename="../src/plugins/desktop/ddplugin-organizer/options/optionswindow.cpp" line="110"/>
@@ -3319,7 +3319,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/dfm-base/base/device/devicemanager.cpp" line="646"/>
         <source>Unable to connect to %1</source>
-        <translation type="unfinished"/>
+        <translation>Verbindung mit %1 nicht möglich</translation>
     </message>
 </context>
 <context>
@@ -3550,7 +3550,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="175"/>
         <source>Error occurred while mounting device</source>
-        <translation type="unfinished"/>
+        <translation>Beim Einhängen des Geräts ist ein Fehler aufgetreten</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="470"/>
@@ -3601,17 +3601,17 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="585"/>
         <source>File operation failed: %1</source>
-        <translation type="unfinished"/>
+        <translation>Fehlgeschlagene Datei-Operation%1</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
         <source>File Name</source>
-        <translation type="unfinished"/>
+        <translation>Dateiname</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="614"/>
         <source>Error Reason</source>
-        <translation type="unfinished"/>
+        <translation>Grund des Fehlers</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/utils/dialogmanager.cpp" line="670"/>
@@ -3923,12 +3923,12 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="354"/>
         <source>Default icon grid density:</source>
-        <translation type="unfinished"/>
+        <translation>Standard-Symbolabstand:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="364"/>
         <source>Default list height:</source>
-        <translation type="unfinished"/>
+        <translation>Standard-Listenhöhe:</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="374"/>
@@ -3958,7 +3958,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="244"/>
         <source>Open new folder in a new tab</source>
-        <translation type="unfinished"/>
+        <translation>Neuen Ordner in neuem Tab öffnen</translation>
     </message>
     <message>
         <location filename="../src/dfm-base/base/configs/settingbackend.cpp" line="247"/>
