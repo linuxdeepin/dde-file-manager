@@ -4574,17 +4574,17 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="171"/>
         <source>File verification successful.</source>
-        <translation type="unfinished"/>
+        <translation>Datei-Verifizierung erfolgreich.</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="178"/>
         <source>File checksum mismatch detected</source>
-        <translation type="unfinished"/>
+        <translation>Datei-Prüfsumme stimmt nicht</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="182"/>
         <source>Data verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Datenverifizierung fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="185"/>
@@ -4633,7 +4633,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="64"/>
         <source>Erase failed</source>
-        <translation type="unfinished"/>
+        <translation>Löschen fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="65"/>
@@ -4664,7 +4664,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="274"/>
         <source>File verification failed</source>
-        <translation type="unfinished"/>
+        <translation>Datei-Verifizierung fehlgeschlagen</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjobmanager.cpp" line="277"/>
@@ -4768,7 +4768,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="652"/>
         <source>Not enough free space on the disc</source>
-        <translation type="unfinished"/>
+        <translation>Nicht genügend freier Speicherplatz auf dem Laufwerk</translation>
     </message>
     <message>
         <location filename="../src/plugins/common/dfmplugin-burn/utils/burnjob.cpp" line="653"/>
@@ -4892,7 +4892,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="339"/>
         <source>Authorization dismissed</source>
-        <translation type="unfinished"/>
+        <translation>Authentifizierung abgelehnt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-computer/controller/computercontroller.cpp" line="583"/>
@@ -5014,32 +5014,32 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="48"/>
         <source>Name</source>
-        <translation type="unfinished"/>
+        <translation>Name</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="49"/>
         <source>Size</source>
-        <translation type="unfinished"/>
+        <translation>Größe</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="50"/>
         <source>Resolution</source>
-        <translation type="unfinished"/>
+        <translation>Auflösung</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="52"/>
         <source>Duration</source>
-        <translation type="unfinished"/>
+        <translation>Dauer</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="53"/>
         <source>Type</source>
-        <translation type="unfinished"/>
+        <translation>Typ</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="54"/>
         <source>Accessed</source>
-        <translation type="unfinished"/>
+        <translation>Zugegriffen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-detailspace/views/fileinfowidget.cpp" line="55"/>
