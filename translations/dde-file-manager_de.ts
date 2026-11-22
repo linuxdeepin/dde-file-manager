@@ -5490,7 +5490,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="779"/>
         <source>unmount</source>
-        <translation type="unfinished"/>
+        <translation>Aushängen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/menu/diskencryptmenuscene.cpp" line="779"/>
@@ -5575,7 +5575,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="308"/>
         <source>Please continue to encrypt &quot;%1&quot; partition</source>
-        <translation type="unfinished"/>
+        <translation>Bitte fahren Sie mit der Verschlüsselung der &quot;%1&quot;-Partition fort</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/gui/encryptparamsinputdialog.cpp" line="309"/>
@@ -5703,12 +5703,12 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="261"/>
         <source>Partition %1 has been encrypted</source>
-        <translation type="unfinished"/>
+        <translation>Partition %1 wurde verschlüsselt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="267"/>
         <source>Partition %1 encrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>Verschlüsselung von Partition %1 fehlgeschlagen, bitte sehen Sie sich die Log-Daten für weitere Information an. (%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="395"/>
@@ -5759,22 +5759,22 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="558"/>
         <source>Partition %1 has been preencrypt, please reboot to finish encryption.</source>
-        <translation type="unfinished"/>
+        <translation>Partition %1 wurde vorverschlüsselt, bitte booten Sie neu, um die Verschlüsselung abzuschließen.</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="567"/>
         <source>Partition %1 preencrypt failed, please see log for more information.(%2)</source>
-        <translation type="unfinished"/>
+        <translation>Vorverschlüsselung von Partition %1 fehlgeschlagen, bitte sehen Sie sich die Log-Daten für weitere Information an. (%2)</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="586"/>
         <source>Partition %1 has been decrypted</source>
-        <translation type="unfinished"/>
+        <translation>Partition %1 wurde entschlüsselt</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="593"/>
         <source>Decrypt partition</source>
-        <translation type="unfinished"/>
+        <translation>Partition entschlüsseln</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-disk-encrypt-entry/events/eventshandler.cpp" line="599"/>
