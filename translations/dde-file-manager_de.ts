@@ -7324,12 +7324,12 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="244"/>
         <source>Image-Content search</source>
-        <translation type="unfinished"/>
+        <translation>Bildinhalts-Suche</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/search.cpp" line="266"/>
         <source>Smart search</source>
-        <translation type="unfinished"/>
+        <translation>Sinngemäße Suche</translation>
     </message>
 </context>
 <context>
@@ -7360,7 +7360,7 @@ Sie müssen den Tresor deswegen anpassen, um ihn benutzen zu können.</translati
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="355"/>
         <source>Enable</source>
-        <translation type="unfinished"/>
+        <translation>Ermöglichen</translation>
     </message>
     <message>
         <location filename="../src/plugins/filemanager/dfmplugin-search/utils/searchhintcontroller.cpp" line="360"/>
