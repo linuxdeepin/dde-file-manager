@@ -44,6 +44,7 @@ public:
     static void createStagingFolder(const QString &path);
     static bool isDupFileNameInPath(const QString &path, const QUrl &url);
     static bool isBurnEnabled();
+    static bool isUDFBurnEnabled();
     static QStringList allOpticalDiscMountPoints();
     static QString findMountPoint(const QString &path);
 

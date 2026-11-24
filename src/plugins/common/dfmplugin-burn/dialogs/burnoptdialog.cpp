@@ -12,7 +12,6 @@
 #include <dfm-burn/dopticaldiscmanager.h>
 #include <dfm-burn/dopticaldiscinfo.h>
 
-#include <DSysInfo>
 #include <QWindow>
 #include <QLabel>
 #include <QFile>
@@ -190,7 +189,7 @@ void BurnOptDialog::initializeUi()
     fsComb->setFont(f14);
 
     static const QString &udItem = BurnOptDialog::tr("%1 (Compatible with Windows CD/DVD mode)").arg(QString("U/D/F").remove("/"));
-    if (fsComb->count() == fsTypes.count() && !DSysInfo::isCommunityEdition())
+    if (fsComb->count() == fsTypes.count() && BurnHelper::isUDFBurnEnabled())
         fsComb->addItem(udItem);
 
     // 控制间距

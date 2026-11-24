@@ -238,6 +238,12 @@ bool BurnHelper::isBurnEnabled()
     return ret.isValid() ? ret.toBool() : true;
 }
 
+bool BurnHelper::isUDFBurnEnabled()
+{
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.burn", "udfBurnEnable");
+    return ret.isValid() ? ret.toBool() : true;
+}
+
 int BurnHelper::defaultBurnFs()
 {
     const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.burn", "defaultBurnFilesystemType", 1);

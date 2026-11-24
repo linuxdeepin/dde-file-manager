@@ -605,6 +605,47 @@ TEST_F(TestOpticalHelper, IsBurnEnabled_InvalidConfig_ReturnsTrue)
     EXPECT_TRUE(result);   // Default to true when config is invalid
 }
 
+TEST_F(TestOpticalHelper, IsUDFBurnEnabled_ConfigTrue_ReturnsTrue)
+{
+    stub.set_lamda(&DConfigManager::value, [](DConfigManager *, const QString &app, const QString &key, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        if (app == "org.deepin.dde.file-manager.burn" && key == "udfBurnEnable")
+            return QVariant(true);
+        return QVariant();
+    });
+
+    bool result = OpticalHelper::isUDFBurnEnabled();
+
+    EXPECT_TRUE(result);
+}
+
+TEST_F(TestOpticalHelper, IsUDFBurnEnabled_ConfigFalse_ReturnsFalse)
+{
+    stub.set_lamda(&DConfigManager::value, [](DConfigManager *, const QString &app, const QString &key, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        if (app == "org.deepin.dde.file-manager.burn" && key == "udfBurnEnable")
+            return QVariant(false);
+        return QVariant();
+    });
+
+    bool result = OpticalHelper::isUDFBurnEnabled();
+
+    EXPECT_FALSE(result);
+}
+
+TEST_F(TestOpticalHelper, IsUDFBurnEnabled_InvalidConfig_ReturnsTrue)
+{
+    // Mock DConfigManager to return invalid QVariant
+    stub.set_lamda(&DConfigManager::value, []() {
+        __DBG_STUB_INVOKE__
+        return QVariant();   // Invalid variant
+    });
+
+    bool result = OpticalHelper::isUDFBurnEnabled();
+
+    EXPECT_TRUE(result);   // Default to true when config is invalid
+}
+
 TEST_F(TestOpticalHelper, AllOpticalDiscMountPoints_ValidDiscs_ReturnsMountPoints)
 {
     QStringList result = OpticalHelper::allOpticalDiscMountPoints();

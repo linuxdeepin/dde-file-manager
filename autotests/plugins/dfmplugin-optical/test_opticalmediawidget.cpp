@@ -23,7 +23,6 @@
 #include <dfm-burn/dburn_global.h>
 #include <dfm-mount/base/dmount_global.h>
 
-#include <DSysInfo>
 #include <QDir>
 #include <QUrl>
 #include <QVariantMap>
@@ -227,15 +226,15 @@ TEST_F(TestOpticalMediaWidget, UpdateDiscInfo_BlankDiscZeroSpace_AttemptsMount)
     EXPECT_TRUE(mountCalled);
 }
 
-TEST_F(TestOpticalMediaWidget, IsSupportedUDF_ProfessionalEditionSupportedMedium_UpdatesUI)
+TEST_F(TestOpticalMediaWidget, IsSupportedUDF_UDFEnabledSupportedMedium_UpdatesUI)
 {
     mockFileSystem = "udf";
     mockFsVersion = "1.02";
     mockMediaType = MediaType::kDVD_R;
 
-    stub.set_lamda(&DSysInfo::deepinType, []() {
+    stub.set_lamda(&OpticalHelper::isUDFBurnEnabled, []() {
         __DBG_STUB_INVOKE__
-        return DSysInfo::DeepinProfessional;
+        return true;
     });
 
     QUrl testUrl("burn:///dev/sr0/disc_files/");
@@ -245,15 +244,15 @@ TEST_F(TestOpticalMediaWidget, IsSupportedUDF_ProfessionalEditionSupportedMedium
     EXPECT_TRUE(true);
 }
 
-TEST_F(TestOpticalMediaWidget, IsSupportedUDF_NonProfessionalEdition_UpdatesUI)
+TEST_F(TestOpticalMediaWidget, IsSupportedUDF_UDFDisabled_UpdatesUI)
 {
     mockFileSystem = "udf";
     mockFsVersion = "1.02";
     mockMediaType = MediaType::kDVD_R;
 
-    stub.set_lamda(&DSysInfo::deepinType, []() {
+    stub.set_lamda(&OpticalHelper::isUDFBurnEnabled, []() {
         __DBG_STUB_INVOKE__
-        return DSysInfo::DeepinPersonal;
+        return false;
     });
 
     QUrl testUrl("burn:///dev/sr0/disc_files/");

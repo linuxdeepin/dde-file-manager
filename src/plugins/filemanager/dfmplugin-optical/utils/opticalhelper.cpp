@@ -242,6 +242,12 @@ bool OpticalHelper::isBurnEnabled()
     return ret.isValid() ? ret.toBool() : true;
 }
 
+bool OpticalHelper::isUDFBurnEnabled()
+{
+    const auto &&ret = DConfigManager::instance()->value("org.deepin.dde.file-manager.burn", "udfBurnEnable");
+    return ret.isValid() ? ret.toBool() : true;
+}
+
 QStringList OpticalHelper::allOpticalDiscMountPoints()
 {
     using namespace GlobalServerDefines;

@@ -428,8 +428,10 @@ TEST_F(UT_BurnOptDialog, onButnBtnClicked_Burn_DeviceNotExists)
         errorDialogShown = true;
     });
 
-    using QFileExistsFunc = bool (*)(const QString &);
-    stub.set_lamda(static_cast<QFileExistsFunc>(&QFile::exists), [] {
+    // onButnBtnClicked checks device existence through the member overload
+    // QFile::exists() const (the static overload is NOT called here)
+    using QFileMemberExistsFunc = bool (QFile::*)() const;
+    stub.set_lamda(static_cast<QFileMemberExistsFunc>(&QFile::exists), [](QFile *) {
         __DBG_STUB_INVOKE__
         return false;   // Device doesn't exist
     });
