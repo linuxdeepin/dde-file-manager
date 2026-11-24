@@ -60,6 +60,34 @@ TEST_F(UT_BurnHelper, IsBurnEnabled_InvalidValue)
     EXPECT_TRUE(BurnHelper::isBurnEnabled());   // Should return default true
 }
 
+TEST_F(UT_BurnHelper, IsUDFBurnEnabled)
+{
+    stub.set_lamda(&DConfigManager::value, [](DConfigManager *, const QString &app, const QString &key, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        if (app == "org.deepin.dde.file-manager.burn" && key == "udfBurnEnable")
+            return QVariant(false);
+        return QVariant();
+    });
+    EXPECT_FALSE(BurnHelper::isUDFBurnEnabled());
+
+    stub.set_lamda(&DConfigManager::value, [](DConfigManager *, const QString &app, const QString &key, const QVariant &) {
+        __DBG_STUB_INVOKE__
+        if (app == "org.deepin.dde.file-manager.burn" && key == "udfBurnEnable")
+            return QVariant(true);
+        return QVariant();
+    });
+    EXPECT_TRUE(BurnHelper::isUDFBurnEnabled());
+}
+
+TEST_F(UT_BurnHelper, IsUDFBurnEnabled_InvalidValue)
+{
+    stub.set_lamda(&DConfigManager::value, [] {
+        __DBG_STUB_INVOKE__
+        return QVariant();   // Invalid value
+    });
+    EXPECT_TRUE(BurnHelper::isUDFBurnEnabled());   // Should return default true
+}
+
 TEST_F(UT_BurnHelper, showOpticalBlankConfirmationDialog)
 {
     int expectedResult = 1;

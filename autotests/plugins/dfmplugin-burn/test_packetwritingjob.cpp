@@ -325,37 +325,47 @@ TEST_F(UT_PacketWritingJob, RenamePacketWritingJob_work_EmptyUrls)
 
 TEST_F(UT_PacketWritingJob, AbstractPacketWritingJob_run)
 {
-    PutPacketWritingJob job("/dev/sr0");
+    // run() must never touch a real optical device: the mount lookup, open and
+    // close of DPacketWritingController are all stubbed, and the device name is
+    // a non-existent placeholder. With a real written disc inserted, the real
+    // open() scans the UDF structures via raw SCSI and stalls for minutes.
+    PutPacketWritingJob job("curDevice");
+
+    QString mountPoint;
+    stub.set_lamda(ADDR(DeviceUtils, getMountInfo), [&mountPoint] {
+        __DBG_STUB_INVOKE__
+        return mountPoint;
+    });
+
+    bool openResult = false;
+    stub.set_lamda(ADDR(DPacketWritingController, open), [&openResult] {
+        __DBG_STUB_INVOKE__
+        return openResult;
+    });
+
+    stub.set_lamda(ADDR(DPacketWritingController, close), [] {
+        __DBG_STUB_INVOKE__
+    });
 
     bool workCalled = false;
-
-    job.run();
-
-    EXPECT_FALSE(workCalled);
-
-    bool finishedEmitted = false;
-
-    stub.set_lamda(ADDR(DeviceUtils, getMountInfo), [] {
-        __DBG_STUB_INVOKE__
-        return "/tmp";
-    });
-
-    job.run();
-
-    EXPECT_FALSE(workCalled);
-
-    stub.set_lamda(ADDR(DPacketWritingController, open), [] {
-        __DBG_STUB_INVOKE__
-        return true;
-    });
-
     stub.set_lamda(VADDR(PutPacketWritingJob, work), [&workCalled] {
         __DBG_STUB_INVOKE__
         workCalled = true;
         return true;
     });
-    job.run();
 
+    // Empty mount point: run() bails out before the controller is created
+    job.run();
+    EXPECT_FALSE(workCalled);
+
+    // Mount point present but open() fails: work() is not called
+    mountPoint = "/tmp";
+    job.run();
+    EXPECT_FALSE(workCalled);
+
+    // open() succeeds: work() is invoked
+    openResult = true;
+    job.run();
     EXPECT_TRUE(workCalled);
 }
 
@@ -368,7 +378,11 @@ TEST_F(UT_PacketWritingJob, PacketWritingScheduler_addJob_NullJob)
 
 TEST_F(UT_PacketWritingJob, PacketWritingScheduler_onTimeout_EmptyQueue)
 {
-    // Should handle empty queue gracefully
+    // Jobs enqueued by previous tests may still be pending; stub QThread::start
+    // so onTimeout() cannot launch a real worker thread against the hardware.
+    stub.set_lamda(ADDR(QThread, start), [] {
+        __DBG_STUB_INVOKE__
+    });
     PacketWritingScheduler::instance().onTimeout();
     // Should not crash
 }

@@ -19,7 +19,6 @@
 
 #include <dfm-burn/dburn_global.h>
 
-#include <DSysInfo>
 #include <QDir>
 
 using namespace dfmplugin_optical;
@@ -167,7 +166,7 @@ void OpticalMediaWidget::updateUi()
 
     if (curFS.toLower() == "udf" && !isSupportedUDF()) {
         fmInfo() << "UDF filesystem detected but not supported - Type:" << curMediaTypeStr << "Version:" << curFSVersion;
-        if (DSysInfo::deepinType() == DSysInfo::DeepinProfessional) {   // for other version, show normal unsupported writtings
+        if (OpticalHelper::isUDFBurnEnabled()) {   // UDF enabled but medium/version not compatible, show detailed unsupported writings
             lbUDFSupport->setText(tr("%1 burning is not supported").arg("UDF"));
             iconCaution->setVisible(true);
             iconCaution->load(QString(":/dark/icons/caution.svg"));
@@ -225,8 +224,8 @@ void OpticalMediaWidget::handleErrorMount()
 
 bool OpticalMediaWidget::isSupportedUDF()
 {
-    if (!(DSysInfo::deepinType() == DSysInfo::DeepinProfessional)) {
-        fmDebug() << "UDF not supported - not professional edition";
+    if (!OpticalHelper::isUDFBurnEnabled()) {
+        fmDebug() << "UDF not supported - disabled by config";
         return false;
     }
     if (!OpticalHelper::isSupportedUDFMedium(curMediaType)) {
