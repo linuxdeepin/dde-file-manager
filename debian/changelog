@@ -1,3 +1,15 @@
+dde-file-manager (6.6.11) unstable; urgency=medium
+
+  * fix: skip service activation when index disabled
+  * fix: synchronize copy-path actions with Ctrl+Shift+C shortcut
+  * fix: prevent duplicate home path in gvfs file navigation
+  * feat: add UDF burn config and update DConfig handling
+  * fix: reduce plugin blacklist log noise
+  * feat: Migrate copy-file-path and related fixes to V25
+  * fix(packaging): require dde-shell 2.0.62 for folder-content plugin
+
+ -- Zhang Sheng <zhangsheng@uniontech.com>  Tue, 24 Nov 2026 19:12:14 +0800
+
 dde-file-manager (6.6.10) unstable; urgency=medium
 
   * fix: sync cross-mode coordinates in canvas grid
