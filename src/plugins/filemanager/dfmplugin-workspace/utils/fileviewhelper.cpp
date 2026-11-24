@@ -433,6 +433,7 @@ void FileViewHelper::handleCommitData(QWidget *editor) const
     fmDebug() << "Old URL:" << oldUrl.toString() << "New URL:" << newUrl.toString();
 
     // Todo(yanghao): tag
+    parent()->prepareRenameSelection(newUrl);
     FileOperatorHelperIns->renameFile(this->parent(), oldUrl, newUrl);
 }
 

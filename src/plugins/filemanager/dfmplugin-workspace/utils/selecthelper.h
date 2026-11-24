@@ -33,6 +33,7 @@ public:
     void saveSelectedFilesList(const QUrl &current, const QList<QUrl> &urls);
     void resortSelectFiles();
     void filterSelectedFiles(const QList<QUrl> &urlList);
+    void notifyUserNavigation();
 
     // Tree-view URL extraction (migrated from FileView)
     QList<QUrl> selectedTreeViewUrlList() const;
@@ -78,6 +79,8 @@ private:
 
     QList<QUrl> selectedFiles {};
     QUrl currentSelectedFile {};
+
+    bool userNavigated { false };
 
     // Cached itemsExpandable state (synced from FileView via setItemsExpandable).
     bool m_itemsExpandable { false };

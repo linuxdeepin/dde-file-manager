@@ -30,6 +30,12 @@ void SelectHelper::setItemsExpandable(bool expandable)
     m_itemsExpandable = expandable;
 }
 
+void SelectHelper::notifyUserNavigation()
+{
+    if (!selectedFiles.isEmpty())
+        userNavigated = true;
+}
+
 QModelIndex SelectHelper::getCurrentPressedIndex() const
 {
     return currentPressedIndex;
@@ -40,6 +46,7 @@ void SelectHelper::click(const QModelIndex &index)
     fmDebug() << "SelectHelper click event - index valid:" << index.isValid() << "row:" << index.row();
     lastPressedIndex = index;
     currentPressedIndex = index;
+    notifyUserNavigation();
 }
 
 void SelectHelper::release()
@@ -138,8 +145,6 @@ bool SelectHelper::select(const QList<QUrl> &urls)
     QModelIndex firstIndex;
     QModelIndex lastIndex;
     const QModelIndex &root = view->rootIndex();
-    view->selectionModel()->clearSelection();
-    QList<QModelIndex> indexes {};
     QItemSelection selection;
     for (const QUrl &url : urls) {
         const QModelIndex &index = view->model()->getIndexByUrl(url);
@@ -162,6 +167,7 @@ bool SelectHelper::select(const QList<QUrl> &urls)
         return false;
     }
 
+    view->selectionModel()->clearSelection();
     view->selectionModel()->select(selection, QItemSelectionModel::Select);
 
     if (lastIndex.isValid()) {
@@ -170,7 +176,7 @@ bool SelectHelper::select(const QList<QUrl> &urls)
     }
 
     if (firstIndex.isValid()) {
-        view->scrollTo(firstIndex, QAbstractItemView::PositionAtTop);
+        view->scrollTo(firstIndex, QAbstractItemView::EnsureVisible);
         fmDebug() << "Scrolled to first selected item";
     }
 
@@ -182,10 +188,19 @@ void SelectHelper::saveSelectedFilesList(const QUrl &current, const QList<QUrl> 
     fmDebug() << "Saving selected files list - current:" << current.toString() << "count:" << urls.size();
     currentSelectedFile = current;
     selectedFiles = urls;
+    userNavigated = false;
 }
 
 void SelectHelper::resortSelectFiles()
 {
+    if (userNavigated) {
+        fmDebug() << "User has navigated away, skipping selection recovery";
+        userNavigated = false;
+        currentSelectedFile = QUrl();
+        selectedFiles.clear();
+        return;
+    }
+
     if (selectedFiles.isEmpty() || !currentSelectedFile.isValid()) {
         fmDebug() << "No files to resort or invalid current file";
         return;
@@ -193,7 +208,11 @@ void SelectHelper::resortSelectFiles()
 
     fmInfo() << "Resorting selected files - count:" << selectedFiles.size() << "current:" << currentSelectedFile.toString();
 
-    select(selectedFiles);
+    if (!select(selectedFiles)) {
+        fmDebug() << "select() failed (URL not yet in model), keeping state for retry";
+        return;
+    }
+
     view->selectionModel()->setCurrentIndex(view->model()->getIndexByUrl(currentSelectedFile), QItemSelectionModel::Select);
 
     /// Clean

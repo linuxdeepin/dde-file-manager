@@ -90,6 +90,7 @@ public:
     bool isSelected(const QModelIndex &index) const;
     int selectedIndexCount() const;
     bool selectFiles(const QList<QUrl> &files) const;
+    void prepareRenameSelection(const QUrl &newUrl);
     void setSelectionMode(const SelectionMode mode);
     void reverseSelect() const;
     void setEnabledSelectionModes(const QList<SelectionMode> &modes);

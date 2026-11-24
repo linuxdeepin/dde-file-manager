@@ -838,6 +838,11 @@ bool FileView::selectFiles(const QList<QUrl> &files) const
     return d->selectHelper->select(files);
 }
 
+void FileView::prepareRenameSelection(const QUrl &newUrl)
+{
+    d->selectHelper->saveSelectedFilesList(newUrl, QList<QUrl> { newUrl });
+}
+
 void FileView::setSelectionMode(const QAbstractItemView::SelectionMode mode)
 {
     if (d->enabledSelectionModes.contains(mode))
@@ -2155,6 +2160,8 @@ void FileView::showContextMenu(const QPoint &pos)
 
 QModelIndex FileView::moveCursor(QAbstractItemView::CursorAction cursorAction, Qt::KeyboardModifiers modifiers)
 {
+    d->selectHelper->notifyUserNavigation();
+
     if (!rootIndex().isValid())
         return QModelIndex();
 

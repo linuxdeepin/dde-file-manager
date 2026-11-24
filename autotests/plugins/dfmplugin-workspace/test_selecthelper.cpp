@@ -209,3 +209,16 @@ TEST_F(SelectHelperTest, IsSelectableItem_ChecksItem)
     // Should return false for invalid index
     EXPECT_FALSE(result);
 }
+
+TEST_F(SelectHelperTest, NotifyUserNavigation_SkipsResortRecovery)
+{
+    QUrl current = QUrl::fromLocalFile("/tmp/current");
+    QList<QUrl> urls;
+    urls << QUrl::fromLocalFile("/tmp/file1") << QUrl::fromLocalFile("/tmp/file2");
+    selectHelper->saveSelectedFilesList(current, urls);
+    selectHelper->notifyUserNavigation();
+
+    EXPECT_NO_FATAL_FAILURE({
+        selectHelper->resortSelectFiles();
+    });
+}
