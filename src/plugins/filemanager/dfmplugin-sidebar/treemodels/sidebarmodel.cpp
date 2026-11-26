@@ -360,6 +360,7 @@ void SideBarModel::updateRow(const QUrl &url, const ItemInfo &newInfo)
                 else
                     flags &= (~Qt::ItemIsEditable);
                 subItem->setFlags(flags);
+                subItem->setExpandable(newInfo.isExpandable);
                 return;
             }
         }
