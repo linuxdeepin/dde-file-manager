@@ -11,6 +11,7 @@
 #include <QDebug>
 #include <QMimeDatabase>
 #include <QMimeType>
+#include <algorithm>
 
 using namespace dfmbase;
 
@@ -232,6 +233,46 @@ MimeTypeDisplayManager *MimeTypeDisplayManager::instance()
 {
     static MimeTypeDisplayManager *ins = new MimeTypeDisplayManager();
     return ins;
+}
+
+bool MimeTypeDisplayManager::isMimeTypeRegistered(const QString &mimeType) const
+{
+    if (mimeType.isEmpty())
+        return false;
+
+    return mimeTypeDatabase.mimeTypeForName(mimeType).isValid();
+}
+
+bool MimeTypeDisplayManager::isCategoryRegistered(FileInfo::FileType type) const
+{
+    if (registeredCategoryCache.contains(type))
+        return true;
+    if (uncheckedCategoryCache.contains(type))
+        return false;
+
+    bool registered = true;
+    switch (type) {
+    case FileInfo::FileType::kArchives:
+        // 无前缀/硬编码规则，纯列表匹配：列表里没有任何系统已注册类型即死分类
+        registered = std::any_of(archiveMimeTypes.cbegin(), archiveMimeTypes.cend(),
+                                 [this](const QString &mime) { return isMimeTypeRegistered(mime); });
+        break;
+    case FileInfo::FileType::kBackups:
+        registered = std::any_of(backupMimeTypes.cbegin(), backupMimeTypes.cend(),
+                                 [this](const QString &mime) { return isMimeTypeRegistered(mime); });
+        break;
+    default:
+        // 目录/应用/可执行走硬编码核心类型，视频/音频/图片/文档走 video/ audio/ image/ text/
+        // 前缀规则，这些核心类型在 shared-mime-info 里恒存在
+        break;
+    }
+
+    if (registered)
+        registeredCategoryCache.insert(type);
+    else
+        uncheckedCategoryCache.insert(type);
+
+    return registered;
 }
 
 QStringList MimeTypeDisplayManager::supportAudioMimeTypes() const

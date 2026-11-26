@@ -9,6 +9,7 @@
 
 #include <QObject>
 #include <QMap>
+#include <QSet>
 
 namespace dfmbase {
 
@@ -29,6 +30,7 @@ public:
     QStringList supportAudioMimeTypes() const;
     QString accurateDisplayTypeFromPath(const QString &filePath) const;
     QString accurateLocalMimeTypeName(const QString &filePath) const;
+    bool isCategoryRegistered(FileInfo::FileType type) const;
 
 private:
     explicit MimeTypeDisplayManager(QObject *parent = nullptr);
@@ -39,9 +41,12 @@ private:
     FileInfo::FileType displayNameToEnumDirect(const QString &mimeType) const;
     bool shouldSkipAncestorMimeType(const QString &mimeType) const;
     QMimeType accurateLocalMimeType(const QString &filePath) const;
+    bool isMimeTypeRegistered(const QString &mimeType) const;
 
 private:
     QMimeDatabase mimeTypeDatabase;
+    mutable QSet<FileInfo::FileType> registeredCategoryCache;
+    mutable QSet<FileInfo::FileType> uncheckedCategoryCache;
     QMap<FileInfo::FileType, QString> namesMap;
     QMap<FileInfo::FileType, QString> displayNamesMap;
     QMap<FileInfo::FileType, QString> defaultIconNames;

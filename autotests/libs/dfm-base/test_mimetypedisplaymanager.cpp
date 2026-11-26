@@ -20,6 +20,8 @@
 #include <QDir>
 #include <QTemporaryFile>
 #include <QFile>
+#include <QMimeDatabase>
+#include <algorithm>
 
 using namespace dfmbase;
 
@@ -102,4 +104,61 @@ TEST(MimeTypeDisplayManagerTest, AccurateDisplayTypeFromPathResolvesTxtFile)
     QString display = m->accurateDisplayTypeFromPath(path);
     EXPECT_TRUE(display.contains(QStringLiteral("Text")));
     QFile::remove(path);
+}
+
+TEST(MimeTypeDisplayManagerTest, IsCategoryRegisteredCoreTypesAlwaysTrue)
+{
+    auto *m = MimeTypeDisplayManager::instance();
+    // freedesktop core types (inode/directory, video/...) exist in every
+    // conforming shared-mime-info installation.
+    EXPECT_TRUE(m->isCategoryRegistered(FileInfo::FileType::kDirectory));
+    EXPECT_TRUE(m->isCategoryRegistered(FileInfo::FileType::kVideos));
+    EXPECT_TRUE(m->isCategoryRegistered(FileInfo::FileType::kAudios));
+    EXPECT_TRUE(m->isCategoryRegistered(FileInfo::FileType::kImages));
+}
+
+TEST(MimeTypeDisplayManagerTest, IsCategoryRegisteredListTypesMatchSystemDb)
+{
+    auto *m = MimeTypeDisplayManager::instance();
+    // Archive is a pure list-based category (no prefix rule): registered iff
+    // some listed MIME exists in the system database. An empty list (config
+    // dir not installed) must read as a dead category.
+    const QStringList archives = m->archiveMimeTypes;   // -fno-access-control
+    bool expected = std::any_of(archives.cbegin(), archives.cend(),
+                                [](const QString &mime) {
+                                    return QMimeDatabase().mimeTypeForName(mime).isValid();
+                                });
+    EXPECT_EQ(m->isCategoryRegistered(FileInfo::FileType::kArchives), expected);
+    // executable additionally matches the hardcoded core type application/x-executable
+    EXPECT_TRUE(m->isCategoryRegistered(FileInfo::FileType::kExecutable));
+}
+
+TEST(MimeTypeDisplayManagerTest, IsCategoryRegisteredRegisteredListEntryHitsTruePath)
+{
+    auto *m = MimeTypeDisplayManager::instance();
+    // Inject a system-registered MIME into the archive list and verify the
+    // alive path; restore state afterwards to keep other tests unaffected.
+    m->registeredCategoryCache.remove(FileInfo::FileType::kArchives);
+    m->uncheckedCategoryCache.remove(FileInfo::FileType::kArchives);
+    m->archiveMimeTypes.append(QStringLiteral("application/zip"));
+    EXPECT_TRUE(m->isCategoryRegistered(FileInfo::FileType::kArchives));
+    m->archiveMimeTypes.removeLast();
+    m->registeredCategoryCache.remove(FileInfo::FileType::kArchives);
+    m->uncheckedCategoryCache.remove(FileInfo::FileType::kArchives);
+}
+
+TEST(MimeTypeDisplayManagerTest, IsCategoryRegisteredUnknownTypeDefaultsTrue)
+{
+    auto *m = MimeTypeDisplayManager::instance();
+    // Non-searchable categories (unknown, devices...) must not be filtered out.
+    EXPECT_TRUE(m->isCategoryRegistered(FileInfo::FileType::kUnknown));
+}
+
+TEST(MimeTypeDisplayManagerTest, IsCategoryRegisteredCachesPerType)
+{
+    auto *m = MimeTypeDisplayManager::instance();
+    // Second call must hit the cache and stay consistent with the first.
+    bool first = m->isCategoryRegistered(FileInfo::FileType::kArchives);
+    bool second = m->isCategoryRegistered(FileInfo::FileType::kArchives);
+    EXPECT_EQ(first, second);
 }
