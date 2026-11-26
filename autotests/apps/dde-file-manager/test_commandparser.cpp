@@ -2,8 +2,8 @@
 //
 // SPDX-License-Identifier: GPL-3.0-or-later
 
-// test_commandparser.cpp - CommandParser + SessionBusiness 单元测试
-// 重编译 app 源码（commandparser.cpp / sessionloader.cpp）进测试二进制，
+// test_commandparser.cpp - CommandParser 单元测试
+// 重编译 app 源码（commandparser.cpp）进测试二进制，
 // 通过 stub_ext 隔离 DConfig/DBus/窗口依赖，验证命令行分支与事件发布行为。
 //
 // 分支清单（来源：get_code_snippet 真实源码）→ 用例映射：
@@ -15,7 +15,6 @@
 //   [-p → showPropertyDialog]                → PropertyDialog_* 系列
 //   [-o → openWithDialog]                    → OpenWithDialog_PushesUrlList
 //   [-O → openInHomeDirectory]               → OpenHome_PublishesOpenNewWindow
-//   [-s → openSession]                       → SessionFile_* 系列
 //   [default → openInUrls]                   → OpenInUrls_* 系列
 // CommandParser::showPropertyDialog
 //   [本地文件不存在 → continue]               → PropertyDialog_MissingFile_SkipsInvalidPath
@@ -45,15 +44,6 @@
 //   [delete → publish kDeleteFiles]           → DeleteAction_PublishesDeleteEvent
 //   [trash 且 trash 文件 → return]            → TrashTrashFile_SkipsPublish
 //   [cleantrash → publish kCleanTrash]        → CleanTrash_PublishesCleanTrashEvent
-// SessionBusiness::readPath
-//   [data 为空 → false]                       → ReadPath_NullPointer_ReturnsFalse
-//   [文件打不开 → false]                       → ReadPath_MissingFile_ReturnsFalse
-//   [JSON 非法 → false]                       → ReadPath_InvalidJson_ReturnsFalse
-//   [path 空 → false]                         → ReadPath_EmptyPath_ReturnsFalse
-//   [合法 → true 且写出 path]                 → ReadPath_ValidJson_ReturnsTrueAndPath
-// SessionBusiness::parseArguments
-//   [arguments 空 → nullptr]                  → ParseArgumentsEmpty_ReturnsNullptr
-//   [非空 → argc/argv 填充]                   → ParseArguments_FillsArgv
 
 #include <gtest/gtest.h>
 #include <QTemporaryDir>
@@ -72,7 +62,6 @@
 #include "stubext.h"
 
 #include "commandparser.h"
-#include "sessionloader.h"
 
 #include <dfm-framework/dpf.h>
 #include <dfm-framework/event/event.h>
@@ -580,71 +569,6 @@ TEST_F(CommandParserTest, ProcessCommand_OpenHome_PublishesOpenNewWindow)
     EXPECT_EQ(g_listener->openNewWindowCalls, before + 1);
     EXPECT_EQ(g_listener->lastNewWindowUrl.toLocalFile(), tempDir->path());
     EXPECT_TRUE(g_listener->lastNewWindowFlag);   // DConfig default true
-}
-
-TEST_F(CommandParserTest, ProcessCommand_SessionFileMissing_WarnsAndNoWindow)
-{
-    // Arrange
-    QString fakeHome = tempDir->path();
-    stub.set_lamda(&QDir::homePath, [&fakeHome]() -> QString {
-        __DBG_STUB_INVOKE__
-        return fakeHome;
-    });
-    stub.set_lamda(&DConfigManager::value,
-                   [](DConfigManager *, const QString &, const QString &,
-                      const QVariant &defaultValue) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return defaultValue;
-                   });
-
-    const int before = listenerCount();
-    parser.process({ "ut-commandparser", "-s", "missing-session" });
-
-    // Act
-    parser.processCommand();
-
-    // Assert
-    EXPECT_EQ(listenerCount(), before);   // readPath fails -> no openWindowWithUrl
-}
-
-TEST_F(CommandParserTest, ProcessCommand_SessionFileValid_OpensStoredPath)
-{
-    // Arrange
-    QString fakeHome = tempDir->path();
-    stub.set_lamda(&QDir::homePath, [&fakeHome]() -> QString {
-        __DBG_STUB_INVOKE__
-        return fakeHome;
-    });
-    stub.set_lamda(&DConfigManager::value,
-                   [](DConfigManager *, const QString &, const QString &,
-                      const QVariant &defaultValue) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return defaultValue;
-                   });
-    stub.set_lamda(&Application::appAttribute,
-                   [](Application::ApplicationAttribute &) -> QVariant {
-                       __DBG_STUB_INVOKE__
-                       return QVariant(false);
-                   });
-
-    const QString sessionDir = fakeHome + "/.config/session";
-    ASSERT_TRUE(QDir().mkpath(sessionDir));
-    const QString sessionFile = sessionDir + "/"
-        + QCoreApplication::applicationName() + "_my-session";
-    QFile f(sessionFile);
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write(R"({"path":"/session/restored"})");
-    f.close();
-
-    const int before = listenerCount();
-    parser.process({ "ut-commandparser", "-s", "my-session" });
-
-    // Act
-    parser.processCommand();
-
-    // Assert
-    EXPECT_EQ(listenerCount(), before + 1);   // readPath succeeds -> openWindowWithUrl -> kOpenNewWindow
-    EXPECT_EQ(g_listener->lastNewWindowUrl.path(), QString("/session/restored"));
 }
 
 TEST_F(CommandParserTest, ProcessEvent_EmptyPositional_ReturnsEarly)
@@ -1384,170 +1308,3 @@ TEST_F(CommandParserTest, OpenInUrls_RealDesktopEntries_RoundTrip)
     }
 }
 
-class SessionBusinessTest : public testing::Test
-{
-protected:
-    void SetUp() override
-    {
-        stub.clear();
-        tempDir = std::make_unique<QTemporaryDir>();
-        ASSERT_TRUE(tempDir->isValid());
-    }
-
-    void TearDown() override
-    {
-        stub.clear();
-        tempDir.reset();
-    }
-
-    stub_ext::StubExt stub;
-    std::unique_ptr<QTemporaryDir> tempDir;
-    SessionBusiness *business = SessionBusiness::instance();
-};
-
-TEST_F(SessionBusinessTest, Instance_IsSingleton_SameReference)
-{
-    // Arrange / Act
-    auto *first = SessionBusiness::instance();
-    auto *second = SessionBusiness::instance();
-
-    // Assert
-    EXPECT_EQ(first, second);
-    EXPECT_EQ(business, first);
-}
-
-TEST_F(SessionBusinessTest, GetAPI_ReturnsNonNull)
-{
-    // Arrange / Act
-    UsmSessionAPI *api = business->getAPI();
-
-    // Assert
-    EXPECT_NE(api, nullptr);
-}
-
-TEST_F(SessionBusinessTest, Process_StoresArgumentsForParsing)
-{
-    // Arrange
-    const QStringList args { "arg-one", "arg-two", "arg-three" };
-
-    // Act
-    business->process(args);
-
-    // Assert: parseArguments is driven by the stored member
-    int argc = 0;
-    char **argv = business->parseArguments(argc);
-    ASSERT_NE(argv, nullptr);
-    EXPECT_EQ(argc, 3);
-    EXPECT_EQ(QString(argv[0]), QString("arg-one"));
-    EXPECT_EQ(QString(argv[2]), QString("arg-three"));
-    business->releaseArguments(argc, argv);
-}
-
-TEST_F(SessionBusinessTest, ParseArgumentsEmpty_ReturnsNullptr)
-{
-    // Arrange
-    business->process({});
-
-    // Act
-    int argc = 99;
-    char **argv = business->parseArguments(argc);
-
-    // Assert
-    EXPECT_EQ(argv, nullptr);   // branch: arguments empty
-}
-
-TEST_F(SessionBusinessTest, ReadPath_NullPointer_ReturnsFalse)
-{
-    // Arrange / Act
-    const bool ok = business->readPath("whatever", nullptr);
-
-    // Assert
-    EXPECT_FALSE(ok);   // branch: null output pointer
-}
-
-TEST_F(SessionBusinessTest, ReadPath_MissingFile_ReturnsFalse)
-{
-    // Arrange
-    QString fakeHome = tempDir->path();
-    stub.set_lamda(&QDir::homePath, [&fakeHome]() -> QString {
-        __DBG_STUB_INVOKE__
-        return fakeHome;
-    });
-    QString out;
-
-    // Act
-    const bool ok = business->readPath("no-such-session", &out);
-
-    // Assert
-    EXPECT_FALSE(ok);   // branch: file cannot be opened
-}
-
-TEST_F(SessionBusinessTest, ReadPath_InvalidJson_ReturnsFalse)
-{
-    // Arrange
-    QString fakeHome = tempDir->path();
-    stub.set_lamda(&QDir::homePath, [&fakeHome]() -> QString {
-        __DBG_STUB_INVOKE__
-        return fakeHome;
-    });
-    const QString dir = fakeHome + "/.config/session";
-    ASSERT_TRUE(QDir().mkpath(dir));
-    QFile f(dir + "/" + QCoreApplication::applicationName() + "_broken");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write("this-is-not-json");
-    f.close();
-    QString out;
-
-    // Act
-    const bool ok = business->readPath("broken", &out);
-
-    // Assert
-    EXPECT_FALSE(ok);   // branch: QJsonDocument null
-}
-
-TEST_F(SessionBusinessTest, ReadPath_EmptyPath_ReturnsFalse)
-{
-    // Arrange
-    QString fakeHome = tempDir->path();
-    stub.set_lamda(&QDir::homePath, [&fakeHome]() -> QString {
-        __DBG_STUB_INVOKE__
-        return fakeHome;
-    });
-    const QString dir = fakeHome + "/.config/session";
-    ASSERT_TRUE(QDir().mkpath(dir));
-    QFile f(dir + "/" + QCoreApplication::applicationName() + "_empty");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write(R"({"path":""})");
-    f.close();
-    QString out;
-
-    // Act
-    const bool ok = business->readPath("empty", &out);
-
-    // Assert
-    EXPECT_FALSE(ok);   // branch: parsed path empty
-}
-
-TEST_F(SessionBusinessTest, ReadPath_ValidJson_ReturnsTrueAndPath)
-{
-    // Arrange
-    QString fakeHome = tempDir->path();
-    stub.set_lamda(&QDir::homePath, [&fakeHome]() -> QString {
-        __DBG_STUB_INVOKE__
-        return fakeHome;
-    });
-    const QString dir = fakeHome + "/.config/session";
-    ASSERT_TRUE(QDir().mkpath(dir));
-    QFile f(dir + "/" + QCoreApplication::applicationName() + "_good");
-    ASSERT_TRUE(f.open(QIODevice::WriteOnly));
-    f.write(R"({"path":"/home/uos/restored-session"})");
-    f.close();
-    QString out;
-
-    // Act
-    const bool ok = business->readPath("good", &out);
-
-    // Assert
-    EXPECT_TRUE(ok);
-    EXPECT_EQ(out, QString("/home/uos/restored-session"));
-}

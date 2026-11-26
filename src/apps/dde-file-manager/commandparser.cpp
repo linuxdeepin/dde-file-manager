@@ -4,7 +4,6 @@
 
 #include "commandparser.h"
 #include "private/commandparser_p.h"
-#include "sessionloader.h"
 
 #include <dfm-base/dfm_event_defines.h>
 #include <dfm-base/dfm_global_defines.h>
@@ -122,12 +121,6 @@ void CommandParser::processCommand()
         openInHomeDirectory();
         return;
     }
-    if (isSet("s") || isSet("sessionfile")) {
-        qCDebug(logAppFileManager) << "Opening session file";
-        openSession();
-        return;
-    }
-
     qCDebug(logAppFileManager) << "Opening URLs from command line arguments";
     openInUrls();
 }
@@ -141,7 +134,6 @@ void CommandParser::process(const QStringList &arguments)
 {
     qCInfo(logAppFileManager) << "Processing command line arguments:" << arguments.size() << "args";
     // 直接使用参数，不再进行 percent 解码，因为 FileManager1DBus 已经处理了 Base64 解码
-    SessionBusiness::instance()->process(arguments);
     commandParser->process(arguments);
 }
 
@@ -188,9 +180,6 @@ void CommandParser::initOptions()
     QCommandLineOption openHomeOption(QStringList() << "O"
                                                     << "open-home",
                                       "open home");
-    QCommandLineOption sessionOption(QStringList() << "s"
-                                                   << "sessionfile",
-                                     "support session loader");
     QCommandLineOption activationTokenOption(QStringList() << "activation-token",
                                              "XDG activation token for Wayland/Treeland window activation",
                                              "token");
@@ -206,7 +195,6 @@ void CommandParser::initOptions()
     addOption(workingDirOption);
     addOption(openWithDialog);
     addOption(openHomeOption);
-    addOption(sessionOption);
     addOption(activationTokenOption);
 }
 
@@ -405,22 +393,8 @@ void CommandParser::openWindowWithUrl(const QUrl &url)
         if (window)
             activeWindow(window);
     } else {
-        flag = flag ? false : isSet("n") || isSet("s") || isSet("sessionfile") || isSet("show-item");
+        flag = flag ? false : isSet("n") || isSet("show-item");
         dpfSignalDispatcher->publish(GlobalEventType::kOpenNewWindow, url, flag);
-    }
-}
-
-void CommandParser::openSession()
-{
-    for (QString filename : positionalArguments()) {
-        QString sessionFile = "";
-        if (!SessionBusiness::instance()->readPath(filename, &sessionFile)) {
-            qCWarning(logAppFileManager) << "Failed to read session path from file:" << filename;
-        } else {
-            qCInfo(logAppFileManager) << "Opening session file:" << sessionFile;
-            openWindowWithUrl(QUrl(sessionFile));
-        }
-        break;   // current time only support one file.
     }
 }
 
