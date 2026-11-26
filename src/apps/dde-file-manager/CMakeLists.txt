@@ -20,8 +20,6 @@ set(SRCS
     ${CMAKE_CURRENT_SOURCE_DIR}/commandparser.h
     ${CMAKE_CURRENT_SOURCE_DIR}/commandparser.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/private/commandparser_p.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/sessionloader.h
-    ${CMAKE_CURRENT_SOURCE_DIR}/sessionloader.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/dragmonitor.cpp
     ${CMAKE_CURRENT_SOURCE_DIR}/dragmonitor.h
     )

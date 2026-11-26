@@ -14,7 +14,6 @@ file(GLOB_RECURSE _ut_files
 
 set(_app_sources
     "${_app_dir}/commandparser.cpp"
-    "${_app_dir}/sessionloader.cpp"
 )
 
 find_package(Qt6 COMPONENTS Widgets Gui REQUIRED)
