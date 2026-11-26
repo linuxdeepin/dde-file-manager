@@ -2438,9 +2438,7 @@ void FileView::currentChanged(const QModelIndex &current, const QModelIndex &pre
 
 void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int end)
 {
-    QModelIndex currentIdx = currentIndex();
     QItemSelection selectionToDeselect;
-    bool currentInRemovedRange = false;
 
     // 遍历所有选中的索引，找出需要取消选择的项
     for (const QModelIndex &index : selectedIndexes()) {
@@ -2450,11 +2448,6 @@ void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int en
         if (index.row() >= start && index.row() <= end) {
             // 收集需要取消选择的 index（避免在迭代中修改选择模型）
             selectionToDeselect.select(index, index);
-
-            // 检查 currentIndex 是否在被删除范围内
-            if (index == currentIdx) {
-                currentInRemovedRange = true;
-            }
         }
     }
 
@@ -2463,11 +2456,9 @@ void FileView::rowsAboutToBeRemoved(const QModelIndex &parent, int start, int en
         selectionModel()->select(selectionToDeselect, QItemSelectionModel::Deselect);
     }
 
-    // 如果 currentIndex 被删除，提前清空，避免 Qt 自动跳转到下一个 item
-    if (currentInRemovedRange) {
-        setCurrentIndex(QModelIndex());
-    }
-
+    // 不清空 currentIndex：Qt 的 DListView::rowsAboutToBeRemoved 会自动将
+    // currentIndex 调整到相邻的有效行，保持其始终有效。若提前清空，在旧行移除
+    // 到新行插入的延迟窗口内 currentIndex 无效，moveCursor 落入默认逻辑返回首行。
     if (itemDelegate())
         itemDelegate()->hideNotEditingIndexWidget();
 
