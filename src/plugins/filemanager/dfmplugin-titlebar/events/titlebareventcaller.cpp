@@ -51,7 +51,7 @@ void TitleBarEventCaller::sendChangeCurrentUrl(QWidget *sender, const QUrl &url)
     if (id > 0 && url.isValid()) {
         dpfSignalDispatcher->publish(DFMBASE_NAMESPACE::GlobalEventType::kChangeCurrentUrl, id, url);
     } else {
-        fmWarning() << "Cannot send URL change: invalid window id or URL, id:" << id << "URL:" << url;
+        fmDebug() << "Cannot send URL change: invalid window id or URL, id:" << id << "URL:" << url;
     }
 }
 

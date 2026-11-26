@@ -39,7 +39,7 @@ bool LocalFileWatcherPrivate::start()
 
     dfmio::DFile file(url);
     if (!file.exists()) {
-        qCWarning(logDFMBase) << "LocalFileWatcher::start: Failed to start watcher, target directory does not exist:" << url;
+        qCDebug(logDFMBase) << "LocalFileWatcher::start: Failed to start watcher, target directory does not exist:" << url;
         return false;
     }
 

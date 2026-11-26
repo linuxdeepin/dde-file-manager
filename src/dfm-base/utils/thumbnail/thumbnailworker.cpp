@@ -227,7 +227,7 @@ void ThumbnailWorker::createThumbnail(const QUrl &url, Global::ThumbnailSize siz
         qCInfo(logDFMBase) << "thumbnail: thumbnail creation completed for:" << d->originalUrl;
         Q_EMIT thumbnailCreateFinished(d->originalUrl, thumbnailPath);
     } else {
-        qCWarning(logDFMBase) << "thumbnail: thumbnail creation failed for:" << d->originalUrl;
+        qCDebug(logDFMBase) << "thumbnail: thumbnail creation failed for:" << d->originalUrl;
         Q_EMIT thumbnailCreateFailed(d->originalUrl);
     }
 }
