@@ -51,7 +51,7 @@ CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
 {
     const KeyType &theType = url.scheme();
     if (!topWidgetCreators.contains(theType)) {
-        fmWarning() << "Scheme: " << theType << "not registered!";
+        fmDebug() << "Scheme: " << theType << "not registered!";
         return nullptr;
     }
 
@@ -62,7 +62,7 @@ CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByUrl(const QUrl &url)
 CustomTopWidgetInterface *WorkspaceHelper::createTopWidgetByScheme(const QString &scheme)
 {
     if (!topWidgetCreators.contains(scheme)) {
-        fmWarning() << "Scheme: " << scheme << "not registered!";
+        fmDebug() << "Scheme: " << scheme << "not registered!";
         return nullptr;
     }
 

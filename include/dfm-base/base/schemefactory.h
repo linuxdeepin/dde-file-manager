@@ -309,7 +309,7 @@ public:
             *isCacheMiss = false;
 
         if (!url.isValid()) {
-            qCWarning(logDFMBase) << "url is invalid !!! url = " << url;
+            qCDebug(logDFMBase) << "url is invalid !!! url = " << url;
             return nullptr;
         }
 
