@@ -91,14 +91,23 @@ void AdvanceSearchBarPrivate::initUI()
     };
 
     asbCombos[kFileType]->addItem("--", QVariant());
-    addItemToFileTypeCombo(tr("Application"));
-    addItemToFileTypeCombo(tr("Video"));
-    addItemToFileTypeCombo(tr("Audio"));
-    addItemToFileTypeCombo(tr("Image"));
-    addItemToFileTypeCombo(tr("Archive"));
-    addItemToFileTypeCombo(tr("Text"));
-    addItemToFileTypeCombo(tr("Executable"));
-    addItemToFileTypeCombo(tr("Backup file"));
+
+    // 分类下没有任何已注册 MIME 类型时（如备份文件仅对应未安装的 deepinclone），
+    // 该筛选项永远筛不出结果，直接不显示。tr() 须在成员函数内求值以保持翻译上下文
+    const QList<QPair<FileInfo::FileType, QString>> fileTypes {
+        { FileInfo::FileType::kDesktopApplication, tr("Application") },
+        { FileInfo::FileType::kVideos, tr("Video") },
+        { FileInfo::FileType::kAudios, tr("Audio") },
+        { FileInfo::FileType::kImages, tr("Image") },
+        { FileInfo::FileType::kArchives, tr("Archive") },
+        { FileInfo::FileType::kDocuments, tr("Text") },
+        { FileInfo::FileType::kExecutable, tr("Executable") },
+        { FileInfo::FileType::kBackups, tr("Backup file") },
+    };
+    for (const auto &pair : fileTypes) {
+        if (MimeTypeDisplayManager::instance()->isCategoryRegistered(pair.first))
+            addItemToFileTypeCombo(pair.second);
+    }
 
     asbCombos[kSizeRange]->addItem("--", QVariant());
     asbCombos[kSizeRange]->addItem("0 ~ 100 KB", QVariant::fromValue(QPair<quint64, quint64>(0, 100)));
