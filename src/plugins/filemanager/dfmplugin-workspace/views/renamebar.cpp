@@ -6,7 +6,6 @@
 #include "private/renamebar_p.h"
 #include "utils/fileoperatorhelper.h"
 #include <dfm-base/interfaces/abstractjobhandler.h>
-#include "workspacewidget.h"
 #include "workspacepage.h"
 #include "views/fileview.h"
 
@@ -76,16 +75,13 @@ void RenameBar::setVisible(bool visible)
     Q_D(RenameBar);
     fmDebug() << "RenameBar setVisible called with visible:" << visible;
     if (!d->connectInitOnce) {
-        auto widget = qobject_cast<WorkspaceWidget *>(parentWidget());
-        if (widget) {
-            auto view = dynamic_cast<FileView *>(widget->currentView());
-            if (view)
-            {
+        auto page = findPage();
+        if (page) {
+            auto view = dynamic_cast<FileView *>(page->currentViewPtr());
+            if (view) {
                 d->connectInitOnce = true;
                 QObject::connect(view, &FileView::selectUrlChanged, this, &RenameBar::onSelectUrlChanged);
             }
-        } else {
-            fmWarning() << "Failed to cast parentWidget to WorkspaceWidget in RenameBar";
         }
     }
     if (visible) {
