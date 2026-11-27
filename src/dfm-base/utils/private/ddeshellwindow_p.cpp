@@ -46,6 +46,28 @@ public:
     {
     }
 
+    /*!
+     * \brief Binds the global now instead of on the next event loop turn
+     *
+     * QWaylandClientExtension posts its initialize() slot through a queued
+     * connection, so a freshly created manager is still unbound when
+     * showEvent() runs and the shell surface used to be created only after
+     * the window had already been mapped. Treeland associates a dde shell
+     * surface with a window when the window is created and ignores surfaces
+     * created later, so the skip flags never reached the window and the
+     * first window of a fresh process kept its dock entry.
+     *
+     * The registry has been read by the time the application runs, so the
+     * global - when exposed - is already cached and initialize() binds
+     * synchronously; without the global it stays inactive and the caller
+     * keeps waiting for the global to appear, as before.
+     */
+    void bindNow()
+    {
+        if (!isInitialized())
+            initialize();
+    }
+
     ~DDEShellManager() override
     {
         // Never runs: the instance is process-global and intentionally not
@@ -94,15 +116,19 @@ private:
  * \brief Process-wide manager, created on first use and never destroyed
  *
  * Like the transition and activation managers, it binds to the Qt Wayland
- * display and only exists when the Wayland platform plugin is in use; the
- * registry has already been read by the time the application runs, so the
- * global - when exposed - initializes the manager immediately.
+ * display and only exists when the Wayland platform plugin is in use. The
+ * bind is completed synchronously by bindNow(): the first window of a fresh
+ * process calls in from showEvent(), where the deferred initialize() has not
+ * run yet and the shell surface would otherwise be created after the window
+ * was mapped, which Treeland does not associate with the window anymore.
  */
 DDEShellManager *manager()
 {
     static DDEShellManager *instance = nullptr;
-    if (!instance && qGuiApp && qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>())
+    if (!instance && qGuiApp && qGuiApp->nativeInterface<QNativeInterface::QWaylandApplication>()) {
         instance = new DDEShellManager;
+        instance->bindNow();
+    }
     return instance;
 }
 
