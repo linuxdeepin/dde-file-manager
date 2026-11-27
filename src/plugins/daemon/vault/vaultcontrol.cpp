@@ -79,6 +79,12 @@ void VaultControl::responseLockScreenDBus(const QDBusMessage &msg)
                 fmInfo() << "[VaultControl::responseLockScreenDBus] Screen unlocked, attempting transparent vault unlock";
                 transparentUnlockVault();
             } else {
+                VaultState st = state(VaultHelper::instance()->vaultBaseDirLocalPath());
+                if (st != kUnlocked) {
+                    fmInfo() << "[VaultControl::responseLockScreenDBus] Vault not unlocked, current state:" << static_cast<int>(st);
+                    return;
+                }
+
                 fmInfo() << "[VaultControl::responseLockScreenDBus] Screen locked, locking vault";
                 lockVault(VaultHelper::instance()->vaultMountDirLocalPath(), false);
 
