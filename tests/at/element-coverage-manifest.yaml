@@ -737,7 +737,7 @@ elements:
     type: DSlider *
     name_source: accessible
   RenameBtn:
-    role: ''
+    role: push button
     source: src/plugins/filemanager/dfmplugin-workspace/views/private/renamebar_p.cpp
     type: DSuggestButton *
     name_source: accessible

@@ -239,3 +239,226 @@ TEST_F(SettingBackendTest, BUG346141_RemoteEnvFilePreviewDefaultOff)
     EXPECT_FALSE(backend->getOption(kRemoteEnvKey).toBool());
     EXPECT_FALSE(meta.value("text").toString().isEmpty());
 }
+
+// ============================================================
+// Coverage additions for commit ca942ca5:
+//   addSettingAccessor(ApplicationAttribute/GenericAttribute)
+//   overloads now directly insert into d->setters (bypassing the
+//   common overload's null-getter warning) and add an explicit
+//   null-setter early-return check.
+// ============================================================
+
+#include "dfm-base/base/configs/private/settingbackend_p.h"
+#include <QSet>
+
+class SettingBackendAttrOverloadTest : public testing::Test
+{
+protected:
+    void SetUp() override
+    {
+        if (Application::instance() == nullptr)
+            appHolder = std::make_unique<Application>();
+        ASSERT_NE(Application::instance(), nullptr);
+        backend = SettingBackend::instance();
+        ASSERT_NE(backend, nullptr);
+    }
+
+    void TearDown() override
+    {
+        for (const auto &key : cleanupKeys) {
+            backend->d->setters.remove(key);
+            backend->d->getters.remove(key);
+        }
+    }
+
+    void trackKey(const QString &key) { cleanupKeys.insert(key); }
+
+    std::unique_ptr<Application> appHolder;
+    SettingBackend *backend { nullptr };
+    QSet<QString> cleanupKeys;
+};
+
+// ---- ApplicationAttribute overload ----
+
+TEST_F(SettingBackendAttrOverloadTest, AppAttrValidSetterRegistersOnlySetter)
+{
+    QString uiKey = backend->d->keyToAA.key(Application::kIconSizeLevel);
+    ASSERT_FALSE(uiKey.isEmpty());
+    trackKey(uiKey);
+
+    bool called = false;
+    QVariant captured;
+    backend->addSettingAccessor(Application::kIconSizeLevel,
+                                [&called, &captured](const QVariant &val) {
+                                    called = true;
+                                    captured = val;
+                                });
+
+    EXPECT_TRUE(backend->d->setters.contains(uiKey));
+    EXPECT_FALSE(backend->d->getters.contains(uiKey));
+
+    backend->d->saveByFunc(uiKey, QVariant(42));
+    EXPECT_TRUE(called);
+    EXPECT_EQ(captured.toInt(), 42);
+}
+
+TEST_F(SettingBackendAttrOverloadTest, AppAttrNullSetterDoesNotRegister)
+{
+    backend->addSettingAccessor(Application::kIconSizeLevel, nullptr);
+
+    QString uiKey = backend->d->keyToAA.key(Application::kIconSizeLevel);
+    EXPECT_FALSE(backend->d->setters.contains(uiKey));
+    EXPECT_FALSE(backend->d->getters.contains(uiKey));
+}
+
+TEST_F(SettingBackendAttrOverloadTest, AppAttrUnmappedAttrDoesNotRegister)
+{
+    // kViewSizeAdjustable exists in the enum but has no keyToAA mapping.
+    bool called = false;
+    backend->addSettingAccessor(Application::kViewSizeAdjustable,
+                                [&called](const QVariant &) { called = true; });
+
+    EXPECT_FALSE(called);
+}
+
+TEST_F(SettingBackendAttrOverloadTest, AppAttrOverwriteSetterReplaces)
+{
+    QString uiKey = backend->d->keyToAA.key(Application::kViewMode);
+    ASSERT_FALSE(uiKey.isEmpty());
+    trackKey(uiKey);
+
+    int callCount = 0;
+    backend->addSettingAccessor(Application::kViewMode,
+                                [&callCount](const QVariant &) { callCount += 10; });
+    backend->addSettingAccessor(Application::kViewMode,
+                                [&callCount](const QVariant &) { callCount += 1; });
+
+    backend->d->saveByFunc(uiKey, QVariant(0));
+    EXPECT_EQ(callCount, 1);
+}
+
+// ---- GenericAttribute overload ----
+
+TEST_F(SettingBackendAttrOverloadTest, GenAttrValidSetterRegistersOnlySetter)
+{
+    QString uiKey = backend->d->keyToGA.key(Application::kShowedHiddenFiles);
+    ASSERT_FALSE(uiKey.isEmpty());
+    trackKey(uiKey);
+
+    bool called = false;
+    QVariant captured;
+    backend->addSettingAccessor(Application::kShowedHiddenFiles,
+                                [&called, &captured](const QVariant &val) {
+                                    called = true;
+                                    captured = val;
+                                });
+
+    EXPECT_TRUE(backend->d->setters.contains(uiKey));
+    EXPECT_FALSE(backend->d->getters.contains(uiKey));
+
+    backend->d->saveByFunc(uiKey, QVariant(true));
+    EXPECT_TRUE(called);
+    EXPECT_EQ(captured.toBool(), true);
+}
+
+TEST_F(SettingBackendAttrOverloadTest, GenAttrNullSetterDoesNotRegister)
+{
+    backend->addSettingAccessor(Application::kShowedHiddenFiles, nullptr);
+
+    QString uiKey = backend->d->keyToGA.key(Application::kShowedHiddenFiles);
+    EXPECT_FALSE(backend->d->setters.contains(uiKey));
+    EXPECT_FALSE(backend->d->getters.contains(uiKey));
+}
+
+TEST_F(SettingBackendAttrOverloadTest, GenAttrUnmappedAttrDoesNotRegister)
+{
+    // kAlwaysShowOfflineRemoteConnections exists in the enum but has no keyToGA mapping.
+    bool called = false;
+    backend->addSettingAccessor(Application::kAlwaysShowOfflineRemoteConnections,
+                                [&called](const QVariant &) { called = true; });
+
+    EXPECT_FALSE(called);
+}
+
+// ---- Common overload (key, get, set) ----
+
+TEST_F(SettingBackendAttrOverloadTest, CommonOverloadRegistersBothGetterAndSetter)
+{
+    QString key = "ut_sb_common_key";
+    trackKey(key);
+
+    bool getterCalled = false;
+    bool setterCalled = false;
+    backend->addSettingAccessor(key,
+                                [&getterCalled]() -> QVariant {
+                                    getterCalled = true;
+                                    return QVariant("gv");
+                                },
+                                [&setterCalled](const QVariant &) {
+                                    setterCalled = true;
+                                });
+
+    EXPECT_TRUE(backend->d->setters.contains(key));
+    EXPECT_TRUE(backend->d->getters.contains(key));
+
+    QVariant result = backend->d->getByFunc(key);
+    EXPECT_TRUE(getterCalled);
+    EXPECT_EQ(result.toString().toStdString(), "gv");
+
+    backend->d->saveByFunc(key, QVariant(1));
+    EXPECT_TRUE(setterCalled);
+}
+
+TEST_F(SettingBackendAttrOverloadTest, CommonOverloadNullSetterDoesNotRegisterSetter)
+{
+    QString key = "ut_sb_common_key";
+    trackKey(key);
+
+    backend->addSettingAccessor(key,
+                                []() -> QVariant { return QVariant(); },
+                                nullptr);
+
+    EXPECT_FALSE(backend->d->setters.contains(key));
+    EXPECT_TRUE(backend->d->getters.contains(key));
+}
+
+// ---- Integration: doSetOption triggers setter via delayed save ----
+
+TEST_F(SettingBackendAttrOverloadTest, DoSetOptionTriggersAttrSetterViaDelayedSave)
+{
+    QString uiKey = backend->d->keyToAA.key(Application::kIconSizeLevel);
+    ASSERT_FALSE(uiKey.isEmpty());
+    trackKey(uiKey);
+
+    bool called = false;
+    QVariant captured;
+    backend->addSettingAccessor(Application::kIconSizeLevel,
+                                [&called, &captured](const QVariant &val) {
+                                    called = true;
+                                    captured = val;
+                                });
+
+    backend->doSetOption(uiKey, QVariant(7));
+    QTest::qWait(300);
+
+    EXPECT_TRUE(called);
+    EXPECT_EQ(captured.toInt(), 7);
+}
+
+TEST_F(SettingBackendAttrOverloadTest, DoSetOptionTriggersGenAttrSetterViaDelayedSave)
+{
+    QString uiKey = backend->d->keyToGA.key(Application::kPreviewImage);
+    ASSERT_FALSE(uiKey.isEmpty());
+    trackKey(uiKey);
+
+    bool called = false;
+    backend->addSettingAccessor(Application::kPreviewImage,
+                                [&called](const QVariant &) {
+                                    called = true;
+                                });
+
+    backend->doSetOption(uiKey, QVariant(false));
+    QTest::qWait(300);
+
+    EXPECT_TRUE(called);
+}

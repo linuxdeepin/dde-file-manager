@@ -1,0 +1,123 @@
+# SPDX-FileCopyrightText: 2026 UnionTech Software Technology Co., Ltd.
+#
+# SPDX-License-Identifier: GPL-3.0-or-later
+name: renamebar_suite
+app: dde-file-manager
+module: renamebar
+setup:
+- action: session_start
+  command: dde-file-manager
+  wait: 3.0
+suites:
+- id: suite_renamebar_001_s1
+  name: 批量重命名栏控件显示验证
+  description: 验证通过菜单触发批量重命名后，重命名栏的 ComboBox 模式选择器和 RenameBtn 重命名按钮可见
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 编辑
+    - 批量重命名
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: focus
+  - step_type: action
+    action: element_action
+    selector:
+      name: RenameBtn
+      role: push button
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RenameBtn
+      role: push button
+- id: suite_renamebar_002_s1
+  name: 批量重命名栏模式切换控件验证
+  description: 验证重命名栏 ComboBox 可切换重命名模式（替换/添加/自定义），切换后控件仍然可见
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 编辑
+    - 批量重命名
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: click
+  - step_type: action
+    action: keyboard_press
+    key: Down
+    wait: 0.5
+  - step_type: action
+    action: keyboard_press
+    key: Return
+    wait: 0.5
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: focus
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: RenameBtn
+      role: push button
+- id: suite_renamebar_003_s1
+  name: 取消文件选中后重命名栏隐藏验证
+  description: 验证批量重命名栏显示后，清除文件选中时重命名栏正确隐藏（commit 7fd17a69 修复点）
+  steps:
+  - step_type: action
+    action: dtk_main_menu
+    items:
+    - 编辑
+    - 批量重命名
+    wait: 2.0
+  - step_type: action
+    action: element_action
+    selector:
+      name: ComboBox
+      role: combo box
+    do: focus
+  - step_type: action
+    action: keyboard_press
+    key: Escape
+    wait: 1.0
+  assert_steps:
+  - step_type: assert
+    action: assert_element
+    selector:
+      name: ComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_not_exists
+    selector:
+      name: ComboBox
+      role: combo box
+  - step_type: assert
+    action: assert_not_exists
+    selector:
+      name: RenameBtn
+      role: push button
+teardown:
+- action: session_stop

@@ -370,6 +370,7 @@ elements:
     name: RenameEditor
   RenameBtn:
     name: RenameBtn
+    role: push button
   RepeatPwdEdit:
     name: RepeatPwdEdit
   SaveBtn:
