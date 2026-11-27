@@ -29,8 +29,21 @@ RootInfo *FileDataManager::fetchRoot(const QUrl &url, const QString &key)
     const QUrl normalizedUrl = normalizeRootUrl(url);
     addRootUser(normalizedUrl, key);
 
-    if (rootInfoMap.contains(normalizedUrl))
-        return rootInfoMap.value(normalizedUrl);
+    if (rootInfoMap.contains(normalizedUrl)) {
+        if (ProtocolUtils::isRemoteFile(normalizedUrl)) {
+            const QString path = normalizedUrl.isLocalFile()
+                    ? normalizedUrl.toLocalFile()
+                    : normalizedUrl.path();
+            QVariantMap devInfo = DevProxyMng->queryDeviceInfoByPath(path, true);
+            if (devInfo.isEmpty() || devInfo.value("fake", false).toBool()) {
+                fmInfo() << "Network mount no longer active, invalidating cache for:"
+                         << normalizedUrl.toString();
+                cleanRoot(normalizedUrl);
+            }
+        }
+        if (rootInfoMap.contains(normalizedUrl))
+            return rootInfoMap.value(normalizedUrl);
+    }
 
     fmDebug() << "Creating new RootInfo for URL:" << normalizedUrl.toString();
     return createRoot(normalizedUrl);
