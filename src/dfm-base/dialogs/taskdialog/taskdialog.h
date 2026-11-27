@@ -26,7 +26,7 @@ class TaskDialog : public DAbstractDialog
     Q_OBJECT
 
 public:
-    explicit TaskDialog(QObject *parent = nullptr);
+    explicit TaskDialog(QWidget *parent = nullptr);
     ~TaskDialog() override;
     void addTask(const JobHandlePointer taskHandler);
     void initUI();

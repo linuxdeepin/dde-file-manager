@@ -285,8 +285,17 @@ void DialogManager::showCopyMoveToSelfDialog()
  */
 void DialogManager::addTask(const JobHandlePointer task)
 {
-    if (!taskdialog)
-        taskdialog = new TaskDialog();
+    if (!taskdialog) {
+        taskdialog = new TaskDialog([]() -> QWidget * {
+            QWidget *parent = FMWindowsIns.findWindowById(FMWindowsIns.lastActivedWindowId());
+            if (!parent)
+                parent = qApp->activeWindow();
+            if (parent && parent->testAttribute(Qt::WA_DeleteOnClose))
+                parent = nullptr;
+            return parent;
+        }());
+        connect(taskdialog, &QObject::destroyed, this, [this]() { taskdialog = nullptr; });
+    }
 
     taskdialog->addTask(task);
 }
