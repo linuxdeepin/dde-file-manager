@@ -64,8 +64,12 @@ if [ "${RUN_ONLY}" = false ]; then
     cmake "${CMAKE_ARGS[@]}"
 
     # Step 2: Build
+    # 注：不要用 cmake --build。CI 覆盖率流水线会注入 cmake 包装器，给每条
+    # cmake 命令追加 -DCMAKE_COVERAGE_ARG=...；cmake --build 不识别该参数
+    # 直接报 "Unknown argument" 退出，导致构建从未执行、覆盖率全空。
+    # 默认生成器是 Unix Makefiles，直接调 make 可规避。
     echo "==> [2/4] Building..."
-    cmake --build "${BUILD_DIR}" -j"$(nproc)"
+    make -C "${BUILD_DIR}" -j"$(nproc)"
 fi
 
 # Step 3: Run tests and collect results
