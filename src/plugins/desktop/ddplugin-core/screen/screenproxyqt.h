@@ -30,6 +30,7 @@ public slots:
 private slots:
     void onScreenAdded(QScreen *screen);
     void onScreenRemoved(QScreen *screen);
+    void onMonitorChanged();
     void onScreenGeometryChanged(const QRect &);
     void onScreenAvailableGeometryChanged(const QRect &);
     void onDockChanged();

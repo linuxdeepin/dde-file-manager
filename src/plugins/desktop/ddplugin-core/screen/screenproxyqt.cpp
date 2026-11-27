@@ -176,6 +176,7 @@ void ScreenProxyQt::reset()
 
     connect(qApp, &QGuiApplication::screenAdded, this, &ScreenProxyQt::onScreenAdded);
     connect(qApp, &QGuiApplication::screenRemoved, this, &ScreenProxyQt::onScreenRemoved);
+    connect(DisplayInfoIns, &DBusDisplay::MonitorsChanged, this, &ScreenProxyQt::onMonitorChanged);
 
     /*!
      * fix bug65195 当Qt提供了屏幕名字改变信号后，应该删除该逻辑，改为监听该信号来同步屏幕名称
@@ -242,6 +243,32 @@ void ScreenProxyQt::onScreenRemoved(QScreen *screen)
     } else {
         fmDebug() << "Attempted to remove non-existent screen:" << screen->name();
     }
+}
+
+void ScreenProxyQt::onMonitorChanged()
+{
+    QStringList activeNames;
+    QDBusPendingReply<QStringList> reply = DisplayInfoIns->ListOutputNames();
+    reply.waitForFinished();
+    if (reply.isError()) {
+        fmWarning() << "Failed to get output names from DBus:" << reply.error().message();
+        return;
+    }
+    activeNames = reply.value();
+    fmInfo() << "MonitorsChanged, active outputs:" << activeNames;
+
+    bool removed = false;
+    for (QScreen *sc : screenMap.keys()) {
+        if (!activeNames.contains(sc->name())) {
+            ScreenPointer psc = screenMap.take(sc);
+            disconnectScreen(psc);
+            fmInfo() << "Monitor removed via DBus:" << sc->name() << "remaining screens:" << screenMap.size();
+            removed = true;
+        }
+    }
+
+    if (removed)
+        appendEvent(kScreen);
 }
 
 void ScreenProxyQt::onScreenGeometryChanged(const QRect &rect)
