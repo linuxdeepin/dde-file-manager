@@ -172,8 +172,12 @@ void SettingBackend::addSettingAccessor(Application::ApplicationAttribute attr, 
         qCWarning(logDFMBase) << "No UI key mapping found for ApplicationAttribute:" << static_cast<int>(attr);
         return;
     }
+    if (!set) {
+        qCWarning(logDFMBase) << "Null setter function provided for ApplicationAttribute:" << static_cast<int>(attr);
+        return;
+    }
     auto uiKey = d->keyToAA.key(attr);
-    addSettingAccessor(uiKey, nullptr, set);
+    d->setters.insert(uiKey, set);
     qCDebug(logDFMBase) << "Setting accessor added for ApplicationAttribute:" << static_cast<int>(attr) << "key:" << uiKey;
 }
 
@@ -183,8 +187,12 @@ void SettingBackend::addSettingAccessor(Application::GenericAttribute attr, Save
         qCWarning(logDFMBase) << "No UI key mapping found for GenericAttribute:" << static_cast<int>(attr);
         return;
     }
+    if (!set) {
+        qCWarning(logDFMBase) << "Null setter function provided for GenericAttribute:" << static_cast<int>(attr);
+        return;
+    }
     auto uiKey = d->keyToGA.key(attr);
-    addSettingAccessor(uiKey, nullptr, set);
+    d->setters.insert(uiKey, set);
     qCDebug(logDFMBase) << "Setting accessor added for GenericAttribute:" << static_cast<int>(attr) << "key:" << uiKey;
 }
 
