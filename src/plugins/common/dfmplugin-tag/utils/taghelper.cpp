@@ -199,7 +199,16 @@ QString TagHelper::getColorNameByTag(const QString &tagName) const
 bool TagHelper::isDefaultTag(const QString &tagName) const
 {
     auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [tagName](const TagColorDefine &define) {
-        return define.displayName == tagName;
+        return define.displayName == tagName || define.colorName == tagName;
+    });
+
+    return ret != colorDefines.cend();
+}
+
+bool TagHelper::isDefaultColor(const QColor &color) const
+{
+    auto ret = std::find_if(colorDefines.cbegin(), colorDefines.cend(), [color](const TagColorDefine &define) {
+        return define.color.name() == color.name();
     });
 
     return ret != colorDefines.cend();

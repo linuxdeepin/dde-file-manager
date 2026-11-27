@@ -300,10 +300,12 @@ QAction *TagMenuScene::createColorListAction(QMenu *parent) const
 
     for (const QString &tag : tags) {
         // The tag name of the database is the display name of the tag
-        if (!TagHelper::instance()->isDefaultTag(tag))
-            continue;
-
         const QColor &color = tagColors.value(tag, QColor());
+
+        if (!TagHelper::instance()->isDefaultTag(tag)) {
+            if (!color.isValid() || !TagHelper::instance()->isDefaultColor(color))
+                continue;
+        }
 
         if (Q_LIKELY(color.isValid()))
             colors << color;
